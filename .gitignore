@@ -1,0 +1,8 @@
+# Ignore heavy compressed zip archives exceeding GitHub's 100MB file limit
+video_frames_png.zip
+
+# OS & Helper scripts
+.DS_Store
+Thumbs.db
+*.ps1
+!serve.ps1

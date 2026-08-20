@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debashish Paul — Senior Software Engineer | Portfolio</title>
+
+  <!-- Instant Preload & DNS Prefetch -->
+  <link rel="preload" as="image" href="frames/frame_000000.png" type="image/png">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://flagcdn.com">
+  <link rel="dns-prefetch" href="https://images.unsplash.com">
+
+  <!-- Professional Google Fonts: Plus Jakarta Sans, Inter, Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=36">
+</head>
+
+<body>
+  <!-- Preloader Screen -->
+  <div id="loader" class="loader">
+    <div class="loader-content">
+      <div class="loader-brand">Debashish Paul</div>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div id="progress-text" class="progress-text">0%</div>
+    </div>
+  </div>
+
+  <!-- Fixed 3D Video Frame Canvas (Background Layer) -->
+  <div id="canvas-container" class="canvas-container">
+    <canvas id="hero-canvas"></canvas>
+    <div class="canvas-overlay"></div>
+  </div>
+
+  <!-- Foreground Content Layer -->
+  <div class="page-wrapper">
+
+    <!-- Top Navigation Header -->
+    <header class="header">
+      <a href="#" class="logo">DEBASHISH</a>
+
+      <nav class="nav-pill">
+        <a href="#about" class="nav-link active">About</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#testimonials" class="nav-link">Testimonials</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <a href="#contact" class="btn-primary">
+        <span>Start a Project</span>
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M7 17L17 7M17 7H7M17 7V17" />
+        </svg>
+      </a>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="hero-container">
+        <!-- Left Column: Title, Headline & Actions -->
+        <div class="hero-content-col">
+          <span class="hero-greeting">Hi, I am</span>
+          <h1 class="hero-title">
+            <span class="name-first">Debashish</span>
+            <span class="name-last">Paul</span>
+          </h1>
+
+          <!-- Profession & Company Badge -->
+          <div class="hero-profession-card">
+            <div class="company-logo-badge">
+              <svg class="tcs-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="10" fill="#0072BC" />
+                <path d="M11 14.5H29M20 14.5V27.5M14 14.5C14 19.5 17.5 22.5 20 22.5C22.5 22.5 26 19.5 26 14.5"
+                  stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="profession-info">
+              <span class="profession-title">Senior Software Engineer</span>
+              <span class="profession-company">TATA Consultancy Services</span>
+            </div>
+          </div>
+
+          <div class="hero-value-box">
+            <div class="badge-tag">
+              <span class="badge-dot"></span> Trusted by 200+ clients
+            </div>
+            <h2 class="hero-subheadline">
+              Websites that turn<br>visitors into clients
+            </h2>
+            <div class="hero-actions">
+              <a href="#contact" class="btn-primary">
+                <span>Start a Project</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
+              </a>
+              <a href="#projects" class="btn-secondary">
+                <span>View My Work</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M7 7L17 17M17 17H7M17 17V7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Bottom-Anchored Social Proof Glass Card -->
+        <div class="hero-social-card glass-card">
+          <div class="card-header-row">
+            <div class="avatar-stack">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&auto=format&fit=crop&q=80"
+                alt="Client 1" class="avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&auto=format&fit=crop&q=80"
+                alt="Client 2" class="avatar">
+              <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&auto=format&fit=crop&q=80"
+                alt="Client 3" class="avatar">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&auto=format&fit=crop&q=80"
+                alt="Client 4" class="avatar">
+              <a href="#testimonials" class="avatar-badge" title="Read Client Testimonials" aria-label="Read Client Testimonials">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
+              </a>
+            </div>
+          </div>
+          <p class="card-text">
+            <strong>99.6%</strong> Of My Clients Are Satisfied — Be One Of Them Today.
+          </p>
+          <div class="card-pill-row">
+            <a href="tel:+919905608257" class="glass-pill glass-pill-interactive" title="Call directly for a Free Consultation">
+              <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>Free Consultation</span>
+            </a>
+            <span class="glass-pill">24h Response</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gradual Glassmorphism Backdrop (From Section 2 to Bottom) -->
+    <div class="content-glass-flow">
+
+      <!-- Infinite Experience & Deliveries Marquee Ticker -->
+      <section class="marquee-section">
+      <div class="marquee-track">
+        <div class="marquee-content">
+          <span>6 YEARS EXPERIENCE</span>
+          <span class="marquee-bullet">•</span>
+          <span>299+ DELIVERIES</span>
+          <span class="marquee-bullet">•</span>
+          <span>99% POSITIVE REVIEWS</span>
+          <span class="marquee-bullet">•</span>
+          <span>6 YEARS EXPERIENCE</span>
+          <span class="marquee-bullet">•</span>
+          <span>299+ DELIVERIES</span>
+          <span class="marquee-bullet">•</span>
+          <span>99% POSITIVE REVIEWS</span>
+          <span class="marquee-bullet">•</span>
+        </div>
+        <div class="marquee-content" aria-hidden="true">
+          <span>6 YEARS EXPERIENCE</span>
+          <span class="marquee-bullet">•</span>
+          <span>299+ DELIVERIES</span>
+          <span class="marquee-bullet">•</span>
+          <span>99% POSITIVE REVIEWS</span>
+          <span class="marquee-bullet">•</span>
+          <span>6 YEARS EXPERIENCE</span>
+          <span class="marquee-bullet">•</span>
+          <span>299+ DELIVERIES</span>
+          <span class="marquee-bullet">•</span>
+          <span>99% POSITIVE REVIEWS</span>
+          <span class="marquee-bullet">•</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+      <div class="section-container">
+        <div class="about-card glass-card">
+          <div class="about-grid">
+            <!-- Left Label Column -->
+            <div class="about-label-col">
+              <div class="badge-tag">
+                <span class="badge-dot"></span> About Me
+              </div>
+              <div class="about-accent-line"></div>
+
+              <div class="about-experience-badges">
+                <div class="exp-badge">
+                  <span class="exp-badge-dot"></span>
+                  <div>
+                    <strong class="exp-role">Senior Software Engineer</strong>
+                    <span class="exp-company">TATA Consultancy Services</span>
+                  </div>
+                </div>
+                <div class="exp-badge">
+                  <span class="exp-badge-dot exp-badge-dot-dim"></span>
+                  <div>
+                    <strong class="exp-role">Ex-Software Engineer</strong>
+                    <span class="exp-company">Wipro Technologies</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Content Column -->
+            <div class="about-content-col">
+              <h3 class="about-heading">
+                Hey there, I'm <span class="highlight-white">Debashish Paul</span> — <span class="text-gradient">Senior
+                  Software Engineer</span> in TATA Consultancy Services, <span class="text-gradient">Ex Software
+                  Engineer</span> in Wipro Technologies. I bridge the gap between <span
+                  class="highlight-white">aesthetic brilliance</span> and <span class="highlight-white">technical
+                  precision</span>. I don't just build sites that look expensive; I build systems designed to scale your
+                business and dominate your niche.
+              </h3>
+              <div class="about-actions">
+                <a href="#contact" class="btn-primary">
+                  <span>Start a Project</span>
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" />
+                  </svg>
+                </a>
+                <a href="#projects" class="btn-secondary">
+                  <span>View My Work</span>
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M7 7L17 17M17 17H7M17 17V7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Client / Partner Brand Logos Strip -->
+    <section class="brands-section">
+      <div class="section-container">
+        <div class="brands-row">
+          <div class="brand-item brand-blistex">Blistex</div>
+          <div class="brand-item brand-dixie">
+            <span class="brand-icon">◐</span> DIXIE DOWNS
+          </div>
+          <div class="brand-item brand-rogue">rogue</div>
+          <div class="brand-item brand-perfect">Perfect</div>
+          <div class="brand-item brand-cdpet">
+            <span class="brand-icon">◀</span> CD.PET
+          </div>
+          <div class="brand-item brand-trava">Trava</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Projects Section -->
+    <section class="projects-section" id="projects">
+      <div class="section-container">
+        <!-- Section Header -->
+        <div class="projects-header">
+          <div class="badge-tag">
+            <span class="badge-dot"></span> Some Recent Projects
+          </div>
+          <h2 class="section-title">Selected Work That Delivers Results</h2>
+        </div>
+
+        <!-- 2-Column Staggered Project Showcase Grid -->
+        <div class="projects-grid">
+
+          <!-- Column 1 (Left) -->
+          <div class="projects-col">
+            <!-- Project Card 1: Lawyer Alexander -->
+            <article class="project-card">
+              <div class="card-media-wrapper">
+                <div class="media-watermark">Lawyer</div>
+                <img src="assets/project1.jpg" alt="Lawyer Alexander's Landing Page Mockup" class="card-img"
+                  loading="lazy">
+              </div>
+              <div class="card-info">
+                <h3 class="card-title">Lawyer Alexander's Landing Page</h3>
+                <p class="card-desc">Designed To Turn Visitors Into Consultation Bookings.</p>
+                <div class="card-tags">
+                  <span class="tag-pill">Web Design</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Project Card 3: Hebrew Marketing Agency -->
+            <article class="project-card">
+              <div class="card-media-wrapper">
+                <div class="media-watermark">Agency</div>
+                <img src="assets/project3.jpg" alt="Hebrew Marketing Agency's Website Mockup" class="card-img"
+                  loading="lazy">
+              </div>
+              <div class="card-info">
+                <h3 class="card-title">Hebrew Marketing Agency's Website</h3>
+                <p class="card-desc">Showcases services and attracts new business clients.</p>
+                <div class="card-tags">
+                  <span class="tag-pill">Web Development</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Column 2 (Right - Staggered Offset) -->
+          <div class="projects-col col-offset">
+            <!-- Project Card 2: KeyPharma Trava -->
+            <article class="project-card">
+              <div class="card-media-wrapper">
+                <div class="media-watermark">Trava</div>
+                <img src="assets/project2.jpg" alt="KeyPharma Company's Trava Product Website Mockup" class="card-img"
+                  loading="lazy">
+              </div>
+              <div class="card-info">
+                <h3 class="card-title">KeyPharma Company's Trava Product Website</h3>
+                <p class="card-desc">Built To Guide Customers From Discovery To Purchase.</p>
+                <div class="card-tags">
+                  <span class="tag-pill">Web Development</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Project Card 4: Robert's Legal Landing Page -->
+            <article class="project-card">
+              <div class="card-media-wrapper">
+                <div class="media-watermark">Lawyer</div>
+                <img src="assets/project4.jpg" alt="Robert's Legal Landing Page Mockup" class="card-img" loading="lazy">
+              </div>
+              <div class="card-info">
+                <h3 class="card-title">Robert's Legal Landing Page</h3>
+                <p class="card-desc">Converts first-time visitors into legal leads.</p>
+                <div class="card-tags">
+                  <span class="tag-pill">Web Design</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Detail Teaser & Services Section -->
+    <section class="services-section" id="services">
+      <div class="section-container">
+        <div class="teaser-row">
+          <h2 class="teaser-title">I strive to pay attention<br>to the smallest details</h2>
+          <p class="teaser-subtitle">Every micro-interaction, transition, and layout decision is engineered with laser
+            focus to maximize user engagement and business conversion.</p>
+        </div>
+
+        <div class="services-grid">
+          <div class="service-card glass-card">
+            <div class="service-num">01</div>
+            <h3 class="service-title">UI/UX & Interactive Design</h3>
+            <p class="service-desc">User-centered bespoke interfaces crafted with high aesthetic fidelity, intuitive
+              design systems, and delightful motion design.</p>
+          </div>
+
+          <div class="service-card glass-card">
+            <div class="service-num">02</div>
+            <h3 class="service-title">Full-Stack Web Engineering</h3>
+            <p class="service-desc">Robust, accessible, and blazing-fast web architectures engineered with cutting-edge
+              standards and responsive performance.</p>
+          </div>
+
+          <div class="service-card glass-card">
+            <div class="service-num">03</div>
+            <h3 class="service-title">3D & Creative Scroll Motion</h3>
+            <p class="service-desc">Immersive web experiences incorporating WebGL, Canvas frame rendering, and smooth
+              scroll physics that leave lasting impressions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="section-container">
+        <div class="section-header-center">
+          <div class="badge-tag">
+            <span class="badge-dot"></span> Client Testimonials
+          </div>
+          <h2 class="section-title">What Clients Say About Working Together</h2>
+        </div>
+
+        <!-- Horizontal Right-to-Left Slider Container -->
+        <div class="testimonials-slider-container">
+          <div class="testimonials-track" id="testimonials-track">
+
+            <!-- Card 1 -->
+            <div class="testimonial-card glass-card">
+              <div class="stars">★★★★★</div>
+              <p class="quote">"Debashish delivered an absolute masterpiece. Our bounce rate dropped by 42% and
+                consultation bookings have doubled in the first month."</p>
+              <div class="client-info">
+                <strong>Alexander Vance</strong>
+                <span>Managing Partner, Vance & Associates</span>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="testimonial-card glass-card">
+              <div class="stars">★★★★★</div>
+              <p class="quote">"The scroll-driven interactive product showcase Debashish engineered for Trava set our
+                brand lightyears ahead of any competitor in our space."</p>
+              <div class="client-info">
+                <strong>Elena Rostova</strong>
+                <span>Head of Product, KeyPharma Ltd.</span>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="testimonial-card glass-card">
+              <div class="stars">★★★★★</div>
+              <p class="quote">"Debashish completely transformed our platform. His attention to micro-interactions,
+                animation speed, and enterprise frontend architecture is world-class."</p>
+              <div class="client-info">
+                <strong>Marcus Chen</strong>
+                <span>Founder & CEO, Nexus Financial</span>
+              </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="testimonial-card glass-card">
+              <div class="stars">★★★★★</div>
+              <p class="quote">"Working with Debashish was seamless. He took our complex Figma prototypes and brought
+                them to life with buttery-smooth 60fps animations."</p>
+              <div class="client-info">
+                <strong>Sarah Jenkins</strong>
+                <span>VP of Design, Blistex Creative</span>
+              </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="testimonial-card glass-card">
+              <div class="stars">★★★★★</div>
+              <p class="quote">"A rare engineer who marries high-end aesthetic fidelity with robust technical
+                performance. Delivered ahead of schedule with zero tech debt."</p>
+              <div class="client-info">
+                <strong>David Miller</strong>
+                <span>Engineering Director, CloudScale AI</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Slider Controls -->
+          <div class="slider-controls">
+            <button class="slider-btn prev-btn" id="slider-prev" aria-label="Previous Testimonial">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div class="slider-dots" id="slider-dots"></div>
+            <button class="slider-btn next-btn" id="slider-next" aria-label="Next Testimonial">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Contact & Lead Capture Form Section -->
+    <section class="contact-section" id="contact">
+      <div class="section-container">
+        <div class="contact-grid">
+
+          <!-- Left Column: Contact Intro & Direct Channels -->
+          <div class="contact-info-col">
+            <div class="badge-tag">
+              <span class="badge-dot"></span> Get In Touch
+            </div>
+            <h2 class="section-title">Let's Build Something Extraordinary Together</h2>
+            <p class="contact-subtitle">
+              Have an upcoming project, engineering challenge, or idea? Fill out the form and I'll get back to you
+              within 24 hours.
+            </p>
+
+            <div class="contact-channels">
+              <div class="channel-card glass-card">
+                <div class="channel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-label">Email Directly</span>
+                  <a href="mailto:debashishpaul@example.com" class="channel-val">debashishpaul@example.com</a>
+                </div>
+              </div>
+
+              <div class="channel-card glass-card">
+                <div class="channel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-label">Location</span>
+                  <span class="channel-val">India • Available Globally (Remote)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="response-pledge">
+              <span class="pulse-indicator"></span>
+              <span>Available for freelance projects & senior software consulting</span>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Lead Generation Form -->
+          <div class="contact-form-col">
+            <div class="form-card glass-card">
+              <!-- Hidden Iframe to guarantee cross-origin native delivery -->
+              <iframe name="gform_iframe" id="gform_iframe" style="display:none;" title="Submission Frame"></iframe>
+
+              <form id="contact-form" class="contact-form"
+                action="https://script.google.com/macros/s/AKfycbzaWRIAD6dz6M2uqDyA6_xKQRvRI6ZWRrFJc5WERO66nZFjhMDmh_ZBiKubz-jyYZGh9A/exec"
+                method="POST" target="gform_iframe">
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="lead-name" class="form-label">Your Name <span class="req">*</span></label>
+                    <input type="text" id="lead-name" name="name" class="form-input" placeholder="e.g. Alexander Vance"
+                      required autocomplete="name">
+                  </div>
+                  <div class="form-group">
+                    <label for="lead-email" class="form-label">Email Address <span class="req">*</span></label>
+                    <input type="email" id="lead-email" name="email" class="form-input"
+                      placeholder="e.g. alexander@company.com" required autocomplete="email">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="lead-phone" class="form-label">Phone / WhatsApp <span class="req">*</span></label>
+                    <div class="phone-input-wrapper">
+                      <span class="phone-flag-prefix" id="phone-flag-icon" title="Country Flag">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10" />
+                          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                          <path d="M2 12h20" />
+                        </svg>
+                      </span>
+                      <input type="tel" id="lead-phone" name="phone" class="form-input phone-input-with-flag"
+                        placeholder="+91 98765 43210" required autocomplete="tel">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="lead-service" class="form-label">Service Needed</label>
+                    <select id="lead-service" name="service" class="form-select">
+                      <option value="Full-Stack Web Engineering">Full-Stack Web Engineering</option>
+                      <option value="UI/UX & Interactive Design">UI/UX & Interactive Design</option>
+                      <option value="3D & Scroll Motion">3D & Scroll Motion</option>
+                      <option value="Enterprise Architecture Consulting">Enterprise Architecture Consulting</option>
+                      <option value="Other / Inquiry">Other / Inquiry</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="lead-budget" class="form-label">Estimated Budget (USD)</label>
+                  <select id="lead-budget" name="budget" class="form-select">
+                    <option value="$2,000 - $5,000">$2,000 – $5,000</option>
+                    <option value="$5,000 - $10,000">$5,000 – $10,000</option>
+                    <option value="$10,000+">$10,000+</option>
+                    <option value="Flexible / Hourly">Flexible / Hourly</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="lead-message" class="form-label">Project Details <span class="req">*</span></label>
+                  <textarea id="lead-message" name="message" class="form-textarea" rows="4"
+                    placeholder="Tell me about your goals, timeline, and deliverables..." required></textarea>
+                </div>
+
+                <button type="submit" id="submit-btn" class="btn-primary form-submit-btn">
+                  <span class="btn-text">Submit Project Inquiry</span>
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" />
+                  </svg>
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                </button>
+
+                <!-- Feedback status notice -->
+                <div id="form-feedback" class="form-feedback" style="display: none;"></div>
+
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer-section">
+      <div class="section-container">
+        <div class="footer-bottom">
+          <div class="footer-left">
+            <a href="#" class="logo">DEBASHISH</a>
+            <p class="copyright">© 2026 Debashish Paul. All Rights Reserved.</p>
+            <div class="footer-legal-links">
+              <button type="button" class="legal-link-btn" id="open-privacy-btn">Privacy Policy</button>
+              <span class="legal-separator">•</span>
+              <button type="button" class="legal-link-btn" id="open-terms-btn">Terms of Service</button>
+            </div>
+          </div>
+          <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#projects">Projects</a>
+            <a href="#services">Services</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    </div> <!-- /.content-glass-flow -->
+
+  </div>
+
+  <!-- Reusable Frosted Glass Legal Modal (Privacy Policy & Terms of Service) -->
+  <div id="legal-modal" class="legal-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="legal-modal-backdrop" id="modal-backdrop"></div>
+    <div class="legal-modal-container">
+      <div class="legal-modal-card glass-card">
+        <div class="modal-header">
+          <div class="modal-header-info">
+            <div class="badge-tag">
+              <span class="badge-dot"></span> Legal & Trust
+            </div>
+            <h3 id="modal-title" class="modal-title">Privacy Policy</h3>
+          </div>
+          <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body" id="modal-body">
+          <!-- Dynamic Content Injected via main.js -->
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-primary modal-action-btn" id="modal-action-btn">
+            <span>Got it, close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Back to Top Button -->
+  <button type="button" id="back-to-top" class="back-to-top-btn" aria-label="Scroll to top of page" title="Back to Top">
+    <svg class="back-to-top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 15l-6-6-6 6" />
+    </svg>
+  </button>
+
+  <script src="main.js?v=24"></script>
+</body>
+
+</html>
