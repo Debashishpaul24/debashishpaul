@@ -847,7 +847,7 @@
       </div>
       <div>
         <h4>📬 4. Your Rights & Data Deletion</h4>
-        <p>You can request a copy of your submitted details or ask for immediate permanent deletion from communication workflows at any time by emailing directly to <a href="mailto:debashishpaul@example.com" style="color:#ff6b35;text-decoration:underline;">debashishpaul@example.com</a>.</p>
+        <p>You can request a copy of your submitted details or ask for immediate permanent deletion from communication workflows at any time by emailing directly to <a href="mailto:pauldebashish115@gmail.com" style="color:#ff6b35;text-decoration:underline;">pauldebashish115@gmail.com</a>.</p>
       </div>
     `;
 
