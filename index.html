@@ -145,19 +145,17 @@
     </section>
 
     <!-- Gradual Glassmorphism Backdrop (From Section 2 to Bottom) -->
-    <div class="content-glass-flow">
-
-      <!-- Infinite Experience & Deliveries Marquee Ticker -->
+    <div class="content-glass-flow">      <!-- Infinite Experience & Deliveries Marquee Ticker -->
       <section class="marquee-section">
       <div class="marquee-track">
         <div class="marquee-content">
-          <span>6 YEARS EXPERIENCE</span>
+          <span>8+ YEARS EXPERIENCE</span>
           <span class="marquee-bullet">•</span>
           <span>299+ DELIVERIES</span>
           <span class="marquee-bullet">•</span>
           <span>99% POSITIVE REVIEWS</span>
           <span class="marquee-bullet">•</span>
-          <span>6 YEARS EXPERIENCE</span>
+          <span>8+ YEARS EXPERIENCE</span>
           <span class="marquee-bullet">•</span>
           <span>299+ DELIVERIES</span>
           <span class="marquee-bullet">•</span>
@@ -165,13 +163,13 @@
           <span class="marquee-bullet">•</span>
         </div>
         <div class="marquee-content" aria-hidden="true">
-          <span>6 YEARS EXPERIENCE</span>
+          <span>8+ YEARS EXPERIENCE</span>
           <span class="marquee-bullet">•</span>
           <span>299+ DELIVERIES</span>
           <span class="marquee-bullet">•</span>
           <span>99% POSITIVE REVIEWS</span>
           <span class="marquee-bullet">•</span>
-          <span>6 YEARS EXPERIENCE</span>
+          <span>8+ YEARS EXPERIENCE</span>
           <span class="marquee-bullet">•</span>
           <span>299+ DELIVERIES</span>
           <span class="marquee-bullet">•</span>
@@ -181,60 +179,135 @@
       </div>
     </section>
 
-    <!-- About Section -->
+    <!-- About Section (Bento Grid Architecture) -->
     <section class="about-section" id="about">
       <div class="section-container">
-        <div class="about-card glass-card">
-          <div class="about-grid">
-            <!-- Left Label Column -->
-            <div class="about-label-col">
-              <div class="badge-tag">
-                <span class="badge-dot"></span> About Me
-              </div>
-              <div class="about-accent-line"></div>
+        <!-- Section Header -->
+        <div class="about-header">
+          <div class="badge-tag">
+            <span class="badge-dot"></span> About Me
+          </div>
+          <h2 class="section-title">Architecting Enterprise Systems & Modern Web Applications</h2>
+        </div>
 
-              <div class="about-experience-badges">
-                <div class="exp-badge">
-                  <span class="exp-badge-dot"></span>
-                  <div>
-                    <strong class="exp-role">Senior Software Engineer</strong>
-                    <span class="exp-company">TATA Consultancy Services</span>
+        <!-- Bento Grid Layout -->
+        <div class="about-bento-grid">
+          <!-- Card 1: Executive Overview -->
+          <div class="bento-card bento-card-bio glass-card">
+            <div class="bento-badge-row">
+              <span class="bento-tag"><span class="badge-dot"></span> Senior Software Engineer @ TCS</span>
+              <span class="bento-stat-pill">8+ Years Experience</span>
+            </div>
+            <h3 class="bento-lead-headline">
+              Delivering scalable, business-driven solutions that improve operational efficiency and support digital transformation.
+            </h3>
+            <p class="bento-bio-desc">
+              Hey there! I am a Senior Software Engineer at Tata Consultancy Services (TCS) with over 8 years of experience in ServiceNow consulting, enterprise application development, and modern web technologies. Throughout my career, I have focused on building high-impact platforms designed to scale seamlessly.
+            </p>
+            <div class="about-actions">
+              <a href="#contact" class="btn-primary">
+                <span>Start a Project</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
+              </a>
+              <a href="#projects" class="btn-secondary">
+                <span>View My Work</span>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M7 7L17 17M17 17H7M17 17V7" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 2: Career Pathway Timeline -->
+          <div class="bento-card bento-card-timeline glass-card">
+            <div class="bento-card-header">
+              <div class="bento-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+              </div>
+              <h4 class="bento-card-title">Career Pathway</h4>
+            </div>
+
+            <div class="bento-timeline-list">
+              <div class="timeline-item timeline-active">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-header-row">
+                    <strong class="timeline-role">Senior Software Engineer</strong>
+                    <span class="timeline-curr-tag">Present</span>
                   </div>
+                  <span class="timeline-company">TATA Consultancy Services</span>
+                  <p class="timeline-sub">Enterprise ServiceNow consulting & platform digital transformation.</p>
                 </div>
-                <div class="exp-badge">
-                  <span class="exp-badge-dot exp-badge-dot-dim"></span>
-                  <div>
-                    <strong class="exp-role">Ex-Software Engineer</strong>
-                    <span class="exp-company">Wipro Technologies</span>
-                  </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-dot timeline-dot-dim"></span>
+                <div class="timeline-content">
+                  <strong class="timeline-role">Software Engineer</strong>
+                  <span class="timeline-company">Wipro Technologies</span>
+                  <p class="timeline-sub">ServiceNow development, configuration, customizations & workflows.</p>
+                </div>
+              </div>
+
+              <div class="timeline-item">
+                <span class="timeline-dot timeline-dot-dim"></span>
+                <div class="timeline-content">
+                  <strong class="timeline-role">Web Developer</strong>
+                  <span class="timeline-company">Carpediem Solutions</span>
+                  <p class="timeline-sub">Modern responsive web applications, UI/UX & performance focus.</p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Right Content Column -->
-            <div class="about-content-col">
-              <h3 class="about-heading">
-                Hey there, I'm <span class="highlight-white">Debashish Paul</span> — <span class="text-gradient">Senior
-                  Software Engineer</span> in TATA Consultancy Services, <span class="text-gradient">Ex Software
-                  Engineer</span> in Wipro Technologies. I bridge the gap between <span
-                  class="highlight-white">aesthetic brilliance</span> and <span class="highlight-white">technical
-                  precision</span>. I don't just build sites that look expensive; I build systems designed to scale your
-                business and dominate your niche.
-              </h3>
-              <div class="about-actions">
-                <a href="#contact" class="btn-primary">
-                  <span>Start a Project</span>
-                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M7 17L17 7M17 7H7M17 7V17" />
-                  </svg>
-                </a>
-                <a href="#projects" class="btn-secondary">
-                  <span>View My Work</span>
-                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M7 7L17 17M17 17H7M17 17V7" />
-                  </svg>
-                </a>
+          <!-- Card 3: Core ServiceNow & Integration Specializations -->
+          <div class="bento-card bento-card-skills glass-card">
+            <div class="bento-card-header">
+              <div class="bento-icon-box accent-cyan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
               </div>
+              <h4 class="bento-card-title">ServiceNow & Enterprise Integrations</h4>
+            </div>
+            <p class="bento-card-desc">
+              Designing custom platform applications, workflow automation, and enterprise solutions across core modules with seamless REST and SOAP API integrations.
+            </p>
+            <div class="bento-skill-chips">
+              <span class="skill-chip highlight-chip">Strategic Portfolio Mgmt (SPM)</span>
+              <span class="skill-chip highlight-chip">Customer Service Mgmt (CSM)</span>
+              <span class="skill-chip highlight-chip">IT Service Management (ITSM)</span>
+              <span class="skill-chip">REST & SOAP API Integrations</span>
+              <span class="skill-chip">Workflow Automation</span>
+              <span class="skill-chip">Platform Architecture</span>
+              <span class="skill-chip">Custom App Development</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Web Development & Engineering Philosophy -->
+          <div class="bento-card bento-card-philosophy glass-card">
+            <div class="bento-card-header">
+              <div class="bento-icon-box accent-orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="2" y1="12" x2="22" y2="12"/>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+              </div>
+              <h4 class="bento-card-title">Web Engineering & Philosophy</h4>
+            </div>
+            <p class="bento-card-desc">
+              Beyond ServiceNow, I enjoy building modern, responsive web applications with a focus on performance, usability, and clean design. I believe great technology should solve business challenges while providing an intuitive user experience.
+            </p>
+            <div class="bento-quote-box">
+              <p class="quote-text">
+                "I'm always excited to collaborate on projects that transform ambitious ideas into reliable, scalable, and impactful digital experiences."
+              </p>
             </div>
           </div>
         </div>

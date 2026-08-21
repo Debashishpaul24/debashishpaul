@@ -218,21 +218,22 @@
     ctx.drawImage(img, 0, 0, imgWidth, imgHeight, renderX, renderY, renderWidth, renderHeight);
 
     // Completely remove Gemini watermark at bottom-right corner seamlessly
-    const wmTargetX = renderX + (1110 / imgWidth) * renderWidth;
-    const wmTargetY = renderY + (560 / imgHeight) * renderHeight;
-    const wmWidth = (160 / imgWidth) * renderWidth;
-    const wmHeight = (150 / imgHeight) * renderHeight;
+    const wmTargetX = renderX + ((imgWidth - 170) / imgWidth) * renderWidth;
+    const wmTargetY = renderY + ((imgHeight - 170) / imgHeight) * renderHeight;
+    const wmWidth = (200 / imgWidth) * renderWidth;
+    const wmHeight = (200 / imgHeight) * renderHeight;
 
     const radGrad = ctx.createRadialGradient(
-      wmTargetX + wmWidth * 0.5, wmTargetY + wmHeight * 0.5, 5,
-      wmTargetX + wmWidth * 0.5, wmTargetY + wmHeight * 0.5, wmWidth * 0.7
+      wmTargetX + wmWidth * 0.5, wmTargetY + wmHeight * 0.5, 0,
+      wmTargetX + wmWidth * 0.5, wmTargetY + wmHeight * 0.5, wmWidth * 0.75
     );
-    radGrad.addColorStop(0, 'rgba(8, 8, 12, 1)');
-    radGrad.addColorStop(0.55, 'rgba(8, 8, 12, 0.95)');
-    radGrad.addColorStop(1, 'rgba(8, 8, 12, 0)');
+    radGrad.addColorStop(0, '#070709');
+    radGrad.addColorStop(0.6, '#070709');
+    radGrad.addColorStop(0.85, 'rgba(7, 7, 9, 0.95)');
+    radGrad.addColorStop(1, 'rgba(7, 7, 9, 0)');
 
     ctx.fillStyle = radGrad;
-    ctx.fillRect(wmTargetX - 20, wmTargetY - 20, wmWidth + 40, wmHeight + 40);
+    ctx.fillRect(wmTargetX - 40, wmTargetY - 40, wmWidth + 80, wmHeight + 80);
   }
 
   // Calculate target frame from full page scroll position & dynamic glass blur (0px -> max 1px)
@@ -640,7 +641,7 @@
       const match = countryFlags.find(item => val.startsWith(item.code));
 
       if (match) {
-        flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/${match.iso}.png" class="flag-img" alt="${match.name}" loading="lazy">`;
+        flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/${match.iso}.png" class="flag-img" alt="${match.name}" loading="lazy" onerror="this.style.display='none'">`;
         flagIcon.title = `${match.name} (${match.code})`;
         flagIcon.style.transform = 'scale(1.05)';
       } else {
