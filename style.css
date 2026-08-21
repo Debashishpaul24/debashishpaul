@@ -450,21 +450,36 @@ a {
 }
 
 .company-logo-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  overflow: hidden;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 114, 188, 0.3);
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
-.company-logo-badge svg {
-  width: 100%;
-  height: 100%;
+.hero-profession-card:hover .company-logo-badge {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.company-logo-badge img,
+.company-logo-badge .tcs-logo-img {
+  height: 24px;
+  width: auto;
+  max-width: 105px;
+  object-fit: contain;
   display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 114, 188, 0.35));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.hero-profession-card:hover .company-logo-badge .tcs-logo-img {
+  filter: drop-shadow(0 2px 12px rgba(0, 114, 188, 0.6));
+  transform: scale(1.04);
 }
 
 .profession-info {
@@ -549,8 +564,10 @@ a {
   height: 34px;
   border-radius: 50%;
   border: 2px solid #14141c;
+  background: #232336;
   object-fit: cover;
   margin-left: -8px;
+  display: inline-block;
   transition: transform 0.2s ease;
 }
 
