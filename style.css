@@ -251,6 +251,8 @@ a {
   font-weight: 600;
   font-size: 0.88rem;
   letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
   box-shadow: 0 4px 18px var(--accent-glow);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
   cursor: pointer;
@@ -275,6 +277,7 @@ a {
 .btn-secondary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.72rem 1.4rem;
   border-radius: 999px;
@@ -283,6 +286,8 @@ a {
   color: var(--text-muted);
   font-weight: 500;
   font-size: 0.88rem;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.3s ease;
   backdrop-filter: blur(12px);
 }
@@ -1023,7 +1028,14 @@ a {
 .about-actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.about-actions .btn-primary,
+.about-actions .btn-secondary {
+  white-space: nowrap;
 }
 
 @media (max-width: 991px) {
@@ -2160,6 +2172,26 @@ a {
     padding: 2rem 1.5rem;
   }
 
+  .bento-card {
+    padding: 1.75rem 1.35rem;
+    border-radius: 22px;
+  }
+
+  .about-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .about-actions .btn-primary,
+  .about-actions .btn-secondary {
+    white-space: nowrap;
+    padding: 0.68rem 1.15rem;
+    font-size: 0.84rem;
+  }
+
   .brands-row {
     justify-content: center;
     gap: 1.5rem;
@@ -2195,6 +2227,28 @@ a {
 }
 
 @media (max-width: 480px) {
+  .bento-card {
+    padding: 1.4rem 1.15rem;
+    border-radius: 20px;
+  }
+
+  .about-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.65rem;
+  }
+
+  .about-actions .btn-primary,
+  .about-actions .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+    padding: 0.72rem 1rem;
+    font-size: 0.85rem;
+  }
+
   .hero-social-card {
     padding: 1.15rem 1.15rem;
     border-radius: 18px;
