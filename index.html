@@ -80,11 +80,17 @@
 
           <!-- Profession & Company Badge -->
           <div class="hero-profession-card">
-            <div class="company-logo-badge">
-              <img src="assets/tcs-logo.png" alt="TATA Consultancy Services" class="tcs-logo-img">
+            <div class="profession-icon-badge">
+              <svg class="profession-code-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
             </div>
             <div class="profession-info">
-              <span class="profession-title">Senior Software Engineer</span>
+              <div class="profession-title-row">
+                <span class="profession-title">Senior Software Engineer</span>
+                <span class="status-live-dot" title="Active & Available"></span>
+              </div>
               <span class="profession-company">TATA Consultancy Services</span>
             </div>
           </div>
@@ -94,7 +100,7 @@
               <span class="badge-dot"></span> Trusted by 200+ clients
             </div>
             <h2 class="hero-subheadline">
-              Websites that turn<br>visitors into clients
+              Turning curious clicks<br>into happy clients
             </h2>
             <div class="hero-actions">
               <a href="#contact" class="btn-primary">
@@ -618,7 +624,7 @@
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="lead-phone" class="form-label">Phone / WhatsApp <span class="req">*</span></label>
+                    <label for="lead-phone" class="form-label">Phone / WhatsApp</label>
                     <div class="phone-input-wrapper">
                       <span class="phone-flag-prefix" id="phone-flag-icon" title="Country Flag">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -628,7 +634,7 @@
                         </svg>
                       </span>
                       <input type="tel" id="lead-phone" name="phone" class="form-input phone-input-with-flag"
-                        placeholder="+91 98765 43210" required autocomplete="tel">
+                        placeholder="+91 98765 43210" autocomplete="tel">
                     </div>
                   </div>
                   <div class="form-group">

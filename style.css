@@ -435,8 +435,8 @@ a {
 .hero-profession-card {
   display: inline-flex;
   align-items: center;
-  gap: 0.9rem;
-  padding: 0.6rem 1.15rem 0.6rem 0.75rem;
+  gap: 0.85rem;
+  padding: 0.6rem 1.25rem 0.6rem 0.75rem;
   background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -449,48 +449,47 @@ a {
 
 .hero-profession-card:hover {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(0, 114, 188, 0.45);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 114, 188, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }
 
-.company-logo-badge {
-  height: 32px;
+.profession-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--accent-orange);
   flex-shrink: 0;
-  background: transparent;
-  border: none;
-  padding: 0;
+  transition: all 0.3s ease;
 }
 
-.hero-profession-card:hover .company-logo-badge {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
+.hero-profession-card:hover .profession-icon-badge {
+  background: rgba(255, 107, 53, 0.16);
+  border-color: rgba(255, 107, 53, 0.4);
+  color: #ffffff;
+  transform: scale(1.05);
 }
 
-.company-logo-badge img,
-.company-logo-badge .tcs-logo-img {
-  height: 24px;
-  width: auto;
-  max-width: 105px;
-  object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 2px 8px rgba(0, 114, 188, 0.35));
-  transition: filter 0.3s ease, transform 0.3s ease;
-}
-
-.hero-profession-card:hover .company-logo-badge .tcs-logo-img {
-  filter: drop-shadow(0 2px 12px rgba(0, 114, 188, 0.6));
-  transform: scale(1.04);
+.profession-code-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .profession-info {
   display: flex;
   flex-direction: column;
   gap: 1px;
+}
+
+.profession-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .profession-title {
@@ -500,6 +499,27 @@ a {
   color: #ffffff;
   letter-spacing: -0.01em;
   line-height: 1.2;
+}
+
+.status-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  display: inline-block;
+  animation: livePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
 }
 
 .profession-company {
@@ -683,15 +703,13 @@ a {
 .content-glass-flow {
   position: relative;
   width: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(7, 7, 9, 0) 0%,
-    rgba(10, 10, 15, 0.08) 220px,
-    rgba(12, 12, 18, 0.15) 550px,
-    rgba(14, 14, 22, 0.20) 1100px,
-    rgba(12, 12, 18, 0.24) 2000px,
-    rgba(10, 10, 15, 0.25) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(7, 7, 9, 0) 0%,
+      rgba(10, 10, 15, 0.08) 220px,
+      rgba(12, 12, 18, 0.15) 550px,
+      rgba(14, 14, 22, 0.20) 1100px,
+      rgba(12, 12, 18, 0.24) 2000px,
+      rgba(10, 10, 15, 0.25) 100%);
   backdrop-filter: blur(var(--scroll-blur, 0px));
   -webkit-backdrop-filter: blur(var(--scroll-blur, 0px));
   border-top: none;

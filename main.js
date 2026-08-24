@@ -321,10 +321,13 @@
     form.addEventListener('submit', (e) => {
       const name = (form.name.value || '').trim();
       const email = (form.email.value || '').trim();
+      if (form.phone.value.trim() === '+') {
+        form.phone.value = '';
+      }
       const phone = (form.phone.value || '').trim();
       const message = (form.message.value || '').trim();
 
-      if (!name || !email || !phone || !message) {
+      if (!name || !email || !message) {
         e.preventDefault();
         showFeedback('Please fill out all required fields (*).', 'error');
         return;
@@ -651,12 +654,42 @@
       }
     }
 
-    phoneInput.addEventListener('input', updateFlag);
-    phoneInput.addEventListener('focus', () => {
+    function ensurePlusPrefix() {
       if (!phoneInput.value.trim()) {
         phoneInput.value = '+';
+        updateFlag();
+      }
+      if (phoneInput.value === '+') {
+        setTimeout(() => {
+          try {
+            phoneInput.setSelectionRange(1, 1);
+          } catch (e) {}
+        }, 10);
+      }
+    }
+
+    phoneInput.addEventListener('focus', ensurePlusPrefix);
+    phoneInput.addEventListener('click', ensurePlusPrefix);
+
+    phoneInput.addEventListener('keydown', (e) => {
+      // Prevent deleting the initial '+'
+      if (e.key === 'Backspace' && phoneInput.selectionStart <= 1 && phoneInput.selectionEnd <= 1 && phoneInput.value.startsWith('+')) {
+        if (phoneInput.value.length === 1) {
+          e.preventDefault();
+        }
       }
     });
+
+    phoneInput.addEventListener('input', () => {
+      let val = phoneInput.value;
+      if (!val) {
+        phoneInput.value = '+';
+      } else if (!val.startsWith('+')) {
+        phoneInput.value = '+' + val.replace(/^\+*/, '');
+      }
+      updateFlag();
+    });
+
     phoneInput.addEventListener('blur', () => {
       if (phoneInput.value.trim() === '+') {
         phoneInput.value = '';
