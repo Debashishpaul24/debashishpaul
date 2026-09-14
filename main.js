@@ -663,7 +663,7 @@
         setTimeout(() => {
           try {
             phoneInput.setSelectionRange(1, 1);
-          } catch (e) {}
+          } catch (e) { }
         }, 10);
       }
     }
