@@ -1536,6 +1536,157 @@ a {
   color: var(--accent-orange);
 }
 
+/* Contact Social Networks Circular Dock */
+.contact-social-circles-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin: 1.35rem 0 1.25rem 0;
+  flex-wrap: wrap;
+}
+
+.social-circles-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #cbd5e1;
+}
+
+.social-circles-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.social-circle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.3s ease,
+              box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              color 0.25s ease;
+}
+
+/* Distinct Brand Styling in Normal (Non-Hover) State */
+.social-circle-btn.linkedin {
+  background: rgba(10, 102, 194, 0.18);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+
+.social-circle-btn.whatsapp {
+  background: rgba(37, 211, 102, 0.18);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: #4ade80;
+}
+
+.social-circle-btn.facebook {
+  background: rgba(24, 119, 242, 0.18);
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  color: #60a5fa;
+}
+
+.social-circle-btn.github {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* Smooth blooming color background on hover */
+.social-circle-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              opacity 0.3s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.social-circle-btn svg {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Hover Floating & Fluid Scaling */
+.social-circle-btn:hover {
+  transform: translateY(-3px) scale(1.06);
+}
+
+.social-circle-btn:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.social-circle-btn:hover svg {
+  transform: scale(1.05);
+}
+
+/* Active Click Feedback */
+.social-circle-btn:active {
+  transform: translateY(-1px) scale(0.95);
+  transition-duration: 0.12s;
+}
+
+/* Smooth Brand Theme Blooms on Hover */
+/* LinkedIn */
+.social-circle-btn.linkedin::before {
+  background: #0a66c2;
+}
+.social-circle-btn.linkedin:hover {
+  border-color: #0a66c2;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(10, 102, 194, 0.45);
+}
+
+/* WhatsApp */
+.social-circle-btn.whatsapp::before {
+  background: #25d366;
+}
+.social-circle-btn.whatsapp:hover {
+  border-color: #25d366;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+}
+
+/* Facebook */
+.social-circle-btn.facebook::before {
+  background: #1877f2;
+}
+.social-circle-btn.facebook:hover {
+  border-color: #1877f2;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(24, 119, 242, 0.45);
+}
+
+/* GitHub */
+.social-circle-btn.github::before {
+  background: #ffffff;
+}
+.social-circle-btn.github:hover {
+  border-color: #ffffff;
+  color: #0b0f19;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.35);
+}
+
 .response-pledge {
   display: inline-flex;
   align-items: center;
