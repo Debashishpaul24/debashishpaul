@@ -29,6 +29,10 @@ while ($listener.IsListening) {
         
         $filePath = [System.IO.Path]::Combine($root, $urlPath.Replace('/', [System.IO.Path]::DirectorySeparatorChar))
         
+        if ([System.IO.Directory]::Exists($filePath)) {
+            $filePath = [System.IO.Path]::Combine($filePath, "index.html")
+        }
+        
         if ([System.IO.File]::Exists($filePath)) {
             $ext = [System.IO.Path]::GetExtension($filePath).ToLower()
             $contentType = if ($mime.ContainsKey($ext)) { $mime[$ext] } else { "application/octet-stream" }

@@ -1158,6 +1158,7 @@ a {
 }
 
 .project-card {
+  position: relative;
   border-radius: 28px;
   background: rgba(16, 16, 22, 0.55);
   backdrop-filter: blur(20px);
@@ -1172,6 +1173,63 @@ a {
   transform: translateY(-8px);
   border-color: var(--border-accent);
   box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 107, 53, 0.18);
+}
+
+.card-link-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: 28px;
+}
+
+/* Live Demo Badge on media thumbnail */
+.live-demo-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(10, 13, 18, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  color: #f7e8b6;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  z-index: 3;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-card:hover .live-demo-badge {
+  background: rgba(212, 175, 55, 0.95);
+  color: #0b0f14;
+  border-color: #ffffff;
+  box-shadow: 0 0 22px rgba(212, 175, 55, 0.65);
+  transform: translateY(-2px);
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: liveDotPulse 2s infinite;
+}
+
+.project-card:hover .live-dot {
+  background: #0b0f14;
+  box-shadow: none;
+}
+
+@keyframes liveDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
 }
 
 .card-media-wrapper {
@@ -1210,6 +1268,45 @@ a {
 
 .card-info {
   padding: 0.5rem 0.75rem 0.5rem;
+  position: relative;
+  z-index: 3;
+}
+
+.card-info-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-info-top .card-title {
+  margin-bottom: 0;
+}
+
+.project-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.14);
+  border: 1px solid rgba(212, 175, 55, 0.38);
+  color: #f7e8b6;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  position: relative;
+  z-index: 4;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-view-btn:hover {
+  background: #d4af37;
+  color: #090c10;
+  border-color: #ffffff;
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.6);
+  transform: translateY(-2px);
 }
 
 .card-title {
@@ -1226,6 +1323,13 @@ a {
   color: var(--text-muted);
   line-height: 1.5;
   margin-bottom: 1.25rem;
+}
+
+.tag-pill.tag-live {
+  background: rgba(16, 185, 129, 0.14);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  font-weight: 600;
 }
 
 /* Services & Detail Teaser */
