@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LAWYER ALEXANDER & ASSOCIATES — LUXURY LEGAL SUITE
+   STERLING & VANCE LLP — LUXURY LEGAL SUITE
    Aesthetic: Bespoke Dark Obsidian & Polished Gold
    ========================================================================== */
 
@@ -110,11 +110,16 @@ button, input, select, textarea {
 
 /* Container */
 .section-container,
-.header-container,
-.bar-container,
 .strip-container,
 .footer-container {
   max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.header-container,
+.bar-container {
+  max-width: 1360px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
@@ -282,16 +287,19 @@ button, input, select, textarea {
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 1.8rem;
+  gap: clamp(0.75rem, 1.4vw, 1.75rem);
+  flex-shrink: 0;
 }
 
 .nav-item {
-  font-size: 0.9rem;
+  font-size: clamp(0.82rem, 0.9vw, 0.9rem);
   font-weight: 500;
   color: var(--text-muted);
   transition: var(--transition-smooth);
   position: relative;
   padding: 0.35rem 0;
+  white-space: nowrap; /* Strictly stick menu text to a single line on laptop view */
+  flex-shrink: 0;
 }
 
 .nav-item::after {
@@ -321,7 +329,8 @@ button, input, select, textarea {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
+  flex-shrink: 0;
 }
 
 .mobile-toggle {
@@ -1284,6 +1293,8 @@ button, input, select, textarea {
   border-radius: 20px;
   padding: 2.2rem;
   transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
 }
 
 .case-card:hover {
@@ -1445,6 +1456,7 @@ button, input, select, textarea {
   border: 1px solid rgba(52, 211, 153, 0.25);
   padding: 0.55rem 0.9rem;
   border-radius: 8px;
+  margin-top: auto;
 }
 
 .check-icon {
@@ -1475,6 +1487,8 @@ button, input, select, textarea {
   border-radius: 20px;
   padding: 2.2rem 1.85rem;
   transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
 }
 
 .attorney-card:hover {
@@ -1568,6 +1582,7 @@ button, input, select, textarea {
   border-top: 1px solid var(--border-subtle);
   padding-top: 0.85rem;
   font-weight: 500;
+  margin-top: auto;
 }
 
 /* ==========================================================================
@@ -1591,6 +1606,8 @@ button, input, select, textarea {
   border-radius: 20px;
   padding: 2.2rem 1.85rem;
   transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
 }
 
 .testimonial-card:hover {
@@ -1612,6 +1629,10 @@ button, input, select, textarea {
   line-height: 1.65;
   color: var(--text-cream);
   margin-bottom: 1.5rem;
+}
+
+.client-meta {
+  margin-top: auto;
 }
 
 .client-meta strong {
@@ -2061,14 +2082,55 @@ button, input, select, textarea {
    RESPONSIVE BREAKPOINTS (ALL DEVICES)
    ========================================================================== */
 
-/* Laptops & Tablets Landscape (<= 1024px) */
-@media (max-width: 1024px) {
+/* Standard Laptops (<= 1260px) */
+@media (max-width: 1260px) {
+  .nav-item.highlight {
+    display: none; /* Hide duplicate consultation nav link so desktop menu remains single-line */
+  }
+
+  .main-nav {
+    gap: 0.95rem;
+  }
+
+  .nav-item {
+    font-size: 0.84rem;
+  }
+
+  .brand-name {
+    font-size: 1.18rem;
+  }
+
+  .brand-sub {
+    font-size: 0.56rem;
+  }
+
+  .header-actions .btn-gold {
+    padding: 0.52rem 0.95rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* Compact Laptops & Tablets Landscape (<= 1040px) */
+@media (max-width: 1040px) {
   .section-container,
   .header-container,
   .bar-container,
   .strip-container,
   .footer-container {
     padding: 0 1.25rem;
+  }
+
+  /* Transition to gold-accented mobile drawer on screens <= 1040px */
+  .main-nav {
+    display: none;
+  }
+
+  .mobile-toggle {
+    display: flex;
+  }
+
+  .mobile-drawer {
+    display: block;
   }
 
   .hero-stats-grid {
@@ -2140,18 +2202,6 @@ button, input, select, textarea {
   /* Header & Mobile Menu */
   .site-header {
     padding: 0.85rem 0;
-  }
-
-  .main-nav {
-    display: none;
-  }
-
-  .mobile-toggle {
-    display: flex;
-  }
-
-  .mobile-drawer {
-    display: block;
   }
 
   .header-actions .btn-gold {

@@ -1,5 +1,5 @@
 /**
- * Lawyer Alexander & Associates — Interactive Script
+ * Sterling & Vance LLP — Interactive Script
  * High-End Legal Platform Interactions
  */
 
