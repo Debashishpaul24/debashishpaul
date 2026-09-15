@@ -404,20 +404,28 @@ button, input, select, textarea {
   transition: var(--transition-smooth);
   border: 1px solid transparent;
   text-align: center;
+  white-space: nowrap; /* Button text strictly sticks to single line */
+  max-width: 100%;
 }
 
 .btn-sm {
   padding: 0.5rem 1.1rem;
   font-size: 0.84rem;
+  white-space: nowrap;
 }
 
 .btn-lg {
   padding: 0.95rem 2.2rem;
   font-size: 1.02rem;
+  white-space: nowrap;
 }
 
 .btn-block {
   width: 100%;
+}
+
+.btn-text {
+  white-space: nowrap;
 }
 
 .btn-gold {
@@ -425,6 +433,7 @@ button, input, select, textarea {
   color: #0c0f16;
   border-color: #f7e8b6;
   box-shadow: 0 8px 24px var(--gold-glow);
+  white-space: nowrap;
 }
 
 .btn-gold:hover {
@@ -2049,59 +2058,407 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
-   RESPONSIVE BREAKPOINTS
+   RESPONSIVE BREAKPOINTS (ALL DEVICES)
    ========================================================================== */
+
+/* Laptops & Tablets Landscape (<= 1024px) */
 @media (max-width: 1024px) {
+  .section-container,
+  .header-container,
+  .bar-container,
+  .strip-container,
+  .footer-container {
+    padding: 0 1.25rem;
+  }
+
   .hero-stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
+
   .about-grid {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+
   .practice-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
+
   .attorney-grid,
   .testimonials-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
+
   .consultation-wrapper {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
+
   .footer-top {
     grid-template-columns: 1fr 1fr;
     gap: 2.5rem;
   }
 }
 
+/* Tablets Portrait & Large Mobiles (<= 768px) */
 @media (max-width: 768px) {
+  .top-announcement-bar {
+    padding: 0.6rem 0;
+  }
+
+  .bar-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .bar-left {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .bar-right {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .bar-phone {
+    font-size: 0.8rem;
+  }
+
+  .return-link {
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  /* Header & Mobile Menu */
+  .site-header {
+    padding: 0.85rem 0;
+  }
+
   .main-nav {
     display: none;
   }
+
   .mobile-toggle {
     display: flex;
   }
+
   .mobile-drawer {
     display: block;
   }
+
+  .header-actions .btn-gold {
+    padding: 0.55rem 1rem;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 4.5rem 0 3.5rem;
+  }
+
+  .hero-badge {
+    font-size: 0.72rem;
+    padding: 0.4rem 1rem;
+    white-space: nowrap;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 8vw, 3.8rem);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+    margin-bottom: 2.2rem;
+  }
+
+  .hero-ctas {
+    flex-direction: column;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto 3.5rem;
+    gap: 0.85rem;
+  }
+
+  .hero-ctas .btn {
+    width: 100%;
+    white-space: nowrap; /* Single line stickiness */
+    font-size: clamp(0.88rem, 3.5vw, 1rem);
+    padding: 0.85rem 1.4rem;
+  }
+
+  /* Strip */
+  .strip-container {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .strip-lead {
+    width: 100%;
+    text-align: center;
+  }
+
+  .strip-badges {
+    justify-content: center;
+    gap: 1.2rem;
+  }
+
+  .badge-item {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  /* Sections */
+  .about-section,
+  .practice-section,
+  .cases-section,
+  .attorneys-section,
+  .testimonials-section,
+  .consultation-section {
+    padding: 4.5rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
   .practice-grid,
   .case-results-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
+
+  .case-figure {
+    font-size: clamp(2rem, 6vw, 2.5rem);
+  }
+
+  .case-outcome {
+    font-size: 0.82rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+    gap: 1.1rem;
   }
-  .bar-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+
   .footer-top {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
+
   .footer-bottom {
     flex-direction: column;
     text-align: center;
+    gap: 1rem;
+  }
+}
+
+/* Compact Smartphones (<= 540px) */
+@media (max-width: 540px) {
+  .section-container,
+  .header-container,
+  .bar-container,
+  .strip-container,
+  .footer-container {
+    padding: 0 1rem;
+  }
+
+  .brand-name {
+    font-size: 1.18rem;
+    letter-spacing: 0.08em;
+  }
+
+  .brand-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+  }
+
+  .logo-crest {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .header-actions .btn-gold {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.76rem;
+    white-space: nowrap;
+  }
+
+  .header-actions .btn-gold svg {
+    display: none;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 3.5rem 0 2.5rem;
+  }
+
+  .hero-badge {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.8rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .hero-title {
+    font-size: clamp(2.1rem, 9vw, 2.9rem);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.55;
+    margin-bottom: 2rem;
+  }
+
+  .hero-ctas {
+    max-width: 100%;
+    margin-bottom: 2.8rem;
+  }
+
+  .hero-ctas .btn {
+    width: 100%;
+    white-space: nowrap; /* Single line stickiness */
+    font-size: 0.86rem;
+    padding: 0.82rem 1rem;
+  }
+
+  .hero-ctas .btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Stats Grid */
+  .hero-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1.15rem 0.9rem;
+    border-radius: 12px;
+  }
+
+  .stat-num {
+    font-size: clamp(1.6rem, 5vw, 2rem);
+  }
+
+  .stat-label {
+    font-size: 0.84rem;
+  }
+
+  .stat-desc {
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  /* Cards Padding */
+  .practice-card,
+  .case-card,
+  .attorney-card,
+  .testimonial-card,
+  .partner-spotlight-card {
+    padding: 1.6rem 1.25rem;
+    border-radius: 16px;
+  }
+
+  .practice-title {
+    font-size: 1.22rem;
+  }
+
+  .practice-desc {
+    font-size: 0.88rem;
+  }
+
+  .practice-link {
+    white-space: nowrap;
+    font-size: 0.84rem;
+  }
+
+  .spotlight-quote {
+    font-size: 1.02rem;
+    padding: 1rem;
+  }
+
+  /* Consultation Intake Form */
+  .consultation-form-card {
+    padding: 1.6rem 1.15rem;
+    border-radius: 18px;
+  }
+
+  .form-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.88rem;
+  }
+
+  #submitBtn {
+    padding: 0.85rem 1rem;
+    font-size: 0.86rem;
+    white-space: nowrap; /* Guaranteed single line */
+  }
+
+  /* Modal */
+  .modal-box {
+    padding: 1.8rem 1.15rem;
+    border-radius: 18px;
+  }
+
+  .modal-title {
+    font-size: 1.35rem;
+  }
+
+  .modal-msg {
+    font-size: 0.88rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+    white-space: nowrap;
+  }
+}
+
+/* Very Small Devices (<= 380px) */
+@media (max-width: 380px) {
+  .hero-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions .btn-gold {
+    display: none; /* Hide header CTA on tiny screens; drawer has full CTA */
+  }
+
+  .hero-title {
+    font-size: 1.95rem;
+  }
+
+  .hero-ctas .btn {
+    font-size: 0.8rem;
+    padding: 0.78rem 0.8rem;
+  }
+
+  .bar-phone strong {
+    font-size: 0.78rem;
   }
 }
