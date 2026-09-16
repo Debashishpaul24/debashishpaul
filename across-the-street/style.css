@@ -1472,11 +1472,37 @@ img {
 
 /* Reservation Form Card */
 .reservation-form-card {
+  position: relative;
+  overflow: hidden;
   background: var(--bg-surface);
   border: 1px solid var(--border-lantern);
   border-radius: 28px;
   padding: 2.8rem 2.5rem;
   box-shadow: var(--shadow-card);
+}
+
+/* Thin Slim Multicolor Accent Bar at Top */
+.reservation-form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, #f5b338 0%, #10b981 25%, #3b82f6 50%, #f43f5e 75%, #f5b338 100%);
+  background-size: 200% 100%;
+  animation: multicolorFlow 5s linear infinite;
+  box-shadow: 0 1px 12px rgba(245, 179, 56, 0.4), 0 1px 16px rgba(59, 130, 246, 0.25);
+  z-index: 2;
+}
+
+@keyframes multicolorFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
 }
 
 .form-header {
