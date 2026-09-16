@@ -85,6 +85,9 @@ html {
   font-size: 16px;
   background-color: var(--bg-canvas);
   color: var(--text-body);
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  width: 100%;
 }
 
 body {
@@ -92,10 +95,30 @@ body {
   line-height: 1.68;
   background-color: var(--bg-canvas);
   color: var(--text-body);
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  width: 100%;
   position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+main,
+header,
+footer,
+section,
+.top-announcement-bar,
+.hero-section,
+.metrics-strip,
+.story-section,
+.dining-spaces-section,
+.menu-section,
+.reservation-section,
+.reviews-section,
+.site-footer {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Background Atmosphere Matching the Illuminated Cottage Photo */
@@ -132,14 +155,18 @@ img {
 /* Layout Containers */
 .section-container {
   max-width: 1320px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 2rem;
+  box-sizing: border-box;
 }
 
 .banner-container {
   max-width: 1380px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 1.5rem;
+  box-sizing: border-box;
 }
 
 /* Section Header Typography */
@@ -645,6 +672,8 @@ img {
   align-items: center;
   gap: 0.6rem;
   width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 0.45rem 1.25rem;
   border-radius: 999px;
   background: rgba(245, 179, 56, 0.08);
@@ -1993,11 +2022,17 @@ img {
   .banner-container,
   .footer-container {
     padding: 0 1.15rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Top Bar */
   .top-announcement-bar {
     padding: 0.55rem 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .bar-container {
@@ -2005,13 +2040,25 @@ img {
     text-align: center;
     gap: 0.45rem;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .bar-left,
   .bar-right {
     justify-content: center;
-    gap: 0.85rem;
+    gap: 0.75rem;
     flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .bar-text {
+    white-space: normal !important;
+    text-align: center;
+    display: inline-block;
   }
 
   .live-pill,
@@ -2023,31 +2070,53 @@ img {
   /* Hero Section */
   .hero-section {
     padding: 2.2rem 0 3.5rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hero-content {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .hero-badge {
     font-size: 0.72rem;
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 0.95rem;
     margin-bottom: 1.2rem;
-    white-space: nowrap !important;
+    white-space: normal !important;
+    text-align: center;
+    line-height: 1.45;
+    letter-spacing: 0.05em;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: inline-flex;
+    justify-content: center;
   }
 
   .hero-title {
-    font-size: clamp(2rem, 6.5vw, 2.8rem);
+    font-size: clamp(1.85rem, 6vw, 2.8rem);
     line-height: 1.18;
     margin-bottom: 1.1rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .hero-subtitle {
-    font-size: 1rem;
+    font-size: 0.98rem;
     line-height: 1.65;
     margin-bottom: 1.8rem;
+    overflow-wrap: break-word;
   }
 
   .hero-stats-bar {
     grid-template-columns: 1fr;
     gap: 0.85rem;
     padding: 1.1rem 1.25rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .hero-stat-item {
@@ -2059,14 +2128,30 @@ img {
     white-space: nowrap !important;
   }
 
+  .hero-media {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hero-card-frame {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .hero-facade-img {
     height: 420px;
+    width: 100%;
+    max-width: 100%;
   }
 
   /* Dining Spaces */
   .dining-spaces-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   /* Curated Menu Tabs Horizontal Swiper */
@@ -2078,6 +2163,8 @@ img {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
     margin-bottom: 2.5rem;
   }
 
@@ -2093,22 +2180,44 @@ img {
   .menu-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .menu-item-card {
+    padding: 1.6rem 1.25rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Reservation Form */
+  .reservation-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 1.1rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   .reservation-form-card {
-    padding: 2rem 1.4rem;
+    padding: 2rem 1.35rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Footer */
   .footer-top {
     grid-template-columns: 1fr;
     gap: 2rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   .footer-bottom {
@@ -2116,10 +2225,20 @@ img {
     gap: 1rem;
     text-align: center;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
   }
 
   .designer-badge {
     justify-content: center;
+    white-space: normal !important;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .designer-badge .bar-text {
+    white-space: normal !important;
+    text-align: center;
   }
 }
 
@@ -2145,10 +2264,28 @@ img {
     display: none;
   }
 
+  .hero-content {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-badge {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    padding: 0.35rem 0.85rem;
+    white-space: normal !important;
+    text-align: center;
+    line-height: 1.4;
+    max-width: 100%;
+    box-sizing: border-box;
+    align-self: center;
+  }
+
   .hero-cta-group {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    max-width: 100%;
     gap: 0.85rem;
   }
 
@@ -2159,12 +2296,15 @@ img {
     padding: 0.85rem 1.4rem;
     font-size: 0.88rem;
     white-space: nowrap !important;
+    box-sizing: border-box;
   }
 
   .floating-pill {
     font-size: 0.72rem;
     padding: 0.45rem 0.85rem;
     white-space: nowrap !important;
+    max-width: calc(100% - 1.7rem);
+    box-sizing: border-box;
   }
 
   .pill-top-right {
@@ -2180,11 +2320,16 @@ img {
   .metrics-grid {
     grid-template-columns: 1fr;
     gap: 1.15rem;
+    width: 100%;
+    max-width: 100%;
   }
 
   .metric-card {
     padding: 1.6rem 1.25rem;
     text-align: center;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .metric-value {
@@ -2193,11 +2338,15 @@ img {
   }
 
   .metric-label {
-    white-space: nowrap !important;
+    white-space: normal !important;
+    text-align: center;
   }
 
   .space-card {
     padding: 1.5rem 1.25rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .space-header {
@@ -2209,6 +2358,11 @@ img {
     white-space: nowrap !important;
     font-size: 0.84rem;
     padding: 0.7rem 0.95rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+    gap: 0.5rem;
   }
 
   .direct-phone {
@@ -2219,16 +2373,20 @@ img {
   .modal-box {
     padding: 2rem 1.25rem;
     border-radius: 20px;
+    max-width: calc(100% - 1.5rem);
+    box-sizing: border-box;
   }
 
   .modal-actions {
     flex-direction: column;
     gap: 0.75rem;
+    width: 100%;
   }
 
   .modal-actions .btn {
     width: 100%;
     white-space: nowrap !important;
+    box-sizing: border-box;
   }
 }
 
@@ -2238,23 +2396,33 @@ img {
   .banner-container,
   .footer-container {
     padding: 0 0.85rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .hero-title {
-    font-size: 1.85rem;
+    font-size: 1.7rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .hero-badge {
-    font-size: 0.74rem;
-    letter-spacing: 0.08em;
-    padding: 0.35rem 0.75rem;
-    white-space: nowrap !important;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    padding: 0.35rem 0.7rem;
+    white-space: normal !important;
+    text-align: center;
+    line-height: 1.35;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .btn {
     font-size: 0.82rem;
-    padding: 0.75rem 1.1rem;
+    padding: 0.75rem 1rem;
     white-space: nowrap !important;
+    box-sizing: border-box;
   }
 
   .stat-val {
