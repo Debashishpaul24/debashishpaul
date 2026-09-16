@@ -329,10 +329,10 @@ img {
   background: rgba(16, 185, 129, 0.15);
   color: #10b981;
   border: 1px solid rgba(16, 185, 129, 0.35);
-  padding: 0.22rem 0.65rem;
+  padding: 0.25rem 0.72rem;
   border-radius: 999px;
   font-family: var(--font-modern);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   white-space: nowrap !important;
@@ -483,9 +483,9 @@ img {
 
 .brand-sub {
   font-family: var(--font-modern);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   color: var(--lantern-gold);
   text-transform: uppercase;
 }
@@ -661,9 +661,9 @@ img {
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 4.8vw, 4.4rem);
+  font-size: clamp(2.3rem, 4vw, 3.8rem);
   font-weight: 700;
-  line-height: 1.14;
+  line-height: 1.15;
   color: #ffffff;
   letter-spacing: -0.015em;
   margin-bottom: 1.4rem;
@@ -725,14 +725,14 @@ img {
 
 .stat-val {
   font-family: var(--font-modern);
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #ffffff;
   white-space: nowrap !important;
 }
 
 .stat-sub {
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
   white-space: nowrap !important;
 }
@@ -814,7 +814,7 @@ img {
 }
 
 .caption-sub {
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
 }
 
@@ -887,7 +887,7 @@ img {
 }
 
 .metric-desc {
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   color: var(--text-muted);
   line-height: 1.5;
 }
@@ -947,10 +947,10 @@ img {
 
 .lead-p {
   font-family: var(--font-display);
-  font-size: 1.38rem;
+  font-size: 1.18rem;
   font-style: italic;
   color: var(--text-cream);
-  line-height: 1.7;
+  line-height: 1.68;
   margin-bottom: 1.2rem;
 }
 
@@ -1084,9 +1084,9 @@ img {
 
 .space-badge {
   font-family: var(--font-modern);
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 0.25rem 0.75rem;
+  padding: 0.28rem 0.8rem;
   border-radius: 999px;
   background: rgba(245, 179, 56, 0.12);
   color: var(--lantern-gold);
@@ -1109,7 +1109,7 @@ img {
 }
 
 .space-capacity {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   white-space: nowrap !important;
   flex-shrink: 0;
@@ -1125,7 +1125,7 @@ img {
 }
 
 .space-desc {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   color: var(--text-body);
   line-height: 1.65;
   margin-bottom: 1.4rem;
@@ -1162,7 +1162,7 @@ img {
   justify-content: space-between;
   width: 100%;
   font-family: var(--font-modern);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--lantern-gold);
   padding: 0.75rem 1.1rem;
@@ -1230,7 +1230,7 @@ img {
 
 .menu-tab {
   font-family: var(--font-modern);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--text-body);
   background: var(--bg-card);
@@ -1298,7 +1298,7 @@ img {
 
 .item-badge {
   font-family: var(--font-modern);
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   padding: 0.28rem 0.8rem;
@@ -1338,7 +1338,7 @@ img {
 }
 
 .item-desc {
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   color: var(--text-body);
   line-height: 1.65;
   margin-bottom: 1.3rem;
@@ -1454,7 +1454,7 @@ img {
 
 .direct-phone {
   font-family: var(--font-modern);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--lantern-gold);
   transition: var(--transition-smooth);
@@ -2104,7 +2104,8 @@ img {
   }
 
   .brand-sub {
-    font-size: 0.6rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
     white-space: nowrap;
   }
 
@@ -2185,7 +2186,7 @@ img {
   }
 
   .direct-phone {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     white-space: nowrap !important;
   }
 
@@ -2218,7 +2219,7 @@ img {
   }
 
   .hero-badge {
-    font-size: 0.68rem;
+    font-size: 0.74rem;
     letter-spacing: 0.08em;
     padding: 0.35rem 0.75rem;
     white-space: nowrap !important;
@@ -2231,12 +2232,12 @@ img {
   }
 
   .stat-val {
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     white-space: nowrap !important;
   }
 
   .stat-sub {
-    font-size: 0.7rem;
+    font-size: 0.76rem;
     white-space: nowrap !important;
   }
 }
