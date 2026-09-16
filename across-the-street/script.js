@@ -184,34 +184,47 @@ function initMenuFiltering() {
   const items = document.querySelectorAll('.menu-item-card');
   if (!tabs.length || !items.length) return;
 
+  const filterCategory = (targetCat, animate = true) => {
+    let visibleIndex = 0;
+    items.forEach(card => {
+      const itemCat = card.getAttribute('data-cat');
+      if (targetCat === 'all' || itemCat === targetCat) {
+        card.style.display = 'flex';
+        if (animate) {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(16px)';
+          setTimeout(() => {
+            card.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, visibleIndex * 50);
+        } else {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }
+        visibleIndex++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  };
+
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
 
       const targetCat = tab.getAttribute('data-category');
-      let visibleIndex = 0;
-
-      items.forEach(card => {
-        const itemCat = card.getAttribute('data-cat');
-        if (targetCat === 'all' || itemCat === targetCat) {
-          card.style.display = 'flex';
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(16px)';
-          
-          setTimeout(() => {
-            card.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          }, visibleIndex * 50);
-          
-          visibleIndex++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      filterCategory(targetCat, true);
     });
   });
+
+  // Automatically filter to the default active category (Chef's Signatures) on initial load
+  const activeTab = document.querySelector('.menu-tab.active') || tabs[0];
+  if (activeTab) {
+    const defaultCat = activeTab.getAttribute('data-category') || 'chef-specials';
+    filterCategory(defaultCat, false);
+  }
 }
 
 /**

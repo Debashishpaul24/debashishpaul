@@ -1276,6 +1276,11 @@ img {
   transition: var(--transition-smooth);
 }
 
+/* Initially display only Chef's Signatures cards on page load */
+.menu-item-card:not([data-cat="chef-specials"]) {
+  display: none;
+}
+
 .menu-item-card:hover {
   transform: translateY(-4px);
   border-color: var(--border-lantern);
