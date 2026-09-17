@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaf & Life — Café & Bistro | New Town, Kolkata</title>
+  <meta name="description"
+    content="Experience New Town's most whimsical botanical café & bistro. Home of the viral Red Love Booth, tabletop board games, fairy-light garden patio, and artisanal Pan-Asian & Continental dining.">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Leaf & Life — Café & Bistro | New Town, Kolkata">
+  <meta property="og:description"
+    content="Bespoke botanical bistro featuring the viral Red Love Booth, tabletop board games, and gourmet wok dishes in New Town, Kolkata.">
+  <meta property="og:image" content="assets/facade-night.png">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+  <!-- Google Fonts: Playfair Display, Outfit, Plus Jakarta Sans, and Caveat (Handwritten note aesthetic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+
+<body>
+  <!-- Ambient Botanical Glow Elements -->
+  <div class="ambient-glows">
+    <div class="glow-sage"></div>
+    <div class="glow-blush"></div>
+    <div class="glow-neon"></div>
+  </div>
+
+  <!-- Top Announcement Bar (Live Client Demo & Return to Portfolio) -->
+  <div class="top-announcement-bar">
+    <div class="bar-container">
+      <div class="bar-left">
+        <span class="live-pill"><span class="pulse-dot"></span> LIVE CLIENT DEMO</span>
+        <span class="bar-text">Designed & Engineered by <strong>Debashish Paul</strong></span>
+      </div>
+      <div class="bar-right">
+        <a href="tel:+916290989335" class="bar-phone">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+            </path>
+          </svg>
+          Reservations: <strong>+91 62909 89335</strong>
+        </a>
+        <a href="../#hero" class="return-link" aria-label="Return to Debashish Paul Portfolio Home">
+          <span>← Back to Portfolio</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <!-- Brand Identity -->
+      <a href="#hero" class="brand-logo">
+        <div class="logo-crest" title="Leaf & Life Cafe & Bistro">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L9 8h6l-3-6z" />
+            <path d="M5 21c0-5 3.5-9 7-9s7 4 7 9" />
+            <path d="M12 12v9" />
+            <circle cx="12" cy="7" r="1.5" fill="currentColor" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">LEAF & LIFE</span>
+          <span class="brand-sub">BOTANICAL BISTRO • NEW TOWN</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="main-nav">
+        <a href="#hero" class="nav-item">The Vibe</a>
+        <a href="#scrapbook" class="nav-item">Polaroid Stories</a>
+        <a href="#matchmaker" class="nav-item nav-badge-item">✨ Vibe Matchmaker</a>
+        <a href="#blackboard-menu" class="nav-item">Chalkboard Menu</a>
+        <a href="#table-pass" class="nav-item">Instant Table Pass</a>
+        <a href="#location-guide" class="nav-item">Neighborhood</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <a href="#table-pass" class="btn btn-primary-accent btn-sm">
+          <span>Get Table Pass</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Navigation -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-links">
+      <a href="#hero" class="drawer-item">The Vibe</a>
+      <a href="#scrapbook" class="drawer-item">Polaroid Stories</a>
+      <a href="#matchmaker" class="drawer-item" style="color: #ff5e7e;">✨ Vibe Matchmaker Quiz</a>
+      <a href="#blackboard-menu" class="drawer-item">Artisan Chalkboard Menu</a>
+      <a href="#table-pass" class="drawer-item drawer-cta">Get Instant Table Pass</a>
+      <a href="#community-notes" class="drawer-item">Sticky Note Reviews</a>
+      <a href="#location-guide" class="drawer-item">Find Us in New Town</a>
+      <a href="../#hero" class="drawer-item drawer-back" aria-label="Return to Debashish Paul Portfolio Home">← Back to Portfolio</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- HERO SECTION: ASYMMETRICAL EDITORIAL COLLAGE & LIVE MOOD SWITCHER -->
+    <section id="hero" class="hero-section">
+      <div class="section-container">
+        <!-- Interactive Mood Bar (Changes the Cafe Ambiance Accent Dynamically) -->
+        <div class="mood-bar-wrapper">
+          <span class="mood-bar-label">Current Café Atmosphere:</span>
+          <div class="mood-pill-group" id="moodSwitcher">
+            <button class="mood-btn" data-mood="morning">
+              <span>☀️</span> Morning Brew & Waffles
+            </button>
+            <button class="mood-btn active" data-mood="evening">
+              <span>🌇</span> Golden Hour & Board Games
+            </button>
+            <button class="mood-btn" data-mood="night">
+              <span>🌙</span> Neon Lights & Wok Sizzlers
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-mosaic-grid">
+          <!-- Left: Editorial Story & Headline -->
+          <div class="hero-story-col">
+            <div class="hero-hand-tag">
+              <span class="tape-strip"></span>
+              <span class="hand-tag-text">#ActionAreaIII • Handcrafted with love</span>
+            </div>
+
+            <h1 class="hero-headline">
+              A Botanical Escape for <br>
+              <span class="italic-serif text-blush">Laughter, Board Games</span> &<br>
+              <span class="highlight-stroke">Neon-Lit Conversations.</span>
+            </h1>
+
+            <p class="hero-lead">
+              Tucked away beside Shapoorji Sukhobristi, Leaf & Life is New Town's most charming hangout. Slip inside our
+              famed London Red Love Booth, challenge your best friends to tabletop Ludo over iced hazelnut frappés, and
+              savor sizzling wok dishes made fresh for the soul.
+            </p>
+
+            <!-- Dynamic Vibe Card (Updates with Mood Switcher) -->
+            <div class="vibe-ticker-card" id="vibeTicker">
+              <div class="ticker-indicator">
+                <span class="ticker-pulse"></span>
+                <span class="ticker-title" id="tickerTitle">Golden Hour & Board Games Vibe</span>
+              </div>
+              <p class="ticker-quote" id="tickerQuote">
+                "Blush velvet armchairs, fresh coolers on ice, and heated Ludo matches under hanging floral lights."
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="hero-actions">
+              <a href="#table-pass" class="btn btn-primary-accent btn-lg">
+                <span>Generate Table Pass</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <a href="#matchmaker" class="btn btn-glass btn-lg">
+                <span>Play Matchmaker</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Quick Credibility Badges -->
+            <div class="hero-quick-meta">
+              <div class="quick-meta-item">
+                <span class="qm-icon">📍</span>
+                <span>Near Bharat Gas Godown, Sukhobristi Rd</span>
+              </div>
+              <div class="quick-meta-item">
+                <span class="qm-icon">⏰</span>
+                <span>10:00 AM – 11:30 PM (Daily)</span>
+              </div>
+              <div class="quick-meta-item">
+                <span class="qm-icon">🎲</span>
+                <span>Free Tabletop Games</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Tilted Polaroid Collage -->
+          <div class="hero-visual-collage">
+            <div class="rotating-seal">
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <path id="circlePath" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" fill="none" />
+                <text font-size="10.8" fill="#d97706" font-weight="700" letter-spacing="2.2">
+                  <textPath href="#circlePath">
+                    LEAF & LIFE • NEW TOWN • BISTRO •
+                  </textPath>
+                </text>
+              </svg>
+              <div class="seal-center-icon">🌺</div>
+            </div>
+
+            <!-- Main Polaroid 1: The Love Booth -->
+            <div class="polaroid-card polaroid-main">
+              <div class="washi-tape tape-top-center"></div>
+              <div class="polaroid-media">
+                <img src="assets/love-booth.png" alt="Viral Red London Love Booth at Leaf & Life Cafe">
+                <span class="polaroid-stamp">VIRAL SPOT</span>
+              </div>
+              <div class="polaroid-caption">
+                <span class="caption-hand">"Hello Lovely!" London Red Booth</span>
+                <span class="caption-sub">Iconic rotary phone & glowing neon frame</span>
+              </div>
+            </div>
+
+            <!-- Overlapping Polaroid 2: Garden Facade -->
+            <div class="polaroid-card polaroid-secondary">
+              <div class="washi-tape tape-top-right"></div>
+              <div class="polaroid-media">
+                <img src="assets/facade-night.png" alt="Fairy-light Garden Entrance of Leaf and Life">
+              </div>
+              <div class="polaroid-caption">
+                <span class="caption-hand">Fairy-Light Garden Gate</span>
+              </div>
+            </div>
+
+            <!-- Overlapping Polaroid 3: Interior Lounge & Board Games -->
+            <div class="polaroid-card polaroid-tertiary">
+              <div class="washi-tape tape-bottom-left"></div>
+              <div class="polaroid-media">
+                <img src="assets/interior-lounge.png" alt="Blush velvet seating and board games at Leaf & Life">
+              </div>
+              <div class="polaroid-caption">
+                <span class="caption-hand">Chess & Ludo Duels</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE POLAROID SCRAPBOOK (UNIQUE VISUAL STORYTELLING) -->
+    <section class="scrapbook-section" id="scrapbook">
+      <div class="section-container">
+        <div class="scrapbook-header">
+          <div class="header-stamp">VISUAL PINBOARD</div>
+          <h2 class="scrapbook-title">Four Vignettes You’ll Fall For</h2>
+          <p class="scrapbook-subtitle">
+            Hover each snapshot to flip into the soundbites and stories behind our botanical retreat.
+          </p>
+        </div>
+
+        <div class="scrapbook-grid">
+          <!-- Vignette 1 -->
+          <div class="scrapbook-item item-booth">
+            <div class="pin-clip">📌</div>
+            <div class="scrapbook-img-frame">
+              <img src="assets/love-booth.png" alt="London Love Booth with Hello Lovely neon">
+              <div class="scrapbook-neon-tag">NEON ROMANCE</div>
+            </div>
+            <div class="scrapbook-body">
+              <div class="scrapbook-num">01 / The London Love Booth</div>
+              <h3 class="scrapbook-h3">Step Inside "Hello Lovely!"</h3>
+              <p class="scrapbook-desc">
+                Crafted in royal crimson like a classic British street icon. Pick up the vintage rotary dial phone, stand
+                under the warm glowing neon script, and take the photos that light up your feed.
+              </p>
+              <div class="scrapbook-footnote">
+                <span class="fn-star">★</span> Most requested date-night photo corner in Action Area III
+              </div>
+            </div>
+          </div>
+
+          <!-- Vignette 2 -->
+          <div class="scrapbook-item item-games">
+            <div class="pin-clip">📌</div>
+            <div class="scrapbook-img-frame">
+              <img src="assets/interior-lounge.png" alt="Blush Lounge Board Games" style="object-position: bottom;">
+              <div class="scrapbook-neon-tag tag-amber">PLAY & LAUGH</div>
+            </div>
+            <div class="scrapbook-body">
+              <div class="scrapbook-num">02 / Tabletop Duels</div>
+              <h3 class="scrapbook-h3">Ludo, Chess, Cards & Zero Rush</h3>
+              <p class="scrapbook-desc">
+                Tired of digital screens? Every table comes equipped with beloved board games. Challenge your friends to
+                fierce Ludo rivalries or thoughtful Chess endgames while the mocktails flow.
+              </p>
+              <div class="scrapbook-footnote">
+                <span class="fn-star">★</span> Free game access on every single table, no deposit required
+              </div>
+            </div>
+          </div>
+
+          <!-- Vignette 3 -->
+          <div class="scrapbook-item item-garden">
+            <div class="pin-clip">📌</div>
+            <div class="scrapbook-img-frame">
+              <img src="assets/facade-night.png" alt="Fairy Light Garden Gate">
+              <div class="scrapbook-neon-tag tag-green">ALFRESCO NIGHTS</div>
+            </div>
+            <div class="scrapbook-body">
+              <div class="scrapbook-num">03 / The Fairy-Light Patio</div>
+              <h3 class="scrapbook-h3">Twinkling Vines & Cool Breezes</h3>
+              <p class="scrapbook-desc">
+                Framed by a white picket garden fence and dense leafy arches illuminated with thousands of warm fairy
+                lights. Perfect for breezy evening conversations and fresh espresso sips.
+              </p>
+              <div class="scrapbook-footnote">
+                <span class="fn-star">★</span> Open air seating with European courtyard atmosphere
+              </div>
+            </div>
+          </div>
+
+          <!-- Vignette 4 -->
+          <div class="scrapbook-item item-kitchen">
+            <div class="pin-clip">📌</div>
+            <div class="scrapbook-img-frame">
+              <img src="assets/dragon-chicken.jpg" alt="Sizzling Dragon Chicken">
+              <div class="scrapbook-neon-tag tag-red">WOK FIRED</div>
+            </div>
+            <div class="scrapbook-body">
+              <div class="scrapbook-num">04 / Sizzling Wok Alchemy</div>
+              <h3 class="scrapbook-h3">Smoky Cashews & Dragon Glaze</h3>
+              <p class="scrapbook-desc">
+                Not just coffee—our chefs bring serious fire to the wok. Crispy chicken glazed in fiery sweet-spicy
+                chilli sauce, wood-fired thin pizzas, and slow-simmered artisanal pastas.
+              </p>
+              <div class="scrapbook-footnote">
+                <span class="fn-star">★</span> 100+ fresh dishes prepared hot to order
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE VIBE & BITE MATCHMAKER (COMPLETELY UNIQUE INTERACTIVE EXPERIENCE) -->
+    <section class="matchmaker-section" id="matchmaker">
+      <div class="section-container">
+        <div class="matchmaker-box">
+          <div class="matchmaker-header">
+            <span class="mm-badge">✨ INTERACTIVE VIBE MATCHMAKER</span>
+            <h2 class="mm-title">What’s Your Café Plan Today?</h2>
+            <p class="mm-sub">
+              Pick your crew and craving—our smart pairing engine will recommend the perfect nook, signature dish, and
+              auto-configure your table pass.
+            </p>
+          </div>
+
+          <div class="matchmaker-steps">
+            <!-- Step 1: Companion -->
+            <div class="mm-step-block">
+              <div class="step-label">Step 1: Who is joining the table?</div>
+              <div class="choice-pills" id="companionChoices">
+                <button class="choice-pill active" data-companion="date" data-zone="The Red Love Booth Corner"
+                  data-game="Jenga & Romantic Talk">
+                  <span>🌹</span> Romantic Date Night
+                </button>
+                <button class="choice-pill" data-companion="squad" data-zone="The Board Games Lounge"
+                  data-game="Fierce Ludo Tournament">
+                  <span>🎲</span> Friend Squad (3–6 People)
+                </button>
+                <button class="choice-pill" data-companion="solo" data-zone="Fairy-Light Garden Patio"
+                  data-game="Solo Chess & Reading">
+                  <span>☕</span> Solo Chill & Work Session
+                </button>
+                <button class="choice-pill" data-companion="party" data-zone="Blush Velvet Sanctuary"
+                  data-game="Card Games & Party Hits">
+                  <span>🎂</span> Birthday or Group Celebration
+                </button>
+              </div>
+            </div>
+
+            <!-- Step 2: Craving -->
+            <div class="mm-step-block">
+              <div class="step-label">Step 2: What are you craving most?</div>
+              <div class="choice-pills" id="cravingChoices">
+                <button class="choice-pill active" data-craving="spicy" data-dish="Sizzling Dragon Chicken"
+                  data-drink="Wild Berry Mint Cooler" data-price="₹295 + ₹175">
+                  <span>🌶️</span> Sizzling & Spicy Pan-Asian
+                </button>
+                <button class="choice-pill" data-craving="coffee" data-dish="Artisanal Hazelnut Frappé"
+                  data-drink="Blueberry Cheesecake" data-price="₹185 + ₹210">
+                  <span>🥤</span> Whipped Frappés & Cheesecakes
+                </button>
+                <button class="choice-pill" data-craving="comfort" data-dish="Truffle Basil Thin Pizza"
+                  data-drink="Caramel Macchiato" data-price="₹345 + ₹160">
+                  <span>🍕</span> Cheesy Wood-Fired Pizza
+                </button>
+                <button class="choice-pill" data-craving="crispy" data-dish="Crumbed Kolkata Bhetki Fish & Chips"
+                  data-drink="Sparkling Mojito" data-price="₹320 + ₹150">
+                  <span>🐟</span> Golden Crispy Continental
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- The Dynamic Recommendation Result Card -->
+          <div class="match-result-card" id="matchResult">
+            <div class="result-badge">YOUR PERFECT PAIRING</div>
+            <div class="result-grid">
+              <div class="result-cell">
+                <span class="cell-k">Recommended Table:</span>
+                <span class="cell-v" id="resZone">The Red Love Booth Corner</span>
+              </div>
+              <div class="result-cell">
+                <span class="cell-k">Must-Order Bites:</span>
+                <span class="cell-v" id="resDish">Sizzling Dragon Chicken & Wild Berry Cooler</span>
+              </div>
+              <div class="result-cell">
+                <span class="cell-k">Tabletop Activity:</span>
+                <span class="cell-v" id="resGame">Jenga & Romantic Talk</span>
+              </div>
+              <div class="result-cell">
+                <span class="cell-k">Est. Table Budget:</span>
+                <span class="cell-v highlight-price" id="resPrice">₹470 for two</span>
+              </div>
+            </div>
+
+            <div class="result-action">
+              <button type="button" class="btn btn-primary-accent btn-md" id="applyMatchToPassBtn">
+                <span>Lock This Plan Into Table Pass ↓</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 5v14M5 12l7 7 7-7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THE ARTISAN CHALKBOARD BISTRO MENU (OPEN DOCKET LEDGER) -->
+    <section class="blackboard-section" id="blackboard-menu">
+      <div class="section-container">
+        <div class="blackboard-frame">
+          <div class="chalkboard-top">
+            <div class="chalk-badge">ESTD 2024 • NEW TOWN ACTION AREA III</div>
+            <h2 class="chalk-title">The Artisan Bistro Slate</h2>
+            <p class="chalk-subtitle">
+              Freshly pulled coffees, hand-tossed doughs, and sizzling wok favorites. Select a section or hover any dish
+              to view its live plate snapshot.
+            </p>
+
+            <!-- Chalkboard Category Filter -->
+            <div class="chalk-tabs">
+              <button class="chalk-tab active" data-tab="all">★ Full Docket</button>
+              <button class="chalk-tab" data-tab="brews">☕ Espresso & Coolers</button>
+              <button class="chalk-tab" data-tab="wok">🥢 Sizzlers & Wok</button>
+              <button class="chalk-tab" data-tab="hearth">🍕 Pizza & Continental</button>
+              <button class="chalk-tab" data-tab="sweet">🍰 Sweet Indulgence</button>
+            </div>
+          </div>
+
+          <!-- Open Book / Two-Column Ledger -->
+          <div class="docket-ledger">
+            <!-- Left Column: Beverages & Chinese Wok -->
+            <div class="ledger-column">
+              <div class="ledger-heading">
+                <span>SECTION A: BREWS, COOLERS & WOK FLAMES</span>
+                <span class="chalk-line"></span>
+              </div>
+
+              <div class="ledger-items-list">
+                <!-- Item 1 -->
+                <div class="docket-item active-dish" data-cat="wok" data-img="assets/dragon-chicken.jpg"
+                  data-dish="Sizzling Dragon Chicken" data-price="₹295"
+                  data-desc="Crispy chicken tenders tossed in a smoky red chili and honey glaze, garnished with roasted cashews and fresh bell peppers.">
+                  <div class="docket-line">
+                    <span class="d-name">Sizzling Dragon Chicken</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹295</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag tag-hot">🔥 Chef's Signature</span>
+                    <span class="d-tag">Cashew Glaze</span>
+                    <span class="d-tag">Bestseller</span>
+                  </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="docket-item" data-cat="brews" data-img="assets/beverage.jpg"
+                  data-dish="Artisanal Hazelnut Frappé" data-price="₹185"
+                  data-desc="Double espresso shot blended with chilled whole milk, hazelnut praline syrup, topped with rich whipped cream.">
+                  <div class="docket-line">
+                    <span class="d-name">Artisanal Hazelnut Frappé</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹185</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag tag-loved">❤️ Most Loved</span>
+                    <span class="d-tag">Cold Brew</span>
+                    <span class="d-tag">Whipped Cream</span>
+                  </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="docket-item" data-cat="brews" data-img="assets/beverage.jpg"
+                  data-dish="Wild Berry Mint Cooler" data-price="₹175"
+                  data-desc="Crushed blueberries, raspberries and garden mint sprigs muddled with sparkling citrus soda on crushed ice.">
+                  <div class="docket-line">
+                    <span class="d-name">Wild Berry Mint Cooler</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹175</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag">Sparkling</span>
+                    <span class="d-tag">Zero Alcohol</span>
+                    <span class="d-tag">Refreshing</span>
+                  </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="docket-item" data-cat="wok" data-img="assets/dragon-chicken.jpg"
+                  data-dish="Singapore Chilli Garlic Noodles" data-price="₹240"
+                  data-desc="Tender yellow egg noodles wok-tossed with burnt garlic, crunchy shredded spring vegetables, and spicy oriental aromatics.">
+                  <div class="docket-line">
+                    <span class="d-name">Singapore Chilli Garlic Noodles</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹240</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag">Wok Tossed</span>
+                    <span class="d-tag">Spicy</span>
+                    <span class="d-tag">Egg / Paneer / Chicken</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Pizzas, Continental & Desserts -->
+            <div class="ledger-column">
+              <div class="ledger-heading">
+                <span>SECTION B: HEARTH, CONTINENTAL & BAKERY</span>
+                <span class="chalk-line"></span>
+              </div>
+
+              <div class="ledger-items-list">
+                <!-- Item 5 -->
+                <div class="docket-item" data-cat="hearth" data-img="assets/pizza-pasta.jpg"
+                  data-dish="Wood-Fired Truffle Margherita" data-price="₹345"
+                  data-desc="Hand-stretched 10-inch thin crust with slow-simmered San Marzano tomato sauce, fresh buffalo mozzarella, and basil oil drizzle.">
+                  <div class="docket-line">
+                    <span class="d-name">Wood-Fired Truffle Margherita</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹345</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag tag-veg">🌿 Vegetarian</span>
+                    <span class="d-tag">Thin Crust</span>
+                    <span class="d-tag">Buffalo Mozzarella</span>
+                  </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="docket-item" data-cat="hearth" data-img="assets/pizza-pasta.jpg"
+                  data-dish="Classic Penne Arrabbiata" data-price="₹280"
+                  data-desc="Al dente durum wheat penne in a fiery garlic, herb and crushed Italian plum tomato sauce with aged parmesan shavings.">
+                  <div class="docket-line">
+                    <span class="d-name">Classic Penne Arrabbiata</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹280</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag">Artisanal Pasta</span>
+                    <span class="d-tag">Parmigiano</span>
+                    <span class="d-tag">Herb Garlic</span>
+                  </div>
+                </div>
+
+                <!-- Item 7 -->
+                <div class="docket-item" data-cat="hearth" data-img="assets/interior-lounge.png"
+                  data-dish="Crumb-Fried Kolkata Bhetki" data-price="₹320"
+                  data-desc="Golden panko-crusted river bhetki fillets accompanied by salted French fries and freshly whipped caper tartar sauce.">
+                  <div class="docket-line">
+                    <span class="d-name">Crumb-Fried Kolkata Bhetki</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹320</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag">Kolkata Classic</span>
+                    <span class="d-tag">House Tartar</span>
+                    <span class="d-tag">Fresh Catch</span>
+                  </div>
+                </div>
+
+                <!-- Item 8 -->
+                <div class="docket-item" data-cat="sweet" data-img="assets/beverage.jpg"
+                  data-dish="New York Baked Blueberry Cheesecake" data-price="₹210"
+                  data-desc="Silky Philadelphia cream cheese on a crunchy honey-graham biscuit crust, topped with slow-reduced wild blueberry compote.">
+                  <div class="docket-line">
+                    <span class="d-name">New York Baked Cheesecake</span>
+                    <span class="d-dots"></span>
+                    <span class="d-price">₹210</span>
+                  </div>
+                  <div class="d-tags">
+                    <span class="d-tag tag-sweet">🍰 Signature Dessert</span>
+                    <span class="d-tag">Wild Blueberry</span>
+                    <span class="d-tag">Graham Crust</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Dish Live Spotlight Box -->
+          <div class="docket-spotlight" id="docketSpotlight">
+            <div class="spotlight-photo">
+              <img src="assets/dragon-chicken.jpg" alt="Dish Preview" id="spotlightImg">
+            </div>
+            <div class="spotlight-info">
+              <div class="spotlight-header">
+                <h4 id="spotlightTitle">Sizzling Dragon Chicken</h4>
+                <span class="spotlight-price" id="spotlightPrice">₹295</span>
+              </div>
+              <p id="spotlightDesc">
+                Crispy chicken tenders tossed in a smoky red chili and honey glaze, garnished with roasted cashews and
+                fresh bell peppers.
+              </p>
+              <div class="spotlight-tip">
+                💡 <em>Recommended Pairing:</em> Wild Berry Mint Cooler or Chilled Hazelnut Frappé.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: THE LIVE CAFÉ BOARDING PASS / TICKET RESERVATION ENGINE -->
+    <section class="table-pass-section" id="table-pass">
+      <div class="section-container">
+        <div class="pass-wrapper">
+          <div class="pass-header text-center">
+            <span class="pass-badge">INSTANT WALK-IN & RESERVATION PASS</span>
+            <h2 class="pass-title">Get Your Leaf & Life Table Pass</h2>
+            <p class="pass-subtitle">
+              Fill in your details to generate your verified bistro boarding pass with guaranteed priority seating,
+              zero booking fees, and instant WhatsApp confirmation.
+            </p>
+          </div>
+
+          <div class="pass-interactive-grid">
+            <!-- Left Side: Interactive Input Controls -->
+            <form class="pass-form" id="bistroPassForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="passName">Guest Name *</label>
+                  <input type="text" id="passName" class="form-input" placeholder="e.g. Sagnik Mukherjee" required>
+                </div>
+                <div class="form-group">
+                  <label for="passPhone">WhatsApp Number *</label>
+                  <input type="tel" id="passPhone" class="form-input" placeholder="+91 98300 12345" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="passParty">Party Size</label>
+                  <select id="passParty" class="form-select">
+                    <option value="2 Guests (Couples Date)" selected>2 Guests (Couples Date)</option>
+                    <option value="3-4 Guests (Small Group)">3-4 Guests (Small Group)</option>
+                    <option value="5-8 Guests (Board Game Squad)">5-8 Guests (Board Game Squad)</option>
+                    <option value="8+ Guests (Celebration Bash)">8+ Guests (Celebration Bash)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="passZone">Preferred Nook</label>
+                  <select id="passZone" class="form-select">
+                    <option value="The Red Love Booth Corner" selected>★ The Red Love Booth Corner</option>
+                    <option value="Blush Velvet Sanctuary">Blush Velvet Lounge (Chandeliers)</option>
+                    <option value="Fairy-Light Garden Patio">Fairy-Light Garden Patio (Outdoor)</option>
+                    <option value="Board Games Hub Table">Board Games Hub Table</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="passDate">Date of Visit</label>
+                  <input type="date" id="passDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="passTime">Arrival Time Slot</label>
+                  <select id="passTime" class="form-select">
+                    <option value="12:30 PM (Brunch)">12:30 PM (Brunch)</option>
+                    <option value="03:30 PM (Afternoon Brews)">03:30 PM (Afternoon Brews)</option>
+                    <option value="06:00 PM (Sunset & Games)">06:00 PM (Sunset & Games)</option>
+                    <option value="07:30 PM (Prime Dinner)" selected>07:30 PM (Prime Dinner)</option>
+                    <option value="09:30 PM (Late Night Wok)">09:30 PM (Late Night Wok)</option>
+                    <option value="10:30 PM (Night Owl Sips)">10:30 PM (Night Owl Sips)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="passNotes">Celebration / Special Request (Optional)</label>
+                <input type="text" id="passNotes" class="form-input"
+                  placeholder="e.g. Anniversary date, fairy light corner, Uno & Chess deck ready...">
+              </div>
+
+              <button type="submit" class="btn btn-primary-accent btn-lg pass-submit-btn" id="generatePassBtn">
+                <span>Issue My Verified Table Pass</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </form>
+
+            <!-- Right Side: The Live Generated Vintage Bistro Ticket Pass -->
+            <div class="live-ticket-pass" id="liveTicketPass">
+              <!-- Perforated Ticket Top Header -->
+              <div class="ticket-header">
+                <div class="ticket-brand">
+                  <span class="t-icon">🌺</span>
+                  <div>
+                    <div class="t-name">LEAF & LIFE</div>
+                    <div class="t-sub">CAFÉ & BISTRO • NEW TOWN</div>
+                  </div>
+                </div>
+                <div class="ticket-status-stamp" id="ticketStatusStamp">
+                  PENDING PASS
+                </div>
+              </div>
+
+              <div class="ticket-tear-line">
+                <span class="tear-notch notch-left"></span>
+                <span class="tear-dots"></span>
+                <span class="tear-notch notch-right"></span>
+              </div>
+
+              <!-- Ticket Content Body -->
+              <div class="ticket-body">
+                <div class="ticket-meta-grid">
+                  <div class="t-field">
+                    <span class="tf-label">PASS HOLDER</span>
+                    <span class="tf-val" id="tGuestName">Guest Diner</span>
+                  </div>
+                  <div class="t-field">
+                    <span class="tf-label">PASS ID</span>
+                    <span class="tf-val font-mono" id="tPassId">LL-2026-LIVE</span>
+                  </div>
+                  <div class="t-field">
+                    <span class="tf-label">PARTY SIZE</span>
+                    <span class="tf-val" id="tPartySize">2 Guests</span>
+                  </div>
+                  <div class="t-field">
+                    <span class="tf-label">DATE & TIME</span>
+                    <span class="tf-val" id="tDateTime">Today • 07:30 PM</span>
+                  </div>
+                  <div class="t-field full-width">
+                    <span class="tf-label">ASSIGNED SEATING NOOK</span>
+                    <span class="tf-val text-accent-rose" id="tZone">The Red Love Booth Corner</span>
+                  </div>
+                </div>
+
+                <div class="ticket-perks">
+                  <span>✓ 100% Free Table Hold</span>
+                  <span>✓ Board Games Ready</span>
+                  <span>✓ Love Booth Access</span>
+                </div>
+
+                <!-- Barcode Graphic -->
+                <div class="ticket-barcode">
+                  <div class="barcode-bars">
+                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                  <span class="barcode-num">2026 89335 ACTION AREA III</span>
+                </div>
+              </div>
+
+              <!-- Ticket Success Overlay (Shown on submit) -->
+              <div class="ticket-confirmed-banner" id="ticketConfirmedBanner" style="display: none;">
+                <div class="tc-stamp">✓ RESERVED</div>
+                <p>Present this pass upon arrival for guaranteed seating.</p>
+                <a href="https://wa.me/916290989335?text=Hi%20Leaf%20%26%20Life%2C%20I%20have%20booked%20a%20table%20via%20the%20website!"
+                  target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-sm">
+                  <span>Ping Us on WhatsApp 💬</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: THE STICKY NOTES & POLAROID COMMUNITY WALL -->
+    <section class="community-section" id="community-notes">
+      <div class="section-container">
+        <div class="scrapbook-header text-center">
+          <div class="header-stamp">GUEST LOVE</div>
+          <h2 class="scrapbook-title">Notes from the Corkboard</h2>
+          <p class="scrapbook-subtitle">
+            Real stories, dates, and game nights shared by our New Town community.
+          </p>
+        </div>
+
+        <div class="sticky-notes-grid">
+          <!-- Sticky Note 1: Pastel Peach -->
+          <div class="sticky-note note-peach">
+            <div class="pin-top">📌</div>
+            <div class="note-stars">★★★★★</div>
+            <p class="note-body">
+              "The red London Love Booth is insanely cute! My partner and I took tons of pictures inside. The Dragon
+              Chicken was surprisingly delicious and spicy—not your usual dry cafe food. 10/10 date spot!"
+            </p>
+            <div class="note-author">
+              <strong>— Rupsa & Anirban</strong>
+              <span>Date Night Diner</span>
+            </div>
+          </div>
+
+          <!-- Sticky Note 2: Pastel Sage -->
+          <div class="sticky-note note-sage">
+            <div class="pin-top">📌</div>
+            <div class="note-stars">★★★★★</div>
+            <p class="note-body">
+              "We played Ludo for nearly 2 hours while having their hazelnut cold frappé and thin crust pizza. The staff
+              never rushed us once. Such a chill, welcoming atmosphere in Shapoorji."
+            </p>
+            <div class="note-author">
+              <strong>— Sourav M.</strong>
+              <span>Weekend Board Game Squad</span>
+            </div>
+          </div>
+
+          <!-- Sticky Note 3: Pastel Lemon -->
+          <div class="sticky-note note-lemon">
+            <div class="pin-top">📌</div>
+            <div class="note-stars">★★★★★</div>
+            <p class="note-body">
+              "Action Area III desperately needed a place like this. The fairy lights outside look like something out of
+              Pinterest. Fish and chips were super fresh and crispy. Will be visiting every week."
+            </p>
+            <div class="note-author">
+              <strong>— Priyanka Sengupta</strong>
+              <span>New Town Resident</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: NEIGHBORHOOD POCKET GUIDE & MAP -->
+    <section class="neighborhood-section" id="location-guide">
+      <div class="section-container">
+        <div class="guide-card">
+          <div class="guide-content">
+            <div class="guide-tag">NEIGHBORHOOD POCKET GUIDE</div>
+            <h2 class="guide-title">How to Find Us in New Town</h2>
+            <p class="guide-lead">
+              Nestled right off the main road in Action Area III, surrounded by Sukhobristi Shapoorji high-rises.
+            </p>
+
+            <div class="landmark-list">
+              <div class="landmark-item">
+                <span class="lm-icon">⛽</span>
+                <div>
+                  <div class="lm-title">Shapoorji Sukhobristi Petrol Pump Road</div>
+                  <div class="lm-desc">Just 2 minutes drive down from the Sukhobristi main petrol pump.</div>
+                </div>
+              </div>
+
+              <div class="landmark-item">
+                <span class="lm-icon">📍</span>
+                <div>
+                  <div class="lm-title">Opposite Bharat Gas Godown</div>
+                  <div class="lm-desc">Patharghata, Action Area III, Shapoorji, Newtown, Kolkata 700135.</div>
+                </div>
+              </div>
+
+              <div class="landmark-item">
+                <span class="lm-icon">📞</span>
+                <div>
+                  <div class="lm-title">Direct Dial / Table Assistance</div>
+                  <div class="lm-desc">+91 62909 89335 (Open 10:00 AM – 11:30 PM daily)</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="guide-actions">
+              <a href="https://maps.app.goo.gl/Xk5F4Bj87VJoiQu77" target="_blank" rel="noopener noreferrer"
+                class="btn btn-primary-accent btn-md">
+                <span>Open in Google Maps ↗</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
+                </svg>
+              </a>
+              <a href="tel:+916290989335" class="btn btn-glass btn-md">
+                <span>Call Front Desk</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="guide-visual">
+            <img src="assets/facade-night.png" alt="Leaf & Life Cafe Entrance at Night in Action Area 3">
+            <div class="guide-visual-overlay">
+              <div class="gvo-badge">Look for the Glowing Picket Gate & Red Phone Booth</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- CONFIRMATION MODAL -->
+  <div class="modal-backdrop" id="bookingModalBackdrop" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close Confirmation Modal">&times;</button>
+      <div class="modal-icon-wrap">
+        <span class="m-icon">🌺</span>
+      </div>
+      <h3 class="modal-title">Table Pass Confirmed!</h3>
+      <p class="modal-sub">
+        Your table at <strong class="text-accent-gold">Leaf & Life — Café & Bistro</strong> is reserved under priority
+        hold.
+      </p>
+
+      <div class="modal-summary-box">
+        <div class="m-sum-row">
+          <span>Booking Reference:</span>
+          <strong class="font-mono text-accent-rose" id="mSumId">LL-2026-8821</strong>
+        </div>
+        <div class="m-sum-row">
+          <span>Guest Name:</span>
+          <strong id="mSumName">Sagnik Mukherjee</strong>
+        </div>
+        <div class="m-sum-row">
+          <span>Dining Nook:</span>
+          <strong id="mSumZone">The Red Love Booth Corner</strong>
+        </div>
+        <div class="m-sum-row">
+          <span>Date & Time:</span>
+          <strong id="mSumDateTime">Tomorrow at 07:30 PM</strong>
+        </div>
+      </div>
+
+      <p class="modal-note">
+        A confirmation alert has been issued. You can also message our floor manager directly on WhatsApp.
+      </p>
+
+      <div class="modal-actions">
+        <a href="https://maps.app.goo.gl/Xk5F4Bj87VJoiQu77" target="_blank" rel="noopener noreferrer"
+          class="btn btn-glass btn-sm">
+          <span>Get Directions ↗</span>
+        </a>
+        <button class="btn btn-primary-accent btn-sm" id="modalDoneBtn">
+          <span>Done & Close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SITE FOOTER WITH DEBASHISH PAUL ENGINEERING CREDITS -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Col 1: Brand & Philosophy -->
+        <div class="footer-brand-col">
+          <a href="#hero" class="brand-logo footer-logo">
+            <div class="logo-crest">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L9 8h6l-3-6z" />
+                <path d="M5 21c0-5 3.5-9 7-9s7 4 7 9" />
+                <path d="M12 12v9" />
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-name">LEAF & LIFE</span>
+              <span class="brand-sub">CAFÉ & BISTRO • NEW TOWN</span>
+            </div>
+          </a>
+          <p class="footer-brand-desc">
+            New Town's botanical sanctuary. Where good coffee, vintage London romance, board games, and sizzling Pan-Asian
+            flavors bring friends and families together.
+          </p>
+          <div class="social-links-row">
+            <a href="https://maps.app.goo.gl/Xk5F4Bj87VJoiQu77" target="_blank" rel="noopener noreferrer"
+              class="soc-circle" aria-label="Google Maps Listing">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
+            </a>
+            <a href="tel:+916290989335" class="soc-circle" aria-label="Call Leaf and Life">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation -->
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Explore Bistro</h4>
+          <ul class="footer-nav-list">
+            <li><a href="#hero">The Vibe</a></li>
+            <li><a href="#scrapbook">Polaroid Stories</a></li>
+            <li><a href="#matchmaker">Vibe Matchmaker</a></li>
+            <li><a href="#blackboard-menu">Artisan Chalkboard</a></li>
+            <li><a href="#table-pass">Instant Table Pass</a></li>
+            <li><a href="#location-guide">Directions & Map</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Signature Specialties -->
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">House Favorites</h4>
+          <ul class="footer-nav-list">
+            <li><a href="#blackboard-menu">Sizzling Dragon Chicken</a></li>
+            <li><a href="#blackboard-menu">Hazelnut Frappé</a></li>
+            <li><a href="#blackboard-menu">Wild Berry Cooler</a></li>
+            <li><a href="#blackboard-menu">Wood-Fired Margherita</a></li>
+            <li><a href="#blackboard-menu">Singapore Noodles</a></li>
+            <li><a href="#blackboard-menu">River Bhetki Fish & Chips</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Timings & Location -->
+        <div class="footer-contact-col">
+          <h4 class="footer-col-title">Visit Us</h4>
+          <p class="f-info-line">
+            <strong>Location:</strong> Patharghata, Near Bharat Gas Godown, Sukhobristi Shapoorji Petrol Pump Rd,
+            Action Area III, Newtown, Kolkata - 700135
+          </p>
+          <p class="f-info-line">
+            <strong>Timings:</strong> 10:00 AM – 11:30 PM (All 7 Days)
+          </p>
+          <p class="f-info-line">
+            <strong>Direct Line:</strong> <a href="tel:+916290989335">+91 62909 89335</a>
+          </p>
+        </div>
+
+        <!-- Col 5: Engineering & Design Credit -->
+        <div class="footer-credit-col">
+          <div class="credit-badge">
+            <span class="cr-dot"></span>
+            <span>PORTFOLIO CLIENT WORK</span>
+          </div>
+          <h4 class="credit-title">Interactive Subsite Demonstration</h4>
+          <p class="credit-desc">
+            Designed, animated, and engineered by <strong>Debashish Paul</strong> as part of his senior creative developer
+            and frontend portfolio.
+          </p>
+          <div class="credit-meta-tags">
+            <span class="cm-tag">Boutique Bistro UI</span>
+            <span class="cm-tag">Interactive Ticket Generator</span>
+            <span class="cm-tag">Scrapbook Layout</span>
+          </div>
+          <a href="../#hero" class="btn btn-gold btn-sm credit-btn"
+            aria-label="Explore Debashish Paul's Main Portfolio Projects">
+            <span>Explore Portfolio Work</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M7 17L17 7M17 7H7M17 7V17" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <p class="copyright-text">
+          &copy; 2026 Leaf & Life — Café & Bistro. All rights reserved. Subsite crafted by <a href="../#hero"
+            class="dp-link">Debashish Paul</a>.
+        </p>
+        <div class="footer-bottom-links">
+          <a href="../#hero">Portfolio Index</a>
+          <span class="f-sep">•</span>
+          <a href="#hero">Back to Top ↑</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Subsite Controller Script -->
+  <script src="script.js?v=2"></script>
+</body>
+
+</html>
