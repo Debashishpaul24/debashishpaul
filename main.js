@@ -1,4 +1,9 @@
 (() => {
+  // Prevent mobile browsers from restoring previous scroll position when navigating back to portfolio
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+
   // Configuration
   const CONFIG = {
     frameCount: 240,
@@ -973,8 +978,24 @@
     });
   }
 
+  // Handle initial page load scroll position (Hero by default, or specific section if hashed)
+  function handleInitialHashOrScroll() {
+    const hash = window.location.hash;
+    if (hash && hash !== '#' && hash !== '#hero') {
+      const targetEl = document.querySelector(hash);
+      if (targetEl) {
+        setTimeout(() => {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+        return;
+      }
+    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
   // Initialize
   function init() {
+    handleInitialHashOrScroll();
     window.addEventListener('resize', handleResize, { passive: true });
     window.addEventListener('scroll', updateScrollTarget, { passive: true });
 

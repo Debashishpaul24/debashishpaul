@@ -1342,6 +1342,13 @@ a {
   margin-bottom: 1.25rem;
 }
 
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: center;
+}
+
 .tag-pill.tag-live {
   background: rgba(16, 185, 129, 0.14);
   color: #34d399;
