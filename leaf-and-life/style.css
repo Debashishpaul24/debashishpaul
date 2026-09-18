@@ -1199,7 +1199,7 @@ body {
 
 .chalkboard-top {
   text-align: center;
-  max-width: 660px;
+  max-width: 900px;
   margin: 0 auto 2.5rem auto;
 }
 
@@ -1223,27 +1223,33 @@ body {
   font-size: clamp(0.88rem, 1.5vw, 0.95rem);
   color: #9ca3af;
   margin-bottom: 1.6rem;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Chalk Tabs */
+/* Chalk Tabs - Single horizontal line on desktop */
 .chalk-tabs {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.55rem;
+  width: 100%;
 }
 
 .chalk-tab {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #d1d5db;
-  padding: 0.45rem 1rem;
+  padding: 0.45rem 0.95rem;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-smooth);
   white-space: nowrap !important;
+  flex-shrink: 0;
 }
 
 .chalk-tab:hover {
@@ -2259,8 +2265,17 @@ body {
   }
 }
 
-/* Tablets (iPad, 768px - 860px) */
+/* Tablets & Mobile (<= 860px) */
 @media (max-width: 860px) {
+  .header-actions .btn {
+    display: none !important;
+  }
+
+  .chalk-tabs {
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
   .pass-interactive-grid {
     grid-template-columns: 1fr;
   }
