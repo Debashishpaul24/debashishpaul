@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Under Scheduled Maintenance | Across The Street — The Dining Room</title>
+  <meta name="description" content="Across The Street Dining Room is momentarily reserved for private kitchen maintenance and seasonal menu curation. Resuming seating shortly.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #060a08;
+      color: #edeae2;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(245, 179, 56, 0.06) 0%, transparent 45%),
+        radial-gradient(circle at 85% 60%, rgba(34, 81, 59, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(245, 179, 56, 0.04) 0%, transparent 55%);
+    }
+
+    /* Top Demo Bar */
+    .top-bar {
+      background: rgba(6, 10, 8, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      padding: 0.6rem 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      z-index: 10;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .status-pill {
+      background: rgba(245, 179, 56, 0.15);
+      border: 1px solid rgba(245, 179, 56, 0.35);
+      color: #f5b338;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .pulse-amber {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #f5b338;
+      box-shadow: 0 0 8px #f5b338;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .top-text {
+      color: #9ca3af;
+    }
+
+    .top-text strong {
+      color: #fff;
+    }
+
+    .return-btn {
+      color: #edeae2;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 6px;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .return-btn:hover {
+      background: rgba(245, 179, 56, 0.15);
+      border-color: #f5b338;
+      color: #f5b338;
+    }
+
+    /* Main Container */
+    .maintenance-container {
+      max-width: 740px;
+      margin: auto;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .brand-crest {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: rgba(245, 179, 56, 0.12);
+      border: 1px solid rgba(245, 179, 56, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f5b338;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 0 25px rgba(245, 179, 56, 0.2);
+    }
+
+    .brand-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #9ca3af;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+
+    .maintenance-card {
+      background: rgba(14, 20, 16, 0.85);
+      border: 1px solid rgba(245, 179, 56, 0.25);
+      border-radius: 20px;
+      padding: 2.8rem 2.2rem;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 179, 56, 0.1);
+      width: 100%;
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: #f5b338;
+      background: rgba(245, 179, 56, 0.12);
+      border: 1px solid rgba(245, 179, 56, 0.3);
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 1.2rem;
+      white-space: nowrap;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 4.2vw, 2.7rem);
+      font-weight: 700;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-bottom: 1.1rem;
+    }
+
+    .card-title span {
+      color: #f5b338;
+      font-style: italic;
+    }
+
+    .card-desc {
+      font-size: 1rem;
+      color: #c7c5bc;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Actions */
+    .action-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.8rem 1.6rem;
+      border-radius: 999px;
+      transition: all 0.25s ease;
+      font-size: 0.92rem;
+      white-space: nowrap !important;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f5b338, #d97706);
+      color: #060a08;
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(245, 179, 56, 0.3);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(245, 179, 56, 0.45);
+    }
+
+    .btn-whatsapp {
+      background: #25d366;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .btn-whatsapp:hover {
+      background: #20ba59;
+      transform: translateY(-2px);
+    }
+
+    .btn-glass {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #edeae2;
+    }
+
+    .btn-glass:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    .maintenance-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #6b7280;
+      z-index: 10;
+    }
+
+    .maintenance-footer a {
+      color: #f5b338;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      .maintenance-card {
+        padding: 2rem 1.2rem;
+      }
+
+      .action-group {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .action-group .btn {
+        width: 100%;
+      }
+
+      .top-bar {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top Return Bar -->
+  <div class="top-bar">
+    <div class="top-left">
+      <span class="status-pill"><span class="pulse-amber"></span> KITCHEN MAINTENANCE</span>
+      <span class="top-text">Engineered by <strong>Debashish Paul</strong></span>
+    </div>
+    <a href="../#hero" class="return-btn">← Back to Portfolio</a>
+  </div>
+
+  <!-- Main Maintenance Card -->
+  <main class="maintenance-container">
+    <div class="brand-crest">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+        <line x1="6" y1="1" x2="6" y2="4"></line>
+        <line x1="10" y1="1" x2="10" y2="4"></line>
+        <line x1="14" y1="1" x2="14" y2="4"></line>
+      </svg>
+    </div>
+
+    <div class="brand-name">ACROSS THE STREET</div>
+    <div class="brand-sub">The Dining Room • New Town, Kolkata</div>
+
+    <div class="maintenance-card">
+      <span class="card-badge">🍷 PRIVATE KITCHEN MAINTENANCE & SEASONAL CURATION</span>
+
+      <h1 class="card-title">
+        Curating New <span>Flavors</span>
+      </h1>
+
+      <p class="card-desc">
+        The Dining Room at Across The Street is momentarily closed for scheduled kitchen maintenance and seasonal menu
+        tasting. Online table reservations and regular dining hours will resume shortly.
+      </p>
+
+      <div class="action-group">
+        <a href="../#hero" class="btn btn-gold">
+          <span>← Back to Portfolio Home</span>
+        </a>
+        <a href="https://wa.me/919830012345?text=Hi%20Across%20The%20Street%2C%20inquiry%20regarding%20dining%20reservations."
+          target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+          <span>Inquire on WhatsApp 💬</span>
+        </a>
+        <a href="tel:+919830012345" class="btn btn-glass">
+          <span>Call Reservations 📞</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="maintenance-footer">
+    <p>
+      &copy; 2026 Across The Street — The Dining Room. Designed & Engineered by <a href="../#hero">Debashish Paul</a>.
+    </p>
+  </footer>
+</body>
+
+</html>

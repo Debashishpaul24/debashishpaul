@@ -3,15 +3,26 @@
  * Serene Editorial Dining Sanctuary Controller
  */
 
-document.addEventListener('DOMContentLoaded', () => {
-  initHeaderScroll();
-  initMobileDrawer();
-  initConciergeDock();
-  initPavilionCards();
-  initMenuFiltering();
-  initReservationEngine();
-  initSmoothScroll();
-});
+// =============================================================================
+// ⚠️ MAINTENANCE MODE TOGGLE
+// Set to `true` to activate the Maintenance Screen for all visitors.
+// Set to `false` for normal live operation.
+// =============================================================================
+const MAINTENANCE_MODE = false;
+
+if (typeof MAINTENANCE_MODE !== 'undefined' && MAINTENANCE_MODE) {
+  window.location.replace('maintenance.html');
+} else {
+  document.addEventListener('DOMContentLoaded', () => {
+    initHeaderScroll();
+    initMobileDrawer();
+    initConciergeDock();
+    initPavilionCards();
+    initMenuFiltering();
+    initReservationEngine();
+    initSmoothScroll();
+  });
+}
 
 /**
  * 1. Sticky Header Elevation on Scroll
