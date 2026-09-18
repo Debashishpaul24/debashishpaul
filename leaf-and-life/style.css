@@ -71,13 +71,13 @@ html {
   font-size: 16px;
   background-color: var(--bg-primary);
   color: var(--text-main);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   font-family: var(--font-sans);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
   position: relative;
   background-color: var(--bg-primary);
   background-image: 
@@ -330,9 +330,10 @@ body {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 90;
+  z-index: 990;
   background: rgba(13, 18, 14, 0.88);
   backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   transition: var(--transition-smooth);
 }
