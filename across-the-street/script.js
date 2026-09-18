@@ -8,7 +8,7 @@
 // Set to `true` to activate the Maintenance Screen for all visitors.
 // Set to `false` for normal live operation.
 // =============================================================================
-const MAINTENANCE_MODE = false;
+const MAINTENANCE_MODE = true;
 
 if (typeof MAINTENANCE_MODE !== 'undefined' && MAINTENANCE_MODE) {
   window.location.replace('maintenance.html');
