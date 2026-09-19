@@ -1755,6 +1755,79 @@ a {
   transform: translateX(4px);
 }
 
+.channel-card-interactive {
+  cursor: pointer;
+  text-decoration: none;
+  border-color: rgba(255, 184, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.06) 0%, rgba(255, 107, 53, 0.04) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.channel-card-interactive:hover {
+  background: linear-gradient(135deg, rgba(255, 184, 0, 0.14) 0%, rgba(255, 107, 53, 0.09) 100%);
+  border-color: rgba(255, 184, 0, 0.6);
+  transform: translateX(6px);
+  box-shadow: 0 10px 25px -5px rgba(255, 184, 0, 0.18);
+}
+
+.accent-gold-icon {
+  background: rgba(255, 184, 0, 0.12);
+  border-color: rgba(255, 184, 0, 0.35);
+  color: #ffb800;
+  transition: all 0.3s ease;
+}
+
+.channel-card-interactive:hover .accent-gold-icon {
+  background: #ffb800;
+  color: #0b0b12;
+  box-shadow: 0 0 15px rgba(255, 184, 0, 0.45);
+  border-color: #ffb800;
+}
+
+.highlight-gold {
+  color: #ffb800 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.timezone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-top: 0.4rem;
+  margin-bottom: 0.5rem;
+  width: fit-content;
+}
+
+.tz-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-tz 2s infinite ease-in-out;
+}
+
+@keyframes pulse-tz {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
 .channel-icon {
   width: 42px;
   height: 42px;

@@ -229,7 +229,11 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=53">
+  <!-- Calendly Popup Widget Integration -->
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+  <link rel="stylesheet" href="style.css?v=54">
 </head>
 
 <body>
@@ -350,14 +354,17 @@
             <strong>99.6%</strong> Of My Clients Are Satisfied — Be One Of Them Today.
           </p>
           <div class="card-pill-row">
-            <a href="tel:+918582857339" class="glass-pill glass-pill-interactive"
-              title="Call directly for a Free Consultation">
+            <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer"
+              onclick="Calendly.initPopupWidget({url: 'https://calendly.com/pauldebashish522/30min'});return false;"
+              class="glass-pill glass-pill-interactive" title="Book a 30-Min Discovery Call">
               <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
                 stroke-linecap="round" stroke-linejoin="round">
-                <path
-                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
               </svg>
-              <span>Free Consultation</span>
+              <span>Book 30-Min Call</span>
             </a>
             <span class="glass-pill">24h Response</span>
           </div>
@@ -911,6 +918,23 @@
                   </p>
 
                   <div class="contact-channels">
+                    <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer"
+                      onclick="Calendly.initPopupWidget({url: 'https://calendly.com/pauldebashish522/30min'});return false;"
+                      class="channel-card channel-card-interactive glass-card" title="Book a 30-Min Discovery Call">
+                      <div class="channel-icon accent-gold-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                          <line x1="16" x2="16" y1="2" y2="6"/>
+                          <line x1="8" x2="8" y1="2" y2="6"/>
+                          <line x1="3" x2="21" y1="10" y2="10"/>
+                        </svg>
+                      </div>
+                      <div>
+                        <span class="channel-label">Schedule a Call</span>
+                        <span class="channel-val highlight-gold">Book 30-Min Discovery Call ↗</span>
+                      </div>
+                    </a>
+
                     <div class="channel-card glass-card">
                       <div class="channel-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -936,6 +960,12 @@
                         <span class="channel-val">India • Available Globally (Remote)</span>
                       </div>
                     </div>
+                  </div>
+
+                  <!-- International Timezone Availability Signal -->
+                  <div class="timezone-badge">
+                    <span class="tz-dot"></span>
+                    <span>Available for US, UK & European overlapping hours</span>
                   </div>
 
                   <!-- Social Media Visual Connect Circles -->
