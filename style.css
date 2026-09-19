@@ -2238,6 +2238,22 @@ a {
   margin-top: 0.4rem;
 }
 
+.footer-location-tag {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-location-tag svg {
+  width: 13px;
+  height: 13px;
+  color: var(--accent-orange);
+  flex-shrink: 0;
+}
+
 .footer-links {
   display: flex;
   gap: 2rem;
