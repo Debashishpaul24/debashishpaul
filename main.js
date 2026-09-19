@@ -978,6 +978,44 @@
     });
   }
 
+  // Projects Work Catalog Filter Controller
+  function initProjectsFilter() {
+    const filterBtns = document.querySelectorAll('.catalog-tab-btn');
+    const projectCards = document.querySelectorAll('.projects-grid .project-card');
+    if (!filterBtns.length || !projectCards.length) return;
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter') || 'all';
+
+        // Update active tab buttons
+        filterBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+
+        // Filter and animate cards
+        projectCards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          const isMatch = (filter === 'all' || category === filter);
+
+          if (isMatch) {
+            card.classList.remove('is-hidden');
+            card.classList.remove('is-animating-in');
+            // Force reflow to re-trigger smooth entry animation
+            void card.offsetWidth;
+            card.classList.add('is-animating-in');
+          } else {
+            card.classList.add('is-hidden');
+            card.classList.remove('is-animating-in');
+          }
+        });
+      });
+    });
+  }
+
   // Handle initial page load scroll position (Hero by default, or specific section if hashed)
   function handleInitialHashOrScroll() {
     const hash = window.location.hash;
@@ -1003,6 +1041,7 @@
     updateScrollTarget();
     animate();
 
+    initProjectsFilter();
     initContactForm();
     initPhoneFlagDetector();
     initTestimonialsSlider();

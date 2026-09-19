@@ -87,7 +87,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=43">
+  <link rel="stylesheet" href="style.css?v=49">
 </head>
 
 <body>
@@ -422,535 +422,587 @@
         </div>
       </section>
 
-      <!-- Selected Projects Section -->
+      <!-- Selected Projects Section (Work Catalog with Industry Filtering) -->
       <section class="projects-section" id="projects">
-        <div class="section-container">
-          <!-- Section Header -->
-          <div class="projects-header">
-            <div class="badge-tag">
-              <span class="badge-dot"></span> Some Recent Projects
-            </div>
-            <h2 class="section-title">Selected Work That Delivers Results</h2>
-          </div>
-
-          <!-- 2-Column Staggered Project Showcase Grid -->
-          <div class="projects-grid">
-
-            <!-- Column 1 (Left) -->
-            <div class="projects-col">
-              <!-- Project Card 1: Sterling & Vance LLP Law Firm -->
-              <article class="project-card has-live-link">
-                <a href="sterling-vance/" target="_blank" rel="noopener" class="card-link-overlay"
-                  aria-label="Open Sterling & Vance LLP Live Website"></a>
-                <div class="card-media-wrapper">
-                  <div class="media-watermark">Legal</div>
-                  <div class="live-demo-badge">
-                    <span class="live-dot"></span> Live Demo ↗
-                  </div>
-                  <img src="assets/project1.jpg?v=2" alt="Sterling & Vance LLP Website Template" class="card-img"
-                    loading="lazy">
+            <div class="section-container">
+              <!-- Section Header & Catalog Filter Tabs -->
+              <div class="projects-header">
+                <div class="badge-tag">
+                  <span class="badge-dot"></span> Work Catalog
                 </div>
-                <div class="card-info">
-                  <div class="card-info-top">
-                    <h3 class="card-title">Sterling & Vance LLP Law Firm</h3>
-                    <a href="sterling-vance/" target="_blank" rel="noopener" class="project-view-btn"
-                      aria-label="Explore Sterling & Vance Website">
-                      <span>Live Site</span>
-                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
-                        stroke-width="2.2">
-                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                <h2 class="section-title">Selected Work That Delivers Results</h2>
+                <p class="projects-lead-desc">
+                  Browse by industry vertical to explore bespoke commercial platforms, interactive dining engines, and
+                  high-conversion client systems.
+                </p>
+
+                <!-- Industry Domain Filter Pills -->
+                <div class="catalog-filter-wrapper">
+                  <div class="catalog-filter-bar" role="tablist" aria-label="Filter Projects by Domain">
+                    <button type="button" class="catalog-tab-btn active" data-filter="all" role="tab"
+                      aria-selected="true">
+                      <svg class="tab-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
                       </svg>
-                    </a>
-                  </div>
-                  <p class="card-desc">Designed To Turn Visitors Into High-Value Retainer Clients.</p>
-                  <div class="card-tags">
-                    <span class="tag-pill">Legal Corporate</span>
-                    <span class="tag-pill">Consultation Funnel</span>
-                    <span class="tag-pill tag-live">Live Demo ↗</span>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Project Card 3: Leaf & Life — Café & Bistro -->
-              <article class="project-card has-live-link">
-                <a href="leaf-and-life/" target="_blank" rel="noopener" class="card-link-overlay"
-                  aria-label="Open Leaf & Life — Café & Bistro Live Website"></a>
-                <div class="card-media-wrapper">
-                  <div class="media-watermark">Bistro</div>
-                  <div class="live-demo-badge">
-                    <span class="live-dot"></span> Live Demo ↗
-                  </div>
-                  <img src="leaf-and-life/assets/facade-night.png" alt="Leaf & Life — Café & Bistro Website" class="card-img"
-                    loading="lazy">
-                </div>
-                <div class="card-info">
-                  <div class="card-info-top">
-                    <h3 class="card-title">Leaf & Life — Café & Bistro</h3>
-                    <a href="leaf-and-life/" target="_blank" rel="noopener" class="project-view-btn"
-                      aria-label="Explore Leaf & Life Website">
-                      <span>Live Site</span>
-                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
-                        stroke-width="2.2">
-                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                      <span class="tab-label">All Works</span>
+                      <span class="tab-count">5</span>
+                    </button>
+                    <button type="button" class="catalog-tab-btn" data-filter="restaurant" role="tab"
+                      aria-selected="false">
+                      <svg class="tab-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M18 2v20M2 15h10M5 2v8a3 3 0 0 0 6 0V2M18 2a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4"></path>
                       </svg>
-                    </a>
-                  </div>
-                  <p class="card-desc">Botanical Date-Night Bistro Featuring The Viral London Love Booth & Tabletop Board Games.</p>
-                  <div class="card-tags">
-                    <span class="tag-pill">Hospitality & Bistro</span>
-                    <span class="tag-pill">Photo-Spot & Games</span>
-                    <span class="tag-pill tag-live">Live Site ↗</span>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Project Card 4: Hebrew Marketing Agency -->
-              <article class="project-card">
-                <div class="card-media-wrapper">
-                  <div class="media-watermark">Agency</div>
-                  <img src="assets/project3.jpg" alt="Hebrew Marketing Agency's Website Mockup" class="card-img"
-                    loading="lazy">
-                </div>
-                <div class="card-info">
-                  <h3 class="card-title">Hebrew Marketing Agency's Website</h3>
-                  <p class="card-desc">Showcases services and attracts new business clients.</p>
-                  <div class="card-tags">
-                    <span class="tag-pill">Digital Agency</span>
-                    <span class="tag-pill">Brand & UI System</span>
-                  </div>
-                </div>
-              </article>
-            </div>
-
-            <!-- Column 2 (Right - Staggered Offset) -->
-            <div class="projects-col col-offset">
-              <!-- Project Card 2: Across The Street — The Dining Room -->
-              <article class="project-card has-live-link">
-                <a href="across-the-street/" target="_blank" rel="noopener" class="card-link-overlay"
-                  aria-label="Open Across The Street — The Dining Room Live Website"></a>
-                <div class="card-media-wrapper">
-                  <div class="media-watermark">Dining</div>
-                  <div class="live-demo-badge">
-                    <span class="live-dot"></span> Live Demo ↗
-                  </div>
-                  <img src="across-the-street/assets/hero-facade.jpg" alt="Across The Street — The Dining Room Website" class="card-img"
-                    loading="lazy">
-                </div>
-                <div class="card-info">
-                  <div class="card-info-top">
-                    <h3 class="card-title">Across The Street — The Dining Room</h3>
-                    <a href="across-the-street/" target="_blank" rel="noopener" class="project-view-btn"
-                      aria-label="Explore Across The Street Website">
-                      <span>Live Site</span>
-                      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
-                        stroke-width="2.2">
-                        <path d="M7 17L17 7M17 7H7M17 7V17" />
+                      <span class="tab-label">Restaurants & Dining</span>
+                      <span class="tab-count">2</span>
+                    </button>
+                    <button type="button" class="catalog-tab-btn" data-filter="legal" role="tab" aria-selected="false">
+                      <svg class="tab-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M2 22h20M6 18V11M10 18V11M14 18V11M18 18V11M12 2l9 5H3l9-5z"></path>
                       </svg>
-                    </a>
-                  </div>
-                  <p class="card-desc">European Cottage Dining Sanctuary Crafted To Convert Visitors Into Table Reservations.</p>
-                  <div class="card-tags">
-                    <span class="tag-pill">Hospitality & F&B</span>
-                    <span class="tag-pill">Table Reservation Engine</span>
-                    <span class="tag-pill tag-live">Live Site ↗</span>
-                  </div>
-                </div>
-              </article>
-
-              <!-- Project Card 5: Robert's Legal Landing Page -->
-              <article class="project-card">
-                <div class="card-media-wrapper">
-                  <div class="media-watermark">Lawyer</div>
-                  <img src="assets/project4.jpg" alt="Robert's Legal Landing Page Mockup" class="card-img"
-                    loading="lazy">
-                </div>
-                <div class="card-info">
-                  <h3 class="card-title">Robert's Legal Landing Page</h3>
-                  <p class="card-desc">Converts first-time visitors into legal leads.</p>
-                  <div class="card-tags">
-                    <span class="tag-pill">Legal Practice</span>
-                    <span class="tag-pill">Lead Generation</span>
-                  </div>
-                </div>
-              </article>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      <!-- Detail Teaser & Services Section -->
-      <section class="services-section" id="services">
-        <div class="section-container">
-          <div class="teaser-row">
-            <h2 class="teaser-title">I strive to pay attention<br>to the smallest details</h2>
-            <p class="teaser-subtitle">Every micro-interaction, transition, and layout decision is engineered with laser
-              focus to maximize user engagement and business conversion.</p>
-          </div>
-
-          <div class="services-grid">
-            <div class="service-card glass-card">
-              <div class="service-num">01</div>
-              <h3 class="service-title">UI/UX & Interactive Design</h3>
-              <p class="service-desc">User-centered bespoke interfaces crafted with high aesthetic fidelity, intuitive
-                design systems, and delightful motion design.</p>
-            </div>
-
-            <div class="service-card glass-card">
-              <div class="service-num">02</div>
-              <h3 class="service-title">Full-Stack Web Engineering</h3>
-              <p class="service-desc">Robust, accessible, and blazing-fast web architectures engineered with
-                cutting-edge
-                standards and responsive performance.</p>
-            </div>
-
-            <div class="service-card glass-card">
-              <div class="service-num">03</div>
-              <h3 class="service-title">3D & Creative Scroll Motion</h3>
-              <p class="service-desc">Immersive web experiences incorporating WebGL, Canvas frame rendering, and smooth
-                scroll physics that leave lasting impressions.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Testimonials Section -->
-      <section class="testimonials-section" id="testimonials">
-        <div class="section-container">
-          <div class="section-header-center">
-            <div class="badge-tag">
-              <span class="badge-dot"></span> Client Testimonials
-            </div>
-            <h2 class="section-title">What Clients Say About Working Together</h2>
-          </div>
-
-          <!-- Horizontal Right-to-Left Slider Container -->
-          <div class="testimonials-slider-container">
-            <div class="testimonials-track" id="testimonials-track">
-
-              <!-- Card 1 -->
-              <div class="testimonial-card glass-card">
-                <div class="stars">★★★★★</div>
-                <p class="quote">"Debashish delivered an absolute masterpiece. Our bounce rate dropped by 42% and
-                  consultation bookings have doubled in the first month."</p>
-                <div class="client-info">
-                  <strong>Julian Vance</strong>
-                  <span>Managing Partner, Sterling & Vance LLP</span>
-                </div>
-              </div>
-
-              <!-- Card 2 -->
-              <div class="testimonial-card glass-card">
-                <div class="stars">★★★★★</div>
-                <p class="quote">"The scroll-driven interactive product showcase Debashish engineered for Trava set our
-                  brand lightyears ahead of any competitor in our space."</p>
-                <div class="client-info">
-                  <strong>Elena Rostova</strong>
-                  <span>Head of Product, KeyPharma Ltd.</span>
-                </div>
-              </div>
-
-              <!-- Card 3 -->
-              <div class="testimonial-card glass-card">
-                <div class="stars">★★★★★</div>
-                <p class="quote">"Debashish completely transformed our platform. His attention to micro-interactions,
-                  animation speed, and enterprise frontend architecture is world-class."</p>
-                <div class="client-info">
-                  <strong>Marcus Chen</strong>
-                  <span>Founder & CEO, Nexus Financial</span>
-                </div>
-              </div>
-
-              <!-- Card 4 -->
-              <div class="testimonial-card glass-card">
-                <div class="stars">★★★★★</div>
-                <p class="quote">"Working with Debashish was seamless. He took our complex Figma prototypes and brought
-                  them to life with buttery-smooth 60fps animations."</p>
-                <div class="client-info">
-                  <strong>Sarah Jenkins</strong>
-                  <span>VP of Design, Blistex Creative</span>
-                </div>
-              </div>
-
-              <!-- Card 5 -->
-              <div class="testimonial-card glass-card">
-                <div class="stars">★★★★★</div>
-                <p class="quote">"A rare engineer who marries high-end aesthetic fidelity with robust technical
-                  performance. Delivered ahead of schedule with zero tech debt."</p>
-                <div class="client-info">
-                  <strong>David Miller</strong>
-                  <span>Engineering Director, CloudScale AI</span>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Slider Controls -->
-            <div class="slider-controls">
-              <button class="slider-btn prev-btn" id="slider-prev" aria-label="Previous Testimonial">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <div class="slider-dots" id="slider-dots"></div>
-              <button class="slider-btn next-btn" id="slider-next" aria-label="Next Testimonial">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- Contact & Lead Capture Form Section -->
-      <section class="contact-section" id="contact">
-        <div class="section-container">
-          <div class="contact-grid">
-
-            <!-- Left Column: Contact Intro & Direct Channels -->
-            <div class="contact-info-col">
-              <div class="badge-tag">
-                <span class="badge-dot"></span> Get In Touch
-              </div>
-              <h2 class="section-title">Let's Build Something Extraordinary Together</h2>
-              <p class="contact-subtitle">
-                Have an upcoming project, engineering challenge, or idea? Fill out the form and I'll get back to you
-                within 24 hours.
-              </p>
-
-              <div class="contact-channels">
-                <div class="channel-card glass-card">
-                  <div class="channel-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect width="20" height="16" x="2" y="4" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                  </div>
-                  <div>
-                    <span class="channel-label">Email Directly</span>
-                    <a href="mailto:pauldebashish115@gmail.com" class="channel-val">pauldebashish115@gmail.com</a>
-                  </div>
-                </div>
-
-                <div class="channel-card glass-card">
-                  <div class="channel-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                  </div>
-                  <div>
-                    <span class="channel-label">Location</span>
-                    <span class="channel-val">India • Available Globally (Remote)</span>
+                      <span class="tab-label">Legal & Corporate</span>
+                      <span class="tab-count">2</span>
+                    </button>
+                    <button type="button" class="catalog-tab-btn" data-filter="agency" role="tab" aria-selected="false">
+                      <svg class="tab-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+                      </svg>
+                      <span class="tab-label">Agencies & Startups</span>
+                      <span class="tab-count">1</span>
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <!-- Social Media Visual Connect Circles -->
-              <div class="contact-social-circles-wrapper">
-                <span class="social-circles-label">Find me on</span>
-                <div class="social-circles-row">
-                  <!-- LinkedIn -->
-                  <a href="https://www.linkedin.com/in/debashishpaul24/" target="_blank" rel="noopener noreferrer"
-                    class="social-circle-btn linkedin" aria-label="LinkedIn" title="Connect on LinkedIn">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.64 1.64 0 1 0 0-3.28 1.64 1.64 0 0 0 0 3.28m1.4 9.74v-8.37H5.06v8.37h2.8z" />
-                    </svg>
-                  </a>
+              <!-- Unified Responsive Project Showcase Grid -->
+              <div class="projects-grid" id="projectsGrid">
 
-                  <!-- WhatsApp -->
-                  <a href="https://wa.me/918582857339" target="_blank" rel="noopener noreferrer"
-                    class="social-circle-btn whatsapp" aria-label="WhatsApp" title="Chat on WhatsApp (+91 85828 57339)">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.45 1.03 2.62.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z" />
-                    </svg>
-                  </a>
-
-                  <!-- Facebook -->
-                  <a href="https://www.facebook.com/debashish.paul24/" target="_blank" rel="noopener noreferrer"
-                    class="social-circle-btn facebook" aria-label="Facebook" title="Visit Facebook Profile">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95C18.05 21.45 22 17.19 22 12z" />
-                    </svg>
-                  </a>
-
-                  <!-- GitHub -->
-                  <a href="https://github.com/Debashishpaul24" target="_blank" rel="noopener noreferrer"
-                    class="social-circle-btn github" aria-label="GitHub" title="Explore GitHub Code">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path
-                        d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-
-              <div class="response-pledge">
-                <span class="pulse-indicator"></span>
-                <span>Available for freelance projects & senior software consulting</span>
-              </div>
-            </div>
-
-            <!-- Right Column: Interactive Lead Generation Form -->
-            <div class="contact-form-col">
-              <div class="form-card glass-card">
-                <!-- Hidden Iframe to guarantee cross-origin native delivery -->
-                <iframe name="gform_iframe" id="gform_iframe" style="display:none;" title="Submission Frame"></iframe>
-
-                <form id="contact-form" class="contact-form"
-                  action="https://script.google.com/macros/s/AKfycbzaWRIAD6dz6M2uqDyA6_xKQRvRI6ZWRrFJc5WERO66nZFjhMDmh_ZBiKubz-jyYZGh9A/exec"
-                  method="POST" target="gform_iframe">
-
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label for="lead-name" class="form-label">Your Name <span class="req">*</span></label>
-                      <input type="text" id="lead-name" name="name" class="form-input" placeholder="e.g. Julian Vance"
-                        required autocomplete="name">
+                <!-- Card 1: Leaf & Life — Café & Bistro -->
+                <article class="project-card has-live-link" data-category="restaurant">
+                  <a href="leaf-and-life/" target="_blank" rel="noopener" class="card-link-overlay"
+                    aria-label="Open Leaf & Life — Café & Bistro Live Website"></a>
+                  <div class="card-media-wrapper">
+                    <div class="media-watermark">Bistro</div>
+                    <div class="live-demo-badge">
+                      <span class="live-dot"></span> Live Demo ↗
                     </div>
-                    <div class="form-group">
-                      <label for="lead-email" class="form-label">Email Address <span class="req">*</span></label>
-                      <input type="email" id="lead-email" name="email" class="form-input"
-                        placeholder="e.g. julian@sterlingvance.com" required autocomplete="email">
+                    <img src="leaf-and-life/assets/facade-night.png" alt="Leaf & Life — Café & Bistro Website"
+                      class="card-img" loading="lazy">
+                  </div>
+                  <div class="card-info">
+                    <div class="card-info-top">
+                      <h3 class="card-title">Leaf & Life — Café & Bistro</h3>
+                      <a href="leaf-and-life/" target="_blank" rel="noopener" class="project-view-btn"
+                        aria-label="Explore Leaf & Life Website">
+                        <span>Live Site</span>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                          stroke-width="2.2">
+                          <path d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
+                      </a>
+                    </div>
+                    <p class="card-desc">Botanical Date-Night Bistro Featuring The Viral London Love Booth & Tabletop
+                      Board Games.</p>
+                    <div class="card-tags">
+                      <span class="tag-pill">Hospitality & Bistro</span>
+                      <span class="tag-pill">Photo-Spot & Games</span>
+                      <span class="tag-pill tag-live">Live Site ↗</span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 2: Across The Street — The Dining Room -->
+                <article class="project-card has-live-link" data-category="restaurant">
+                  <a href="across-the-street/" target="_blank" rel="noopener" class="card-link-overlay"
+                    aria-label="Open Across The Street — The Dining Room Live Website"></a>
+                  <div class="card-media-wrapper">
+                    <div class="media-watermark">Dining</div>
+                    <div class="live-demo-badge">
+                      <span class="live-dot"></span> Live Demo ↗
+                    </div>
+                    <img src="across-the-street/assets/hero-facade.jpg"
+                      alt="Across The Street — The Dining Room Website" class="card-img" loading="lazy">
+                  </div>
+                  <div class="card-info">
+                    <div class="card-info-top">
+                      <h3 class="card-title">Across The Street — The Dining Room</h3>
+                      <a href="across-the-street/" target="_blank" rel="noopener" class="project-view-btn"
+                        aria-label="Explore Across The Street Website">
+                        <span>Live Site</span>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                          stroke-width="2.2">
+                          <path d="M7 17L17 7H7M17 7V17" />
+                        </svg>
+                      </a>
+                    </div>
+                    <p class="card-desc">European Cottage Dining Sanctuary Crafted To Convert Visitors Into Table
+                      Reservations.</p>
+                    <div class="card-tags">
+                      <span class="tag-pill">Hospitality & F&B</span>
+                      <span class="tag-pill">Table Reservation Engine</span>
+                      <span class="tag-pill tag-live">Live Site ↗</span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 3: Sterling & Vance LLP Law Firm -->
+                <article class="project-card has-live-link" data-category="legal">
+                  <a href="sterling-vance/" target="_blank" rel="noopener" class="card-link-overlay"
+                    aria-label="Open Sterling & Vance LLP Live Website"></a>
+                  <div class="card-media-wrapper">
+                    <div class="media-watermark">Legal</div>
+                    <div class="live-demo-badge">
+                      <span class="live-dot"></span> Live Demo ↗
+                    </div>
+                    <img src="assets/project1.jpg?v=2" alt="Sterling & Vance LLP Website Template" class="card-img"
+                      loading="lazy">
+                  </div>
+                  <div class="card-info">
+                    <div class="card-info-top">
+                      <h3 class="card-title">Sterling & Vance LLP Law Firm</h3>
+                      <a href="sterling-vance/" target="_blank" rel="noopener" class="project-view-btn"
+                        aria-label="Explore Sterling & Vance Website">
+                        <span>Live Site</span>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                          stroke-width="2.2">
+                          <path d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
+                      </a>
+                    </div>
+                    <p class="card-desc">Designed To Turn Visitors Into High-Value Retainer Clients.</p>
+                    <div class="card-tags">
+                      <span class="tag-pill">Legal Corporate</span>
+                      <span class="tag-pill">Consultation Funnel</span>
+                      <span class="tag-pill tag-live">Live Demo ↗</span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 4: Robert's Legal Landing Page -->
+                <article class="project-card" data-category="legal">
+                  <div class="card-media-wrapper">
+                    <div class="media-watermark">Lawyer</div>
+                    <img src="assets/project4.jpg" alt="Robert's Legal Landing Page Mockup" class="card-img"
+                      loading="lazy">
+                  </div>
+                  <div class="card-info">
+                    <h3 class="card-title">Robert's Legal Landing Page</h3>
+                    <p class="card-desc">Converts first-time visitors into qualified legal consultation leads.</p>
+                    <div class="card-tags">
+                      <span class="tag-pill">Legal Practice</span>
+                      <span class="tag-pill">Lead Generation</span>
+                    </div>
+                  </div>
+                </article>
+
+                <!-- Card 5: Hebrew Marketing Agency -->
+                <article class="project-card" data-category="agency">
+                  <div class="card-media-wrapper">
+                    <div class="media-watermark">Agency</div>
+                    <img src="assets/project3.jpg" alt="Hebrew Marketing Agency's Website Mockup" class="card-img"
+                      loading="lazy">
+                  </div>
+                  <div class="card-info">
+                    <h3 class="card-title">Hebrew Marketing Agency's Website</h3>
+                    <p class="card-desc">Showcases services and attracts high-converting business clients.</p>
+                    <div class="card-tags">
+                      <span class="tag-pill">Digital Agency</span>
+                      <span class="tag-pill">Brand & UI System</span>
+                    </div>
+                  </div>
+                </article>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- Detail Teaser & Services Section -->
+          <section class="services-section" id="services">
+            <div class="section-container">
+              <div class="teaser-row">
+                <h2 class="teaser-title">I strive to pay attention<br>to the smallest details</h2>
+                <p class="teaser-subtitle">Every micro-interaction, transition, and layout decision is engineered with
+                  laser
+                  focus to maximize user engagement and business conversion.</p>
+              </div>
+
+              <div class="services-grid">
+                <div class="service-card glass-card">
+                  <div class="service-num">01</div>
+                  <h3 class="service-title">UI/UX & Interactive Design</h3>
+                  <p class="service-desc">User-centered bespoke interfaces crafted with high aesthetic fidelity,
+                    intuitive
+                    design systems, and delightful motion design.</p>
+                </div>
+
+                <div class="service-card glass-card">
+                  <div class="service-num">02</div>
+                  <h3 class="service-title">Full-Stack Web Engineering</h3>
+                  <p class="service-desc">Robust, accessible, and blazing-fast web architectures engineered with
+                    cutting-edge
+                    standards and responsive performance.</p>
+                </div>
+
+                <div class="service-card glass-card">
+                  <div class="service-num">03</div>
+                  <h3 class="service-title">3D & Creative Scroll Motion</h3>
+                  <p class="service-desc">Immersive web experiences incorporating WebGL, Canvas frame rendering, and
+                    smooth
+                    scroll physics that leave lasting impressions.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Testimonials Section -->
+          <section class="testimonials-section" id="testimonials">
+            <div class="section-container">
+              <div class="section-header-center">
+                <div class="badge-tag">
+                  <span class="badge-dot"></span> Client Testimonials
+                </div>
+                <h2 class="section-title">What Clients Say About Working Together</h2>
+              </div>
+
+              <!-- Horizontal Right-to-Left Slider Container -->
+              <div class="testimonials-slider-container">
+                <div class="testimonials-track" id="testimonials-track">
+
+                  <!-- Card 1 -->
+                  <div class="testimonial-card glass-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"Debashish delivered an absolute masterpiece. Our bounce rate dropped by 42% and
+                      consultation bookings have doubled in the first month."</p>
+                    <div class="client-info">
+                      <strong>Julian Vance</strong>
+                      <span>Managing Partner, Sterling & Vance LLP</span>
                     </div>
                   </div>
 
-                  <div class="form-row">
-                    <div class="form-group">
-                      <label for="lead-phone" class="form-label">Phone / WhatsApp</label>
-                      <div class="phone-input-wrapper">
-                        <span class="phone-flag-prefix" id="phone-flag-icon" title="Country Flag">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                            <path d="M2 12h20" />
-                          </svg>
-                        </span>
-                        <input type="tel" id="lead-phone" name="phone" class="form-input phone-input-with-flag"
-                          placeholder="+91 98765 43210" autocomplete="tel">
+                  <!-- Card 2 -->
+                  <div class="testimonial-card glass-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"The scroll-driven interactive product showcase Debashish engineered for Trava set
+                      our
+                      brand lightyears ahead of any competitor in our space."</p>
+                    <div class="client-info">
+                      <strong>Elena Rostova</strong>
+                      <span>Head of Product, KeyPharma Ltd.</span>
+                    </div>
+                  </div>
+
+                  <!-- Card 3 -->
+                  <div class="testimonial-card glass-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"Debashish completely transformed our platform. His attention to
+                      micro-interactions,
+                      animation speed, and enterprise frontend architecture is world-class."</p>
+                    <div class="client-info">
+                      <strong>Marcus Chen</strong>
+                      <span>Founder & CEO, Nexus Financial</span>
+                    </div>
+                  </div>
+
+                  <!-- Card 4 -->
+                  <div class="testimonial-card glass-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"Working with Debashish was seamless. He took our complex Figma prototypes and
+                      brought
+                      them to life with buttery-smooth 60fps animations."</p>
+                    <div class="client-info">
+                      <strong>Sarah Jenkins</strong>
+                      <span>VP of Design, Blistex Creative</span>
+                    </div>
+                  </div>
+
+                  <!-- Card 5 -->
+                  <div class="testimonial-card glass-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"A rare engineer who marries high-end aesthetic fidelity with robust technical
+                      performance. Delivered ahead of schedule with zero tech debt."</p>
+                    <div class="client-info">
+                      <strong>David Miller</strong>
+                      <span>Engineering Director, CloudScale AI</span>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Slider Controls -->
+                <div class="slider-controls">
+                  <button class="slider-btn prev-btn" id="slider-prev" aria-label="Previous Testimonial">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <div class="slider-dots" id="slider-dots"></div>
+                  <button class="slider-btn next-btn" id="slider-next" aria-label="Next Testimonial">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- Contact & Lead Capture Form Section -->
+          <section class="contact-section" id="contact">
+            <div class="section-container">
+              <div class="contact-grid">
+
+                <!-- Left Column: Contact Intro & Direct Channels -->
+                <div class="contact-info-col">
+                  <div class="badge-tag">
+                    <span class="badge-dot"></span> Get In Touch
+                  </div>
+                  <h2 class="section-title">Let's Build Something Extraordinary Together</h2>
+                  <p class="contact-subtitle">
+                    Have an upcoming project, engineering challenge, or idea? Fill out the form and I'll get back to you
+                    within 24 hours.
+                  </p>
+
+                  <div class="contact-channels">
+                    <div class="channel-card glass-card">
+                      <div class="channel-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect width="20" height="16" x="2" y="4" rx="2" />
+                          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                      </div>
+                      <div>
+                        <span class="channel-label">Email Directly</span>
+                        <a href="mailto:pauldebashish115@gmail.com" class="channel-val">pauldebashish115@gmail.com</a>
                       </div>
                     </div>
-                    <div class="form-group">
-                      <label for="lead-service" class="form-label">Service Needed</label>
-                      <select id="lead-service" name="service" class="form-select">
-                        <option value="Full-Stack Web Engineering">Full-Stack Web Engineering</option>
-                        <option value="UI/UX & Interactive Design">UI/UX & Interactive Design</option>
-                        <option value="3D & Scroll Motion">3D & Scroll Motion</option>
-                        <option value="Enterprise Architecture Consulting">Enterprise Architecture Consulting</option>
-                        <option value="Other / Inquiry">Other / Inquiry</option>
-                      </select>
+
+                    <div class="channel-card glass-card">
+                      <div class="channel-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                      </div>
+                      <div>
+                        <span class="channel-label">Location</span>
+                        <span class="channel-val">India • Available Globally (Remote)</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="lead-budget" class="form-label">Estimated Budget (USD)</label>
-                    <select id="lead-budget" name="budget" class="form-select">
-                      <option value="$2,000 - $5,000">$2,000 – $5,000</option>
-                      <option value="$5,000 - $10,000">$5,000 – $10,000</option>
-                      <option value="$10,000+">$10,000+</option>
-                      <option value="Flexible / Hourly">Flexible / Hourly</option>
-                    </select>
+                  <!-- Social Media Visual Connect Circles -->
+                  <div class="contact-social-circles-wrapper">
+                    <span class="social-circles-label">Find me on</span>
+                    <div class="social-circles-row">
+                      <!-- LinkedIn -->
+                      <a href="https://www.linkedin.com/in/debashishpaul24/" target="_blank" rel="noopener noreferrer"
+                        class="social-circle-btn linkedin" aria-label="LinkedIn" title="Connect on LinkedIn">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.64 1.64 0 1 0 0-3.28 1.64 1.64 0 0 0 0 3.28m1.4 9.74v-8.37H5.06v8.37h2.8z" />
+                        </svg>
+                      </a>
+
+                      <!-- WhatsApp -->
+                      <a href="https://wa.me/918582857339" target="_blank" rel="noopener noreferrer"
+                        class="social-circle-btn whatsapp" aria-label="WhatsApp"
+                        title="Chat on WhatsApp (+91 85828 57339)">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.23 8.23 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.49-1.4-1.74-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.45 1.03 2.62.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z" />
+                        </svg>
+                      </a>
+
+                      <!-- Facebook -->
+                      <a href="https://www.facebook.com/debashish.paul24/" target="_blank" rel="noopener noreferrer"
+                        class="social-circle-btn facebook" aria-label="Facebook" title="Visit Facebook Profile">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95C18.05 21.45 22 17.19 22 12z" />
+                        </svg>
+                      </a>
+
+                      <!-- GitHub -->
+                      <a href="https://github.com/Debashishpaul24" target="_blank" rel="noopener noreferrer"
+                        class="social-circle-btn github" aria-label="GitHub" title="Explore GitHub Code">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                        </svg>
+                      </a>
+                    </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="lead-message" class="form-label">Project Details <span class="req">*</span></label>
-                    <textarea id="lead-message" name="message" class="form-textarea" rows="4"
-                      placeholder="Tell me about your goals, timeline, and deliverables..." required></textarea>
+                  <div class="response-pledge">
+                    <span class="pulse-indicator"></span>
+                    <span>Available for freelance projects & senior software consulting</span>
                   </div>
+                </div>
 
-                  <button type="submit" id="submit-btn" class="btn-primary form-submit-btn">
-                    <span class="btn-text">Submit Project Inquiry</span>
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
-                    <span class="btn-spinner" aria-hidden="true"></span>
-                  </button>
+                <!-- Right Column: Interactive Lead Generation Form -->
+                <div class="contact-form-col">
+                  <div class="form-card glass-card">
+                    <!-- Hidden Iframe to guarantee cross-origin native delivery -->
+                    <iframe name="gform_iframe" id="gform_iframe" style="display:none;"
+                      title="Submission Frame"></iframe>
 
-                  <!-- Feedback status notice -->
-                  <div id="form-feedback" class="form-feedback" style="display: none;"></div>
+                    <form id="contact-form" class="contact-form"
+                      action="https://script.google.com/macros/s/AKfycbzaWRIAD6dz6M2uqDyA6_xKQRvRI6ZWRrFJc5WERO66nZFjhMDmh_ZBiKubz-jyYZGh9A/exec"
+                      method="POST" target="gform_iframe">
 
-                </form>
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="lead-name" class="form-label">Your Name <span class="req">*</span></label>
+                          <input type="text" id="lead-name" name="name" class="form-input"
+                            placeholder="e.g. Julian Vance" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                          <label for="lead-email" class="form-label">Email Address <span class="req">*</span></label>
+                          <input type="email" id="lead-email" name="email" class="form-input"
+                            placeholder="e.g. julian@sterlingvance.com" required autocomplete="email">
+                        </div>
+                      </div>
+
+                      <div class="form-row">
+                        <div class="form-group">
+                          <label for="lead-phone" class="form-label">Phone / WhatsApp</label>
+                          <div class="phone-input-wrapper">
+                            <span class="phone-flag-prefix" id="phone-flag-icon" title="Country Flag">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                                <path d="M2 12h20" />
+                              </svg>
+                            </span>
+                            <input type="tel" id="lead-phone" name="phone" class="form-input phone-input-with-flag"
+                              placeholder="+91 98765 43210" autocomplete="tel">
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="lead-service" class="form-label">Service Needed</label>
+                          <select id="lead-service" name="service" class="form-select">
+                            <option value="Full-Stack Web Engineering">Full-Stack Web Engineering</option>
+                            <option value="UI/UX & Interactive Design">UI/UX & Interactive Design</option>
+                            <option value="3D & Scroll Motion">3D & Scroll Motion</option>
+                            <option value="Enterprise Architecture Consulting">Enterprise Architecture Consulting
+                            </option>
+                            <option value="Other / Inquiry">Other / Inquiry</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="lead-budget" class="form-label">Estimated Budget (USD)</label>
+                        <select id="lead-budget" name="budget" class="form-select">
+                          <option value="$2,000 - $5,000">$2,000 – $5,000</option>
+                          <option value="$5,000 - $10,000">$5,000 – $10,000</option>
+                          <option value="$10,000+">$10,000+</option>
+                          <option value="Flexible / Hourly">Flexible / Hourly</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="lead-message" class="form-label">Project Details <span class="req">*</span></label>
+                        <textarea id="lead-message" name="message" class="form-textarea" rows="4"
+                          placeholder="Tell me about your goals, timeline, and deliverables..." required></textarea>
+                      </div>
+
+                      <button type="submit" id="submit-btn" class="btn-primary form-submit-btn">
+                        <span class="btn-text">Submit Project Inquiry</span>
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <path d="M7 17L17 7M17 7H7M17 7V17" />
+                        </svg>
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                      </button>
+
+                      <!-- Feedback status notice -->
+                      <div id="form-feedback" class="form-feedback" style="display: none;"></div>
+
+                    </form>
+                  </div>
+                </div>
+
               </div>
             </div>
+          </section>
 
-          </div>
-        </div>
-      </section>
-
-      <!-- Footer Section -->
-      <footer class="footer-section">
-        <div class="section-container">
-          <div class="footer-bottom">
-            <div class="footer-left">
-              <a href="#" class="logo">DEBASHISH</a>
-              <p class="copyright">© 2026 Debashish Paul. All Rights Reserved.</p>
-              <div class="footer-legal-links">
-                <button type="button" class="legal-link-btn" id="open-privacy-btn">Privacy Policy</button>
-                <span class="legal-separator">•</span>
-                <button type="button" class="legal-link-btn" id="open-terms-btn">Terms of Service</button>
+          <!-- Footer Section -->
+          <footer class="footer-section">
+            <div class="section-container">
+              <div class="footer-bottom">
+                <div class="footer-left">
+                  <a href="#" class="logo">DEBASHISH</a>
+                  <p class="copyright">© 2026 Debashish Paul. All Rights Reserved.</p>
+                  <div class="footer-legal-links">
+                    <button type="button" class="legal-link-btn" id="open-privacy-btn">Privacy Policy</button>
+                    <span class="legal-separator">•</span>
+                    <button type="button" class="legal-link-btn" id="open-terms-btn">Terms of Service</button>
+                  </div>
+                </div>
+                <div class="footer-links">
+                  <a href="#about">About</a>
+                  <a href="#projects">Projects</a>
+                  <a href="#services">Services</a>
+                  <a href="#testimonials">Testimonials</a>
+                  <a href="#contact">Contact</a>
+                </div>
               </div>
             </div>
-            <div class="footer-links">
-              <a href="#about">About</a>
-              <a href="#projects">Projects</a>
-              <a href="#services">Services</a>
-              <a href="#testimonials">Testimonials</a>
-              <a href="#contact">Contact</a>
+          </footer>
+
+        </div> <!-- /.content-glass-flow -->
+
+    </div>
+
+    <!-- Reusable Frosted Glass Legal Modal (Privacy Policy & Terms of Service) -->
+    <div id="legal-modal" class="legal-modal" aria-hidden="true" role="dialog" aria-modal="true"
+      aria-labelledby="modal-title">
+      <div class="legal-modal-backdrop" id="modal-backdrop"></div>
+      <div class="legal-modal-container">
+        <div class="legal-modal-card glass-card">
+          <div class="modal-header">
+            <div class="modal-header-info">
+              <div class="badge-tag">
+                <span class="badge-dot"></span> Legal & Trust
+              </div>
+              <h3 id="modal-title" class="modal-title">Privacy Policy</h3>
             </div>
+            <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-        </div>
-      </footer>
 
-    </div> <!-- /.content-glass-flow -->
-
-  </div>
-
-  <!-- Reusable Frosted Glass Legal Modal (Privacy Policy & Terms of Service) -->
-  <div id="legal-modal" class="legal-modal" aria-hidden="true" role="dialog" aria-modal="true"
-    aria-labelledby="modal-title">
-    <div class="legal-modal-backdrop" id="modal-backdrop"></div>
-    <div class="legal-modal-container">
-      <div class="legal-modal-card glass-card">
-        <div class="modal-header">
-          <div class="modal-header-info">
-            <div class="badge-tag">
-              <span class="badge-dot"></span> Legal & Trust
-            </div>
-            <h3 id="modal-title" class="modal-title">Privacy Policy</h3>
+          <div class="modal-body" id="modal-body">
+            <!-- Dynamic Content Injected via main.js -->
           </div>
-          <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close dialog">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
 
-        <div class="modal-body" id="modal-body">
-          <!-- Dynamic Content Injected via main.js -->
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn-primary modal-action-btn" id="modal-action-btn">
-            <span>Got it, close</span>
-          </button>
+          <div class="modal-footer">
+            <button type="button" class="btn-primary modal-action-btn" id="modal-action-btn">
+              <span>Got it, close</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Floating Back to Top Button -->
-  <button type="button" id="back-to-top" class="back-to-top-btn" aria-label="Scroll to top of page" title="Back to Top">
-    <svg class="back-to-top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-      stroke-linecap="round" stroke-linejoin="round">
-      <path d="M18 15l-6-6-6 6" />
-    </svg>
-  </button>
+    <!-- Floating Back to Top Button -->
+    <button type="button" id="back-to-top" class="back-to-top-btn" aria-label="Scroll to top of page"
+      title="Back to Top">
+      <svg class="back-to-top-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 15l-6-6-6 6" />
+      </svg>
+    </button>
 
-  <script src="main.js?v=26"></script>
+    <script src="main.js?v=26"></script>
 </body>
 
 </html>
