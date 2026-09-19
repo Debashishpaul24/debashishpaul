@@ -392,6 +392,32 @@
     }
   }
 
+  // Calendly Event Scheduled Listener -> Notifies Google Apps Script for instant WhatsApp alert
+  function initCalendlyBookingTracker() {
+    window.addEventListener('message', (e) => {
+      if (e.data && e.data.event === 'calendly.event_scheduled') {
+        const payload = e.data.payload || {};
+        const eventUri = payload.event && payload.event.uri ? payload.event.uri : '';
+        const inviteeUri = payload.invitee && payload.invitee.uri ? payload.invitee.uri : '';
+
+        const formData = new FormData();
+        formData.append('type', 'calendly_booking');
+        formData.append('eventUri', eventUri);
+        formData.append('inviteeUri', inviteeUri);
+
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(CONFIG.googleScriptUrl, formData);
+        } else {
+          fetch(CONFIG.googleScriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: formData
+          }).catch(() => {});
+        }
+      }
+    });
+  }
+
   // Country Code to Real Graphic Flag Icon Dynamic Detection (Comprehensive Global Directory)
   function initPhoneFlagDetector() {
     const phoneInput = document.getElementById('lead-phone');
@@ -1043,6 +1069,7 @@
 
     initProjectsFilter();
     initContactForm();
+    initCalendlyBookingTracker();
     initPhoneFlagDetector();
     initTestimonialsSlider();
     initSmoothScrollLinks();
