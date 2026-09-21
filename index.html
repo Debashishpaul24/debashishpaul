@@ -270,13 +270,90 @@
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
 
-      <a href="#contact" class="btn-primary">
-        <span>Start a Project</span>
-        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M7 17L17 7M17 7H7M17 7V17" />
-        </svg>
-      </a>
+      <div class="header-actions">
+        <a href="#contact" class="btn-primary header-cta-btn">
+          <span>Start a Project</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M7 17L17 7M17 7H7M17 7V17" />
+          </svg>
+        </a>
+
+        <button type="button" class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav-drawer">
+          <span class="hamburger-bar bar-1"></span>
+          <span class="hamburger-bar bar-2"></span>
+          <span class="hamburger-bar bar-3"></span>
+        </button>
+      </div>
     </header>
+
+    <!-- Mobile Slide-out Navigation Drawer (< 768px) -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation Menu">
+      <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
+      <div class="mobile-nav-panel">
+        <div class="mobile-nav-header">
+          <a href="#" class="logo mobile-nav-logo">DEBASHISH</a>
+          <button type="button" class="mobile-nav-close" id="mobile-nav-close" aria-label="Close navigation menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="mobile-nav-body">
+          <nav class="mobile-nav-menu">
+            <a href="#about" class="mobile-nav-link" data-section="about">
+              <span class="mobile-nav-num">01</span>
+              <span class="mobile-nav-text">About</span>
+              <svg class="mobile-nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#projects" class="mobile-nav-link" data-section="projects">
+              <span class="mobile-nav-num">02</span>
+              <span class="mobile-nav-text">Projects</span>
+              <svg class="mobile-nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#services" class="mobile-nav-link" data-section="services">
+              <span class="mobile-nav-num">03</span>
+              <span class="mobile-nav-text">Services</span>
+              <svg class="mobile-nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#testimonials" class="mobile-nav-link" data-section="testimonials">
+              <span class="mobile-nav-num">04</span>
+              <span class="mobile-nav-text">Testimonials</span>
+              <svg class="mobile-nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+            <a href="#contact" class="mobile-nav-link" data-section="contact">
+              <span class="mobile-nav-num">05</span>
+              <span class="mobile-nav-text">Contact</span>
+              <svg class="mobile-nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </a>
+          </nav>
+
+          <div class="mobile-nav-cta">
+            <a href="#contact" class="btn-primary mobile-cta-btn">
+              <span>Start a Project / Book Call</span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="mobile-nav-footer">
+            <div class="mobile-nav-status">
+              <span class="badge-dot"></span>
+              <span>Available for Q2/Q3 Projects</span>
+            </div>
+            <div class="mobile-nav-socials">
+              <a href="https://wa.me/919957799515" target="_blank" rel="noopener noreferrer" class="mobile-social-link">WhatsApp</a>
+              <span class="mobile-nav-sep">•</span>
+              <a href="mailto:pauldebashish115@gmail.com" class="mobile-social-link">Email</a>
+              <span class="mobile-nav-sep">•</span>
+              <a href="https://linkedin.com/in/debashishpaul24" target="_blank" rel="noopener noreferrer" class="mobile-social-link">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero-section" id="hero">
@@ -300,19 +377,19 @@
             </div>
             <div class="profession-info">
               <div class="profession-title-row">
-                <span class="profession-title">Senior Software Engineer</span>
-                <span class="status-live-dot" title="Active & Available"></span>
+                <span class="profession-title">Senior Software Engineer & Web Consultant</span>
+                <span class="status-live-dot" title="Active & Available for Projects"></span>
               </div>
-              <span class="profession-company">TATA Consultancy Services</span>
+              <span class="profession-company">Enterprise Architecture &amp; Systems • 8+ Years</span>
             </div>
           </div>
 
           <div class="hero-value-box">
             <div class="badge-tag">
-              <span class="badge-dot"></span> Trusted by 200+ clients
+              <span class="badge-dot"></span> Bespoke Websites & Digital Platforms
             </div>
             <h2 class="hero-subheadline">
-              Turning curious clicks<br>into happy clients
+              Turning your digital presence into an<br>active client acquisition engine
             </h2>
             <div class="hero-actions">
               <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer"
@@ -354,7 +431,7 @@
             </div>
           </div>
           <p class="card-text">
-            <strong>99.6%</strong> Of My Clients Are Satisfied — Be One Of Them Today.
+            <strong>Bespoke 60fps</strong> platforms engineered with zero tech debt & dedicated 24h support.
           </p>
           <div class="card-pill-row">
             <span class="glass-pill" title="100% Free Consultation">

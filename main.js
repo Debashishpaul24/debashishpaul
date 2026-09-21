@@ -280,6 +280,15 @@
           link.classList.remove('active');
         }
       });
+
+      const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+      mobileLinks.forEach((link) => {
+        if (link.getAttribute('href') === `#${currentSectionId}`) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
     }
   }
 
@@ -1042,6 +1051,71 @@
     });
   }
 
+  // Mobile Navigation Drawer Controller (< 768px)
+  function initMobileNav() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const drawer = document.getElementById('mobile-nav-drawer');
+    const closeBtn = document.getElementById('mobile-nav-close');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+
+    if (!toggleBtn || !drawer) return;
+
+    function openDrawer() {
+      drawer.classList.add('active');
+      toggleBtn.classList.add('active');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      drawer.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('active');
+      toggleBtn.classList.remove('active');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (drawer.classList.contains('active')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeDrawer);
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeDrawer);
+    }
+
+    // Auto-close on clicking any drawer link
+    const drawerLinks = drawer.querySelectorAll('.mobile-nav-link, .mobile-cta-btn, .mobile-nav-logo');
+    drawerLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer.classList.contains('active')) {
+        closeDrawer();
+      }
+    });
+
+    // Handle screen resize to desktop (close drawer if open)
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && drawer.classList.contains('active')) {
+        closeDrawer();
+      }
+    }, { passive: true });
+  }
+
   // Handle initial page load scroll position (Hero by default, or specific section if hashed)
   function handleInitialHashOrScroll() {
     const hash = window.location.hash;
@@ -1073,6 +1147,7 @@
     initPhoneFlagDetector();
     initTestimonialsSlider();
     initSmoothScrollLinks();
+    initMobileNav();
     initLegalModals();
     initBackToTop();
     preloadImages();
