@@ -12,6 +12,7 @@ $mime = @{
     ".png"  = "image/png"
     ".jpg"  = "image/jpeg"
     ".svg"  = "image/svg+xml"
+    ".webp" = "image/webp"
     ".json" = "application/json"
     ".woff2" = "font/woff2"
 }

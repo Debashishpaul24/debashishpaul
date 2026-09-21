@@ -9,7 +9,7 @@
     frameCount: 240,
     padDigits: 6,
     prefix: 'frames/frame_',
-    ext: '.png',
+    ext: '.webp',
     lerpSpeed: 0.08, // Buttery smoothing factor for scroll interpolation
     criticalFrames: 12, // Ultra-fast unlock after first 12 frames loaded (~300ms)
     // Google Apps Script Web App Deployment URL for saving leads to Google Sheets:

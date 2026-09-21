@@ -7,3 +7,7 @@ Thumbs.db
 NUL
 *.ps1
 !serve.ps1
+
+# Documents & Office temp files
+*.docx
+~$*
