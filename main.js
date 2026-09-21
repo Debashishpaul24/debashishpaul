@@ -1066,6 +1066,7 @@
       toggleBtn.setAttribute('aria-expanded', 'true');
       drawer.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('mobile-drawer-open');
     }
 
     function closeDrawer() {
@@ -1074,6 +1075,7 @@
       toggleBtn.setAttribute('aria-expanded', 'false');
       drawer.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      document.body.classList.remove('mobile-drawer-open');
     }
 
     toggleBtn.addEventListener('click', (e) => {
