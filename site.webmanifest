@@ -1,0 +1,22 @@
+{
+  "name": "Debashish Paul | Senior Software Engineer & Global Web Consultant",
+  "short_name": "Debashish Paul",
+  "description": "Senior Software Engineer & Web Consultant engineering bespoke, high-converting digital platforms, full-stack architectures & 60fps 3D web experiences.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/og-preview.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

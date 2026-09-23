@@ -1,27 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.debashishpaul.in/</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/og-preview.png</image:loc>
+      <image:title>Debashish Paul — Senior Software Engineer &amp; Global Web Consultant</image:title>
+      <image:caption>Portfolio of Debashish Paul, Senior Software Engineer &amp; Global Web Consultant</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/project1.jpg</image:loc>
+      <image:title>Sterling &amp; Vance LLP — Legal Practice Platform</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/project3.jpg</image:loc>
+      <image:title>Hebrew Marketing Agency — B2B Digital Platform</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/project4.jpg</image:loc>
+      <image:title>Robert's Legal Consultation Platform</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.debashishpaul.in/leaf-and-life/</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/leaf-and-life/assets/facade-night.png</image:loc>
+      <image:title>Leaf &amp; Life Cafe &amp; Bistro Facade</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.debashishpaul.in/across-the-street/</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/across-the-street/assets/hero-facade.jpg</image:loc>
+      <image:title>Across The Street European Cottage Dining</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://www.debashishpaul.in/sterling-vance/</loc>
-    <lastmod>2026-09-19</lastmod>
+    <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/sterling-vance-showcase.jpg</image:loc>
+      <image:title>Sterling &amp; Vance Law Practice Showcase</image:title>
+    </image:image>
   </url>
 </urlset>
