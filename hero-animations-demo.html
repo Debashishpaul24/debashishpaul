@@ -329,6 +329,57 @@
     }
 
     /* ============================================================
+       DEMO: 3D KINETIC TEXT FLIP + LIQUID GRADIENT SHIMMER (COMBINED)
+       ============================================================ */
+    .liquid-flip-item {
+      height: 2.4rem;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(90deg, #ff6b35 0%, #ffffff 35%, #ff8c42 65%, #ff6b35 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: liquidShimmerFlow 3.8s linear infinite;
+      font-weight: 800;
+      white-space: nowrap;
+      transition: background 0.3s ease;
+    }
+
+    @keyframes liquidShimmerFlow {
+      0% {
+        background-position: 0% center;
+      }
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      padding: 0.32rem 0.8rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .preset-btn:hover {
+      color: #ffffff;
+      border-color: rgba(255, 107, 53, 0.4);
+    }
+
+    .preset-btn.active {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(255, 107, 53, 0.35);
+    }
+
+    /* ============================================================
        DEMO 3: DEVELOPER TERMINAL CODE PILL (VERCEL & LINEAR STYLE)
        ============================================================ */
     .terminal-pill {
@@ -521,14 +572,70 @@
     <!-- Filter Buttons -->
     <div class="tab-bar">
       <button class="tab-btn active" onclick="filterDemo('all')">Show All Demos</button>
-      <button class="tab-btn" onclick="filterDemo('demo-1')">1. Smooth Typewriter</button>
+      <button class="tab-btn" onclick="filterDemo('demo-liquid-flip')">✨ Flip + Liquid Shimmer</button>
       <button class="tab-btn" onclick="filterDemo('demo-2')">2. 3D Kinetic Flip</button>
-      <button class="tab-btn" onclick="filterDemo('demo-3')">3. Dev Terminal Pill</button>
       <button class="tab-btn" onclick="filterDemo('demo-4')">4. Liquid Shimmer</button>
+      <button class="tab-btn" onclick="filterDemo('demo-1')">1. Smooth Typewriter</button>
+      <button class="tab-btn" onclick="filterDemo('demo-3')">3. Dev Terminal Pill</button>
     </div>
   </header>
 
   <main class="demos-wrapper">
+
+    <!-- ==========================================
+         FEATURED DEMO: 3D KINETIC FLIP + LIQUID GRADIENT SHIMMER
+         ========================================== -->
+    <section class="demo-card" id="demo-liquid-flip" style="border: 1px solid rgba(255, 107, 53, 0.45); box-shadow: 0 10px 40px rgba(255, 107, 53, 0.12);">
+      <div class="demo-card-tag">
+        <div class="demo-meta-left">
+          <span class="demo-num" style="background: var(--accent-gradient); color: #fff;">LIVE</span>
+          <h2 class="demo-name">3D Kinetic Text Flip + Liquid Gradient Shimmer <span class="badge-recommend">Your Proposed Style</span></h2>
+        </div>
+        <span class="demo-style-badge">Position: Hero Subheadline (&lt;h2&gt;)</span>
+      </div>
+
+      <div class="hero-mockup">
+        <p class="hero-greeting">Hi, I am</p>
+        <h3 class="hero-title">
+          <span class="name-first">Debashish</span>
+          <span class="name-last">Paul</span>
+        </h3>
+
+        <!-- The 3D Flip Subheadline with Liquid Gradient Shimmer -->
+        <h4 class="flip-headline">
+          Turning your digital presence into<br>
+          <span class="flip-viewport">
+            <span class="flip-track" id="liquid-flip-track">
+              <span class="liquid-flip-item">a bespoke 60fps web application</span>
+              <span class="liquid-flip-item">an active client acquisition engine</span>
+              <span class="liquid-flip-item">an AI-powered business solution</span>
+              <span class="liquid-flip-item">a scalable digital growth asset</span>
+              <span class="liquid-flip-item">a bespoke 60fps web application</span>
+            </span>
+          </span>
+        </h4>
+
+        <div class="hero-actions-mockup">
+          <button class="btn-mockup-primary">Book a 15-Min Call →</button>
+          <button class="btn-mockup-secondary">View My Work ↓</button>
+        </div>
+
+        <!-- Interactive Color Preset Toggles -->
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+          <span style="font-size: 0.8rem; color: var(--text-dim); margin-right: 0.25rem;">Live Color Options:</span>
+          <button type="button" class="preset-btn active" onclick="setShimmerPreset('cyber', this)">1. Cyber Orange &amp; White Glint</button>
+          <button type="button" class="preset-btn" onclick="setShimmerPreset('sunset', this)">2. Molten Gold Sunset</button>
+          <button type="button" class="preset-btn" onclick="setShimmerPreset('electric', this)">3. Electric Amber Sheen</button>
+          <button type="button" class="preset-btn" onclick="toggleShimmerSpeed(this)">Speed: 3.8s (Normal)</button>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <span>⚡ <strong>Motion:</strong> 0.65s vertical elastic flip combined with continuous horizontal light streak</span>
+        <span>✨ <strong>Aesthetic:</strong> Liquid light-beam sweeping through the sentences while rotating</span>
+        <span>🚀 <strong>Performance:</strong> Pure GPU composited linear gradient, locked 60fps with zero layout reflow</span>
+      </div>
+    </section>
 
     <!-- ==========================================
          DEMO 1: CLASSIC SMOOTH TYPEWRITER
@@ -830,13 +937,69 @@
       }, 450);
     }, 3200);
 
+    // --- FEATURED DEMO: 3D KINETIC FLIP + LIQUID SHIMMER ---
+    const liquidFlipTrack = document.getElementById("liquid-flip-track");
+    if (liquidFlipTrack) {
+      let liquidFlipIndex = 0;
+      const liquidTotalItems = 4;
+      const liquidItemHeight = 2.4;
+
+      function liquidFlipStep() {
+        liquidFlipIndex++;
+        liquidFlipTrack.style.transition = "transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1)";
+        liquidFlipTrack.style.transform = `translateY(-${liquidFlipIndex * liquidItemHeight}rem)`;
+
+        if (liquidFlipIndex === liquidTotalItems) {
+          setTimeout(() => {
+            liquidFlipTrack.style.transition = "none";
+            liquidFlipIndex = 0;
+            liquidFlipTrack.style.transform = "translateY(0)";
+          }, 700);
+        }
+      }
+      setInterval(liquidFlipStep, 2800);
+    }
+
+    const shimmerPresets = {
+      cyber: 'linear-gradient(90deg, #ff6b35 0%, #ffffff 35%, #ff8c42 65%, #ff6b35 100%)',
+      sunset: 'linear-gradient(90deg, #ff5722 0%, #ffb703 30%, #ffffff 55%, #ff8c42 75%, #ff5722 100%)',
+      electric: 'linear-gradient(90deg, #ff6b35 0%, #ffd8cc 30%, #ffffff 50%, #ffa500 70%, #ff6b35 100%)'
+    };
+
+    function setShimmerPreset(name, btn) {
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        if (!b.textContent.includes('Speed:')) b.classList.remove('active');
+      });
+      btn.classList.add('active');
+      const items = document.querySelectorAll('.liquid-flip-item');
+      items.forEach(el => {
+        el.style.background = shimmerPresets[name];
+        el.style.webkitBackgroundClip = 'text';
+        el.style.webkitTextFillColor = 'transparent';
+      });
+    }
+
+    let isFastSpeed = false;
+    function toggleShimmerSpeed(btn) {
+      isFastSpeed = !isFastSpeed;
+      const duration = isFastSpeed ? '2.2s' : '3.8s';
+      btn.textContent = `Speed: ${duration} (${isFastSpeed ? 'Fast' : 'Normal'})`;
+      btn.classList.toggle('active', isFastSpeed);
+      const items = document.querySelectorAll('.liquid-flip-item');
+      items.forEach(el => {
+        el.style.animationDuration = duration;
+      });
+    }
+
     // --- TAB FILTERING ---
     function filterDemo(id) {
       const cards = document.querySelectorAll(".demo-card");
       const buttons = document.querySelectorAll(".tab-btn");
 
       buttons.forEach(btn => btn.classList.remove("active"));
-      event.currentTarget.classList.add("active");
+      if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add("active");
+      }
 
       cards.forEach(card => {
         if (id === 'all' || card.id === id) {
