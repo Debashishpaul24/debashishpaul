@@ -2726,8 +2726,11 @@ body.mobile-drawer-open #back-to-top {
 }
 
 .legal-separator {
-  color: rgba(255, 255, 255, 0.15);
-  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1;
+  opacity: 0.65;
+  user-select: none;
 }
 
 /* ==========================================================================
