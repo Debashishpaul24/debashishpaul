@@ -332,18 +332,57 @@
 
     let isSubmitting = false;
 
+    function isValidEmail(val) {
+      // RFC 5322 standard compliant pattern for web forms
+      return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/.test(val);
+    }
+
+    if (form.email) {
+      form.email.addEventListener('input', () => {
+        form.email.classList.remove('is-invalid');
+      });
+      form.email.addEventListener('blur', () => {
+        const val = form.email.value.trim();
+        if (val && !isValidEmail(val)) {
+          form.email.classList.add('is-invalid');
+        } else {
+          form.email.classList.remove('is-invalid');
+        }
+      });
+    }
+
+    if (form.phone) {
+      form.phone.addEventListener('input', () => {
+        form.phone.classList.remove('is-invalid');
+      });
+    }
+
     form.addEventListener('submit', (e) => {
       const name = (form.name.value || '').trim();
       const email = (form.email.value || '').trim();
-      if (form.phone.value.trim() === '+') {
-        form.phone.value = '';
-      }
-      const phone = (form.phone.value || '').trim();
+      const rawPhone = (form.phone.value || '').trim();
+      const phoneDigits = rawPhone.replace(/\D/g, '');
       const message = (form.message.value || '').trim();
 
       if (!name || !email || !message) {
         e.preventDefault();
         showFeedback('Please fill out all required fields (*).', 'error');
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        e.preventDefault();
+        form.email.classList.add('is-invalid');
+        showFeedback('Please provide a valid email address (e.g. name@company.com).', 'error');
+        form.email.focus();
+        return;
+      }
+
+      if (!rawPhone || phoneDigits.length < 7) {
+        e.preventDefault();
+        form.phone.classList.add('is-invalid');
+        showFeedback('Please provide a valid Phone / WhatsApp number with country code.', 'error');
+        form.phone.focus();
         return;
       }
 
@@ -359,11 +398,21 @@
         </div>
       `;
 
+      function resetFormVisualState() {
+        form.email?.classList.remove('is-invalid');
+        form.phone?.classList.remove('is-invalid');
+        if (typeof window.__setPhoneCountry === 'function') {
+          const isCurrInr = document.getElementById('curr-btn-inr')?.classList.contains('active');
+          window.__setPhoneCountry(!!isCurrInr);
+        }
+      }
+
       // Fallback timer ensures user feedback even if iframe load event is suppressed
       setTimeout(() => {
         if (isSubmitting) {
           showFeedback(successMessageHtml, 'success', true);
           form.reset();
+          resetFormVisualState();
           submitBtn.classList.remove('loading');
           submitBtn.disabled = false;
           isSubmitting = false;
@@ -382,6 +431,7 @@
           `;
           showFeedback(successMessageHtml, 'success', true);
           form.reset();
+          resetFormVisualState();
           submitBtn.classList.remove('loading');
           submitBtn.disabled = false;
           isSubmitting = false;
@@ -668,12 +718,46 @@
     // Sort by code length descending so longer codes match first (e.g. +1868 before +1, +971 before +9)
     countryFlags.sort((a, b) => b.code.length - a.code.length);
 
+    let currentDefault = {
+      code: '+1',
+      iso: 'us',
+      name: 'USA / Canada',
+      placeholder: '+1 (555) 000-0000'
+    };
+
+    function setPhoneCountry(isIndia) {
+      currentDefault = isIndia ? {
+        code: '+91',
+        iso: 'in',
+        name: 'India',
+        placeholder: '+91 98765 43210'
+      } : {
+        code: '+1',
+        iso: 'us',
+        name: 'USA / Canada',
+        placeholder: '+1 (555) 000-0000'
+      };
+
+      phoneInput.placeholder = currentDefault.placeholder;
+
+      const currentVal = phoneInput.value.trim();
+      // Only reset/update value if input is empty or still just holds default prefix
+      if (!currentVal || currentVal === '+' || currentVal === '+1' || currentVal === '+1 ' || currentVal === '+91' || currentVal === '+91 ') {
+        phoneInput.value = '';
+        updateFlag();
+      }
+    }
+
+    // Expose for geo-detection and currency toggles
+    window.__setPhoneCountry = setPhoneCountry;
+
     function updateFlag() {
       let val = phoneInput.value.trim().replace(/\s+/g, '');
       if (!val) {
-        flagIcon.innerHTML = defaultGlobe;
-        flagIcon.removeAttribute('title');
-        flagIcon.style.transform = 'scale(1)';
+        // Auto-detected default country flag when input is empty
+        flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/${currentDefault.iso}.png" class="flag-img" alt="${currentDefault.name}" loading="lazy">`;
+        flagIcon.title = `${currentDefault.name} (${currentDefault.code})`;
+        flagIcon.style.transform = 'scale(1.05)';
         return;
       }
 
@@ -694,49 +778,132 @@
       }
     }
 
-    function ensurePlusPrefix() {
+    function ensurePrefix() {
       if (!phoneInput.value.trim()) {
-        phoneInput.value = '+';
+        phoneInput.value = currentDefault.code + ' ';
         updateFlag();
       }
-      if (phoneInput.value === '+') {
+      if (phoneInput.value === currentDefault.code + ' ') {
         setTimeout(() => {
           try {
-            phoneInput.setSelectionRange(1, 1);
+            const len = phoneInput.value.length;
+            phoneInput.setSelectionRange(len, len);
           } catch (e) { }
         }, 10);
       }
     }
 
-    phoneInput.addEventListener('focus', ensurePlusPrefix);
-    phoneInput.addEventListener('click', ensurePlusPrefix);
+    phoneInput.addEventListener('focus', ensurePrefix);
+    phoneInput.addEventListener('click', ensurePrefix);
 
     phoneInput.addEventListener('keydown', (e) => {
-      // Prevent deleting the initial '+'
-      if (e.key === 'Backspace' && phoneInput.selectionStart <= 1 && phoneInput.selectionEnd <= 1 && phoneInput.value.startsWith('+')) {
-        if (phoneInput.value.length === 1) {
-          e.preventDefault();
+      // 1. Allow standard navigation, deletion and shortcut combinations
+      if (
+        e.key === 'Backspace' ||
+        e.key === 'Delete' ||
+        e.key === 'Tab' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'Home' ||
+        e.key === 'End' ||
+        e.key === 'Enter' ||
+        e.key === 'Escape' ||
+        e.ctrlKey ||
+        e.metaKey
+      ) {
+        // Prevent deleting the initial '+' if cursor is at position 1
+        if (e.key === 'Backspace' && phoneInput.selectionStart <= 1 && phoneInput.selectionEnd <= 1 && phoneInput.value.startsWith('+')) {
+          if (phoneInput.value.length === 1) {
+            e.preventDefault();
+          }
         }
+        return;
       }
+
+      // 2. Allow '+' only at position 0
+      if (e.key === '+' && (phoneInput.selectionStart === 0 || !phoneInput.value.includes('+'))) {
+        return;
+      }
+
+      // 3. Allow only numeric digits 0-9 and formatting space or hyphen
+      if (/^[0-9\s\-]$/.test(e.key)) {
+        return;
+      }
+
+      // Block all non-numeric characters (alphabet letters, symbols, punctuation)
+      e.preventDefault();
     });
 
     phoneInput.addEventListener('input', () => {
       let val = phoneInput.value;
       if (!val) {
-        phoneInput.value = '+';
-      } else if (!val.startsWith('+')) {
-        phoneInput.value = '+' + val.replace(/^\+*/, '');
+        updateFlag();
+        return;
+      }
+
+      // Strictly filter out any characters that are not digits, '+', space, or hyphen
+      let clean = '';
+      if (val.startsWith('+')) {
+        clean = '+' + val.slice(1).replace(/[^0-9\s\-]/g, '');
+      } else {
+        clean = '+' + val.replace(/[^0-9\s\-]/g, '');
+      }
+
+      if (phoneInput.value !== clean) {
+        phoneInput.value = clean;
       }
       updateFlag();
     });
 
+    phoneInput.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+      const cleanDigits = text.replace(/[^0-9\s\-]/g, '');
+      const start = phoneInput.selectionStart;
+      const end = phoneInput.selectionEnd;
+      const current = phoneInput.value;
+      let nextVal = current.substring(0, start) + cleanDigits + current.substring(end);
+      if (!nextVal.startsWith('+')) {
+        nextVal = '+' + nextVal.replace(/^\+*/, '');
+      }
+      phoneInput.value = nextVal;
+      updateFlag();
+    });
+
     phoneInput.addEventListener('blur', () => {
-      if (phoneInput.value.trim() === '+') {
+      const val = phoneInput.value.trim();
+      if (val === '+' || val === currentDefault.code || val === currentDefault.code + ' ') {
         phoneInput.value = '';
         updateFlag();
       }
     });
 
+    // Synchronous initial detection via Timezone & GMT Offset for 0ms latency
+    function detectInitialCountry() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const forced = (urlParams.get('currency') || urlParams.get('curr') || urlParams.get('geo') || urlParams.get('country') || '').toUpperCase();
+        if (forced === 'USD' || forced === 'US') return false;
+        if (forced === 'INR' || forced === 'IN') return true;
+      } catch (e) {}
+
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        const offset = new Date().getTimezoneOffset(); // India is -330
+        const lang = (navigator.language || '').toLowerCase();
+        const languages = (navigator.languages || []).map(l => l.toLowerCase());
+
+        if (tz.includes('Calcutta') || tz.includes('Kolkata') || offset === -330 || lang.includes('-in') || languages.some(l => l.includes('-in'))) {
+          return true;
+        }
+      } catch (e) {}
+
+      return false;
+    }
+
+    setPhoneCountry(detectInitialCountry());
     updateFlag();
   }
 
@@ -776,27 +943,44 @@
       });
 
       if (curr === 'INR') {
-        if (budgetLabel) budgetLabel.textContent = "Estimated Budget (INR / ₹)";
+        if (budgetLabel) budgetLabel.textContent = "Estimated Budget";
         btnInr.classList.add('active');
         btnUsd.classList.remove('active');
       } else {
-        if (budgetLabel) budgetLabel.textContent = "Estimated Budget (USD / $)";
+        if (budgetLabel) budgetLabel.textContent = "Estimated Budget";
         btnUsd.classList.add('active');
         btnInr.classList.remove('active');
       }
     }
 
-    btnInr.addEventListener('click', () => setCurrency('INR'));
-    btnUsd.addEventListener('click', () => setCurrency('USD'));
+    btnInr.addEventListener('click', () => {
+      setCurrency('INR');
+      if (typeof window.__setPhoneCountry === 'function') {
+        window.__setPhoneCountry(true);
+      }
+    });
+
+    btnUsd.addEventListener('click', () => {
+      setCurrency('USD');
+      if (typeof window.__setPhoneCountry === 'function') {
+        window.__setPhoneCountry(false);
+      }
+    });
 
     // Smart Auto-detection: Detect if visitor is in India
     async function detectLocation() {
-      // 1. URL parameter override for testing: ?currency=USD or ?currency=INR
+      // 1. URL parameter override for testing: ?currency=USD or ?currency=INR or ?geo=IN or ?geo=US
       try {
         const urlParams = new URLSearchParams(window.location.search);
-        const forcedCurr = (urlParams.get('currency') || urlParams.get('curr') || '').toUpperCase();
-        if (forcedCurr === 'USD' || forcedCurr === 'INR') {
-          setCurrency(forcedCurr);
+        const forcedCurr = (urlParams.get('currency') || urlParams.get('curr') || urlParams.get('geo') || urlParams.get('country') || '').toUpperCase();
+        if (forcedCurr === 'USD' || forcedCurr === 'US') {
+          setCurrency('USD');
+          if (typeof window.__setPhoneCountry === 'function') window.__setPhoneCountry(false);
+          return;
+        }
+        if (forcedCurr === 'INR' || forcedCurr === 'IN') {
+          setCurrency('INR');
+          if (typeof window.__setPhoneCountry === 'function') window.__setPhoneCountry(true);
           return;
         }
       } catch (e) {}
@@ -816,8 +1000,10 @@
 
       if (isIndia) {
         setCurrency('INR');
+        if (typeof window.__setPhoneCountry === 'function') window.__setPhoneCountry(true);
       } else {
         setCurrency('USD');
+        if (typeof window.__setPhoneCountry === 'function') window.__setPhoneCountry(false);
       }
 
       // 3. Fast non-blocking IP Geolocation check
@@ -826,7 +1012,9 @@
         if (res.ok) {
           const data = await res.json();
           if (data && data.country) {
-            setCurrency(data.country === 'IN' ? 'INR' : 'USD');
+            const isIndiaIP = data.country === 'IN';
+            setCurrency(isIndiaIP ? 'INR' : 'USD');
+            if (typeof window.__setPhoneCountry === 'function') window.__setPhoneCountry(isIndiaIP);
           }
         }
       } catch (e) {
@@ -1270,9 +1458,9 @@
     initHeroFlip();
     initProjectsFilter();
     initContactForm();
+    initPhoneFlagDetector();
     initBudgetCurrencySwitcher();
     initCalendlyBookingTracker();
-    initPhoneFlagDetector();
     initTestimonialsSlider();
     initSmoothScrollLinks();
     initMobileNav();
