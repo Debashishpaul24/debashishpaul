@@ -1137,6 +1137,29 @@
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
+  // 3D Kinetic Text Flip Carousel (Hero Subheadline)
+  function initHeroFlip() {
+    const flipTrack = document.getElementById('hero-flip-track');
+    if (!flipTrack) return;
+
+    let flipIndex = 0;
+    const totalFlipItems = 4;
+
+    setInterval(() => {
+      flipIndex++;
+      flipTrack.style.transition = 'transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      flipTrack.style.transform = `translateY(-${flipIndex * 1.32}em)`;
+
+      if (flipIndex === totalFlipItems) {
+        setTimeout(() => {
+          flipTrack.style.transition = 'none';
+          flipIndex = 0;
+          flipTrack.style.transform = 'translateY(0)';
+        }, 700);
+      }
+    }, 2800);
+  }
+
   // Initialize
   function init() {
     handleInitialHashOrScroll();
@@ -1147,6 +1170,7 @@
     updateScrollTarget();
     animate();
 
+    initHeroFlip();
     initProjectsFilter();
     initContactForm();
     initCalendlyBookingTracker();

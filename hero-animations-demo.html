@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Animation Visual Demos — Debashish Paul</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070709;
+      --bg-card: rgba(18, 18, 26, 0.75);
+      --bg-card-hover: rgba(24, 24, 34, 0.9);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(255, 107, 53, 0.4);
+      --accent-orange: #ff6b35;
+      --accent-orange-dark: #e8590c;
+      --accent-glow: rgba(255, 107, 53, 0.35);
+      --accent-gradient: linear-gradient(135deg, #ff6b35 0%, #ff8c42 50%, #e8590c 100%);
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem 5rem;
+      background-image:
+        radial-gradient(circle at 20% 15%, rgba(255, 107, 53, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 80% 40%, rgba(59, 130, 246, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(255, 107, 53, 0.06) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .demo-header {
+      max-width: 1080px;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+
+    .demo-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-orange);
+      box-shadow: 0 0 10px var(--accent-orange);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .demo-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(180deg, #ffffff 40%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .demo-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 650px;
+      margin: 0 auto 2rem;
+    }
+
+    /* Tab Selector */
+    .tab-bar {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      background: rgba(18, 18, 26, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem;
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.65rem 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #ffffff;
+      background: var(--accent-gradient);
+      box-shadow: 0 4px 18px rgba(255, 107, 53, 0.35);
+    }
+
+    /* Container for Demos */
+    .demos-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .demo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
+      padding: 2.5rem;
+      backdrop-filter: blur(30px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .demo-card:hover {
+      border-color: rgba(255, 107, 53, 0.25);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 30px rgba(255, 107, 53, 0.08);
+    }
+
+    .demo-card-tag {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .demo-meta-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .demo-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--accent-orange);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .demo-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .demo-style-badge {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Actual Hero Replica Inside Card */
+    .hero-mockup {
+      padding: 1.5rem 0;
+    }
+
+    .hero-mockup .hero-greeting {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    .hero-mockup .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .hero-mockup .name-first {
+      color: #ffffff;
+    }
+
+    .hero-mockup .name-last {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ============================================================
+       DEMO 1: CLASSIC SMOOTH TYPEWRITER WITH GLOWING ORANGE CURSOR
+       ============================================================ */
+    .typewriter-card-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .typewriter-icon {
+      color: var(--accent-orange);
+      display: flex;
+      align-items: center;
+    }
+
+    .typewriter-text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #ffffff;
+      min-width: 280px;
+      white-space: nowrap;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.15rem;
+      background: var(--accent-orange);
+      margin-left: 2px;
+      vertical-align: middle;
+      box-shadow: 0 0 8px var(--accent-orange);
+      animation: blink 0.85s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    /* ============================================================
+       DEMO 2: 3D KINETIC TEXT FLIP (APPLE & STRIPE ROLLING REEL)
+       ============================================================ */
+    .flip-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+      font-weight: 700;
+      line-height: 1.35;
+      color: #ffffff;
+    }
+
+    .flip-viewport {
+      display: inline-block;
+      height: 2.4rem;
+      overflow: hidden;
+      vertical-align: bottom;
+      position: relative;
+      perspective: 600px;
+    }
+
+    .flip-track {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .flip-item {
+      height: 2.4rem;
+      display: flex;
+      align-items: center;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       DEMO 3: DEVELOPER TERMINAL CODE PILL (VERCEL & LINEAR STYLE)
+       ============================================================ */
+    .terminal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(10, 10, 14, 0.95);
+      border: 1px solid rgba(255, 107, 53, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 107, 53, 0.12);
+      border-radius: 14px;
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .terminal-prompt {
+      color: var(--accent-orange);
+      font-weight: 700;
+      user-select: none;
+    }
+
+    .syntax-kw { color: #c084fc; font-weight: 600; }
+    .syntax-obj { color: #60a5fa; font-weight: 600; }
+    .syntax-fn { color: #34d399; }
+    .syntax-str { color: #f59e0b; }
+    .syntax-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.1rem;
+      background: var(--accent-orange);
+      vertical-align: text-bottom;
+      animation: blink 0.9s infinite;
+      box-shadow: 0 0 10px var(--accent-orange);
+    }
+
+    /* ============================================================
+       DEMO 4: GRADIENT SHIMMER & LIQUID CROSS-FADE (OPENAI STYLE)
+       ============================================================ */
+    .shimmer-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+    }
+
+    .shimmer-word-container {
+      display: inline-block;
+      position: relative;
+      min-width: 320px;
+    }
+
+    .shimmer-word {
+      display: inline-block;
+      background: linear-gradient(90deg, #ff6b35 0%, #ffffff 40%, #ff8c42 70%, #ff6b35 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineGradient 3s linear infinite;
+      font-weight: 800;
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
+    }
+
+    .shimmer-word.morph-out {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.96);
+      filter: blur(6px);
+    }
+
+    .shimmer-word.morph-in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    @keyframes shineGradient {
+      to { background-position: 200% center; }
+    }
+
+    /* ============================================================
+       DEMO 5: TYPEWRITER WITH ACCENT HIGHLIGHTER (FRAMER / PITCH)
+       ============================================================ */
+    .highlight-wrapper {
+      display: inline-block;
+      position: relative;
+    }
+
+    .highlight-text {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      position: relative;
+      z-index: 2;
+    }
+
+    .highlight-line {
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      height: 8px;
+      background: rgba(255, 107, 53, 0.35);
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+    }
+
+    .highlight-line.active {
+      width: 100%;
+    }
+
+    /* Actions Mockup */
+    .hero-actions-mockup {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.75rem;
+    }
+
+    .btn-mockup-primary {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 12px;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 20px rgba(255, 107, 53, 0.35);
+    }
+
+    .btn-mockup-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.75rem 1.4rem;
+      border-radius: 12px;
+    }
+
+    .pros-cons {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .pros-cons span strong {
+      color: #ffffff;
+    }
+
+    .badge-recommend {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #34d399;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .demo-card { padding: 1.5rem; }
+      .hero-actions-mockup { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="demo-header">
+    <div class="demo-badge">
+      <span class="demo-badge-dot"></span> Live Interactive Showcase
+    </div>
+    <h1 class="demo-title">Hero Animation Concepts</h1>
+    <p class="demo-subtitle">
+      Explore live demonstrations of each animation style in your real portfolio hero layout. Compare their rhythm, visual weight, and conversion feel.
+    </p>
+
+    <!-- Filter Buttons -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="filterDemo('all')">Show All Demos</button>
+      <button class="tab-btn" onclick="filterDemo('demo-1')">1. Smooth Typewriter</button>
+      <button class="tab-btn" onclick="filterDemo('demo-2')">2. 3D Kinetic Flip</button>
+      <button class="tab-btn" onclick="filterDemo('demo-3')">3. Dev Terminal Pill</button>
+      <button class="tab-btn" onclick="filterDemo('demo-4')">4. Liquid Shimmer</button>
+    </div>
+  </header>
+
+  <main class="demos-wrapper">
+
+    <!-- ==========================================
+         DEMO 1: CLASSIC SMOOTH TYPEWRITER
+         ========================================== -->
+    <section class="demo-card" id="demo-1">
+      <div class="demo-card-tag">
+        <div class="demo-meta-left">
+          <span class="demo-num">01</span>
+          <h2 class="demo-name">Classic Smooth Typewriter</h2>
+        </div>
+        <span class="demo-style-badge">Position: Profession &amp; Role Card</span>
+      </div>
+
+      <div class="hero-mockup">
+        <p class="hero-greeting">Hi, I am</p>
+        <h3 class="hero-title">
+          <span class="name-first">Debashish</span>
+          <span class="name-last">Paul</span>
+        </h3>
+
+        <!-- The Typewriter Box -->
+        <div class="typewriter-card-container">
+          <div class="typewriter-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <div>
+            <span id="typewriter-text" class="typewriter-text">Senior Software Engineer &amp; Web Consultant</span>
+            <span class="typewriter-cursor"></span>
+          </div>
+        </div>
+
+        <p style="color:var(--text-muted);font-size:0.95rem;max-width:540px;">
+          Turning your digital presence into an active client acquisition engine with bespoke 60fps engineering.
+        </p>
+
+        <div class="hero-actions-mockup">
+          <button class="btn-mockup-primary">Book a 15-Min Call →</button>
+          <button class="btn-mockup-secondary">View My Work ↓</button>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <span>⚡ <strong>Speed:</strong> Methodical letter-by-letter</span>
+        <span>🎯 <strong>Best For:</strong> Clear job title &amp; consultancy communication</span>
+        <span>✨ <strong>Aesthetic:</strong> Timeless, highly engaging</span>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         DEMO 2: 3D KINETIC TEXT FLIP (APPLE / STRIPE)
+         ========================================== -->
+    <section class="demo-card" id="demo-2">
+      <div class="demo-card-tag">
+        <div class="demo-meta-left">
+          <span class="demo-num">02</span>
+          <h2 class="demo-name">3D Kinetic Text Flip <span class="badge-recommend">Top Recommended</span></h2>
+        </div>
+        <span class="demo-style-badge">Position: Hero Subheadline (&lt;h2&gt;)</span>
+      </div>
+
+      <div class="hero-mockup">
+        <p class="hero-greeting">Hi, I am</p>
+        <h3 class="hero-title">
+          <span class="name-first">Debashish</span>
+          <span class="name-last">Paul</span>
+        </h3>
+
+        <!-- The 3D Flip Subheadline -->
+        <h4 class="flip-headline">
+          Turning your digital presence into<br>
+          <span class="flip-viewport">
+            <span class="flip-track" id="flip-track">
+              <span class="flip-item">an active client acquisition engine</span>
+              <span class="flip-item">a bespoke 60fps web application</span>
+              <span class="flip-item">an AI-powered business workflow</span>
+              <span class="flip-item">a scalable digital growth asset</span>
+              <span class="flip-item">an active client acquisition engine</span>
+            </span>
+          </span>
+        </h4>
+
+        <div class="hero-actions-mockup">
+          <button class="btn-mockup-primary">Book a 15-Min Call →</button>
+          <button class="btn-mockup-secondary">View My Work ↓</button>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <span>⚡ <strong>Speed:</strong> Snappy 0.65s elastic spring transition</span>
+        <span>🎯 <strong>Best For:</strong> High-ticket enterprise conversion</span>
+        <span>✨ <strong>Aesthetic:</strong> Ultra-modern, premium Stripe/Apple product feel</span>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         DEMO 3: DEVELOPER TERMINAL CODE PILL
+         ========================================== -->
+    <section class="demo-card" id="demo-3">
+      <div class="demo-card-tag">
+        <div class="demo-meta-left">
+          <span class="demo-num">03</span>
+          <h2 class="demo-name">Developer Terminal Code Capsule</h2>
+        </div>
+        <span class="demo-style-badge">Position: Badge Tag or Tech Pill</span>
+      </div>
+
+      <div class="hero-mockup">
+        <p class="hero-greeting">Hi, I am</p>
+        <h3 class="hero-title">
+          <span class="name-first">Debashish</span>
+          <span class="name-last">Paul</span>
+        </h3>
+
+        <!-- Terminal Pill -->
+        <div class="terminal-pill">
+          <span class="terminal-prompt">&gt;</span>
+          <span class="syntax-kw">const</span>
+          <span class="syntax-obj">Admirers</span>
+          <span>=</span>
+          <span class="syntax-kw">new</span>
+          <span class="syntax-fn">Solutions</span>({ <span style="color:#e2e8f0;">focus</span>: <span class="syntax-str" id="terminal-string">"AI &amp; Digital"</span><span class="syntax-cursor"></span> });
+        </div>
+
+        <p style="color:var(--text-muted);font-size:0.95rem;max-width:540px;">
+          Senior Software Engineer &amp; Web Consultant engineering enterprise architecture with 8+ years experience.
+        </p>
+
+        <div class="hero-actions-mockup">
+          <button class="btn-mockup-primary">Book a 15-Min Call →</button>
+          <button class="btn-mockup-secondary">View My Work ↓</button>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <span>⚡ <strong>Speed:</strong> Dynamic code typing</span>
+        <span>🎯 <strong>Best For:</strong> Tech founders, CTOs &amp; dev-heavy clients</span>
+        <span>✨ <strong>Aesthetic:</strong> Linear / Vercel developer credibility</span>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         DEMO 4: LIQUID GRADIENT SHIMMER & CROSS-FADE
+         ========================================== -->
+    <section class="demo-card" id="demo-4">
+      <div class="demo-card-tag">
+        <div class="demo-meta-left">
+          <span class="demo-num">04</span>
+          <h2 class="demo-name">Liquid Gradient Shimmer &amp; Morph</h2>
+        </div>
+        <span class="demo-style-badge">Position: Dynamic Value Proposition</span>
+      </div>
+
+      <div class="hero-mockup">
+        <p class="hero-greeting">Hi, I am</p>
+        <h3 class="hero-title">
+          <span class="name-first">Debashish</span>
+          <span class="name-last">Paul</span>
+        </h3>
+
+        <h4 class="shimmer-headline">
+          Engineering high-impact solutions for<br>
+          <span class="shimmer-word-container">
+            <span class="shimmer-word morph-in" id="shimmer-text">AI &amp; Digital Solutions</span>
+          </span>
+        </h4>
+
+        <div class="hero-actions-mockup">
+          <button class="btn-mockup-primary">Book a 15-Min Call →</button>
+          <button class="btn-mockup-secondary">View My Work ↓</button>
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <span>⚡ <strong>Speed:</strong> Seamless 3s morph cycle with light-streak beam</span>
+        <span>🎯 <strong>Best For:</strong> Elegant, subtle corporate polish</span>
+        <span>✨ <strong>Aesthetic:</strong> OpenAI / Raycast calm luxury</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- DEMO 1: CLASSIC TYPEWRITER ---
+    const typewriterRoles = [
+      "Senior Software Engineer & Web Consultant",
+      "AI & Digital Solutions Architect",
+      "Creative Developer & 3D Web Specialist",
+      "Enterprise Full-Stack Consultant"
+    ];
+    let roleIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    const typewriterElem = document.getElementById("typewriter-text");
+
+    function typeLoop() {
+      const currentRole = typewriterRoles[roleIdx];
+      if (isDeleting) {
+        typewriterElem.textContent = currentRole.substring(0, charIdx - 1);
+        charIdx--;
+      } else {
+        typewriterElem.textContent = currentRole.substring(0, charIdx + 1);
+        charIdx++;
+      }
+
+      let speed = isDeleting ? 30 : 60;
+
+      if (!isDeleting && charIdx === currentRole.length) {
+        speed = 2200; // Pause at full text
+        isDeleting = true;
+      } else if (isDeleting && charIdx === 0) {
+        isDeleting = false;
+        roleIdx = (roleIdx + 1) % typewriterRoles.length;
+        speed = 500; // Pause before typing next
+      }
+
+      setTimeout(typeLoop, speed);
+    }
+    typeLoop();
+
+    // --- DEMO 2: 3D KINETIC FLIP CAROUSEL ---
+    const flipTrack = document.getElementById("flip-track");
+    let flipIndex = 0;
+    const totalFlipItems = 4;
+    const itemHeightRem = 2.4;
+
+    function flipStep() {
+      flipIndex++;
+      flipTrack.style.transition = "transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1)";
+      flipTrack.style.transform = `translateY(-${flipIndex * itemHeightRem}rem)`;
+
+      if (flipIndex === totalFlipItems) {
+        setTimeout(() => {
+          flipTrack.style.transition = "none";
+          flipIndex = 0;
+          flipTrack.style.transform = "translateY(0)";
+        }, 700);
+      }
+    }
+    setInterval(flipStep, 2800);
+
+    // --- DEMO 3: TERMINAL CODE PILL ---
+    const termStrings = [
+      '"AI & Digital"',
+      '"Bespoke Web"',
+      '"60fps WebGL"',
+      '"Enterprise UI"'
+    ];
+    let termIdx = 0;
+    let termChar = 0;
+    let termDeleting = false;
+    const termElem = document.getElementById("terminal-string");
+
+    function termLoop() {
+      const target = termStrings[termIdx];
+      if (termDeleting) {
+        termElem.textContent = target.substring(0, termChar - 1);
+        termChar--;
+      } else {
+        termElem.textContent = target.substring(0, termChar + 1);
+        termChar++;
+      }
+
+      let tSpeed = termDeleting ? 35 : 70;
+
+      if (!termDeleting && termChar === target.length) {
+        tSpeed = 2400;
+        termDeleting = true;
+      } else if (termDeleting && termChar === 0) {
+        termDeleting = false;
+        termIdx = (termIdx + 1) % termStrings.length;
+        tSpeed = 400;
+      }
+      setTimeout(termLoop, tSpeed);
+    }
+    termLoop();
+
+    // --- DEMO 4: SHIMMER MORPH ---
+    const shimmerWords = [
+      "AI & Digital Solutions",
+      "Bespoke 60fps Platforms",
+      "Global Enterprise Brands",
+      "High-Converting Websites"
+    ];
+    let shimIdx = 0;
+    const shimmerElem = document.getElementById("shimmer-text");
+
+    setInterval(() => {
+      shimmerElem.classList.remove("morph-in");
+      shimmerElem.classList.add("morph-out");
+
+      setTimeout(() => {
+        shimIdx = (shimIdx + 1) % shimmerWords.length;
+        shimmerElem.textContent = shimmerWords[shimIdx];
+        shimmerElem.classList.remove("morph-out");
+        shimmerElem.classList.add("morph-in");
+      }, 450);
+    }, 3200);
+
+    // --- TAB FILTERING ---
+    function filterDemo(id) {
+      const cards = document.querySelectorAll(".demo-card");
+      const buttons = document.querySelectorAll(".tab-btn");
+
+      buttons.forEach(btn => btn.classList.remove("active"));
+      event.currentTarget.classList.add("active");
+
+      cards.forEach(card => {
+        if (id === 'all' || card.id === id) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>

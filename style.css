@@ -746,7 +746,9 @@ body.mobile-drawer-open #back-to-top {
 }
 
 .hero-title .name-last {
-  color: #ffffff;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Profession & Company Badge */
@@ -860,10 +862,37 @@ body.mobile-drawer-open #back-to-top {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(1.55rem, 2.2vw, 2.05rem);
-  line-height: 1.22;
-  margin: 0.65rem 0 1.4rem;
+  line-height: 1.25;
+  margin: 0.25rem 0 1.5rem;
   letter-spacing: -0.025em;
   color: #ffffff;
+}
+
+/* 3D Kinetic Text Flip (Apple & Stripe Style) */
+.flip-viewport {
+  display: inline-block;
+  height: 1.32em;
+  overflow: hidden;
+  vertical-align: bottom;
+  position: relative;
+  perspective: 600px;
+}
+
+.flip-track {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.flip-item {
+  height: 1.32em;
+  display: flex;
+  align-items: center;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .hero-actions {
@@ -3302,6 +3331,11 @@ body.mobile-drawer-open #back-to-top {
 }
 
 @media (max-width: 520px) {
+  .hero-subheadline {
+    font-size: clamp(1.18rem, 5vw, 1.55rem);
+    line-height: 1.25;
+  }
+
   .projects-grid {
     grid-template-columns: 1fr;
     gap: 1.15rem;
