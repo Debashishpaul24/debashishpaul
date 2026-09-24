@@ -2514,6 +2514,49 @@ body.mobile-drawer-open #back-to-top {
   background-size: 16px 16px !important;
 }
 
+/* Contact Form Currency Switcher */
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.55rem;
+}
+
+.currency-switcher {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.curr-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.curr-btn:hover {
+  color: #ffffff;
+}
+
+.curr-btn.active {
+  background: var(--accent-gradient);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.35);
+}
+
 /* Phone Input with Dynamic Country Flag Prefix */
 .phone-input-wrapper {
   position: relative;

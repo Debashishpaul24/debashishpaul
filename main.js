@@ -740,6 +740,103 @@
     updateFlag();
   }
 
+  // Smart Geo-Detection & Currency Switcher for Contact Form Budget
+  function initBudgetCurrencySwitcher() {
+    const budgetSelect = document.getElementById('lead-budget');
+    const budgetLabel = document.getElementById('budget-label');
+    const btnUsd = document.getElementById('curr-btn-usd');
+    const btnInr = document.getElementById('curr-btn-inr');
+
+    if (!budgetSelect || !btnUsd || !btnInr) return;
+
+    const inrOptions = [
+      { value: "Flexible / To Be Discussed", text: "Flexible / Open to Discuss on Call" },
+      { value: "₹35,000 - ₹75,000 (Starter / MVP)", text: "₹35,000 – ₹75,000 (Starter / MVP Website)" },
+      { value: "₹75,000 - ₹1,75,000 (Growth Platform)", text: "₹75,000 – ₹1,75,000 (Growth & E-commerce)" },
+      { value: "₹1,75,000 - ₹4,00,000+ (Enterprise / AI)", text: "₹1,75,000 – ₹4,00,000+ (Custom AI & Enterprise)" },
+      { value: "Monthly Maintenance / Advisory", text: "Monthly Maintenance / Advisory" }
+    ];
+
+    const usdOptions = [
+      { value: "Flexible / Open for Discussion", text: "Flexible / Open to Discuss on Call" },
+      { value: "$1,500 - $3,500 (Starter / MVP)", text: "$1,500 – $3,500 (Starter / MVP Platform)" },
+      { value: "$3,500 - $7,500 (Full-Stack / E-commerce)", text: "$3,500 – $7,500 (Full-Stack & E-commerce)" },
+      { value: "$7,500 - $15,000+ (Enterprise & AI)", text: "$7,500 – $15,000+ (Enterprise Architecture & AI)" },
+      { value: "Flexible Hourly / Advisory", text: "Flexible Hourly / Retainer Advisory" }
+    ];
+
+    function setCurrency(curr) {
+      const opts = curr === 'INR' ? inrOptions : usdOptions;
+      budgetSelect.innerHTML = '';
+      opts.forEach(opt => {
+        const el = document.createElement('option');
+        el.value = opt.value;
+        el.textContent = opt.text;
+        budgetSelect.appendChild(el);
+      });
+
+      if (curr === 'INR') {
+        if (budgetLabel) budgetLabel.textContent = "Estimated Budget (INR / ₹)";
+        btnInr.classList.add('active');
+        btnUsd.classList.remove('active');
+      } else {
+        if (budgetLabel) budgetLabel.textContent = "Estimated Budget (USD / $)";
+        btnUsd.classList.add('active');
+        btnInr.classList.remove('active');
+      }
+    }
+
+    btnInr.addEventListener('click', () => setCurrency('INR'));
+    btnUsd.addEventListener('click', () => setCurrency('USD'));
+
+    // Smart Auto-detection: Detect if visitor is in India
+    async function detectLocation() {
+      // 1. URL parameter override for testing: ?currency=USD or ?currency=INR
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const forcedCurr = (urlParams.get('currency') || urlParams.get('curr') || '').toUpperCase();
+        if (forcedCurr === 'USD' || forcedCurr === 'INR') {
+          setCurrency(forcedCurr);
+          return;
+        }
+      } catch (e) {}
+
+      // 2. Instant synchronous check via Timezone & System Offset
+      let isIndia = false;
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        const offset = new Date().getTimezoneOffset(); // India is -330
+        const lang = (navigator.language || '').toLowerCase();
+        const languages = (navigator.languages || []).map(l => l.toLowerCase());
+
+        if (tz.includes('Calcutta') || tz.includes('Kolkata') || offset === -330 || lang.includes('-in') || languages.some(l => l.includes('-in'))) {
+          isIndia = true;
+        }
+      } catch (e) {}
+
+      if (isIndia) {
+        setCurrency('INR');
+      } else {
+        setCurrency('USD');
+      }
+
+      // 3. Fast non-blocking IP Geolocation check
+      try {
+        const res = await fetch('https://api.country.is', { signal: AbortSignal.timeout(2500) });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.country) {
+            setCurrency(data.country === 'IN' ? 'INR' : 'USD');
+          }
+        }
+      } catch (e) {
+        // Fallback to timezone already applied
+      }
+    }
+
+    detectLocation();
+  }
+
   // Automated Horizontal Testimonials Slider (Right-to-Left with 1s pause)
   function initTestimonialsSlider() {
     const track = document.getElementById('testimonials-track');
@@ -1173,6 +1270,7 @@
     initHeroFlip();
     initProjectsFilter();
     initContactForm();
+    initBudgetCurrencySwitcher();
     initCalendlyBookingTracker();
     initPhoneFlagDetector();
     initTestimonialsSlider();

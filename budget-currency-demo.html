@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Form Budget & Currency Demos — Debashish Paul</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070709;
+      --bg-card: rgba(18, 18, 24, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(255, 107, 53, 0.4);
+      --accent-orange: #ff6b35;
+      --accent-gradient: linear-gradient(135deg, #ff6b35 0%, #e8590c 100%);
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --font-display: 'Plus Jakarta Sans', sans-serif;
+      --font-sans: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem 5rem;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(255, 107, 53, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 85% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 45%);
+    }
+
+    .demo-header {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      text-align: center;
+    }
+
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.9rem;
+      background: rgba(255, 107, 53, 0.1);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+
+    .demo-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-orange);
+      box-shadow: 0 0 10px var(--accent-orange);
+    }
+
+    .demo-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-subtitle {
+      color: var(--text-muted);
+      font-size: 1.02rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .demos-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .demo-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
+      padding: 2.25rem 2.5rem;
+      backdrop-filter: blur(28px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .demo-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .demo-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .demo-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 107, 53, 0.15);
+      color: var(--accent-orange);
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 107, 53, 0.3);
+    }
+
+    .demo-card-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .badge-recommend {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #34d399;
+      padding: 0.2rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Form Components Replica */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.65rem;
+    }
+
+    .form-label {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Currency Switcher Pill */
+    .currency-switcher {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .curr-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .curr-btn:hover {
+      color: #ffffff;
+    }
+
+    .curr-btn.active {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.35);
+    }
+
+    .geo-status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.76rem;
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      padding: 0.25rem 0.65rem;
+      border-radius: 8px;
+      margin-bottom: 0.85rem;
+    }
+
+    .form-select {
+      width: 100%;
+      background: rgba(14, 14, 20, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      padding: 0.85rem 1.15rem;
+      font-size: 0.95rem;
+      color: #ffffff;
+      font-family: var(--font-sans);
+      outline: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ff6b35' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1.15rem center;
+      padding-right: 2.75rem;
+    }
+
+    .form-select:focus {
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 20px rgba(255, 107, 53, 0.25);
+    }
+
+    .form-select option {
+      background: #121218;
+      color: #ffffff;
+      padding: 0.6rem;
+    }
+
+    .demo-footer-notes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .demo-footer-notes strong {
+      color: #ffffff;
+    }
+
+    .highlight-box {
+      background: rgba(255, 107, 53, 0.06);
+      border: 1px dashed rgba(255, 107, 53, 0.3);
+      padding: 0.85rem 1.15rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      color: #fdba74;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .demo-card { padding: 1.5rem; }
+      .form-label-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="demo-header">
+    <div class="demo-badge">
+      <span class="demo-badge-dot"></span> Interactive Comparison Showcase
+    </div>
+    <h1 class="demo-title">Budget Field &amp; Currency Solutions</h1>
+    <p class="demo-subtitle">
+      Compare how each approach balances domestic Indian inquiries (via Google Business Profile) with premium high-ticket global clients (US, UK, UAE).
+    </p>
+  </header>
+
+  <main class="demos-grid">
+
+    <!-- =======================================================
+         DEMO 1: SMART GEO-IP WITH CLICKABLE TOGGLE (TOP PICK)
+         ======================================================= -->
+    <section class="demo-card" id="demo-geo">
+      <div class="demo-card-header">
+        <div class="demo-title-group">
+          <span class="demo-num">01</span>
+          <h2 class="demo-card-title">Smart Geo-Detection + Manual Currency Switcher</h2>
+        </div>
+        <span class="badge-recommend">Recommended Top Pick</span>
+      </div>
+
+      <!-- Live Geo Status Simulation -->
+      <div class="geo-status-indicator">
+        <span>📍</span> <span id="geo-status-text">Simulated Location: India — Automatically switched to INR (₹)</span>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label-row">
+          <label for="demo1-budget" class="form-label" id="demo1-label">
+            Estimated Budget (INR / ₹)
+          </label>
+
+          <!-- Interactive Currency Toggle Buttons -->
+          <div class="currency-switcher">
+            <button type="button" class="curr-btn active" id="btn-inr" onclick="setCurrency('INR')">
+              🇮🇳 INR (₹)
+            </button>
+            <button type="button" class="curr-btn" id="btn-usd" onclick="setCurrency('USD')">
+              🇺🇸 USD ($)
+            </button>
+          </div>
+        </div>
+
+        <select id="demo1-budget" class="form-select">
+          <!-- Dynamic options loaded via JS -->
+        </select>
+      </div>
+
+      <div class="highlight-box">
+        💡 <strong>How it behaves live:</strong> Indian visitors automatically see <strong>₹ INR</strong> with realistic local SME ranges. US/UK/global visitors automatically see <strong>$ USD</strong>. If an NRI or foreign client in India prefers USD, they can simply tap <strong>[ 🇺🇸 USD ($) ]</strong> above the field!
+      </div>
+
+      <div class="demo-footer-notes">
+        <span>🇮🇳 <strong>India Conversion:</strong> Zero sticker shock, high GBP lead volume</span>
+        <span>🌍 <strong>Global Conversion:</strong> High-ticket enterprise authority preserved</span>
+        <span>⚡ <strong>Friction:</strong> Zero (auto-detected via IP/Timezone)</span>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         DEMO 2: VALUE-BASED SCOPE TIERS (UNIVERSAL DUAL CURRENCY)
+         ======================================================= -->
+    <section class="demo-card" id="demo-tiers">
+      <div class="demo-card-header">
+        <div class="demo-title-group">
+          <span class="demo-num">02</span>
+          <h2 class="demo-card-title">Value-Based Project Scope Tiers (Universal)</h2>
+        </div>
+        <span style="font-size:0.75rem;color:var(--text-dim);border:1px solid var(--border-subtle);padding:0.2rem 0.6rem;border-radius:6px;">Universal Single List</span>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label-row">
+          <label for="demo2-budget" class="form-label">
+            Project Scope &amp; Target Investment
+          </label>
+        </div>
+
+        <select id="demo2-budget" class="form-select">
+          <option value="Flexible / Let's Scope on Call" selected>Flexible / Open to Discuss on Call (Recommended)</option>
+          <option value="Starter / MVP Launch (From $1,200 / ₹75k)">Starter / MVP Launch (From $1,200 / ₹75k)</option>
+          <option value="Complete Business Platform (From $2,800 / ₹1.75L)">Complete Business Platform (From $2,800 / ₹1.75L)</option>
+          <option value="Custom AI &amp; Enterprise System (From $5,500 / ₹3.5L+)">Custom AI &amp; Enterprise System (From $5,500 / ₹3.5L+)</option>
+          <option value="Ongoing Maintenance / Monthly Advisory">Ongoing Maintenance / Monthly Advisory</option>
+        </select>
+      </div>
+
+      <div class="highlight-box" style="color:#93c5fd;border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.06);">
+        💡 <strong>How it works:</strong> Reframes the budget from raw prices to <em>deliverable outcomes</em> (MVP vs Platform vs AI Enterprise). Both currencies are displayed side-by-side in each option.
+      </div>
+
+      <div class="demo-footer-notes">
+        <span>⚖️ <strong>Pros:</strong> Transparent, single static HTML dropdown</span>
+        <span>⚠️ <strong>Cons:</strong> Option text is slightly longer on small mobile screens</span>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         DEMO 3: LOWERED USD ANCHOR + FLEXIBLE DEFAULT
+         ======================================================= -->
+    <section class="demo-card" id="demo-accessible-usd">
+      <div class="demo-card-header">
+        <div class="demo-title-group">
+          <span class="demo-num">03</span>
+          <h2 class="demo-card-title">Accessible USD with "Let's Discuss" Default</h2>
+        </div>
+        <span style="font-size:0.75rem;color:var(--text-dim);border:1px solid var(--border-subtle);padding:0.2rem 0.6rem;border-radius:6px;">USD Only</span>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label-row">
+          <label for="demo3-budget" class="form-label">
+            Estimated Budget (USD)
+          </label>
+        </div>
+
+        <select id="demo3-budget" class="form-select">
+          <option value="Flexible / Let's Discuss First" selected>Flexible / Let's Discuss First (No commitment)</option>
+          <option value="Under $1,500 (Starter Consultation / Fixes)">Under $1,500 (Starter Consultation / Fixes)</option>
+          <option value="$1,500 - $3,500 (Core Web Platform)">$1,500 – $3,500 (Core Web Platform)</option>
+          <option value="$3,500 - $7,500 (Full-Stack &amp; E-commerce)">$3,500 – $7,500 (Full-Stack &amp; E-commerce)</option>
+          <option value="$7,500+ (Enterprise Architecture &amp; AI)">$7,500+ (Enterprise Architecture &amp; AI)</option>
+        </select>
+      </div>
+
+      <div class="highlight-box" style="color:#d1d5db;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.03);">
+        💡 <strong>How it works:</strong> Keeps the global prestige of USD, but sets <em>"Flexible / Let's Discuss First"</em> as default so visitors who don't have thousands of dollars are not scared off from submitting the form.
+      </div>
+
+      <div class="demo-footer-notes">
+        <span>🌐 <strong>Pros:</strong> Maintains pure US Dollar branding</span>
+        <span>⚠️ <strong>Cons:</strong> Indian clients still need to mentally convert USD to INR</span>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- DEMO 1 DATA & LOGIC ---
+    const inrOptions = [
+      { value: "Flexible / To Be Discussed", text: "Flexible / Open to Discuss on Call" },
+      { value: "₹35,000 - ₹75,000 (Starter / MVP)", text: "₹35,000 – ₹75,000 (Starter / MVP Website)" },
+      { value: "₹75,000 - ₹1,75,000 (Growth Platform)", text: "₹75,000 – ₹1,75,000 (Growth & E-commerce)" },
+      { value: "₹1,75,000 - ₹4,00,000+ (Enterprise / AI)", text: "₹1,75,000 – ₹4,00,000+ (Custom AI & Enterprise)" },
+      { value: "Monthly Maintenance / Advisory", text: "Monthly Maintenance / Advisory" }
+    ];
+
+    const usdOptions = [
+      { value: "Flexible / Open for Discussion", text: "Flexible / Open to Discuss on Call" },
+      { value: "$1,500 - $3,500 (Starter / MVP)", text: "$1,500 – $3,500 (Starter / MVP Platform)" },
+      { value: "$3,500 - $7,500 (Full-Stack / E-commerce)", text: "$3,500 – $7,500 (Full-Stack & E-commerce)" },
+      { value: "$7,500 - $15,000+ (Enterprise & AI)", text: "$7,500 – $15,000+ (Enterprise Architecture & AI)" },
+      { value: "Flexible Hourly / Advisory", text: "Flexible Hourly / Retainer Advisory" }
+    ];
+
+    const demo1Select = document.getElementById("demo1-budget");
+    const demo1Label = document.getElementById("demo1-label");
+    const geoStatusText = document.getElementById("geo-status-text");
+    const btnInr = document.getElementById("btn-inr");
+    const btnUsd = document.getElementById("btn-usd");
+
+    function renderOptions(options) {
+      demo1Select.innerHTML = "";
+      options.forEach(opt => {
+        const optionEl = document.createElement("option");
+        optionEl.value = opt.value;
+        optionEl.textContent = opt.text;
+        demo1Select.appendChild(optionEl);
+      });
+    }
+
+    function setCurrency(curr) {
+      if (curr === 'INR') {
+        renderOptions(inrOptions);
+        demo1Label.textContent = "Estimated Budget (INR / ₹)";
+        btnInr.classList.add("active");
+        btnUsd.classList.remove("active");
+        geoStatusText.textContent = "Location: India (INR Mode Active)";
+      } else {
+        renderOptions(usdOptions);
+        demo1Label.textContent = "Estimated Budget (USD / $)";
+        btnUsd.classList.add("active");
+        btnInr.classList.remove("active");
+        geoStatusText.textContent = "Location: International / US / Europe (USD Mode Active)";
+      }
+    }
+
+    // Default to INR to simulate Indian local visitor
+    setCurrency('INR');
+  </script>
+</body>
+
+</html>
