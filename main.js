@@ -908,39 +908,43 @@
 
     const privacyContent = `
       <div>
-        <h4>🔒 1. Data Collected & Purpose</h4>
-        <p>When you fill out the contact form on this website, we collect your <strong>Full Name</strong>, <strong>Email Address</strong>, <strong>Phone Number / WhatsApp</strong>, and <strong>Project Details</strong>. This data is collected solely to evaluate your engineering requirements and reply to your consultation inquiry.</p>
+        <h4>🏢 1. Entity & Data Controller</h4>
+        <p>This website is operated by <strong>Admirers Creation – AI & Digital Solutions</strong>, founded and led by principal engineer <strong>Debashish Paul</strong>. We act as the data controller for any personal details and communication submitted through this platform.</p>
       </div>
       <div>
-        <h4>🛡️ 2. Zero Third-Party Selling or Sharing</h4>
-        <p>Your privacy is absolute. Your contact information is strictly confidential and is <strong>never sold, rented, monetized, or shared</strong> with any third-party marketing companies, advertisers, or data brokers.</p>
+        <h4>🔒 2. Data Collected & Purpose</h4>
+        <p>When you fill out the contact or consultation form on this website, we collect your <strong>Full Name</strong>, <strong>Email Address</strong>, <strong>Phone Number / WhatsApp</strong>, <strong>Service Required</strong>, <strong>Estimated Budget</strong>, and <strong>Project Scope Details</strong>. This data is collected solely to evaluate project feasibility, provide technical estimates, and respond to your inquiry.</p>
       </div>
       <div>
-        <h4>⚡ 3. Storage & Encryption</h4>
-        <p>Form submissions are securely routed via industry-standard TLS encryption to private, restricted-access Google Workspace / Gmail workflows for direct review by Debashish Paul.</p>
+        <h4>🛡️ 3. Zero Third-Party Selling or Sharing</h4>
+        <p>Your privacy is absolute. Your contact information and project concepts are strictly confidential and are <strong>never sold, rented, monetized, or shared</strong> with third-party marketing companies, advertisers, or data brokers.</p>
       </div>
       <div>
-        <h4>📬 4. Your Rights & Data Deletion</h4>
-        <p>You can request a copy of your submitted details or ask for immediate permanent deletion from communication workflows at any time by emailing directly to <a href="mailto:pauldebashish115@gmail.com" style="color:#ff6b35;text-decoration:underline;">pauldebashish115@gmail.com</a>.</p>
+        <h4>⚡ 4. Storage, Security & Cookies</h4>
+        <p>Form submissions are securely routed via industry-standard <strong>TLS/SSL encryption</strong> to private, restricted-access Google Workspace workflows. We utilize minimal local session storage for essential UI preferences and performance caching. We do not engage in invasive tracking or sell user behavioral data.</p>
+      </div>
+      <div>
+        <h4>📬 5. Global Privacy Rights (GDPR & CCPA)</h4>
+        <p>Under international privacy standards (including GDPR and CCPA), you hold the right to request access to your submitted data, request corrections, or request immediate permanent deletion (&ldquo;Right to be Forgotten&rdquo;) at any time by emailing directly to <a href="mailto:pauldebashish115@gmail.com" style="color:#ff6b35;text-decoration:underline;">pauldebashish115@gmail.com</a>.</p>
       </div>
     `;
 
     const termsContent = `
       <div>
-        <h4>⚖️ 1. Intellectual Property</h4>
-        <p>All case studies, interactive UI components, animations, 3D assets, source code, and branding presented on this website are the intellectual property of <strong>Debashish Paul</strong> and respective enterprise/client entities. Unauthorized copying or redistribution is prohibited.</p>
+        <h4>⚖️ 1. Intellectual Property & Brand Rights</h4>
+        <p>All case studies, interactive UI components, animations, 3D WebGL assets, custom source code, and design systems presented on this website are the proprietary intellectual property of <strong>Admirers Creation – AI & Digital Solutions</strong> and <strong>Debashish Paul</strong>. Unauthorized copying, scraping, or redistribution is strictly prohibited.</p>
       </div>
       <div>
         <h4>💼 2. Project Inquiries & Consultations</h4>
-        <p>Submitting an inquiry through this website initiates a mutual consultation and does not establish a formal vendor-client contract until a customized Statement of Work (SOW) or master services agreement is signed by both parties.</p>
+        <p>Submitting an inquiry through this website initiates a preliminary consultation and technical scoping dialogue. It does not establish a formal vendor-client contract until a customized <strong>Statement of Work (SOW)</strong> or service agreement is executed by both parties.</p>
       </div>
       <div>
-        <h4>🌐 3. External Links & Demonstrations</h4>
-        <p>References to third-party tools, frameworks, and client company trademarks are for demonstration and portfolio showcase purposes only.</p>
+        <h4>🌐 3. Case Studies & Demonstrations</h4>
+        <p>References to third-party tools, frameworks, and client company trademarks are for technical demonstration and portfolio showcase purposes only. All respective trademarks belong to their respective owners.</p>
       </div>
       <div>
-        <h4>🛡️ 4. Warranty Disclaimer</h4>
-        <p>This website is provided "as is" to showcase engineering capabilities and interactive design excellence.</p>
+        <h4>🛡️ 4. Warranty & Liability Disclaimer</h4>
+        <p>This website is provided &ldquo;as is&rdquo; to showcase design engineering capabilities and production excellence. Admirers Creation is not liable for indirect damages or temporary disruptions arising from third-party hosting networks or external API providers.</p>
       </div>
     `;
 
