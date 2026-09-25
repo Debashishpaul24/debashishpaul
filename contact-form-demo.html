@@ -768,6 +768,16 @@
       btnInr.addEventListener('click', () => setCurrency('INR'));
       btnUsd.addEventListener('click', () => setCurrency('USD'));
 
+      phoneInput.addEventListener('input', () => {
+        const val = phoneInput.value.trim().replace(/\s+/g, '');
+        if (!val) return;
+        if (val.startsWith('+91')) {
+          if (!btnInr.classList.contains('active')) setCurrency('INR');
+        } else if (val.startsWith('+') && !val.startsWith('+91') && val.length >= 2) {
+          if (!btnUsd.classList.contains('active')) setCurrency('USD');
+        }
+      });
+
       // File upload handling
       const uploadZone = document.getElementById('upload-zone');
       const fileInput = document.getElementById('file-input');

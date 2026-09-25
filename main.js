@@ -876,10 +876,26 @@
         flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/${match.iso}.png" class="flag-img" alt="${match.name}" loading="lazy" onerror="this.style.display='none'">`;
         flagIcon.title = `${match.name} (${match.code})`;
         flagIcon.style.transform = 'scale(1.05)';
+
+        // Automatically toggle budget currency based on country code
+        // When country code other than +91 is entered -> $USD
+        // When +91 is entered -> ₹INR
+        if (typeof window.__setBudgetCurrency === 'function') {
+          if (match.code === '+91') {
+            window.__setBudgetCurrency('INR');
+          } else {
+            window.__setBudgetCurrency('USD');
+          }
+        }
       } else {
         flagIcon.innerHTML = defaultGlobe;
         flagIcon.removeAttribute('title');
         flagIcon.style.transform = 'scale(1)';
+
+        // If a non-+91 country prefix is entered (e.g. +4, +3, +2, etc.)
+        if (val.length >= 2 && !val.startsWith('+91') && typeof window.__setBudgetCurrency === 'function') {
+          window.__setBudgetCurrency('USD');
+        }
       }
     }
 
@@ -1039,6 +1055,9 @@
     ];
 
     function setCurrency(curr) {
+      if (curr === 'USD' && btnUsd.classList.contains('active')) return;
+      if (curr === 'INR' && btnInr.classList.contains('active')) return;
+
       const opts = curr === 'INR' ? inrOptions : usdOptions;
       budgetSelect.innerHTML = '';
       opts.forEach(opt => {
@@ -1058,6 +1077,9 @@
         btnInr.classList.remove('active');
       }
     }
+
+    // Expose for external calls (e.g. phone country code detector)
+    window.__setBudgetCurrency = setCurrency;
 
     btnInr.addEventListener('click', () => {
       setCurrency('INR');
