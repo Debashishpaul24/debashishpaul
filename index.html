@@ -292,7 +292,7 @@
   <noscript><link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"></noscript>
   <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
 
-  <link rel="stylesheet" href="style.css?v=68">
+  <link rel="stylesheet" href="style.css?v=72">
 </head>
 
 <body>
@@ -1160,20 +1160,27 @@
                       action="https://script.google.com/macros/s/AKfycbzaWRIAD6dz6M2uqDyA6_xKQRvRI6ZWRrFJc5WERO66nZFjhMDmh_ZBiKubz-jyYZGh9A/exec"
                       method="POST" target="gform_iframe">
 
+                      <!-- Row 1: Your Name (Req) & Business Name -->
                       <div class="form-row">
                         <div class="form-group">
                           <label for="lead-name" class="form-label">Your Name <span class="req">*</span></label>
                           <input type="text" id="lead-name" name="name" class="form-input"
-                            placeholder="e.g. Alex Morgan or Company Name" required autocomplete="name">
+                            placeholder="e.g. Alex Morgan" required autocomplete="name">
                         </div>
+                        <div class="form-group">
+                          <label for="lead-business" class="form-label">Business Name</label>
+                          <input type="text" id="lead-business" name="business_name" class="form-input"
+                            placeholder="e.g. Acme Corp or Studio" autocomplete="organization">
+                        </div>
+                      </div>
+
+                      <!-- Row 2: Email Address (Req) & Phone / WhatsApp (Req) -->
+                      <div class="form-row">
                         <div class="form-group">
                           <label for="lead-email" class="form-label">Email Address <span class="req">*</span></label>
                           <input type="email" id="lead-email" name="email" class="form-input"
                             placeholder="alex@company.com (or personal email)" required autocomplete="email">
                         </div>
-                      </div>
-
-                      <div class="form-row">
                         <div class="form-group">
                           <label for="lead-phone" class="form-label">Phone / WhatsApp <span class="req">*</span></label>
                           <div class="phone-input-wrapper">
@@ -1188,8 +1195,12 @@
                               placeholder="+1 (555) 000-0000" autocomplete="tel" inputmode="tel" pattern="[\+]?[0-9\s\-]+" required>
                           </div>
                         </div>
+                      </div>
+
+                      <!-- Row 3: Service Required & What best describes your requirement? -->
+                      <div class="form-row">
                         <div class="form-group">
-                          <label for="lead-service" class="form-label">Service Needed</label>
+                          <label for="lead-service" class="form-label">Service Required</label>
                           <select id="lead-service" name="service" class="form-select">
                             <option value="New Website Development" selected>New Website Development</option>
                             <option value="Website Redesign & Modernization">Website Redesign & Modernization</option>
@@ -1207,8 +1218,19 @@
                             <option value="Other / Custom Requirement">Other / Custom Requirement</option>
                           </select>
                         </div>
+                        <div class="form-group">
+                          <label for="lead-requirement-tier" class="form-label">What best describes your requirement?</label>
+                          <select id="lead-requirement-tier" name="requirement_tier" class="form-select">
+                            <option value="🌱 Starter: Simple website / landing page">🌱 Starter: Simple website / landing page</option>
+                            <option value="💼 Professional: Business / portfolio website" selected>💼 Professional: Business / portfolio website</option>
+                            <option value="🏢 Business: Advanced business website">🏢 Business: Advanced business website</option>
+                            <option value="⚡ Custom: E-commerce / booking / integrations / web application">⚡ Custom: E-commerce / booking / integrations / web application</option>
+                            <option value="🤔 Not sure, help me choose">🤔 Not sure, help me choose</option>
+                          </select>
+                        </div>
                       </div>
 
+                      <!-- Row 4: Estimated Budget with Currency Switcher -->
                       <div class="form-group">
                         <div class="form-label-row">
                           <label for="lead-budget" class="form-label" id="budget-label">Estimated Budget</label>
@@ -1226,14 +1248,50 @@
                         </select>
                       </div>
 
+                      <!-- Row 5: Tell us about your requirement (Req) -->
                       <div class="form-group">
-                        <label for="lead-message" class="form-label">Project Details <span class="req">*</span></label>
+                        <label for="lead-message" class="form-label">Tell us about your requirement <span class="req">*</span></label>
                         <textarea id="lead-message" name="message" class="form-textarea" rows="4"
                           placeholder="Describe your vision, target deliverables, timeline, or current challenges..." required></textarea>
                       </div>
 
+                      <!-- Row 6: Attach Reference Files or Wireframes (Compact Horizontal Pill) -->
+                      <div class="form-group">
+                        <label class="form-label">Attach Reference Files or Wireframes</label>
+                        <div class="upload-zone upload-zone-compact" id="upload-zone">
+                          <input type="file" id="file-input" class="upload-input-file"
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip">
+                          <div class="upload-compact-content">
+                            <div class="upload-compact-left">
+                              <svg class="upload-compact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                              </svg>
+                              <span class="upload-compact-prompt">Drag &amp; drop or <span class="browse-link">Browse file</span></span>
+                            </div>
+                            <span class="upload-compact-badge">PDF, PNG, DOC · Max 10MB</span>
+                          </div>
+                        </div>
+
+                        <!-- File Preview Chip -->
+                        <div class="file-preview-card file-preview-compact" id="file-preview">
+                          <div class="file-preview-left">
+                            <div class="file-preview-icon">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                              </svg>
+                            </div>
+                            <div class="file-preview-info">
+                              <div class="file-preview-name" id="preview-file-name">file.pdf</div>
+                              <div class="file-preview-meta" id="preview-file-meta">0 MB · Ready</div>
+                            </div>
+                          </div>
+                          <button type="button" class="file-remove-btn" id="file-remove-btn" title="Remove file">✕</button>
+                        </div>
+                      </div>
+
                       <button type="submit" id="submit-btn" class="btn-primary form-submit-btn">
-                        <span class="btn-text">Submit Project Inquiry</span>
+                        <span class="btn-text">Get a Free consultation</span>
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                           <path d="M7 17L17 7M17 7H7M17 7V17" />
                         </svg>
@@ -1321,7 +1379,7 @@
       </svg>
     </button>
 
-    <script src="main.js?v=38"></script>
+    <script src="main.js?v=40"></script>
 </body>
 
 </html>

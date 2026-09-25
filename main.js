@@ -357,6 +357,120 @@
       });
     }
 
+    // File Upload & Drag-and-Drop Controller (Initialized on page load)
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const filePreview = document.getElementById('file-preview');
+    const previewName = document.getElementById('preview-file-name');
+    const previewMeta = document.getElementById('preview-file-meta');
+    const removeBtn = document.getElementById('file-remove-btn');
+
+    let attachedFile = null;
+
+    function handleFile(file) {
+      if (!file) return;
+
+      if (file.size > 10 * 1024 * 1024) {
+        showFeedback('Selected file exceeds 10MB limit. Please choose a smaller file.', 'error');
+        return;
+      }
+
+      const sizeFormatted = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+      attachedFile = {
+        name: file.name,
+        size: sizeFormatted,
+        type: file.type || 'application/octet-stream'
+      };
+
+      if (previewName) previewName.textContent = file.name;
+      if (previewMeta) previewMeta.textContent = `${sizeFormatted} · Ready to submit`;
+      if (filePreview) filePreview.classList.add('visible');
+
+      // Read file to Base64 in background for form submission
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        let hiddenData = form.querySelector('input[name="attachment_data"]');
+        if (!hiddenData) {
+          hiddenData = document.createElement('input');
+          hiddenData.type = 'hidden';
+          hiddenData.name = 'attachment_data';
+          form.appendChild(hiddenData);
+        }
+        hiddenData.value = e.target.result;
+
+        let hiddenName = form.querySelector('input[name="attachment_name"]');
+        if (!hiddenName) {
+          hiddenName = document.createElement('input');
+          hiddenName.type = 'hidden';
+          hiddenName.name = 'attachment_name';
+          form.appendChild(hiddenName);
+        }
+        hiddenName.value = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    if (fileInput) {
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0]);
+        }
+      });
+    }
+
+    if (uploadZone) {
+      uploadZone.addEventListener('click', (e) => {
+        if (e.target !== fileInput && fileInput) {
+          fileInput.click();
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        uploadZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        uploadZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadZone.classList.remove('dragover');
+        });
+      });
+
+      uploadZone.addEventListener('drop', (e) => {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    function clearAttachment() {
+      attachedFile = null;
+      if (fileInput) fileInput.value = '';
+      if (filePreview) filePreview.classList.remove('visible');
+      form.querySelector('input[name="attachment_data"]')?.remove();
+      form.querySelector('input[name="attachment_name"]')?.remove();
+    }
+
+    if (removeBtn) {
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearAttachment();
+      });
+    }
+
+    function resetFormVisualState() {
+      form.email?.classList.remove('is-invalid');
+      form.phone?.classList.remove('is-invalid');
+      clearAttachment();
+      if (typeof window.__setPhoneCountry === 'function') {
+        const isCurrInr = document.getElementById('curr-btn-inr')?.classList.contains('active');
+        window.__setPhoneCountry(!!isCurrInr);
+      }
+    }
+
     form.addEventListener('submit', (e) => {
       const name = (form.name.value || '').trim();
       const email = (form.email.value || '').trim();
@@ -397,15 +511,6 @@
           <p class="feedback-desc">Thank you for reaching out. I'll review your request and get back to you within 24-48 hours.</p>
         </div>
       `;
-
-      function resetFormVisualState() {
-        form.email?.classList.remove('is-invalid');
-        form.phone?.classList.remove('is-invalid');
-        if (typeof window.__setPhoneCountry === 'function') {
-          const isCurrInr = document.getElementById('curr-btn-inr')?.classList.contains('active');
-          window.__setPhoneCountry(!!isCurrInr);
-        }
-      }
 
       // Fallback timer ensures user feedback even if iframe load event is suppressed
       setTimeout(() => {
@@ -917,11 +1022,12 @@
     if (!budgetSelect || !btnUsd || !btnInr) return;
 
     const inrOptions = [
-      { value: "Flexible / To Be Discussed", text: "Flexible / Open to Discuss on Call" },
-      { value: "₹35,000 - ₹75,000 (Starter / MVP)", text: "₹35,000 – ₹75,000 (Starter / MVP Website)" },
-      { value: "₹75,000 - ₹1,75,000 (Growth Platform)", text: "₹75,000 – ₹1,75,000 (Growth & E-commerce)" },
-      { value: "₹1,75,000 - ₹4,00,000+ (Enterprise / AI)", text: "₹1,75,000 – ₹4,00,000+ (Custom AI & Enterprise)" },
-      { value: "Monthly Maintenance / Advisory", text: "Monthly Maintenance / Advisory" }
+      { value: "Under ₹5,000", text: "Under ₹5,000" },
+      { value: "₹5,000–₹15,000", text: "₹5,000–₹15,000" },
+      { value: "₹15,000–₹30,000", text: "₹15,000–₹30,000" },
+      { value: "₹30,000–₹50,000", text: "₹30,000–₹50,000" },
+      { value: "₹50,000+", text: "₹50,000+" },
+      { value: "Not sure yet", text: "Not sure yet" }
     ];
 
     const usdOptions = [

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Contact Form — Full Desktop Web View Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=68">
+
+  <style>
+    /* Demo-specific Top Navigation & Switchers */
+    .demo-top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(7, 7, 9, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .demo-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .demo-title-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+
+    .demo-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.5; }
+    }
+
+    .demo-viewport-toggles {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .view-btn.active {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(255, 107, 53, 0.4);
+    }
+
+    .demo-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .demo-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.42rem 0.9rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .demo-action-btn:hover {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Viewport Simulator Container */
+    #viewport-container {
+      width: 100%;
+      transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin 0.4s ease;
+      margin: 0 auto;
+    }
+
+    #viewport-container.mobile-mode {
+      max-width: 420px;
+      margin: 2rem auto 4rem;
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 36px;
+      padding: 1.5rem 0.5rem;
+      background: #070709;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 107, 53, 0.15);
+      position: relative;
+    }
+
+    #viewport-container.mobile-mode::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 99px;
+    }
+
+    /* Enhanced Form Styling Additions */
+    .field-tag-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--accent-orange);
+      background: rgba(255, 107, 53, 0.12);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 4px;
+      padding: 1px 5px;
+      margin-left: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+    }
+
+    .form-label .opt {
+      color: var(--text-dim);
+      font-weight: 400;
+      font-size: 0.8rem;
+      margin-left: 4px;
+    }
+
+    /* Drag & Drop File Upload Box */
+    .upload-zone {
+      position: relative;
+      border: 1.5px dashed rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.015);
+      border-radius: 14px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      overflow: hidden;
+      margin-top: 0.35rem;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--accent-orange);
+      background: rgba(255, 107, 53, 0.04);
+      box-shadow: 0 0 20px rgba(255, 107, 53, 0.1);
+    }
+
+    .upload-input-file {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-icon {
+      width: 30px;
+      height: 30px;
+      margin: 0 auto 0.4rem;
+      color: var(--accent-orange);
+      transition: transform 0.2s ease;
+    }
+
+    .upload-zone:hover .upload-icon {
+      transform: translateY(-2px);
+    }
+
+    .upload-prompt {
+      font-size: 0.86rem;
+      color: #e2e8f0;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+
+    .upload-prompt span.browse-link {
+      color: var(--accent-orange);
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .upload-hint {
+      font-size: 0.73rem;
+      color: var(--text-dim);
+    }
+
+    .file-preview-card {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 107, 53, 0.08);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 12px;
+      margin-top: 0.75rem;
+    }
+
+    .file-preview-card.visible {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .file-preview-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      overflow: hidden;
+    }
+
+    .file-preview-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 107, 53, 0.2);
+      color: var(--accent-orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .file-preview-info {
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .file-preview-name {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 280px;
+    }
+
+    .file-preview-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .file-remove-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #cbd5e1;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .file-remove-btn:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    /* Bottom Slide-up Data Inspector Drawer */
+    .drawer-toggle-fixed {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      z-index: 1000;
+      padding: 0.65rem 1.25rem;
+      background: #121218;
+      color: #ffffff;
+      border: 1px solid var(--border-accent);
+      border-radius: 999px;
+      font-family: var(--font-display);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 107, 53, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s ease;
+    }
+
+    .drawer-toggle-fixed:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 107, 53, 0.4);
+    }
+
+    .drawer-panel {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 80vh;
+      background: rgba(14, 14, 18, 0.96);
+      backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border-accent);
+      border-left: 1px solid var(--border-subtle);
+      border-top-left-radius: 20px;
+      box-shadow: -10px -10px 40px rgba(0, 0, 0, 0.7);
+      padding: 1.5rem;
+      z-index: 1001;
+      transform: translateY(110%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer-panel.open {
+      transform: translateY(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .drawer-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .drawer-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .drawer-close:hover {
+      color: #ffffff;
+    }
+
+    .json-code-box {
+      background: #070709;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #6ee7b7;
+      overflow-y: auto;
+      flex: 1;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Demo Control Navigation Bar -->
+  <div class="demo-top-bar">
+    <div class="demo-bar-left">
+      <div class="demo-title-tag">
+        <span class="demo-live-dot"></span>
+        Portfolio Contact Form — Live Architecture Demo
+      </div>
+
+      <!-- Viewport Toggle: Full Desktop vs Mobile -->
+      <div class="demo-viewport-toggles" role="group" aria-label="Viewport Switcher">
+        <button type="button" class="view-btn active" id="btn-view-desktop">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/>
+          </svg>
+          Desktop Web View (100% Full Width)
+        </button>
+        <button type="button" class="view-btn" id="btn-view-mobile">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="14" height="20" x="5" y="2" rx="2"/><line x1="12" x2="12.01" y1="18" y2="18"/>
+          </svg>
+          Mobile Screen View (390px)
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-bar-right">
+      <a href="http://localhost:8080/#contact" class="demo-action-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        Back to Production Site
+      </a>
+    </div>
+  </div>
+
+  <!-- Viewport Simulator Container -->
+  <div id="viewport-container">
+
+    <!-- Contact & Lead Capture Form Section (Exact match to Portfolio index.html) -->
+    <section class="contact-section" id="contact" style="padding-top: 3.5rem;">
+      <div class="section-container">
+        <div class="contact-grid">
+
+          <!-- Left Column: Contact Intro & Direct Channels -->
+          <div class="contact-info-col">
+            <div class="badge-tag">
+              <span class="badge-dot"></span> Get In Touch
+            </div>
+            <h2 class="section-title">Let's Build Something Extraordinary Together</h2>
+            <p class="contact-subtitle">
+              Have an upcoming project, engineering challenge, or idea? Fill out the form and I'll get back to you
+              within 24 hours.
+            </p>
+
+            <div class="contact-channels">
+              <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer"
+                class="channel-card channel-card-interactive glass-card" title="Book a 15-Min Discovery Call">
+                <div class="channel-icon accent-gold-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <line x1="3" x2="21" y1="10" y2="10"/>
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-label">Schedule a Call</span>
+                  <span class="channel-val highlight-gold">Book 15-Min Discovery Call ↗</span>
+                </div>
+              </a>
+
+              <div class="channel-card glass-card">
+                <div class="channel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-label">Email Directly</span>
+                  <a href="mailto:pauldebashish115@gmail.com" class="channel-val">pauldebashish115@gmail.com</a>
+                </div>
+              </div>
+
+              <div class="channel-card glass-card">
+                <div class="channel-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div>
+                  <span class="channel-label">Availability & Timezone</span>
+                  <span class="channel-val">Global Remote • US / UK / Global Timezone Overlap</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="response-pledge">
+              <span class="pulse-indicator"></span>
+              <span>Available globally · Async-first workflow · Rapid 24h inquiry response</span>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Lead Generation Form with all 7 requested upgrades -->
+          <div class="contact-form-col">
+            <div class="form-card glass-card">
+              <form id="contact-form" class="contact-form">
+
+                <!-- 1. Row 1: Your Name (Req) & Business Name -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="lead-name" class="form-label">Your Name <span class="req">*</span></label>
+                    <input type="text" id="lead-name" name="name" class="form-input"
+                      placeholder="e.g. Alex Morgan" required autocomplete="name" value="Debashish Paul">
+                  </div>
+                  <div class="form-group">
+                    <label for="lead-business" class="form-label">Business Name</label>
+                    <input type="text" id="lead-business" name="business_name" class="form-input"
+                      placeholder="e.g. Admirers Creation or Studio" autocomplete="organization">
+                  </div>
+                </div>
+
+                <!-- 2. Row 2: Email Address (Req) & Phone / WhatsApp (Req) -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="lead-email" class="form-label">Email Address <span class="req">*</span></label>
+                    <input type="email" id="lead-email" name="email" class="form-input"
+                      placeholder="alex@company.com" required autocomplete="email" value="pauldebashish115@gmail.com">
+                  </div>
+                  <div class="form-group">
+                    <label for="lead-phone" class="form-label">Phone / WhatsApp <span class="req">*</span></label>
+                    <div class="phone-input-wrapper">
+                      <span class="phone-flag-prefix" id="phone-flag-icon" title="India (+91)">
+                        <img src="https://flagcdn.com/w40/in.png" alt="India">
+                      </span>
+                      <input type="tel" id="lead-phone" name="phone" class="form-input phone-input-with-flag"
+                        placeholder="+91 98765 43210" autocomplete="tel" inputmode="tel" required value="+91 99056 08257">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Row 3: Service Required & What best describes your requirement? -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="lead-service" class="form-label">Service Required</label>
+                    <select id="lead-service" name="service" class="form-select">
+                      <option value="New Website Development" selected>New Website Development</option>
+                      <option value="Website Redesign & Modernization">Website Redesign & Modernization</option>
+                      <option value="UI/UX Design">UI/UX Design</option>
+                      <option value="3D & Scroll Motion">3D & Scroll Motion</option>
+                      <option value="Custom Web Development">Custom Web Development</option>
+                      <option value="API & Third-Party Integrations">API & Third-Party Integrations</option>
+                      <option value="Business Automation & Workflows">Business Automation & Workflows</option>
+                      <option value="SEO & Performance Optimization">SEO & Performance Optimization</option>
+                      <option value="E-commerce Development">E-commerce Development</option>
+                      <option value="Other / Custom Requirement">Other / Custom Requirement</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="lead-requirement-tier" class="form-label">What best describes your requirement?</label>
+                    <select id="lead-requirement-tier" name="requirement_tier" class="form-select">
+                      <option value="🌱 Starter: Simple website / landing page">🌱 Starter: Simple website / landing page</option>
+                      <option value="💼 Professional: Business / portfolio website" selected>💼 Professional: Business / portfolio website</option>
+                      <option value="🏢 Business: Advanced business website">🏢 Business: Advanced business website</option>
+                      <option value="⚡ Custom: E-commerce / booking / integrations / web application">⚡ Custom: E-commerce / booking / integrations / web application</option>
+                      <option value="🤔 Not sure, help me choose">🤔 Not sure, help me choose</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 4. Row 4: Estimated Budget with Currency Switcher -->
+                <div class="form-group">
+                  <div class="form-label-row">
+                    <label for="lead-budget" class="form-label" id="budget-label">Estimated Budget</label>
+                    <div class="currency-switcher" id="currency-switcher" role="group" aria-label="Currency Switcher">
+                      <button type="button" class="curr-btn active" id="curr-btn-inr" data-curr="INR">₹ INR</button>
+                      <button type="button" class="curr-btn" id="curr-btn-usd" data-curr="USD">$ USD</button>
+                    </div>
+                  </div>
+                  <select id="lead-budget" name="budget" class="form-select">
+                    <!-- Populated dynamically with new requested INR tiers -->
+                    <option value="Under ₹5,000">Under ₹5,000</option>
+                    <option value="₹5,000–₹15,000">₹5,000–₹15,000</option>
+                    <option value="₹15,000–₹30,000" selected>₹15,000–₹30,000</option>
+                    <option value="₹30,000–₹50,000">₹30,000–₹50,000</option>
+                    <option value="₹50,000+">₹50,000+</option>
+                    <option value="Not sure yet">Not sure yet</option>
+                  </select>
+                </div>
+
+                <!-- 5. Row 5: Tell us about your requirement (Req) -->
+                <div class="form-group">
+                  <label for="lead-message" class="form-label">Tell us about your requirement <span class="req">*</span></label>
+                  <textarea id="lead-message" name="message" class="form-textarea" rows="3"
+                    placeholder="Describe your vision, target deliverables, timeline, or current challenges..." required>We need a bespoke 60fps website redesign with interactive elements and high conversion architecture.</textarea>
+                </div>
+
+                <!-- 6. Row 6: Attach Reference Files or Wireframes -->
+                <div class="form-group">
+                  <label class="form-label">Attach Reference Files or Wireframes</label>
+                  <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="file-input" class="upload-input-file"
+                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip">
+                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <div class="upload-prompt">
+                      Drag &amp; drop files here or <span class="browse-link">Browse Computer</span>
+                    </div>
+                    <div class="upload-hint">Supported: PDF, DOCX, PNG, JPG, ZIP (Max 10MB)</div>
+                  </div>
+
+                  <!-- File Preview Chip -->
+                  <div class="file-preview-card" id="file-preview">
+                    <div class="file-preview-left">
+                      <div class="file-preview-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                      </div>
+                      <div class="file-preview-info">
+                        <div class="file-preview-name" id="preview-file-name">design_spec.pdf</div>
+                        <div class="file-preview-meta" id="preview-file-meta">2.4 MB · Ready for upload</div>
+                      </div>
+                    </div>
+                    <button type="button" class="file-remove-btn" id="file-remove-btn" title="Remove file">✕</button>
+                  </div>
+                </div>
+
+                <!-- 7. Row 7: Submit Button (Renamed #7) -->
+                <button type="submit" id="submit-btn" class="btn-primary form-submit-btn">
+                  <span class="btn-text">Get a Free consultation</span>
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" />
+                  </svg>
+                  <span class="btn-spinner" aria-hidden="true"></span>
+                </button>
+
+                <!-- Feedback status notice -->
+                <div id="form-feedback" class="form-feedback" style="display: none;"></div>
+
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Floating Button to Inspect Live Form Data -->
+  <button type="button" class="drawer-toggle-fixed" id="drawer-toggle">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+    </svg>
+    Live Payload Inspector
+  </button>
+
+  <!-- Slide-out JSON Inspector Drawer -->
+  <div class="drawer-panel" id="drawer-panel">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <span class="demo-live-dot"></span>
+        Live Form Submission Payload
+      </div>
+      <button type="button" class="drawer-close" id="drawer-close" aria-label="Close Inspector">✕</button>
+    </div>
+    <pre class="json-code-box" id="json-box"></pre>
+  </div>
+
+  <script>
+    (() => {
+      const container = document.getElementById('viewport-container');
+      const btnDesktop = document.getElementById('btn-view-desktop');
+      const btnMobile = document.getElementById('btn-view-mobile');
+
+      // Viewport Switcher
+      btnDesktop.addEventListener('click', () => {
+        container.classList.remove('mobile-mode');
+        btnDesktop.classList.add('active');
+        btnMobile.classList.remove('active');
+      });
+
+      btnMobile.addEventListener('click', () => {
+        container.classList.add('mobile-mode');
+        btnMobile.classList.add('active');
+        btnDesktop.classList.remove('active');
+      });
+
+      // Form & Currency logic
+      const form = document.getElementById('contact-form');
+      const btnInr = document.getElementById('curr-btn-inr');
+      const btnUsd = document.getElementById('curr-btn-usd');
+      const budgetSelect = document.getElementById('lead-budget');
+      const phoneInput = document.getElementById('lead-phone');
+      const flagIcon = document.getElementById('phone-flag-icon');
+
+      const inrOptions = [
+        { value: "Under ₹5,000", text: "Under ₹5,000" },
+        { value: "₹5,000–₹15,000", text: "₹5,000–₹15,000" },
+        { value: "₹15,000–₹30,000", text: "₹15,000–₹30,000" },
+        { value: "₹30,000–₹50,000", text: "₹30,000–₹50,000" },
+        { value: "₹50,000+", text: "₹50,000+" },
+        { value: "Not sure yet", text: "Not sure yet" }
+      ];
+
+      const usdOptions = [
+        { value: "Flexible / Open for Discussion", text: "Flexible / Open to Discuss on Call" },
+        { value: "$1,500 - $3,500 (Starter / MVP)", text: "$1,500 – $3,500 (Starter / MVP Platform)" },
+        { value: "$3,500 - $7,500 (Full-Stack / E-commerce)", text: "$3,500 – $7,500 (Full-Stack & E-commerce)" },
+        { value: "$7,500 - $15,000+ (Enterprise & AI)", text: "$7,500 – $15,000+ (Enterprise Architecture & AI)" },
+        { value: "Flexible Hourly / Advisory", text: "Flexible Hourly / Retainer Advisory" }
+      ];
+
+      function setCurrency(curr) {
+        const opts = curr === 'INR' ? inrOptions : usdOptions;
+        budgetSelect.innerHTML = '';
+        opts.forEach((o, i) => {
+          const opt = document.createElement('option');
+          opt.value = o.value;
+          opt.textContent = o.text;
+          if (i === 2) opt.selected = true;
+          budgetSelect.appendChild(opt);
+        });
+
+        if (curr === 'INR') {
+          btnInr.classList.add('active');
+          btnUsd.classList.remove('active');
+          flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/in.png" alt="India">`;
+          flagIcon.title = "India (+91)";
+          if (!phoneInput.value || phoneInput.value.startsWith('+1')) {
+            phoneInput.value = '+91 ';
+          }
+        } else {
+          btnUsd.classList.add('active');
+          btnInr.classList.remove('active');
+          flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/us.png" alt="USA">`;
+          flagIcon.title = "USA / Canada (+1)";
+          if (!phoneInput.value || phoneInput.value.startsWith('+91')) {
+            phoneInput.value = '+1 ';
+          }
+        }
+        updateInspector();
+      }
+
+      btnInr.addEventListener('click', () => setCurrency('INR'));
+      btnUsd.addEventListener('click', () => setCurrency('USD'));
+
+      // File upload handling
+      const uploadZone = document.getElementById('upload-zone');
+      const fileInput = document.getElementById('file-input');
+      const filePreview = document.getElementById('file-preview');
+      const previewName = document.getElementById('preview-file-name');
+      const previewMeta = document.getElementById('preview-file-meta');
+      const removeBtn = document.getElementById('file-remove-btn');
+
+      let currentFileObj = null;
+
+      function handleFileSelected(file) {
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+          alert('File size exceeds 10MB limit. Please upload a smaller file or link a Google Drive / Figma file.');
+          return;
+        }
+
+        const sizeFormatted = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+        currentFileObj = {
+          name: file.name,
+          size: sizeFormatted,
+          type: file.type || 'application/octet-stream'
+        };
+
+        previewName.textContent = file.name;
+        previewMeta.textContent = `${sizeFormatted} · Attached`;
+        filePreview.classList.add('visible');
+
+        updateInspector();
+      }
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleFileSelected(e.target.files[0]);
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        uploadZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        uploadZone.addEventListener(evt, (e) => {
+          e.preventDefault();
+          uploadZone.classList.remove('dragover');
+        });
+      });
+
+      uploadZone.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFileSelected(e.dataTransfer.files[0]);
+        }
+      });
+
+      removeBtn.addEventListener('click', () => {
+        currentFileObj = null;
+        fileInput.value = '';
+        filePreview.classList.remove('visible');
+        updateInspector();
+      });
+
+      // JSON Inspector Drawer
+      const drawerToggle = document.getElementById('drawer-toggle');
+      const drawerPanel = document.getElementById('drawer-panel');
+      const drawerClose = document.getElementById('drawer-close');
+      const jsonBox = document.getElementById('json-box');
+
+      drawerToggle.addEventListener('click', () => {
+        drawerPanel.classList.toggle('open');
+      });
+
+      drawerClose.addEventListener('click', () => {
+        drawerPanel.classList.remove('open');
+      });
+
+      function updateInspector() {
+        const payload = {
+          name: form.name.value,
+          business_name: form.business_name.value || "(Not provided)",
+          email: form.email.value,
+          phone: form.phone.value,
+          service_required: form.service.value,
+          requirement_tier: form.requirement_tier.value,
+          currency: btnInr.classList.contains('active') ? 'INR' : 'USD',
+          estimated_budget: form.budget.value,
+          requirement_details: form.message.value,
+          file_attachment: currentFileObj ? {
+            name: currentFileObj.name,
+            size: currentFileObj.size,
+            status: "Base64 encoded for Google Apps Script Web App"
+          } : null
+        };
+        jsonBox.textContent = JSON.stringify(payload, null, 2);
+      }
+
+      form.addEventListener('input', updateInspector);
+      form.addEventListener('change', updateInspector);
+
+      // Submission simulation
+      const submitBtn = document.getElementById('submit-btn');
+      const feedback = document.getElementById('form-feedback');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        feedback.style.display = 'none';
+
+        setTimeout(() => {
+          submitBtn.classList.remove('loading');
+          submitBtn.disabled = false;
+
+          feedback.className = 'form-feedback success';
+          feedback.innerHTML = `
+            <strong>✓ Free Consultation Request Received!</strong><br>
+            All 7 updated parameters were packaged cleanly and routed into your workflow.
+          `;
+          feedback.style.display = 'block';
+        }, 1200);
+      });
+
+      // Initialize
+      updateInspector();
+    })();
+  </script>
+</body>
+
+</html>
