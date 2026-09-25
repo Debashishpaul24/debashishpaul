@@ -42,7 +42,7 @@ function testNotification() {
     "david.miller@example.com",
     "+1 (415) 890-1234",
     "UI/UX Design",
-    "💼 Professional: Business / portfolio website",
+    "Professional: Business / portfolio website",
     "₹30,000–₹50,000",
     "Hello Debashish, looking to redesign our agency portfolio with modern 3D scroll motion and fast loading times. Attached is our initial wireframe outline.",
     "",
