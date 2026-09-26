@@ -1038,6 +1038,7 @@
     if (!budgetSelect || !btnUsd || !btnInr) return;
 
     const inrOptions = [
+      { value: "Flexible / Open for Discussion", text: "Flexible / Open to Discuss on Call" },
       { value: "Under ₹5,000", text: "Under ₹5,000" },
       { value: "₹5,000–₹15,000", text: "₹5,000–₹15,000" },
       { value: "₹15,000–₹30,000", text: "₹15,000–₹30,000" },

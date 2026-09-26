@@ -598,6 +598,7 @@
                   </div>
                   <select id="lead-budget" name="budget" class="form-select">
                     <!-- Populated dynamically with new requested INR tiers -->
+                    <option value="Flexible / Open for Discussion">Flexible / Open to Discuss on Call</option>
                     <option value="Under ₹5,000">Under ₹5,000</option>
                     <option value="₹5,000–₹15,000">₹5,000–₹15,000</option>
                     <option value="₹15,000–₹30,000" selected>₹15,000–₹30,000</option>
@@ -719,6 +720,7 @@
       const flagIcon = document.getElementById('phone-flag-icon');
 
       const inrOptions = [
+        { value: "Flexible / Open for Discussion", text: "Flexible / Open to Discuss on Call" },
         { value: "Under ₹5,000", text: "Under ₹5,000" },
         { value: "₹5,000–₹15,000", text: "₹5,000–₹15,000" },
         { value: "₹15,000–₹30,000", text: "₹15,000–₹30,000" },
