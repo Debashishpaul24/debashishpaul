@@ -40,10 +40,10 @@
     return `${CONFIG.prefix}${padded}${CONFIG.ext}`;
   }
 
-  // Fast Snappy Critical-Batch Preloader
+  // Fast Snappy Critical-Batch Preloader (Instant Hero Frame 0 unlock)
   function preloadImages() {
     return new Promise((resolve) => {
-      // Safety unlock timeout so user is NEVER stuck on loading screen (max 800ms)
+      // Safety unlock timeout so user is NEVER stuck on loading screen (max 350ms)
       const safetyTimer = setTimeout(() => {
         if (!isReady) {
           isReady = true;
@@ -51,8 +51,9 @@
           if (progressText) progressText.textContent = '100%';
           hideLoader();
           resolve();
+          loadRemainingFrames(1);
         }
-      }, 850);
+      }, 350);
 
       // 1. Load Initial Hero Frame 0 immediately
       const firstImg = new Image();
@@ -62,49 +63,18 @@
       firstImg.onload = () => {
         images[0] = firstImg;
         loadedCount++;
-        updateProgress();
         drawFrame(0);
 
-        // 2. Fast critical batch (frames 1 to CONFIG.criticalFrames)
-        let criticalLoaded = 1;
-        for (let i = 1; i <= CONFIG.criticalFrames; i++) {
-          const img = new Image();
-          img.decoding = 'async';
-          img.src = getFramePath(i);
+        if (!isReady) {
+          isReady = true;
+          clearTimeout(safetyTimer);
+          if (progressBar) progressBar.style.width = '100%';
+          if (progressText) progressText.textContent = '100%';
+          hideLoader();
+          resolve();
 
-          img.onload = () => {
-            images[i] = img;
-            loadedCount++;
-            criticalLoaded++;
-            updateProgress();
-
-            if (criticalLoaded >= CONFIG.criticalFrames && !isReady) {
-              isReady = true;
-              clearTimeout(safetyTimer);
-              if (progressBar) progressBar.style.width = '100%';
-              if (progressText) progressText.textContent = '100%';
-              setTimeout(() => {
-                hideLoader();
-                resolve();
-              }, 100);
-
-              // 3. Stream remaining frames in lightweight background idle batches
-              loadRemainingFrames(CONFIG.criticalFrames + 1);
-            }
-          };
-
-          img.onerror = () => {
-            loadedCount++;
-            criticalLoaded++;
-            updateProgress();
-            if (criticalLoaded >= CONFIG.criticalFrames && !isReady) {
-              isReady = true;
-              clearTimeout(safetyTimer);
-              hideLoader();
-              resolve();
-              loadRemainingFrames(CONFIG.criticalFrames + 1);
-            }
-          };
+          // Stream remaining frames asynchronously in lightweight background idle batches
+          loadRemainingFrames(1);
         }
       };
 
@@ -113,6 +83,7 @@
         clearTimeout(safetyTimer);
         hideLoader();
         resolve();
+        loadRemainingFrames(1);
       };
     });
   }

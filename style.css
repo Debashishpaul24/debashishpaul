@@ -108,6 +108,12 @@ a {
   pointer-events: none;
 }
 
+@media (max-width: 768px) {
+  .loader {
+    display: none !important;
+  }
+}
+
 .loader-content {
   display: flex;
   flex-direction: column;
