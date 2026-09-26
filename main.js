@@ -978,20 +978,6 @@
       updateFlag();
     });
 
-    phoneInput.addEventListener('paste', (e) => {
-      e.preventDefault();
-      const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
-      const cleanDigits = text.replace(/[^0-9\s\-]/g, '');
-      const start = phoneInput.selectionStart;
-      const end = phoneInput.selectionEnd;
-      const current = phoneInput.value;
-      let nextVal = current.substring(0, start) + cleanDigits + current.substring(end);
-      if (!nextVal.startsWith('+')) {
-        nextVal = '+' + nextVal.replace(/^\+*/, '');
-      }
-      phoneInput.value = nextVal;
-      updateFlag();
-    });
 
     phoneInput.addEventListener('blur', () => {
       const val = phoneInput.value.trim();
