@@ -1265,10 +1265,11 @@
 
                       <!-- Row 6: Attach Reference Files or Wireframes (Compact Horizontal Pill) -->
                       <div class="form-group">
-                        <label class="form-label">Attach Reference Files or Wireframes</label>
+                        <label for="file-input" id="file-input-label" class="form-label">Attach Reference Files or Wireframes</label>
                         <div class="upload-zone upload-zone-compact" id="upload-zone">
-                          <input type="file" id="file-input" class="upload-input-file"
-                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip">
+                          <input type="file" id="file-input" name="file" class="upload-input-file"
+                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip"
+                            aria-label="Attach Reference Files or Wireframes">
                           <div class="upload-compact-content">
                             <div class="upload-compact-left">
                               <svg class="upload-compact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

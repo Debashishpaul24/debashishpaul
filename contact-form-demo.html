@@ -617,10 +617,11 @@
 
                 <!-- 6. Row 6: Attach Reference Files or Wireframes -->
                 <div class="form-group">
-                  <label class="form-label">Attach Reference Files or Wireframes</label>
+                  <label for="file-input" id="file-input-label" class="form-label">Attach Reference Files or Wireframes</label>
                   <div class="upload-zone" id="upload-zone">
-                    <input type="file" id="file-input" class="upload-input-file"
-                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip">
+                    <input type="file" id="file-input" name="file" class="upload-input-file"
+                      accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip"
+                      aria-label="Attach Reference Files or Wireframes">
                     <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                       <polyline points="17 8 12 3 7 8"/>
