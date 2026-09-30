@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalMaterialsList.innerHTML = '';
     proj.materials.forEach(mat => {
       const li = document.createElement('li');
-      li.style.cssText = 'font-size: 0.88rem; color: #cfd0d8; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;';
+      li.style.cssText = 'font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;';
       li.innerHTML = `<span style="width: 5px; height: 5px; border-radius: 50%; background: var(--accent-gold); display: inline-block;"></span> ${mat}`;
       modalMaterialsList.appendChild(li);
     });
