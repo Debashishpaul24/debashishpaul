@@ -646,9 +646,9 @@ ul, ol {
   position: absolute;
   inset: 0;
   background: 
-    radial-gradient(circle at 75% 35%, rgba(165, 123, 67, 0.12), transparent 50%),
-    linear-gradient(to top, #FBF9F5 5%, rgba(251, 249, 245, 0.82) 50%, rgba(251, 249, 245, 0.94) 100%),
-    linear-gradient(to right, #FBF9F5 0%, rgba(251, 249, 245, 0.88) 55%, rgba(251, 249, 245, 0.35) 100%);
+    radial-gradient(circle at 80% 35%, rgba(165, 123, 67, 0.08), transparent 50%),
+    linear-gradient(to right, #FBF9F5 0%, rgba(251, 249, 245, 0.92) 42%, rgba(251, 249, 245, 0.45) 75%, rgba(251, 249, 245, 0.1) 100%),
+    linear-gradient(to top, #FBF9F5 0%, transparent 20%);
 }
 
 .hero-grid {
@@ -1505,20 +1505,21 @@ ul, ol {
 
 .modal-hero-cover {
   width: 100%;
-  height: 320px;
+  height: 380px;
   position: relative;
+  background: #F4EFE6;
+  overflow: hidden;
 }
 
 .modal-hero-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .modal-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, #FFFFFF 0%, transparent 60%);
+  display: none !important;
 }
 
 .modal-inner-content {

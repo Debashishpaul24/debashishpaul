@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modalHeroImg.src = proj.coverImg;
     modalHeroImg.alt = proj.title;
-    modalCategory.textContent = `${proj.category} Â· ${proj.subCategory}`;
+    modalCategory.textContent = `${proj.category} · ${proj.subCategory}`;
     modalTitle.textContent = proj.title;
     modalLocation.textContent = proj.location;
     modalArea.textContent = proj.area;
