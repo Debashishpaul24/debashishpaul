@@ -1,6 +1,6 @@
 /**
- * ATELIER VESPER — ARCHITECTURE, INTERIOR DESIGN & HOME DÉCOR
- * Interactive Engine & Experience Controller
+ * NEXUS ENGINEERING & ADVISORY SERVICES
+ * Architectural, Structural & Interior Engineering Experience Controller
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       id: 'botanica-bistro-lounge',
-      title: 'Botanica Atelier & Bistro',
+      title: 'Botanica Pavilion & Bistro',
       category: 'Commercial',
       subCategory: 'Restaurant',
       location: 'Indiranagar, Bengaluru',
