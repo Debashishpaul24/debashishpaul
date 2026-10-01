@@ -126,26 +126,78 @@
 
   <!-- Mobile Drawer Menu -->
   <div class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation Drawer">
-    <div class="mobile-nav-links">
-      <a href="../#hero" class="mobile-nav-link drawer-back" aria-label="Return to Portfolio Home">&larr; Back to Portfolio</a>
-      <a href="#about" class="mobile-nav-link">01 &mdash; The Studio</a>
-      <a href="#services" class="mobile-nav-link">02 &mdash; Comprehensive Services</a>
-      <a href="#expertise" class="mobile-nav-link">03 &mdash; Our Expertise</a>
-      <a href="#process" class="mobile-nav-link">04 &mdash; Design Process</a>
-      <a href="#projects" class="mobile-nav-link">05 &mdash; Portfolio &amp; Projects</a>
-      <a href="#before-after" class="mobile-nav-link">06 &mdash; Before &amp; After</a>
-      <a href="#styles" class="mobile-nav-link">07 &mdash; Design Styles</a>
-      <a href="#materials" class="mobile-nav-link">08 &mdash; Materials &amp; Finishes</a>
-      <a href="#testimonials" class="mobile-nav-link">09 &mdash; Client Testimonials</a>
-      <a href="#contact" class="mobile-nav-link">10 &mdash; Consultation Enquiry</a>
+    <div class="mobile-drawer-header">
+      <a href="../#hero" class="drawer-back-btn mobile-nav-link" aria-label="Return to Portfolio Home">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span>Back to Portfolio</span>
+      </a>
+      <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close Navigation Drawer">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
+
+    <nav class="mobile-nav-links" aria-label="Mobile Navigation Links">
+      <a href="#about" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">01</span>
+        <span class="mobile-nav-label">The Practice &amp; Advisory</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#services" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">02</span>
+        <span class="mobile-nav-label">Multi-Disciplinary Services</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#expertise" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">03</span>
+        <span class="mobile-nav-label">Core Capabilities</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#process" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">04</span>
+        <span class="mobile-nav-label">8-Step Methodology</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#projects" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">05</span>
+        <span class="mobile-nav-label">Curated Projects</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#before-after" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">06</span>
+        <span class="mobile-nav-label">Transformations</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#styles" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">07</span>
+        <span class="mobile-nav-label">Engineering Styles</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#materials" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">08</span>
+        <span class="mobile-nav-label">Materials &amp; Finishes</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#testimonials" class="mobile-nav-link mobile-nav-item">
+        <span class="mobile-nav-idx">09</span>
+        <span class="mobile-nav-label">Client Endorsements</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+      <a href="#contact" class="mobile-nav-link mobile-nav-item highlight">
+        <span class="mobile-nav-idx">10</span>
+        <span class="mobile-nav-label">Schedule Consultation</span>
+        <svg class="mobile-nav-chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+    </nav>
 
     <div class="mobile-drawer-footer">
       <div class="mobile-contact-snippet">
         <strong>NEXUS Engineering &amp; Advisory Services</strong><br>
-        Engineering precision, structural stewardship &amp; bespoke interior environments worldwide.
+        Precision structural stewardship &amp; bespoke interior environments worldwide.
       </div>
-      <a href="#contact" class="btn btn-primary btn-sm">Start Your Project &nearr;</a>
+      <a href="#contact" class="btn btn-primary btn-sm mobile-drawer-cta mobile-nav-link">
+        <span>Start Your Project</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+      </a>
     </div>
   </div>
 

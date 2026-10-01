@@ -33,8 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', handleScroll, { passive: true });
   handleScroll();
 
+  const drawerCloseBtn = document.getElementById('drawerCloseBtn');
+
   // Mobile Drawer Toggle
   if (mobileToggle && mobileDrawer) {
+    const closeDrawer = () => {
+      mobileToggle.classList.remove('active');
+      mobileDrawer.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
     mobileToggle.addEventListener('click', () => {
       mobileToggle.classList.toggle('active');
       mobileDrawer.classList.toggle('open');
@@ -42,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = isOpen ? 'hidden' : '';
     });
 
+    if (drawerCloseBtn) {
+      drawerCloseBtn.addEventListener('click', closeDrawer);
+    }
+
     mobileNavLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        mobileToggle.classList.remove('active');
-        mobileDrawer.classList.remove('open');
-        document.body.style.overflow = '';
-      });
+      link.addEventListener('click', closeDrawer);
     });
 
     document.addEventListener('click', (e) => {
