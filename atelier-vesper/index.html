@@ -21,7 +21,7 @@
   <meta property="og:title" content="Atelier Vesper | Luxury Interior Architecture & Home Décor Studio">
   <meta property="og:description"
     content="Spaces Designed Around the Way You Live. Crafting bespoke residential and commercial environments combining architectural precision with timeless aesthetics.">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80">
+  <meta property="og:image" content="assets/img_1.jpg">
 
   <!-- Google Fonts: Playfair Display, Plus Jakarta Sans, Cinzel, Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +38,7 @@
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
     "name": "Atelier Vesper Architecture & Interiors",
-    "image": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80",
+    "image": "assets/img_1.jpg",
     "description": "Bespoke interior architecture, residential spatial design, turnkey execution, and curated home décor studio.",
     "priceRange": "$$$$",
     "address": {
@@ -52,6 +52,29 @@
 </head>
 
 <body>
+
+  <!-- ==========================================================================
+       TOP ANNOUNCEMENT / PORTFOLIO UTILITY BAR
+       ========================================================================== -->
+  <div class="top-announcement-bar">
+    <div class="container container-wide">
+      <div class="top-bar-inner">
+        <div class="top-bar-left">
+          <span class="top-bar-badge">Atelier Studio</span>
+          <span class="top-bar-text">Turnkey Architecture &amp; Bespoke Living Environments</span>
+        </div>
+        <div class="top-bar-right">
+          <a href="tel:+919830012345" class="top-bar-phone">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>Consultation Desk: <strong>+91 98300 12345</strong></span>
+          </a>
+          <a href="../#hero" class="return-link" aria-label="Return to Debashish Paul Portfolio Home">
+            <span>&larr; Back to Portfolio</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        STICKY HEADER & NAVIGATION
@@ -89,11 +112,11 @@
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
           </a>
 
-          <!-- Mobile Hamburger -->
-          <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Toggle Mobile Menu" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
+          <!-- Mobile Hamburger Menu Button -->
+          <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu" aria-expanded="false">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
           </button>
         </div>
 
@@ -104,16 +127,17 @@
   <!-- Mobile Drawer Menu -->
   <div class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation Drawer">
     <div class="mobile-nav-links">
-      <a href="#about" class="mobile-nav-link">01 — The Studio</a>
-      <a href="#services" class="mobile-nav-link">02 — Comprehensive Services</a>
-      <a href="#expertise" class="mobile-nav-link">03 — Our Expertise</a>
-      <a href="#process" class="mobile-nav-link">04 — Design Process</a>
-      <a href="#projects" class="mobile-nav-link">05 — Portfolio &amp; Projects</a>
-      <a href="#before-after" class="mobile-nav-link">06 — Before &amp; After</a>
-      <a href="#styles" class="mobile-nav-link">07 — Design Styles</a>
-      <a href="#materials" class="mobile-nav-link">08 — Materials &amp; Finishes</a>
-      <a href="#testimonials" class="mobile-nav-link">09 — Client Testimonials</a>
-      <a href="#contact" class="mobile-nav-link">10 — Consultation Enquiry</a>
+      <a href="../#hero" class="mobile-nav-link drawer-back" aria-label="Return to Portfolio Home">&larr; Back to Portfolio</a>
+      <a href="#about" class="mobile-nav-link">01 &mdash; The Studio</a>
+      <a href="#services" class="mobile-nav-link">02 &mdash; Comprehensive Services</a>
+      <a href="#expertise" class="mobile-nav-link">03 &mdash; Our Expertise</a>
+      <a href="#process" class="mobile-nav-link">04 &mdash; Design Process</a>
+      <a href="#projects" class="mobile-nav-link">05 &mdash; Portfolio &amp; Projects</a>
+      <a href="#before-after" class="mobile-nav-link">06 &mdash; Before &amp; After</a>
+      <a href="#styles" class="mobile-nav-link">07 &mdash; Design Styles</a>
+      <a href="#materials" class="mobile-nav-link">08 &mdash; Materials &amp; Finishes</a>
+      <a href="#testimonials" class="mobile-nav-link">09 &mdash; Client Testimonials</a>
+      <a href="#contact" class="mobile-nav-link">10 &mdash; Consultation Enquiry</a>
     </div>
 
     <div class="mobile-drawer-footer">
@@ -121,7 +145,7 @@
         <strong>Atelier Vesper</strong><br>
         Curating refined spaces across luxury residences, penthouses &amp; boutique commercial dockets worldwide.
       </div>
-      <a href="#contact" class="btn btn-primary btn-sm">Start Your Project ↗</a>
+      <a href="#contact" class="btn btn-primary btn-sm">Start Your Project &nearr;</a>
     </div>
   </div>
 
@@ -132,7 +156,7 @@
          ========================================================================== -->
     <section class="hero-section" id="hero">
       <div class="hero-backdrop">
-        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=2000&q=85"
+        <img src="assets/img_2.jpg"
           alt="Luxury Double-Height Minimalist Living Room Interior by Atelier Vesper" class="hero-bg-img">
         <div class="hero-overlay-gradient"></div>
       </div>
@@ -192,7 +216,7 @@
             </div>
             <div class="hero-card-preview">
               <span class="hero-card-tag">Penthouse Architecture</span>
-              <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80" alt="Penthouse Architecture by Atelier Vesper">
+              <img src="assets/img_3.jpg" alt="Penthouse Architecture by Atelier Vesper">
             </div>
             <h3 class="hero-card-title">The Solarium Duplex</h3>
             <p class="hero-card-desc">4,600 sq.ft. duplex featuring floor-to-ceiling perimeter glazing, Roman travertine monoliths, and custom Italian walnut millwork.</p>
@@ -214,7 +238,7 @@
           <!-- Visuals Column -->
           <div class="about-visuals">
             <div class="about-main-img-wrap">
-              <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80"
+              <img src="assets/img_4.jpg"
                 alt="Architectural Interior Craftsmanship at Atelier Vesper" class="about-main-img" loading="lazy">
             </div>
             
@@ -247,7 +271,7 @@
             <!-- Key Philosophy Points -->
             <div class="about-highlights-grid">
               <div class="about-highlight-card">
-                <svg class="highlight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <svg class="highlight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><path d="m5 21 7-14 7 14"/><path d="M7 16h10"/></svg>
                 <div>
                   <h4 class="highlight-title">Architectural Rigor</h4>
                   <p class="highlight-text">Every partition, sightline, and ceiling coffer is calibrated to maximize natural light and intuitive flow.</p>
@@ -409,7 +433,7 @@
 
             <div class="service-card">
               <div class="service-card-top">
-                <svg class="service-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg class="service-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18"/><path d="M4 18h16"/><path d="M6 18V9"/><path d="M10 18V9"/><path d="M14 18V9"/><path d="M18 18V9"/><path d="m2 9 10-6 10 6z"/></svg>
                 <h4 class="service-card-title">Luxury Home Interiors</h4>
                 <p class="service-card-desc">Bespoke Italian stone bookmatching, handcrafted brass details, and rare architectural veneers.</p>
               </div>
@@ -947,7 +971,7 @@
           <button type="button" class="portfolio-filter-btn" data-filter="commercial">Commercial</button>
           <button type="button" class="portfolio-filter-btn" data-filter="office">Office</button>
           <button type="button" class="portfolio-filter-btn" data-filter="restaurant">Restaurant</button>
-          <button type="button" class="portfolio-filter-btn" data-filter="décor">Décor &amp; Styling</button>
+          <button type="button" class="portfolio-filter-btn" data-filter="decor">Décor &amp; Styling</button>
         </div>
 
         <!-- Projects Grid Container (Populated via JS) -->
@@ -989,14 +1013,14 @@
           <div class="ba-slider-container" id="baSlider">
             <!-- Before Image (Base Layer) -->
             <div class="ba-image-layer">
-              <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80"
+              <img src="assets/img_5.jpg"
                 alt="Before Renovation by Atelier Vesper" id="baBeforeImg">
               <span class="ba-label-pill ba-label-before">Before Condition</span>
             </div>
 
             <!-- After Image (Clipped Overlay Layer) -->
             <div class="ba-after-layer" id="baAfterLayer">
-              <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=80"
+              <img src="assets/img_6.jpg"
                 alt="After Interior Architecture by Atelier Vesper" id="baAfterImg">
               <span class="ba-label-pill ba-label-after">Completed Atelier Vesper Design</span>
             </div>
@@ -1042,7 +1066,7 @@
           
           <div class="style-card">
             <div class="style-card-media">
-              <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Modern Interior Style" class="style-card-img" loading="lazy">
+              <img src="assets/img_7.jpg" alt="Modern Interior Style" class="style-card-img" loading="lazy">
             </div>
             <div class="style-card-body">
               <h3 class="style-title">Modern &amp; Contemporary</h3>
@@ -1057,7 +1081,7 @@
 
           <div class="style-card">
             <div class="style-card-media">
-              <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" alt="Minimalist Interior Style" class="style-card-img" loading="lazy">
+              <img src="assets/img_8.jpg" alt="Minimalist Interior Style" class="style-card-img" loading="lazy">
             </div>
             <div class="style-card-body">
               <h3 class="style-title">Minimalist Sanctuary</h3>
@@ -1072,7 +1096,7 @@
 
           <div class="style-card">
             <div class="style-card-media">
-              <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80" alt="Japandi Style" class="style-card-img" loading="lazy">
+              <img src="assets/img_9.jpg" alt="Japandi Style" class="style-card-img" loading="lazy">
             </div>
             <div class="style-card-body">
               <h3 class="style-title">Japandi &amp; Scandinavian</h3>
@@ -1087,7 +1111,7 @@
 
           <div class="style-card">
             <div class="style-card-media">
-              <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80" alt="Luxury Classical Style" class="style-card-img" loading="lazy">
+              <img src="assets/img_10.jpg" alt="Luxury Classical Style" class="style-card-img" loading="lazy">
             </div>
             <div class="style-card-body">
               <h3 class="style-title">Curated Luxury &amp; Classical</h3>
@@ -1102,7 +1126,7 @@
 
           <div class="style-card">
             <div class="style-card-media">
-              <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Indian Contemporary Style" class="style-card-img" loading="lazy">
+              <img src="assets/img_11.jpg" alt="Indian Contemporary Style" class="style-card-img" loading="lazy">
             </div>
             <div class="style-card-body">
               <h3 class="style-title">Indian Contemporary</h3>
@@ -1117,7 +1141,7 @@
 
           <div class="style-card">
             <div class="style-card-media">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" alt="Industrial Chic Style" class="style-card-img" loading="lazy">
+              <img src="assets/img_12.jpg" alt="Industrial Chic Style" class="style-card-img" loading="lazy">
             </div>
             <div class="style-card-body">
               <h3 class="style-title">Industrial &amp; Loft Chic</h3>
@@ -1159,7 +1183,7 @@
           
           <div class="material-card">
             <div class="material-img-wrap">
-              <img src="https://images.unsplash.com/photo-1590381105924-c72589b9ef3f?auto=format&fit=crop&w=800&q=80" alt="Navona Travertine Marble" class="material-img" loading="lazy">
+              <img src="assets/img_13.jpg" alt="Navona Travertine Marble" class="material-img" loading="lazy">
             </div>
             <div class="material-info">
               <div class="material-cat">Natural Stone</div>
@@ -1170,7 +1194,7 @@
 
           <div class="material-card">
             <div class="material-img-wrap">
-              <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&w=800&q=80" alt="Smoked European Oak Veneer" class="material-img" loading="lazy">
+              <img src="assets/img_14.jpg" alt="Smoked European Oak Veneer" class="material-img" loading="lazy">
             </div>
             <div class="material-info">
               <div class="material-cat">Timber &amp; Veneer</div>
@@ -1181,7 +1205,7 @@
 
           <div class="material-card">
             <div class="material-img-wrap">
-              <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80" alt="Brushed Champagne Brass" class="material-img" loading="lazy">
+              <img src="assets/img_15.jpg" alt="Brushed Champagne Brass" class="material-img" loading="lazy">
             </div>
             <div class="material-info">
               <div class="material-cat">Metals &amp; Hardware</div>
@@ -1192,7 +1216,7 @@
 
           <div class="material-card">
             <div class="material-img-wrap">
-              <img src="https://images.unsplash.com/photo-1584589167171-541ce45f1eea?auto=format&fit=crop&w=800&q=80" alt="Belgian Bouclé & Linen" class="material-img" loading="lazy">
+              <img src="assets/img_16.jpg" alt="Belgian Bouclé & Linen" class="material-img" loading="lazy">
             </div>
             <div class="material-info">
               <div class="material-cat">Fabrics &amp; Upholstery</div>
@@ -1203,7 +1227,7 @@
 
           <div class="material-card">
             <div class="material-img-wrap">
-              <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" alt="Fluted Architectural Glass" class="material-img" loading="lazy">
+              <img src="assets/img_17.jpg" alt="Fluted Architectural Glass" class="material-img" loading="lazy">
             </div>
             <div class="material-info">
               <div class="material-cat">Architectural Glass</div>
@@ -1214,7 +1238,7 @@
 
           <div class="material-card">
             <div class="material-img-wrap">
-              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80" alt="Honed Basalt & Quartzite" class="material-img" loading="lazy">
+              <img src="assets/img_18.jpg" alt="Honed Basalt & Quartzite" class="material-img" loading="lazy">
             </div>
             <div class="material-info">
               <div class="material-cat">Engineered &amp; Natural</div>
@@ -1341,7 +1365,7 @@
                   “Atelier Vesper completely reimagined our duplex penthouse. What impressed us most wasn't just the sheer beauty of the Italian travertine and custom woodwork—it was the precision of their site stewardship. They handed over the keys two weeks ahead of schedule with zero snag items.”
                 </p>
                 <div class="testimonial-author-group">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Eleanor & Marcus Vance" class="testimonial-author-avatar">
+                  <img src="assets/img_19.jpg" alt="Eleanor & Marcus Vance" class="testimonial-author-avatar">
                   <div class="testimonial-author-info">
                     <h4 class="testimonial-author-name">Eleanor &amp; Marcus Vance</h4>
                     <span class="testimonial-project-tag">South Kensington Penthouse · London</span>
@@ -1358,7 +1382,7 @@
                   “Designing a 7,000 sq.ft. coastal villa from scratch can easily become an overwhelming nightmare. Atelier Vesper made it pure joy. Their 3D renders were so accurate that stepping into our finished home felt like walking directly inside the concept drawing. Unrivaled professionalism.”
                 </p>
                 <div class="testimonial-author-group">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Rohit & Neha Singhania" class="testimonial-author-avatar">
+                  <img src="assets/img_20.jpg" alt="Rohit & Neha Singhania" class="testimonial-author-avatar">
                   <div class="testimonial-author-info">
                     <h4 class="testimonial-author-name">Rohit &amp; Neha Singhania</h4>
                     <span class="testimonial-project-tag">Villa Terracotta · Bandra West, Mumbai</span>
@@ -1375,7 +1399,7 @@
                   “For our Mayfair private equity headquarters, we required speech confidentiality without feeling sterile or corporate. Atelier Vesper delivered an acoustic masterpiece of leather, slatted walnut, and bronze that commands respect the moment our institutional clients walk in.”
                 </p>
                 <div class="testimonial-author-group">
-                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80" alt="Julian Sterling" class="testimonial-author-avatar">
+                  <img src="assets/img_21.jpg" alt="Julian Sterling" class="testimonial-author-avatar">
                   <div class="testimonial-author-info">
                     <h4 class="testimonial-author-name">Julian Sterling, Managing Partner</h4>
                     <span class="testimonial-project-tag">Lumina Capital Headquarters · Mayfair, London</span>
@@ -1781,29 +1805,15 @@
           </ul>
         </div>
 
-        <!-- Column 5: Contact -->
-        <div>
-          <div class="footer-col-title">Studio Locations</div>
-          <div class="footer-contact-item">
-            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <div>
-              <strong>London Atelier:</strong><br>
-              42 Berkeley Square, Mayfair, London W1J 5AW
-            </div>
-          </div>
-          <div class="footer-contact-item">
-            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <div>
-              <strong>Inquiries:</strong><br>
-              +44 20 7946 0912 / +91 99056 08257
-            </div>
-          </div>
-          <div class="footer-contact-item">
-            <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <div>
-              <strong>Hours:</strong> Mon – Sat: 9:00 AM – 7:00 PM
-            </div>
-          </div>
+        <!-- Column 5: Engineering Credit -->
+        <div class="footer-col">
+          <div class="footer-col-title">Engineering Credit</div>
+          <p class="footer-credit-text">
+            This live luxury interior architecture &amp; home décor platform was designed and engineered by <strong>Debashish Paul</strong> as part of his client showcase portfolio.
+          </p>
+          <a href="../#hero" class="btn btn-sm btn-outline-gold" style="margin-top: 0.5rem;">
+            <span>Explore Portfolio &nearr;</span>
+          </a>
         </div>
 
       </div>
@@ -1813,10 +1823,12 @@
         <div>
           &copy; 2026 Atelier Vesper Architecture &amp; Interiors. All Rights Reserved.
         </div>
+        <div class="designer-badge">
+          Designed &amp; Engineered by <a href="../#hero" class="designer-link">Debashish Paul</a>
+        </div>
         <div class="footer-legal-links">
-          <a href="#about" class="footer-nav-link">Privacy Policy</a>
-          <a href="#about" class="footer-nav-link">Terms of Service</a>
-          <a href="#about" class="footer-nav-link">Site Map</a>
+          <a href="../#hero" class="footer-nav-link">&larr; Portfolio Home</a>
+          <a href="#hero" class="footer-nav-link">Back to Top &uarr;</a>
         </div>
       </div>
 

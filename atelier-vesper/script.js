@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '4,600 sq.ft.',
       year: '2025',
       duration: '7 Months',
-      coverImg: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_6.jpg',
       shortDesc: 'A double-height duplex penthouse celebrating raw travertine, smoked European oak, and architectural perimeter glazing.',
       concept: 'Harmonizing brutalist architectural lines with warm tactile textiles and bespoke Italian monolithic joinery.',
       challenge: 'Managing double-height acoustic resonance and optimizing natural daylight without glare on custom walnut paneling.',
@@ -190,9 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Navona Roman Travertine', 'Smoked European White Oak', 'Brushed Champagne Brass', 'Belgian Oatmeal Linen'],
       colors: ['#282624', '#c8a97e', '#dfd7cc', '#85786b'],
       gallery: [
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_22.jpg',
+        'assets/img_23.jpg',
+        'assets/img_4.jpg'
       ]
     },
     {
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '7,200 sq.ft.',
       year: '2024',
       duration: '11 Months',
-      coverImg: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_24.jpg',
       shortDesc: 'A Mediterranean coastal villa fusing lime-washed plaster, hand-cut terracotta floor tiles, and private garden verandahs.',
       concept: 'Biophilic cross-ventilation paired with understated Indian Contemporary woodwork and indoor courtyard water gardens.',
       challenge: 'High coastal humidity requiring moisture-resistant sustainable hardwoods and salt-tolerant bronze exterior joinery.',
@@ -212,8 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Handmade Terracotta Tiles', 'Seasoned CP Teak', 'Honed Green Kota Stone', 'Linen Gauze Drapery'],
       colors: ['#c97a5b', '#e8dfd3', '#394038', '#ab8a66'],
       gallery: [
-        'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_25.jpg',
+        'assets/img_26.jpg'
       ]
     },
     {
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '1,250 sq.ft.',
       year: '2025',
       duration: '4 Months',
-      coverImg: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_27.jpg',
       shortDesc: 'A sculptural chef’s kitchen anchored by a seamless 14-foot quartzite waterfall island and concealed pocket bar.',
       concept: 'Discreet luxury where all appliances vanish behind architectural bookmatched fluted timber cabinetry.',
       challenge: 'Structural weight distribution for a 1.8-ton solid Taj Mahal quartzite monolith on loft floor joists.',
@@ -233,8 +233,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Taj Mahal Quartzite', 'Ebonized Ash Millwork', 'Aged Gunmetal Fixtures', 'Fluted Glass Screens'],
       colors: ['#1e1f24', '#d8d4cd', '#9e978e', '#665f57'],
       gallery: [
-        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_1.jpg',
+        'assets/img_25.jpg'
       ]
     },
     {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '9,800 sq.ft.',
       year: '2024',
       duration: '8 Months',
-      coverImg: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_28.jpg',
       shortDesc: 'A private wealth & legal boardroom suite expressing discreet authority with tailored leather and acoustic slats.',
       concept: 'High-focus acoustic sanctuary combining residential hospitality intimacy with enterprise video-conferencing technology.',
       challenge: 'Speech confidentiality standards (NC-25) across glass-fronted executive meeting spaces.',
@@ -254,8 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Bookmatched American Walnut', 'Cognac Saddle Leather', 'Nero Marquina Marble', 'Acoustic Wool Felt'],
       colors: ['#171920', '#a36d42', '#dcd8cf', '#2e3340'],
       gallery: [
-        'https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_29.jpg',
+        'assets/img_22.jpg'
       ]
     },
     {
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '3,800 sq.ft.',
       year: '2024',
       duration: '5 Months',
-      coverImg: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_30.jpg',
       shortDesc: 'A botanical culinary sanctuary featuring custom arched plaster niches, sage velvet banquettes, and brass bistro lights.',
       concept: 'Atmospheric day-to-night transformation powered by circadian-responsive lighting and lush tropical indoor flora.',
       challenge: 'Maximizing covers while safeguarding intimate acoustics and clear server service corridors.',
@@ -275,8 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Hand-Rubbed Brass', 'Forest Green Velvet', 'Terrazzo Flooring', 'Exposed Reclaimed Brick'],
       colors: ['#233a30', '#c8a97e', '#dfd5c6', '#69412f'],
       gallery: [
-        'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_25.jpg',
+        'assets/img_31.jpg'
       ]
     },
     {
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '950 sq.ft.',
       year: '2025',
       duration: '3 Months',
-      coverImg: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_32.jpg',
       shortDesc: 'A master sanctuary dedicated to restorative sleep, wrapped in warm Japandi slatted woodwork, bouclé, and soft wash lights.',
       concept: 'Zero visual clutter, concealed flush-to-wall wardrobe doors, and organic tactile layers.',
       challenge: 'Integrating an expansive walk-in dressing lounge and open spa ensuite without diminishing bedroom calm.',
@@ -296,8 +296,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Natural White Oak Slats', 'Ivory Bouclé Fabric', 'Calacatta Gold Marble', 'Brushed Bronze Hardware'],
       colors: ['#d7cfc5', '#8a7e72', '#222327', '#c8a97e'],
       gallery: [
-        'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_26.jpg',
+        'assets/img_1.jpg'
       ]
     },
     {
@@ -309,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '2,900 sq.ft.',
       year: '2025',
       duration: '3 Months',
-      coverImg: 'https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_33.jpg',
       shortDesc: 'An art collector’s apartment furnished with sculptural Pierre Paulin armchairs, antique kilim rugs, and gallery lighting.',
       concept: 'Curated home décor styling celebrating balance between collectible design pieces and everyday domestic comfort.',
       challenge: 'Displaying oversized modern canvas art without making the space feel like a stark commercial gallery.',
@@ -317,8 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Wool & Silk Hand-Knotted Rugs', 'Ceramic Sculptural Vessels', 'Raw Travertine Plinths', 'Custom Linen Curtains'],
       colors: ['#e4ded5', '#2a2b30', '#c29d6d', '#615349'],
       gallery: [
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_22.jpg',
+        'assets/img_23.jpg'
       ]
     },
     {
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
       area: '650 sq.ft.',
       year: '2024',
       duration: '2.5 Months',
-      coverImg: 'https://images.unsplash.com/photo-1593062096033-9a26b09da705?auto=format&fit=crop&w=1600&q=80',
+      coverImg: 'assets/img_34.jpg',
       shortDesc: 'A floor-to-ceiling brass-ladder private library with an integrated leather writing desk and garden light well.',
       concept: 'An introspective reading room with moody charcoal lacquer and warm brass joinery details.',
       challenge: 'Storing over 2,000 architectural volumes while maintaining a light, uncluttered visual rhythm.',
@@ -338,8 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
       materials: ['Smoked Charcoal Walnut', 'Patinated Brass Ladder', 'Full-Grain English Leather', 'Honed Green Slate'],
       colors: ['#17181c', '#ab9273', '#94959c', '#403831'],
       gallery: [
-        'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80'
+        'assets/img_22.jpg',
+        'assets/img_4.jpg'
       ]
     }
   ];
@@ -354,11 +354,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const filtered = projectsData.filter(item => {
       if (filter === 'all') return true;
-      const f = filter.toLowerCase();
-      return (
-        item.category.toLowerCase() === f ||
-        item.subCategory.toLowerCase() === f
-      );
+      const f = filter.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const cat = item.category.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const sub = item.subCategory.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return cat.includes(f) || sub.includes(f) || f.includes(cat) || f.includes(sub);
     });
 
     filtered.forEach(project => {
@@ -367,8 +366,8 @@ document.addEventListener('DOMContentLoaded', () => {
       card.setAttribute('data-id', project.id);
       card.innerHTML = `
         <div class="project-media-wrap">
-          <span class="project-badge-float">${project.category} · ${project.subCategory}</span>
-          <img src="${project.coverImg}" alt="${project.title}" class="project-img" loading="lazy">
+          <span class="project-badge-float">${project.category} &bull; ${project.subCategory}</span>
+          <img src="${project.coverImg}" alt="${project.title}" class="project-img" loading="lazy" onerror="this.src='assets/img_1.jpg'">
         </div>
         <div class="project-info">
           <div class="project-meta-row">
@@ -426,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modalHeroImg.src = proj.coverImg;
     modalHeroImg.alt = proj.title;
-    modalCategory.textContent = `${proj.category} · ${proj.subCategory}`;
+    modalCategory.textContent = `${proj.category} Â· ${proj.subCategory}`;
     modalTitle.textContent = proj.title;
     modalLocation.textContent = proj.location;
     modalArea.textContent = proj.area;
@@ -500,18 +499,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const baPairs = {
     penthouse: {
-      before: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80',
-      after: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=80',
+      before: 'assets/img_5.jpg',
+      after: 'assets/img_6.jpg',
       title: 'South Kensington Penthouse Living Room'
     },
     kitchen: {
-      before: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?auto=format&fit=crop&w=1600&q=80',
-      after: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
+      before: 'assets/img_35.jpg',
+      after: 'assets/img_27.jpg',
       title: 'Tribeca Monolith Chef Kitchen'
     },
     suite: {
-      before: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=80',
-      after: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1600&q=80',
+      before: 'assets/img_36.jpg',
+      after: 'assets/img_32.jpg',
       title: 'Alipore Serenity Master Suite'
     }
   };
