@@ -1406,6 +1406,11 @@
         btn.classList.add('active');
         btn.setAttribute('aria-selected', 'true');
 
+        // Smoothly bring active pill into view if horizontally scrollable
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch (_) {}
+
         // Filter and animate cards
         projectCards.forEach(card => {
           const category = card.getAttribute('data-category');

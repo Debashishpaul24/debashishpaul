@@ -3438,28 +3438,41 @@ body.mobile-drawer-open #back-to-top {
   }
 
   .catalog-filter-wrapper {
-    margin-bottom: 2.25rem;
+    margin-bottom: 2rem;
     width: 100%;
+    overflow: hidden;
+    position: relative;
   }
 
   .catalog-filter-bar {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.55rem;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.5rem;
     width: 100%;
-    border-radius: 18px;
-    padding: 0.45rem;
+    max-width: 100%;
+    border-radius: 999px;
+    padding: 0.35rem 0.45rem;
     background: rgba(18, 18, 26, 0.88);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .catalog-filter-bar::-webkit-scrollbar {
+    display: none;
   }
 
   .catalog-tab-btn {
-    width: 100%;
+    width: auto;
+    flex-shrink: 0;
+    white-space: nowrap !important;
     justify-content: center;
-    padding: 0.65rem 0.5rem;
+    padding: 0.55rem 0.95rem;
     font-size: 0.82rem;
-    gap: 0.4rem;
-    border-radius: 12px;
+    gap: 0.45rem;
+    border-radius: 999px;
   }
 
   .catalog-tab-btn .tab-count {
@@ -3470,15 +3483,19 @@ body.mobile-drawer-open #back-to-top {
   }
 
   @media (max-width: 480px) {
+    .catalog-filter-wrapper {
+      margin-bottom: 1.75rem;
+    }
+
     .catalog-filter-bar {
       gap: 0.4rem;
-      padding: 0.35rem;
+      padding: 0.3rem 0.4rem;
     }
 
     .catalog-tab-btn {
       font-size: 0.78rem;
-      padding: 0.58rem 0.25rem;
-      gap: 0.3rem;
+      padding: 0.48rem 0.8rem;
+      gap: 0.38rem;
     }
 
     .catalog-tab-btn .tab-count {
