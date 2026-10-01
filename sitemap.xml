@@ -3,13 +3,17 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.debashishpaul.in/</loc>
-    <lastmod>2026-09-25</lastmod>
+    <lastmod>2026-10-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://www.debashishpaul.in/assets/og-preview.png</image:loc>
       <image:title>Debashish Paul — Senior Software Engineer &amp; Global Web Consultant</image:title>
       <image:caption>Portfolio of Debashish Paul, Senior Software Engineer &amp; Global Web Consultant</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/nexus-showcase.jpg</image:loc>
+      <image:title>NEXUS Engineering &amp; Advisory Services Showcase</image:title>
     </image:image>
     <image:image>
       <image:loc>https://www.debashishpaul.in/assets/project1.jpg</image:loc>
