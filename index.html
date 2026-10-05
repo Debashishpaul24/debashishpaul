@@ -310,7 +310,7 @@
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet"></noscript>
 
-  <link rel="stylesheet" href="style.css?v=76">
+  <link rel="stylesheet" href="style.css?v=77">
 </head>
 
 <body>
@@ -803,28 +803,45 @@
               <div class="projects-grid" id="projectsGrid">
 
                 <!-- Card 1: DineFlow — QR-Based Restaurant SaaS Platform -->
-                <article class="project-card has-live-link" data-category="restaurant">
+                <article class="project-card has-live-link has-video-preview" data-category="restaurant">
                   <a href="dineflow/#/r/the-urban-plate/t/T12" target="_blank" rel="noopener" class="card-link-overlay"
                     aria-label="Open DineFlow — QR-Based Restaurant Digital SaaS Platform"></a>
-                  <div class="card-media-wrapper">
+                  <div class="card-media-wrapper has-video-preview">
                     <div class="media-watermark">SaaS / Dining</div>
                     <div class="live-demo-badge">
                       <span class="live-dot"></span> Live Demo
                     </div>
+                    <div class="video-preview-badge">
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      <span>Hover for Demo</span>
+                    </div>
                     <img src="assets/dineflow-showcase.jpg?v=2"
                       alt="DineFlow — QR-Based Restaurant Digital SaaS Platform" class="card-img" width="600" height="380" fetchpriority="high" decoding="async">
+                    <img data-src="assets/dineflow-demo.webp"
+                      alt="DineFlow Live Demo Video" class="card-video-preview" width="600" height="380" loading="lazy">
                   </div>
                   <div class="card-info">
                     <div class="card-info-top">
                       <h3 class="card-title">DineFlow &mdash; QR Restaurant SaaS</h3>
-                      <a href="dineflow/#/r/the-urban-plate/t/T12" target="_blank" rel="noopener" class="project-view-btn"
-                        aria-label="Explore DineFlow QR Restaurant Platform">
-                        <span>Explore</span>
-                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
-                          stroke-width="2.2">
-                          <path d="M7 17L17 7M17 7H7M17 7V17" />
-                        </svg>
-                      </a>
+                      <div class="card-action-btns">
+                        <a href="assets/dineflow-demo.webp" target="_blank" rel="noopener" class="project-view-btn btn-video-preview"
+                          aria-label="Watch DineFlow Video Demo" title="Watch instant video demo" onclick="event.stopPropagation()">
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                          <span>Watch Demo</span>
+                        </a>
+                        <a href="dineflow/#/r/the-urban-plate/t/T12" target="_blank" rel="noopener" class="project-view-btn"
+                          aria-label="Explore DineFlow QR Restaurant Platform">
+                          <span>Live Demo</span>
+                          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                            stroke-width="2.2">
+                            <path d="M7 17L17 7M17 7H7M17 7V17" />
+                          </svg>
+                        </a>
+                      </div>
                     </div>
                     <p class="card-desc">Production-grade QR ordering SaaS for hospitality. Real-time kitchen KDS, dynamic table tent cards, mobile cart, instant UPI billing & multi-tenant operations.</p>
                     <div class="card-tags">
@@ -1474,7 +1491,7 @@
     </button>
 
     <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
-    <script src="main.js?v=44"></script>
+    <script src="main.js?v=45"></script>
 </body>
 
 </html>
