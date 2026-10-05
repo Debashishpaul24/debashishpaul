@@ -1,0 +1,1546 @@
+/* ==============================================================================
+   DineFlow — Premium QR Restaurant SaaS Design System
+   "Scan. Order. Enjoy."
+   Modern Luxury Glassmorphic & Mobile-First Restaurant UI
+   ============================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Dynamic Restaurant Brand Tokens (Overridden per tenant) */
+  --brand-primary: #E5A93C;
+  --brand-primary-hover: #D49B2E;
+  --brand-primary-rgb: 229, 169, 60;
+  --brand-secondary: #0F172A;
+  --brand-accent: #FF5E3A;
+  
+  /* Core Luxury Palette */
+  --bg-dark: #07090E;
+  --bg-surface: #0E131F;
+  --bg-card: rgba(18, 25, 41, 0.75);
+  --bg-card-hover: rgba(26, 36, 58, 0.85);
+  --bg-glass: rgba(14, 19, 31, 0.85);
+  --bg-glass-heavy: rgba(9, 13, 22, 0.95);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(var(--brand-primary-rgb), 0.35);
+  --border-light: rgba(255, 255, 255, 0.15);
+
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --text-dim: #64748B;
+  
+  --status-veg: #10B981;
+  --status-nonveg: #EF4444;
+  --status-spicy: #F97316;
+  --status-gold: #F59E0B;
+  --status-blue: #38BDF8;
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 25px rgba(var(--brand-primary-rgb), 0.25);
+
+  --font-heading: 'Outfit', -apple-system, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 9999px;
+  
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* Base Reset & Typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  outline: none;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(var(--brand-primary-rgb), 0.2);
+}
+
+/* Top Universal App Bar */
+.df-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  z-index: 100;
+}
+
+.df-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.df-brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--brand-primary), #B47818);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  box-shadow: 0 2px 10px rgba(var(--brand-primary-rgb), 0.35);
+}
+
+.df-brand-text h1 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.df-brand-tagline {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.df-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.df-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.df-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--border-light);
+}
+
+.df-pill-btn.primary {
+  background: var(--brand-primary);
+  color: #0b0f17;
+  border-color: var(--brand-primary);
+  font-weight: 700;
+}
+
+.df-pill-btn.primary:hover {
+  background: var(--brand-primary-hover);
+  box-shadow: 0 0 15px rgba(var(--brand-primary-rgb), 0.45);
+}
+
+/* Master Container */
+.df-app-viewport {
+  padding-top: 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile Customer Shell vs Desktop Experience */
+.df-customer-layout {
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: 95px;
+  position: relative;
+}
+
+/* Welcome / Splash Screen Overlay */
+.df-splash-screen {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, #172138, #07090e 80%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.df-splash-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.df-splash-logo-card {
+  width: 96px;
+  height: 96px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(229, 169, 60, 0.2), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.5);
+  box-shadow: 0 0 45px rgba(var(--brand-primary-rgb), 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(var(--brand-primary-rgb), 0.25); }
+  50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(var(--brand-primary-rgb), 0.5); }
+}
+
+.df-splash-table-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(var(--brand-primary-rgb), 0.15);
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.4);
+  color: var(--brand-primary);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.45rem 1.1rem;
+  border-radius: var(--radius-full);
+  margin: 1.25rem 0 2rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.df-splash-btn {
+  background: linear-gradient(135deg, var(--brand-primary), #D49B2E);
+  color: #080C14;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 0.95rem 2.5rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 25px rgba(var(--brand-primary-rgb), 0.45);
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.01em;
+}
+
+.df-splash-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(var(--brand-primary-rgb), 0.6);
+}
+
+/* Customer Home Header */
+.df-restaurant-hero {
+  position: relative;
+  height: 190px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.df-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(7, 9, 14, 0.2), rgba(7, 9, 14, 0.95) 90%);
+}
+
+.df-hero-content {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.df-hero-title h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.df-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.df-table-chip {
+  background: rgba(var(--brand-primary-rgb), 0.2);
+  border: 1px solid var(--border-glow);
+  color: #fff;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.df-table-chip .live-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  animation: pulseLive 2s infinite;
+}
+
+@keyframes pulseLive {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Quick Actions Hub */
+.df-quick-actions-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+  padding: 1rem 1.25rem 0.5rem;
+}
+
+.df-action-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.35rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.df-action-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-glow);
+  transform: translateY(-2px);
+}
+
+.df-action-icon {
+  font-size: 1.35rem;
+}
+
+.df-action-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Search Bar */
+.df-search-wrapper {
+  padding: 0.75rem 1.25rem;
+}
+
+.df-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.df-search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-dim);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.df-search-input {
+  width: 100%;
+  padding-left: 2.75rem;
+  padding-right: 2.5rem;
+  height: 46px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+}
+
+.df-search-clear {
+  position: absolute;
+  right: 1rem;
+  color: var(--text-dim);
+  display: none;
+  font-size: 1.1rem;
+}
+
+.df-search-clear.active {
+  display: block;
+}
+
+/* Promotional Offers Ribbon */
+.df-offers-scroll {
+  padding: 0 1.25rem 0.75rem;
+  display: flex;
+  gap: 0.85rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.df-offers-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.df-offer-badge-card {
+  flex-shrink: 0;
+  width: 250px;
+  background: linear-gradient(135deg, rgba(229, 169, 60, 0.18), rgba(255, 94, 58, 0.12));
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.35);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.df-offer-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--brand-primary);
+  color: #0b0f17;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.df-offer-details h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.df-offer-details p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.df-coupon-code {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  margin-top: 0.2rem;
+  letter-spacing: 0.05em;
+}
+
+/* Category Filter Track */
+.df-category-sticky-bar {
+  position: sticky;
+  top: 60px;
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.65rem 1.25rem;
+  z-index: 80;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.df-category-sticky-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.df-cat-pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.42rem 0.95rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.df-cat-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.df-cat-pill.active {
+  background: var(--brand-primary);
+  color: #0b0f17;
+  border-color: var(--brand-primary);
+  font-weight: 800;
+  box-shadow: 0 4px 15px rgba(var(--brand-primary-rgb), 0.35);
+}
+
+/* Menu Food List & Cards */
+.df-menu-section {
+  padding: 1rem 1.25rem;
+}
+
+.df-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.df-section-heading h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.df-section-count {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.df-food-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Individual Food Item Card */
+.df-food-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.df-food-card:hover {
+  border-color: var(--border-glow);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.df-food-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.df-food-header-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+
+/* Veg / Non-Veg Indicator */
+.df-diet-badge {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.df-diet-badge.veg {
+  border-color: var(--status-veg);
+}
+
+.df-diet-badge.veg::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--status-veg);
+}
+
+.df-diet-badge.nonveg {
+  border-color: var(--status-nonveg);
+}
+
+.df-diet-badge.nonveg::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-bottom: 6px solid var(--status-nonveg);
+}
+
+.df-micro-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.df-micro-badge.bestseller {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--status-gold);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.df-micro-badge.chef {
+  background: rgba(229, 169, 60, 0.2);
+  color: var(--brand-primary);
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.4);
+}
+
+.df-food-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.df-food-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 0.65rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.df-food-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.df-food-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+}
+
+/* Food Card Media & Add Button */
+.df-food-media {
+  width: 110px;
+  height: 110px;
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.df-food-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.df-food-card:hover .df-food-img {
+  transform: scale(1.08);
+}
+
+.df-card-add-btn {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(8px);
+  color: var(--brand-primary);
+  border: 1px solid var(--border-glow);
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.df-card-add-btn:hover {
+  background: var(--brand-primary);
+  color: #080C14;
+  transform: scale(1.05);
+}
+
+/* Quantity Control Stepper */
+.df-qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-glass-heavy);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-full);
+  padding: 0.15rem 0.3rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.df-qty-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+
+.df-qty-btn:hover {
+  background: var(--brand-primary);
+  color: #0b0f17;
+}
+
+.df-qty-value {
+  min-width: 26px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Sticky Bottom Navigation Bar */
+.df-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 68px;
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 90;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.df-nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  gap: 0.2rem;
+  position: relative;
+  transition: color 0.2s;
+  padding: 0.35rem 0;
+}
+
+.df-nav-tab:hover {
+  color: var(--text-muted);
+}
+
+.df-nav-tab.active {
+  color: var(--brand-primary);
+}
+
+.df-nav-icon {
+  font-size: 1.25rem;
+  position: relative;
+}
+
+.df-nav-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.df-cart-pill-count {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background: var(--brand-accent);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid var(--bg-dark);
+}
+
+/* Modals & Bottom Sheets */
+.df-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.df-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.df-bottom-sheet {
+  background: #0E1422;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.7);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.df-modal-backdrop.active .df-bottom-sheet {
+  transform: translateY(0);
+}
+
+.df-sheet-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 0.75rem auto 0.25rem;
+}
+
+.df-sheet-header {
+  padding: 1rem 1.5rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.df-sheet-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.df-sheet-body {
+  padding: 1rem 1.5rem 2rem;
+  flex: 1;
+}
+
+/* Food Detail Modal Content */
+.df-detail-hero {
+  width: 100%;
+  height: 220px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.df-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.df-option-group {
+  margin-bottom: 1.5rem;
+}
+
+.df-option-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.65rem;
+}
+
+.df-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.df-choice-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.df-choice-item:hover, .df-choice-item.selected {
+  border-color: var(--brand-primary);
+  background: rgba(var(--brand-primary-rgb), 0.08);
+}
+
+.df-choice-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.df-choice-left input[type="radio"], .df-choice-left input[type="checkbox"] {
+  accent-color: var(--brand-primary);
+}
+
+/* Slide-Over Cart */
+.df-cart-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 0.75rem;
+}
+
+.df-cart-item-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.df-cart-customization-summary {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.df-bill-summary-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin: 1.25rem 0;
+}
+
+.df-bill-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.df-bill-row.total {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.65rem;
+  margin-top: 0.65rem;
+}
+
+.df-coupon-input-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.df-coupon-input-box input {
+  flex: 1;
+  text-transform: uppercase;
+}
+
+/* Order Tracking Stepper */
+.df-order-tracking-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.df-tracking-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.df-order-badge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  background: rgba(var(--brand-primary-rgb), 0.15);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.df-stepper-track {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  padding-left: 2.25rem;
+}
+
+.df-stepper-track::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.df-step-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.df-step-circle {
+  position: absolute;
+  left: -2.25rem;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #151D2C;
+  border: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  transition: all 0.3s ease;
+}
+
+.df-step-node.completed .df-step-circle {
+  background: #10B981;
+  border-color: #10B981;
+  color: #fff;
+}
+
+.df-step-node.active .df-step-circle {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #0b0f17;
+  box-shadow: 0 0 15px rgba(var(--brand-primary-rgb), 0.6);
+  animation: pulseNode 2s infinite;
+}
+
+@keyframes pulseNode {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.df-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.df-step-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Call Staff Grid Options */
+.df-staff-call-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.df-staff-opt-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.df-staff-opt-btn:hover {
+  background: rgba(var(--brand-primary-rgb), 0.15);
+  border-color: var(--brand-primary);
+  transform: translateY(-2px);
+}
+
+.df-staff-opt-icon {
+  font-size: 1.8rem;
+}
+
+/* Star Rating Component */
+.df-rating-stars {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1.6rem;
+  color: #475569;
+  cursor: pointer;
+  margin: 0.4rem 0 1rem;
+}
+
+.df-rating-stars .star.active {
+  color: var(--status-gold);
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+/* ==============================================================================
+   ADMIN & SUPER ADMIN DASHBOARDS
+   ============================================================================== */
+.df-admin-layout {
+  display: flex;
+  min-height: calc(100vh - 60px);
+}
+
+.df-admin-sidebar {
+  width: 260px;
+  background: #0B0F18;
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.75rem;
+  flex-shrink: 0;
+}
+
+.df-admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+  margin-bottom: 0.25rem;
+}
+
+.df-admin-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.df-admin-nav-item.active {
+  background: rgba(var(--brand-primary-rgb), 0.15);
+  color: var(--brand-primary);
+  border: 1px solid rgba(var(--brand-primary-rgb), 0.35);
+}
+
+.df-admin-badge-count {
+  margin-left: auto;
+  background: #EF4444;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.1rem 0.45rem;
+  border-radius: 99px;
+}
+
+.df-admin-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  max-width: 1400px;
+}
+
+/* Stat Metric Cards */
+.df-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.df-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.df-stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.df-stat-val {
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  color: #fff;
+}
+
+.df-stat-change {
+  font-size: 0.75rem;
+  color: #10B981;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Live Kitchen Kanban */
+.df-kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.df-kanban-col {
+  background: rgba(14, 19, 31, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+}
+
+.df-kanban-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.df-kanban-col-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.df-kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.df-order-admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.95rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.df-order-admin-card:hover {
+  border-color: var(--border-glow);
+  transform: translateY(-2px);
+}
+
+.df-order-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.df-order-card-table {
+  font-weight: 800;
+  color: var(--brand-primary);
+  font-size: 0.88rem;
+}
+
+.df-order-items-snippet {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Tables & QR Code Grid */
+.df-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1.25rem;
+}
+
+.df-table-admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.65rem;
+}
+
+.df-table-qr-preview {
+  width: 140px;
+  height: 140px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.df-table-qr-preview svg, .df-table-qr-preview img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Printable Table Tent Stand Card (Modal / Print Mode) */
+.df-print-tent-card {
+  width: 320px;
+  background: #ffffff;
+  color: #0b0f17;
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
+  border: 2px solid #E5A93C;
+}
+
+.df-print-tent-header h2 {
+  color: #0b0f17;
+  font-size: 1.45rem;
+  margin-bottom: 0.2rem;
+}
+
+.df-print-tent-header p {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+}
+
+.df-print-qr-holder {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 10px;
+  background: #fff;
+}
+
+.df-print-table-tag {
+  display: inline-block;
+  background: #0f172a;
+  color: #E5A93C;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 0.4rem 1.25rem;
+  border-radius: 99px;
+  margin-bottom: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.df-print-instructions {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* Print Media Override */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .df-print-tent-card, .df-print-tent-card * {
+    visibility: visible;
+  }
+  .df-print-tent-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* Toasts */
+.df-toast-container {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.df-toast {
+  background: var(--bg-glass-heavy);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glow);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 0.82rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Media Queries */
+@media (max-width: 900px) {
+  .df-kanban-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .df-admin-layout {
+    flex-direction: column;
+  }
+  .df-admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem 1rem;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .df-admin-main {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .df-kanban-board {
+    grid-template-columns: 1fr;
+  }
+  .df-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .df-food-media {
+    width: 95px;
+    height: 95px;
+  }
+}

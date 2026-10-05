@@ -43,7 +43,9 @@ while ($listener.IsListening) {
             $response.ContentLength64 = $bytes.Length
             $response.AddHeader("Access-Control-Allow-Origin", "*")
             $response.AddHeader("Cache-Control", "no-cache, no-store, must-revalidate")
-            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            if ($request.HttpMethod -ne "HEAD") {
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
         } else {
             $response.StatusCode = 404
             $buffer = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found")

@@ -68,4 +68,14 @@
       <image:title>NEXUS Engineering and Advisory Services Showcase</image:title>
     </image:image>
   </url>
+  <url>
+    <loc>https://www.debashishpaul.in/dineflow/</loc>
+    <lastmod>2026-10-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&amp;fit=crop&amp;w=1200&amp;q=80</image:loc>
+      <image:title>DineFlow — QR-Based Restaurant Digital SaaS Application</image:title>
+    </image:image>
+  </url>
 </urlset>

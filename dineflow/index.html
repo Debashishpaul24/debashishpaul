@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RQEHBYXQBG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-RQEHBYXQBG');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>The Urban Plate — QR Digital Dining Experience | Powered by DineFlow</title>
+
+  <!-- PWA & Mobile Web App Meta -->
+  <meta name="theme-color" content="#07090E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DineFlow">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+  <!-- SEO & Social OpenGraph -->
+  <meta name="description" content="Scan. Order. Enjoy. Turn every restaurant table into a digital ordering experience. Browse chef specials, customize orders, track food in real-time, and call staff from your phone.">
+  <meta property="og:title" content="The Urban Plate — QR-Based Digital Dining Platform">
+  <meta property="og:description" content="Zero-friction digital dining. Scan table QR code to explore chef specials, track live kitchen status, call staff, and pay seamlessly.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80">
+  <meta property="og:type" content="website">
+
+  <!-- Design Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+
+<body>
+  <!-- Dynamic Single Page Application Mount Point -->
+  <div id="app"></div>
+
+  <!-- Client-Side Modules (Zero external network dependencies for QR & Storage) -->
+  <script src="qr-engine.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

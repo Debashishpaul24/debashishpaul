@@ -1,0 +1,18 @@
+{
+  "name": "DineFlow — QR Restaurant Experience",
+  "short_name": "DineFlow",
+  "description": "Scan. Order. Enjoy. Premium QR-based digital restaurant ordering SaaS.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0B0F17",
+  "theme_color": "#E5A93C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "../favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
