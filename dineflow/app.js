@@ -21,6 +21,63 @@
   let activeTableTentData = null;
   let currentAdminTab = 'orders';
 
+  // ------------------------------------------------------------------------------
+  // ZERO-NETWORK RESILIENT DISH IMAGE FALLBACK ENGINE
+  // Renders exquisite, category-tailored glassmorphic vector badges if corporate VPNs,
+  // firewalls, or offline states block external CDN images.
+  // ------------------------------------------------------------------------------
+  window.dfGetDishSvgFallback = function (categoryId, itemName = '') {
+    const configs = {
+      'cat-specials': { icon: '👨‍🍳', label: "Chef's Special", g1: '#2e1c0d', g2: '#120f09', accent: '#E5A93C' },
+      'cat-starters': { icon: '🥟', label: 'Starters & Bites', g1: '#281c12', g2: '#120e09', accent: '#F59E0B' },
+      'cat-biryani': { icon: '🍲', label: 'Royal Dum Biryani', g1: '#2d1808', g2: '#140c06', accent: '#F97316' },
+      'cat-pizza': { icon: '🍕', label: 'Gourmet Pizza', g1: '#2c1414', g2: '#140a0a', accent: '#EF4444' },
+      'cat-burgers': { icon: '🍔', label: 'Artisanal Burger', g1: '#281a0e', g2: '#130d07', accent: '#EAB308' },
+      'cat-pasta': { icon: '🍝', label: 'Handcrafted Pasta', g1: '#251e13', g2: '#120f09', accent: '#D97706' },
+      'cat-mains': { icon: '🥘', label: 'Signature Main', g1: '#2b150c', g2: '#140905', accent: '#EA580C' },
+      'cat-kebabs': { icon: '🍢', label: 'Tandoor & Kebab', g1: '#29120c', g2: '#140805', accent: '#DC2626' },
+      'cat-desserts': { icon: '🍰', label: 'Decadent Dessert', g1: '#291321', g2: '#140810', accent: '#EC4899' },
+      'cat-beverages': { icon: '🍹', label: 'Craft Beverage', g1: '#0e222a', g2: '#061116', accent: '#06B6D4' }
+    };
+    const cfg = configs[categoryId] || { icon: '🍽️', label: 'Culinary Delicacy', g1: '#1c1f2b', g2: '#0d1017', accent: '#E5A93C' };
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+      <defs>
+        <radialGradient id="df-grad-${categoryId}" cx="50%" cy="38%" r="65%">
+          <stop offset="0%" stop-color="${cfg.g1}"/>
+          <stop offset="100%" stop-color="${cfg.g2}"/>
+        </radialGradient>
+        <linearGradient id="df-stroke-${categoryId}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${cfg.accent}" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#E5A93C" stop-opacity="0.2"/>
+        </linearGradient>
+      </defs>
+      <rect width="300" height="300" fill="url(#df-grad-${categoryId})"/>
+      <circle cx="150" cy="122" r="70" fill="none" stroke="url(#df-stroke-${categoryId})" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.45"/>
+      <circle cx="150" cy="122" r="54" fill="${cfg.accent}" fill-opacity="0.08" stroke="${cfg.accent}" stroke-width="1" opacity="0.65"/>
+      <text x="150" y="140" font-size="52" text-anchor="middle" dominant-baseline="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif">${cfg.icon}</text>
+      <rect x="25" y="214" width="250" height="28" rx="14" fill="rgba(15, 23, 42, 0.88)" stroke="${cfg.accent}" stroke-width="1" stroke-opacity="0.35"/>
+      <text x="150" y="232" font-size="10.5" font-weight="700" letter-spacing="1.2" fill="${cfg.accent}" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" text-transform="uppercase">${cfg.label}</text>
+    </svg>`;
+
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+  };
+
+  window.dfHandleImageError = function (imgElement, categoryId, itemId) {
+    if (!imgElement || imgElement.dataset.failed) return;
+    imgElement.dataset.failed = 'true';
+    imgElement.onerror = null;
+    imgElement.classList.add('df-img-fallback');
+    let itemName = '';
+    try {
+      if (typeof state !== 'undefined' && state.menuItems) {
+        const match = state.menuItems.find(m => m.id === itemId);
+        if (match) itemName = match.name;
+      }
+    } catch (e) { }
+    imgElement.src = window.dfGetDishSvgFallback(categoryId, itemName);
+  };
+
   // Sounds (Web Audio Synthesizer chimes with zero external audio assets!)
   const SoundFX = {
     ctx: null,
@@ -209,7 +266,7 @@
         <div class="df-customer-layout">
 
           <!-- Restaurant Hero Card -->
-          <div class="df-restaurant-hero" style="background-image: url('${tenant.coverImage}');">
+          <div class="df-restaurant-hero" style="background-image: url('${tenant.coverImage}'), url('../assets/dineflow-showcase.jpg');">
             <div class="df-hero-scrim"></div>
             <div class="df-hero-content">
               <div class="df-hero-title">
@@ -315,7 +372,7 @@
                     </div>
 
                     <div class="df-food-media">
-                      <img src="${item.image}" alt="${item.name}" class="df-food-img" loading="lazy">
+                      <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-food-img" loading="lazy" referrerpolicy="no-referrer" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
                       ${inCart ? `
                         <div class="df-qty-stepper" style="position: absolute; bottom: 6px; right: 6px;" onclick="event.stopPropagation()">
                           <button class="df-qty-btn btn-cart-dec" data-id="${item.id}">−</button>
@@ -541,7 +598,7 @@
           </div>
           <div class="df-sheet-body">
             <div class="df-detail-hero">
-              <img src="${item.image}" alt="${item.name}" class="df-detail-img">
+              <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-detail-img" referrerpolicy="no-referrer" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
             </div>
 
             <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
@@ -1320,17 +1377,17 @@
 
     container.innerHTML = `
       <!-- Admin Topbar -->
-      <header class="df-topbar">
+      <header class="df-topbar df-staff-topbar">
         <div class="df-brand-badge">
           <div class="df-brand-icon">${tenant.logoEmoji || '🍽️'}</div>
           <div class="df-brand-text">
-            <h1>${tenant.name} &mdash; Kitchen & Management OS</h1>
-            <span class="df-brand-tagline">Live Operations Portal • ${tenant.branch}</span>
+            <h1 title="${tenant.name} Staff OS">${tenant.name} &mdash; Staff OS</h1>
+            <span class="df-brand-tagline">${tenant.branch}</span>
           </div>
         </div>
         <div class="df-top-actions">
           <a href="#/r/${tenant.slug}/t/T12" target="_blank" class="df-pill-btn" title="Open Customer View for Table T12">
-            <span>Customer QR View ↗</span>
+            <span>Customer QR ↗</span>
           </a>
           <a href="#/super-admin" class="df-pill-btn" title="Super Admin Platform">
             <span>SaaS Admin</span>
@@ -1757,7 +1814,7 @@
             ${state.menuItems.map(item => `
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                 <td style="padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                  <img src="${item.image}" alt="${item.name}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                  <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" referrerpolicy="no-referrer" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
                   <div>
                     <div style="font-weight: 700; color: #fff;">${item.name}</div>
                     <div style="font-size: 0.72rem; color: var(--text-dim);">${item.isBestseller ? '⭐ Bestseller' : ''}</div>
@@ -2275,7 +2332,7 @@
         </div>
       </header>
 
-      <main class="df-app-viewport" style="padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%;">
+      <main class="df-superadmin-layout" style="padding-top: 96px; padding-bottom: 4rem; padding-left: 2rem; padding-right: 2rem; max-width: 1280px; margin: 0 auto; width: 100%; min-height: 100vh; box-sizing: border-box;">
         <div class="df-stats-grid" style="margin-bottom: 2rem;">
           <div class="df-stat-card">
             <span class="df-stat-label">Total Restaurants</span>
@@ -2382,7 +2439,7 @@
           </div>
         </header>
 
-        <main class="df-app-viewport" style="max-width: 600px; margin: 0 auto; padding: 2rem 1.25rem; width: 100%;">
+        <main class="df-onboarding-layout" style="padding-top: 96px; padding-bottom: 4rem; padding-left: 1.25rem; padding-right: 1.25rem; max-width: 640px; margin: 0 auto; width: 100%; min-height: 100vh; box-sizing: border-box;">
           <!-- Progress Bar -->
           <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; margin-bottom: 2rem; overflow: hidden;">
             <div style="width: ${(currentStep / totalSteps) * 100}%; height: 100%; background: linear-gradient(90deg, #E5A93C, #10B981); transition: width 0.3s ease;"></div>

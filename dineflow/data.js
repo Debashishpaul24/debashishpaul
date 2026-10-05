@@ -629,7 +629,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1604909052743-94e838986d24?auto=format&fit=crop&w=600&q=80',
       allergens: ['Shellfish', 'Egg', 'Gluten']
     },
     {
@@ -644,7 +644,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80',
+      image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80',
       allergens: ['Dairy']
     },
     {
@@ -1117,7 +1117,7 @@ const DINEFLOW_DEFAULT_DATA = {
 
 // Store helper for localStorage persistence with state change broadcast
 const DineFlowStore = {
-  KEY: 'DINEFLOW_SaaS_STORE_v1',
+  KEY: 'DINEFLOW_SaaS_STORE_v2',
   broadcastChannel: null,
 
   init() {

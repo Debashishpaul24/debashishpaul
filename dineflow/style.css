@@ -713,6 +713,9 @@ input:focus, textarea:focus, select:focus {
   flex-shrink: 0;
   border-radius: 14px;
   overflow: hidden;
+  background: radial-gradient(circle at center, #242838 0%, #0d1017 100%);
+  border: 1px solid rgba(229, 169, 60, 0.16);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .df-food-img {
@@ -720,6 +723,13 @@ input:focus, textarea:focus, select:focus {
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
+  display: block;
+}
+
+.df-food-img.df-img-fallback,
+.df-detail-img.df-img-fallback {
+  object-fit: cover;
+  background: transparent;
 }
 
 .df-food-card:hover .df-food-img {
@@ -938,6 +948,8 @@ input:focus, textarea:focus, select:focus {
   overflow: hidden;
   position: relative;
   margin-bottom: 1.25rem;
+  background: radial-gradient(circle at center, #242838 0%, #0d1017 100%);
+  border: 1px solid rgba(229, 169, 60, 0.16);
 }
 
 .df-detail-img {
@@ -1257,6 +1269,45 @@ input:focus, textarea:focus, select:focus {
   max-width: 1400px;
 }
 
+/* Super Admin Platform Layout (Ensures clear visibility below fixed topbar and full scrolling) */
+.df-superadmin-layout {
+  padding-top: 85px;
+  padding-bottom: 4rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Onboarding Wizard Layout */
+.df-onboarding-layout {
+  padding-top: 85px;
+  padding-bottom: 4rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .df-superadmin-layout {
+    padding-top: 76px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 3rem;
+  }
+  .df-onboarding-layout {
+    padding-top: 76px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 3rem;
+  }
+}
+
 /* Stat Metric Cards */
 .df-stats-grid {
   display: grid;
@@ -1523,9 +1574,22 @@ input:focus, textarea:focus, select:focus {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
     border-right: none;
     border-bottom: 1px solid var(--border-subtle);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.35rem;
+  }
+  .df-admin-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  .df-admin-nav-item {
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-bottom: 0;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
   }
   .df-admin-main {
     padding: 1.25rem;
@@ -1533,6 +1597,51 @@ input:focus, textarea:focus, select:focus {
 }
 
 @media (max-width: 600px) {
+  .df-topbar {
+    height: 56px;
+    padding: 0 0.75rem;
+  }
+  .df-app-viewport {
+    padding-top: 56px;
+  }
+  .df-brand-badge {
+    gap: 0.45rem;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .df-brand-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .df-brand-text {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .df-brand-text h1 {
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .df-brand-tagline {
+    font-size: 0.64rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+  .df-top-actions {
+    flex-shrink: 0;
+    gap: 0.35rem;
+  }
+  .df-top-actions .df-pill-btn {
+    padding: 0.32rem 0.55rem;
+    font-size: 0.72rem;
+    white-space: nowrap;
+  }
   .df-kanban-board {
     grid-template-columns: 1fr;
   }
