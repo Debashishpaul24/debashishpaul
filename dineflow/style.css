@@ -868,6 +868,110 @@ input:focus, textarea:focus, select:focus {
   border: 1.5px solid var(--bg-dark);
 }
 
+/* DineFlow Luxury Customer Footer */
+.df-customer-footer {
+  margin-top: 3.5rem;
+  padding: 2.25rem 1.25rem 2.5rem;
+  background: linear-gradient(180deg, rgba(14, 19, 31, 0.4) 0%, rgba(7, 9, 14, 0.98) 100%);
+  border-top: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.df-footer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.df-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.df-footer-icon {
+  font-size: 1.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.df-footer-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.df-footer-branch {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.df-back-portfolio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-full);
+  background: rgba(229, 169, 60, 0.12);
+  border: 1px solid rgba(229, 169, 60, 0.35);
+  color: var(--brand-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.df-back-portfolio-btn:hover {
+  background: var(--brand-primary);
+  color: #080C14;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(var(--brand-primary-rgb), 0.4);
+}
+
+.df-footer-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  width: 100%;
+}
+
+.df-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+
+.df-footer-credit {
+  color: var(--text-muted);
+}
+
+.df-credit-link {
+  color: var(--brand-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.df-credit-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.df-footer-tech {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+}
+
 /* Modals & Bottom Sheets */
 .df-modal-backdrop {
   position: fixed;

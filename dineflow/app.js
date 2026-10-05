@@ -396,6 +396,33 @@
               `}
             </div>
           </div>
+
+          <!-- DineFlow Luxury Customer Footer -->
+          <footer class="df-customer-footer">
+            <div class="df-footer-top">
+              <div class="df-footer-brand">
+                <span class="df-footer-icon">${tenant.logoEmoji || '🍽️'}</span>
+                <div>
+                  <h4 class="df-footer-name">${tenant.name}</h4>
+                  <p class="df-footer-branch">${tenant.branch}</p>
+                </div>
+              </div>
+              <a href="../#projects" class="df-back-portfolio-btn" title="Return to Debashish Paul Portfolio">
+                <span>← Back to Portfolio</span>
+              </a>
+            </div>
+
+            <div class="df-footer-divider"></div>
+
+            <div class="df-footer-bottom">
+              <div class="df-footer-credit">
+                Designed &amp; Engineered by <a href="../" class="df-credit-link">Debashish Paul</a>
+              </div>
+              <div class="df-footer-tech">
+                <span>DineFlow Platform</span> • <span>QR Dining Experience</span>
+              </div>
+            </div>
+          </footer>
         </div>
       </main>
 
@@ -1462,6 +1489,16 @@
 
             <!-- Tab Content Dynamic Switcher -->
             <div id="admin-tab-body"></div>
+
+            <!-- Operations OS Footer -->
+            <footer class="df-admin-footer" style="margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div style="font-size: 0.82rem; color: var(--text-dim);">
+                Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow Restaurant OS
+              </div>
+              <a href="../#projects" class="df-back-portfolio-btn">
+                <span>← Back to Portfolio</span>
+              </a>
+            </footer>
           </section>
         </div>
       </main>
@@ -2390,6 +2427,16 @@
             </div>
           `).join('')}
         </div>
+
+        <!-- Super Admin Footer -->
+        <footer class="df-superadmin-footer" style="margin-top: 3.5rem; padding-top: 1.75rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow SaaS Platform
+          </div>
+          <a href="../#projects" class="df-back-portfolio-btn">
+            <span>← Back to Portfolio</span>
+          </a>
+        </footer>
       </main>
     `;
 
