@@ -2,7 +2,7 @@
  * DineFlow Service Worker — PWA Offline Shell & Asset Caching
  */
 
-const CACHE_NAME = 'dineflow-v1.4.0';
+const CACHE_NAME = 'dineflow-v1.5.0';
 const STATIC_ASSETS = [
   './',
   './index.html',

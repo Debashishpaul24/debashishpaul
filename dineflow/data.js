@@ -1181,11 +1181,16 @@ const DineFlowStore = {
     return fresh;
   },
 
-  save(data) {
+  save(data, meta = {}) {
     try {
       localStorage.setItem(this.KEY, JSON.stringify(data));
       if (this.broadcastChannel) {
-        this.broadcastChannel.postMessage({ type: 'SYNC', timestamp: Date.now() });
+        this.broadcastChannel.postMessage({
+          type: 'SYNC',
+          payload: data,
+          meta: meta,
+          timestamp: Date.now()
+        });
       }
     } catch (e) {
       console.error('Failed saving localStorage', e);

@@ -20,6 +20,7 @@
   let activeDetailItem = null;
   let activeTableTentData = null;
   let currentAdminTab = 'orders';
+  let activeTrackingOrderId = null;
 
   // ------------------------------------------------------------------------------
   // ZERO-NETWORK RESILIENT DISH IMAGE FALLBACK ENGINE
@@ -472,9 +473,6 @@
           Instant QR Dining Experience • Powered by DineFlow
         </p>
       </div>
-
-      <!-- Modals Container -->
-      <div id="modal-container"></div>
     `;
 
     bindCustomerEvents(tenant, table);
@@ -959,7 +957,13 @@
         }
 
         // Save state and notify cross-tabs
-        DineFlowStore.save(state);
+        DineFlowStore.save(state, {
+          action: 'NEW_ORDER',
+          source: 'customer',
+          orderId: newOrder.id,
+          tableId: table.id,
+          customerName: newOrder.customerName
+        });
 
         // Clear cart
         cart = [];
@@ -985,6 +989,7 @@
     // Find latest active orders for this table
     const tableOrders = state.orders.filter(o => o.tableId === table.id && o.tenantId === tenant.id);
     const activeOrder = focusOrderId ? tableOrders.find(o => o.id === focusOrderId) : tableOrders[0];
+    activeTrackingOrderId = activeOrder ? activeOrder.id : (focusOrderId || null);
 
     const statusSteps = [
       { key: 'RECEIVED', title: 'Order Received', desc: 'Sent directly to the kitchen brigade' },
@@ -1089,16 +1094,19 @@
       </div>
     `;
 
-    document.getElementById('btn-close-orders')?.addEventListener('click', () => {
+    const closeOrdersModal = () => {
+      activeTrackingOrderId = null;
       modalContainer.innerHTML = '';
-    });
-    document.getElementById('btn-browse-orders')?.addEventListener('click', () => {
-      modalContainer.innerHTML = '';
-    });
-    document.getElementById('btn-order-more')?.addEventListener('click', () => {
-      modalContainer.innerHTML = '';
+    };
+
+    document.getElementById('btn-close-orders')?.addEventListener('click', closeOrdersModal);
+    document.getElementById('btn-browse-orders')?.addEventListener('click', closeOrdersModal);
+    document.getElementById('btn-order-more')?.addEventListener('click', closeOrdersModal);
+    document.getElementById('orders-backdrop')?.addEventListener('click', (e) => {
+      if (e.target.id === 'orders-backdrop') closeOrdersModal();
     });
     document.getElementById('btn-order-feedback')?.addEventListener('click', () => {
+      closeOrdersModal();
       openFeedbackModal(tenant, table);
     });
   }
@@ -1176,7 +1184,12 @@
           time: 'Just now'
         });
 
-        DineFlowStore.save(state);
+        DineFlowStore.save(state, {
+          action: 'STAFF_CALL',
+          source: 'customer',
+          tableId: table.id,
+          requestLabel: label
+        });
         SoundFX.chime('success');
         modalContainer.innerHTML = '';
         showToast(`Request sent to staff! Server arriving at Table ${table.id}.`, '🔔');
@@ -1289,7 +1302,11 @@
         time: 'Just now'
       });
 
-      DineFlowStore.save(state);
+      DineFlowStore.save(state, {
+        action: 'BILL_REQUEST',
+        source: 'customer',
+        tableId: table.id
+      });
       SoundFX.chime('success');
       modalContainer.innerHTML = '';
       showToast(`Bill requested! Server is bringing receipt to Table ${table.id}.`, '💳');
@@ -1502,8 +1519,6 @@
           </section>
         </div>
       </main>
-
-      <div id="modal-container"></div>
     `;
 
     // Bind Admin Sidebar Nav
@@ -1643,7 +1658,13 @@
         const order = state.orders.find(o => o.id === orderId);
         if (order) {
           order.status = nextStatus;
-          DineFlowStore.save(state);
+          DineFlowStore.save(state, {
+            action: 'ORDER_STATUS_CHANGED',
+            source: 'staff',
+            orderId: order.id,
+            newStatus: nextStatus,
+            tableId: order.tableId
+          });
           SoundFX.chime('success');
           showToast(`Order #${orderId} moved to ${nextStatus}`);
           renderKitchenKanban(container, tenant);
@@ -2654,11 +2675,74 @@
   window.addEventListener('hashchange', renderApp);
 
   // Cross-tab synchronization hook
-  window.onDineFlowRemoteSync = function () {
-    state = DineFlowStore.get();
-    SoundFX.chime('alert');
-    showToast('Real-time updates received from staff', '🔔');
-    renderApp();
+  window.onDineFlowRemoteSync = function (event) {
+    // 1. Sync in-memory state directly from broadcast payload or storage
+    if (event && event.payload) {
+      state = event.payload;
+    } else {
+      state = DineFlowStore.get();
+    }
+
+    const route = parseRoute();
+    const meta = (event && event.meta) || {};
+
+    if (route.view === 'admin') {
+      const tenant = getCurrentTenant();
+
+      // Audio notification for staff
+      SoundFX.chime(meta.action === 'NEW_ORDER' ? 'alert' : 'chime');
+
+      // Staff Toast
+      if (meta.action === 'NEW_ORDER') {
+        showToast(`New Order #${meta.orderId || ''} received from Table ${meta.tableId || ''}! 🛎️`, '📥');
+      } else if (meta.action === 'STAFF_CALL') {
+        showToast(`Table ${meta.tableId || ''} requests ${meta.requestLabel || 'Staff Assistance'}!`, '⚠️');
+      } else if (meta.action === 'BILL_REQUEST') {
+        showToast(`Table ${meta.tableId || ''} requested their bill!`, '💳');
+      } else {
+        showToast('Real-time order sync received from customer', '🔔');
+      }
+
+      // Re-render Admin View (updates metrics, kanban cards, and call counts instantly)
+      const appEl = document.getElementById('app');
+      if (appEl) {
+        renderAdminView(appEl, tenant);
+      }
+    } else if (route.view === 'customer') {
+      const tenant = getCurrentTenant(route.tenantSlug);
+      const table = state.tables.find(t => t.id === route.tableId) || { id: route.tableId, name: `Table ${route.tableId}`, section: 'Indoor' };
+
+      // Chime for customer
+      SoundFX.chime('success');
+
+      // Customer Toast
+      if (meta.action === 'ORDER_STATUS_CHANGED') {
+        const statusMap = {
+          RECEIVED: 'Order Received by Kitchen 📥',
+          CONFIRMED: 'Chef Confirmed your Order! 👨‍🍳',
+          PREPARING: 'Now Cooking in the Kitchen! 🍳',
+          READY: 'Plated & Ready for Delivery! 🔔',
+          SERVED: 'Delivered to your Table! Enjoy! 🍽️',
+          COMPLETED: 'Order Completed. Thank you! ⭐'
+        };
+        showToast(statusMap[meta.newStatus] || `Order #${meta.orderId}: ${meta.newStatus}`, '👨‍🍳');
+      } else {
+        showToast('Live order updates synced', '✓');
+      }
+
+      // Re-render customer background (dishes, badges, cart count)
+      const appEl = document.getElementById('app');
+      if (appEl) {
+        renderCustomerView(appEl, route.tenantSlug, route.tableId);
+      }
+
+      // PRESERVE AND UPDATE THE ORDER TRACKING MODAL IF OPEN (NO AUTO-CLOSING!)
+      if (activeTrackingOrderId || document.getElementById('orders-backdrop')) {
+        openOrdersModal(tenant, table, activeTrackingOrderId || meta.orderId);
+      }
+    } else {
+      renderApp();
+    }
   };
 
   // Register PWA Service Worker
