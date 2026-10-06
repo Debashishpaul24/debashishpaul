@@ -1832,6 +1832,44 @@ body.mobile-drawer-open #back-to-top {
   box-shadow: 0 0 15px rgba(229, 169, 60, 0.5);
 }
 
+.video-preview-badge.is-clickable {
+  pointer-events: auto;
+  cursor: pointer;
+  text-decoration: none;
+  z-index: 4;
+}
+
+.video-preview-badge.is-clickable:hover {
+  background: #E5A93C;
+  color: #07090e;
+  border-color: #ffffff;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 0 18px rgba(229, 169, 60, 0.7);
+}
+
+.tag-pill.tag-video-pill {
+  background: rgba(229, 169, 60, 0.14);
+  border: 1px solid rgba(229, 169, 60, 0.45);
+  color: #f7e8b6;
+  font-weight: 700;
+  text-decoration: none;
+  position: relative;
+  z-index: 4;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.25s ease;
+}
+
+.tag-pill.tag-video-pill:hover {
+  background: rgba(229, 169, 60, 0.28);
+  border-color: #E5A93C;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(229, 169, 60, 0.4);
+  transform: translateY(-1px);
+}
+
 .card-action-btns {
   display: inline-flex;
   align-items: center;
@@ -1904,7 +1942,8 @@ body.mobile-drawer-open #back-to-top {
 .card-title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.06rem;
+  line-height: 1.3;
   letter-spacing: -0.02em;
   color: #ffffff;
   margin-bottom: 0.35rem;
