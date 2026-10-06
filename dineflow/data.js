@@ -33,7 +33,7 @@ const DINEFLOW_DEFAULT_DATA = {
       serviceChargeRate: 5, // 5% Service Charge
       primaryColor: '#E5A93C',
       secondaryColor: '#0F172A',
-      coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80',
+      coverImage: 'images/cover-the-urban-plate.jpg',
       logoEmoji: '🍽️',
       wifiName: 'UrbanPlate_Guest',
       wifiPass: 'GoodFood2026',
@@ -55,7 +55,7 @@ const DINEFLOW_DEFAULT_DATA = {
       serviceChargeRate: 7.5,
       primaryColor: '#10B981',
       secondaryColor: '#1E1B4B',
-      coverImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
+      coverImage: 'images/cover-bella-vista.jpg',
       logoEmoji: '🍕',
       wifiName: 'BellaVista_5G',
       wifiPass: 'PizzaPasta2026',
@@ -77,7 +77,7 @@ const DINEFLOW_DEFAULT_DATA = {
       serviceChargeRate: 10,
       primaryColor: '#E11D48',
       secondaryColor: '#0B0F19',
-      coverImage: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=1200&q=80',
+      coverImage: 'images/cover-sakura-asian.jpg',
       logoEmoji: '🥢',
       wifiName: 'Sakura_VIP',
       wifiPass: 'SushiTokyo26',
@@ -116,7 +116,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-01.jpg',
       allergens: ['Dairy'],
       addOns: [
         { name: 'Extra Boneless Chicken', price: 90 },
@@ -140,7 +140,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-02.jpg',
       allergens: ['Dairy', 'Gluten'],
       addOns: [
         { name: 'Extra Shaved Truffle', price: 120 },
@@ -162,7 +162,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1559742811-822873691df8?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-03.jpg',
       allergens: ['Shellfish', 'Dairy'],
       addOns: [
         { name: 'Herb Butter Rice', price: 80 },
@@ -183,7 +183,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-04.jpg',
       allergens: ['Gluten'],
       addOns: [{ name: 'Spicy Schezwan Dip', price: 30 }]
     },
@@ -199,7 +199,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-05.jpg',
       allergens: ['Gluten', 'Soy', 'Sesame'],
       addOns: [{ name: 'Extra Dim Sum Sauce', price: 25 }]
     },
@@ -215,7 +215,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-06.jpg',
       allergens: ['Dairy', 'Gluten'],
       addOns: [{ name: 'Chipotle Mayo Dip', price: 35 }]
     },
@@ -233,7 +233,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-07.jpg',
       allergens: ['Dairy'],
       addOns: [
         { name: 'Extra Mutton Boti (2 pcs)', price: 140 },
@@ -252,7 +252,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-08.jpg',
       allergens: ['Dairy', 'Nuts'],
       addOns: [
         { name: 'Extra Malai Paneer Cubes', price: 60 },
@@ -273,7 +273,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-09.jpg',
       allergens: ['Gluten', 'Dairy'],
       addOns: [
         { name: 'Extra Burrata Cheese Ball', price: 95 },
@@ -295,7 +295,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-10.jpg',
       allergens: ['Gluten', 'Dairy'],
       addOns: [
         { name: 'Extra Chicken Bacon Strips', price: 80 },
@@ -314,7 +314,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-11.jpg',
       allergens: ['Gluten', 'Dairy']
     },
 
@@ -331,7 +331,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-12.jpg',
       allergens: ['Gluten', 'Dairy', 'Egg'],
       addOns: [
         { name: 'Crispy Peri-Peri Fries', price: 75 },
@@ -351,7 +351,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-13.jpg',
       allergens: ['Gluten', 'Dairy'],
       addOns: [{ name: 'Seasoned Potato Wedges', price: 70 }]
     },
@@ -367,7 +367,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-14.jpg',
       allergens: ['Gluten', 'Dairy']
     },
 
@@ -384,7 +384,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-15.jpg',
       allergens: ['Gluten', 'Dairy'],
       addOns: [{ name: 'Toasted Garlic Herb Loaf', price: 60 }]
     },
@@ -400,7 +400,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-16.jpg',
       allergens: ['Gluten'],
       addOns: [{ name: 'Add Grilled Herb Chicken', price: 75 }]
     },
@@ -418,7 +418,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-17.jpg',
       allergens: ['Dairy', 'Nuts'],
       addOns: [
         { name: 'Butter Garlic Naan', price: 55 },
@@ -437,7 +437,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-18.jpg',
       allergens: ['Dairy', 'Nuts'],
       addOns: [{ name: 'Amritsari Kulcha', price: 65 }]
     },
@@ -453,7 +453,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-19.jpg',
       allergens: ['Dairy'],
       addOns: [{ name: 'Tandoori Roti (2 pcs)', price: 40 }]
     },
@@ -471,7 +471,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-20.jpg',
       allergens: ['Dairy'],
       addOns: [{ name: 'Mint Chutney & Laccha Onion', price: 20 }]
     },
@@ -487,7 +487,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-21.jpg',
       allergens: ['Dairy']
     },
     {
@@ -502,7 +502,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1628294895950-9805252327bc?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-22.jpg',
       allergens: ['Dairy', 'Gluten']
     },
 
@@ -519,7 +519,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-23.jpg',
       allergens: ['Dairy', 'Gluten', 'Egg'],
       addOns: [{ name: 'Extra Scoop Vanilla Gelato', price: 50 }]
     },
@@ -535,7 +535,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-24.jpg',
       allergens: ['Dairy', 'Gluten', 'Nuts']
     },
     {
@@ -550,7 +550,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-25.jpg',
       allergens: ['Dairy', 'Gluten']
     },
 
@@ -567,7 +567,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-26.jpg',
       allergens: []
     },
     {
@@ -582,7 +582,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-27.jpg',
       allergens: ['Dairy', 'Nuts']
     },
     {
@@ -597,7 +597,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-28.jpg',
       allergens: []
     },
     {
@@ -612,7 +612,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-29.jpg',
       allergens: []
     },
 
@@ -629,7 +629,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: true,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1604909052743-94e838986d24?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-30.jpg',
       allergens: ['Shellfish', 'Egg', 'Gluten']
     },
     {
@@ -644,7 +644,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: false,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-31.jpg',
       allergens: ['Dairy']
     },
     {
@@ -659,7 +659,7 @@ const DINEFLOW_DEFAULT_DATA = {
       isBestseller: true,
       isRecommended: false,
       isAvailable: true,
-      image: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=600&q=80',
+      image: 'images/item-32.jpg',
       allergens: ['Dairy']
     }
   ],
@@ -1117,7 +1117,7 @@ const DINEFLOW_DEFAULT_DATA = {
 
 // Store helper for localStorage persistence with state change broadcast
 const DineFlowStore = {
-  KEY: 'DINEFLOW_SaaS_STORE_v2',
+  KEY: 'DINEFLOW_SaaS_STORE_v3',
   broadcastChannel: null,
 
   init() {
@@ -1136,9 +1136,41 @@ const DineFlowStore = {
 
   get() {
     try {
-      const stored = localStorage.getItem(this.KEY);
+      // Migrate previous v1 / v2 localStorage stores if v3 is not yet populated
+      let stored = localStorage.getItem(this.KEY);
+      if (!stored) {
+        stored = localStorage.getItem('DINEFLOW_SaaS_STORE_v2') || localStorage.getItem('DINEFLOW_SaaS_STORE_v1');
+      }
       if (stored) {
-        return JSON.parse(stored);
+        const data = JSON.parse(stored);
+        // Resilient corporate VPN migration: ensure all dish images reference local bundled assets
+        if (data && Array.isArray(data.menuItems)) {
+          let updated = false;
+          data.menuItems.forEach((item) => {
+            if (!item.image || item.image.includes('unsplash.com')) {
+              item.image = 'images/' + item.id + '.jpg';
+              updated = true;
+            }
+          });
+          if (data.tenants) {
+            if (data.tenants['the-urban-plate'] && data.tenants['the-urban-plate'].coverImage.includes('unsplash.com')) {
+              data.tenants['the-urban-plate'].coverImage = 'images/cover-the-urban-plate.jpg';
+              updated = true;
+            }
+            if (data.tenants['bella-vista'] && data.tenants['bella-vista'].coverImage.includes('unsplash.com')) {
+              data.tenants['bella-vista'].coverImage = 'images/cover-bella-vista.jpg';
+              updated = true;
+            }
+            if (data.tenants['sakura-asian'] && data.tenants['sakura-asian'].coverImage.includes('unsplash.com')) {
+              data.tenants['sakura-asian'].coverImage = 'images/cover-sakura-asian.jpg';
+              updated = true;
+            }
+          }
+          if (updated || !localStorage.getItem(this.KEY)) {
+            this.save(data);
+          }
+        }
+        return data;
       }
     } catch (e) {
       console.warn('Failed reading localStorage', e);

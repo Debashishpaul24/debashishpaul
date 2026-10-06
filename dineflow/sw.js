@@ -2,12 +2,13 @@
  * DineFlow Service Worker — PWA Offline Shell & Asset Caching
  */
 
-const CACHE_NAME = 'dineflow-v1.0.0';
+const CACHE_NAME = 'dineflow-v1.4.0';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
+  './data.js',
   './qr-engine.js',
   './manifest.json',
   '../favicon.svg'
@@ -44,7 +45,7 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cachedResponse) => {
       return cachedResponse || fetch(event.request).then((networkResponse) => {
         // Cache valid HTTP responses
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+        if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
@@ -53,7 +54,7 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       });
     }).catch(() => {
-      // Fallback
+      return caches.match(event.request);
     })
   );
 });

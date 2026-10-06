@@ -372,7 +372,7 @@
                     </div>
 
                     <div class="df-food-media">
-                      <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-food-img" loading="lazy" referrerpolicy="no-referrer" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
+                      <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-food-img" loading="lazy" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
                       ${inCart ? `
                         <div class="df-qty-stepper" style="position: absolute; bottom: 6px; right: 6px;" onclick="event.stopPropagation()">
                           <button class="df-qty-btn btn-cart-dec" data-id="${item.id}">−</button>
@@ -625,7 +625,7 @@
           </div>
           <div class="df-sheet-body">
             <div class="df-detail-hero">
-              <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-detail-img" referrerpolicy="no-referrer" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
+              <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-detail-img" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
             </div>
 
             <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
@@ -1851,7 +1851,7 @@
             ${state.menuItems.map(item => `
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                 <td style="padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                  <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" referrerpolicy="no-referrer" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                  <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
                   <div>
                     <div style="font-weight: 700; color: #fff;">${item.name}</div>
                     <div style="font-size: 0.72rem; color: var(--text-dim);">${item.isBestseller ? '⭐ Bestseller' : ''}</div>
@@ -1948,7 +1948,7 @@
               </div>
               <div>
                 <label style="font-size: 0.78rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; display: block;">High-Res Image URL</label>
-                <input type="url" id="new-dish-img" value="https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80" style="width: 100%;">
+                <input type="url" id="new-dish-img" value="images/item-19.jpg" style="width: 100%;">
               </div>
               <div style="display: flex; gap: 1.5rem; align-items: center; padding: 0.5rem 0;">
                 <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; cursor: pointer;">
@@ -2561,7 +2561,7 @@
               </div>
               <div>
                 <label style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem; display: block;">Cover Photography URL</label>
-                <input type="url" value="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4" style="width: 100%;">
+                <input type="url" value="images/cover-the-urban-plate.jpg" style="width: 100%;">
               </div>
             </div>
           `;
