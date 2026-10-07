@@ -2079,6 +2079,22 @@
       });
     });
 
+    // Bind Staff OS Logout
+    document.getElementById('btn-admin-logout')?.addEventListener('click', () => {
+      state = DineFlowStore.get();
+      state.session = {
+        isAuthenticated: false,
+        role: 'CUSTOMER',
+        user: null,
+        tenantId: tenant ? tenant.slug : 'the-urban-plate'
+      };
+      DineFlowStore.save(state);
+      SoundFX.chime('alert');
+      showToast('Signed out of Staff OS. Session secured.', '🔒');
+      window.location.hash = '#/login';
+      renderApp();
+    });
+
     renderAdminTabContent(tenant);
   }
 
@@ -2913,19 +2929,6 @@
       SoundFX.chime('success');
       showToast('Branding updated and published live!');
     });
-
-    document.getElementById('btn-admin-logout')?.addEventListener('click', () => {
-      state.session = {
-        isAuthenticated: false,
-        role: 'CUSTOMER',
-        user: null,
-        tenantId: tenant.slug
-      };
-      DineFlowStore.save(state);
-      SoundFX.chime('alert');
-      showToast('Signed out of Staff OS. Session secured.', '🔒');
-      window.location.hash = '#/login';
-    });
   }
 
   // ------------------------------------------------------------------------------
@@ -3046,6 +3049,7 @@
     });
 
     document.getElementById('btn-superadmin-logout')?.addEventListener('click', () => {
+      state = DineFlowStore.get();
       state.session = {
         isAuthenticated: false,
         role: 'CUSTOMER',
@@ -3056,6 +3060,7 @@
       SoundFX.chime('alert');
       showToast('Signed out of Platform Super Admin.', '🔒');
       window.location.hash = '#/login';
+      renderApp();
     });
   }
 
