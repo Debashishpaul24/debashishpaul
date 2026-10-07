@@ -226,6 +226,9 @@
           <a href="#/r/the-urban-plate/t/T12" class="df-demo-link ${activeView === 'customer' ? 'active' : ''}" title="Guest QR Menu (Table T12)">
             <span>📱 Guest T12</span>
           </a>
+          <a href="#/login" class="df-demo-link ${activeView === 'login' ? 'active' : ''}" title="Staff & Admin Login Portal">
+            <span>🔐 Login</span>
+          </a>
           <a href="#/admin" class="df-demo-link ${activeView === 'admin' ? 'active' : ''}" title="Kitchen Staff OS & KDS">
             <span>👨‍🍳 Staff OS</span>
           </a>
@@ -277,8 +280,8 @@
       window.location.hash = '#/login';
       return;
     } else if (route.view === 'login') {
-      removeFloatingRoleSwitcher();
       renderLoginView(appEl, route.target === 'super-admin' ? '#/super-admin' : '#/admin');
+      renderFloatingRoleSwitcher('login');
     } else if (route.view === 'admin') {
       if (!isStaffAuth) {
         removeFloatingRoleSwitcher();
@@ -520,6 +523,8 @@
         updatePinDots();
       }
     }
+
+    document.title = 'DineFlow — Operations & Staff Login Gateway';
 
     container.innerHTML = `
       <header class="df-topbar">
@@ -3314,10 +3319,12 @@
     }
   };
 
-  // Register PWA Service Worker
+  // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(err => {
+      navigator.serviceWorker.register('./sw.js?v=1.6.0').then(reg => {
+        reg.update();
+      }).catch(err => {
         console.warn('Service Worker registration skipped', err);
       });
     });
