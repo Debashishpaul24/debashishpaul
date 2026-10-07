@@ -250,6 +250,7 @@
   // ==============================================================================
 
   function renderApp() {
+    state = DineFlowStore.get();
     const route = parseRoute();
     const appEl = document.getElementById('app');
     if (!appEl) return;
@@ -483,11 +484,12 @@
 
     function authenticateUser(account) {
       if (!account) return false;
+      state = DineFlowStore.get();
       state.session = {
         isAuthenticated: true,
         role: account.role,
         user: account,
-        tenantId: account.tenantId || state.currentTenantId
+        tenantId: account.tenantId || 'the-urban-plate'
       };
       if (account.tenantId) {
         state.currentTenantId = account.tenantId;
@@ -496,13 +498,12 @@
       SoundFX.chime('success');
       showToast(`Welcome, ${account.name}! Authenticated as ${account.roleTitle}`, account.avatarEmoji || '🔑');
 
+      const targetHash = (account.role === 'SUPER_ADMIN') ? '#/super-admin' : '#/admin';
+
       setTimeout(() => {
-        if (account.role === 'SUPER_ADMIN') {
-          window.location.hash = redirectTarget.includes('super-admin') ? redirectTarget : '#/super-admin';
-        } else {
-          window.location.hash = redirectTarget.includes('admin') ? redirectTarget : '#/admin';
-        }
-      }, 350);
+        window.location.hash = targetHash;
+        renderApp();
+      }, 200);
       return true;
     }
 
@@ -512,7 +513,9 @@
         triggerShake();
         return;
       }
-      const match = (state.staffAccounts || []).find(acc => acc.pin === enteredPin);
+      state = DineFlowStore.get();
+      const accounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+      const match = accounts.find(acc => acc.pin === enteredPin);
       if (match) {
         authenticateUser(match);
       } else {
@@ -657,9 +660,13 @@
 
     // Event Listeners for 1-Click Demo Profiles
     container.querySelectorAll('.btn-quick-login').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const pin = btn.getAttribute('data-pin');
-        const match = (state.staffAccounts || []).find(acc => acc.pin === pin);
+        state = DineFlowStore.get();
+        const accounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+        const match = accounts.find(acc => acc.pin === pin);
         if (match) {
           authenticateUser(match);
         }
@@ -709,10 +716,13 @@
     container.querySelector('.btn-submit-pin')?.addEventListener('click', verifyPin);
 
     // Password form submit
-    container.querySelector('#btn-submit-password')?.addEventListener('click', () => {
+    container.querySelector('#btn-submit-password')?.addEventListener('click', (e) => {
+      e.preventDefault();
       const email = container.querySelector('#login-email')?.value.trim();
       const pass = container.querySelector('#login-password')?.value;
-      const match = (state.staffAccounts || []).find(acc => acc.email.toLowerCase() === email.toLowerCase());
+      state = DineFlowStore.get();
+      const accounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+      const match = accounts.find(acc => acc.email.toLowerCase() === email.toLowerCase());
       if (match) {
         authenticateUser(match);
       } else {
@@ -2922,7 +2932,10 @@
   // 3. SUPER ADMIN PLATFORM VIEW (Multi-Tenant Overview)
   // ------------------------------------------------------------------------------
   function renderSuperAdminView(container) {
-    const tenantsList = Object.values(state.tenants);
+    document.title = 'DineFlow — Platform Super Admin Operations & Analytics';
+    state = DineFlowStore.get();
+    const tenantsList = state.tenants ? Object.values(state.tenants) : [];
+    const totalOrdersRev = (state.orders || []).reduce((a, b) => a + (b.total || 0), 0);
 
     container.innerHTML = `
       <header class="df-topbar">
@@ -2960,7 +2973,7 @@
           </div>
           <div class="df-stat-card">
             <span class="df-stat-label">Platform GMV (Processed)</span>
-            <div class="df-stat-val">₹${(state.orders.reduce((a, b) => a + b.total, 0) * 12).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
+            <div class="df-stat-val">₹${(totalOrdersRev * 12).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
             <span class="df-stat-change">↑ +28% YoY Growth</span>
           </div>
           <div class="df-stat-card">
