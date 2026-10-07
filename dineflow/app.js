@@ -79,42 +79,133 @@
     imgElement.src = window.dfGetDishSvgFallback(categoryId, itemName);
   };
 
-  // Sounds (Web Audio Synthesizer chimes with zero external audio assets!)
+  // Professional Acoustic Audio Synthesizer (Zero external audio assets needed!)
   const SoundFX = {
     ctx: null,
+
     init() {
       try {
         if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
         }
       } catch (e) { }
     },
-    chime(type = 'success') {
+
+    getToneProfile() {
+      try {
+        const s = DineFlowStore.get();
+        return (s && s.settings && s.settings.toneProfile) || 'executive';
+      } catch (e) {
+        return 'executive';
+      }
+    },
+
+    // Refined acoustic bell synthesis with fundamental sine, harmonic overtone, and smooth envelope
+    playBell(freq, startTime, duration = 0.45, volume = 0.16, overtoneRatio = 2.0, overtoneGainRatio = 0.22, waveType = 'sine') {
+      if (!this.ctx) return;
+      const ctx = this.ctx;
+
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0.0001, startTime);
+      masterGain.gain.exponentialRampToValueAtTime(volume, startTime + 0.008); // 8ms soft attack (zero clicks)
+      masterGain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration); // smooth exponential decay
+      masterGain.connect(ctx.destination);
+
+      // Fundamental harmonic
+      const osc1 = ctx.createOscillator();
+      osc1.type = waveType;
+      osc1.frequency.setValueAtTime(freq, startTime);
+      osc1.connect(masterGain);
+      osc1.start(startTime);
+      osc1.stop(startTime + duration + 0.05);
+
+      // Harmonic overtone for natural acoustic warmth
+      if (overtoneGainRatio > 0) {
+        const osc2 = ctx.createOscillator();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(freq * overtoneRatio, startTime);
+        const overGain = ctx.createGain();
+        overGain.gain.setValueAtTime(overtoneGainRatio, startTime);
+        overGain.gain.exponentialRampToValueAtTime(0.001, startTime + duration * 0.75);
+        osc2.connect(overGain);
+        overGain.connect(masterGain);
+        osc2.start(startTime);
+        osc2.stop(startTime + duration + 0.05);
+      }
+    },
+
+    chime(type = 'success', overrideProfile = null) {
       try {
         this.init();
         if (!this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
+        const now = this.ctx.currentTime + 0.01;
+        const profile = overrideProfile || this.getToneProfile();
 
-        if (type === 'success') {
-          osc.frequency.setValueAtTime(523.25, now); // C5
-          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
-          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-          osc.start(now);
-          osc.stop(now + 0.45);
-        } else if (type === 'alert') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.setValueAtTime(880, now + 0.1);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-          osc.start(now);
-          osc.stop(now + 0.35);
+        if (profile === 'mute') return;
+
+        if (profile === 'concierge') {
+          // Warm 5-Star Hotel Hospitality Bell (Rich brass resonance)
+          if (type === 'success' || type === 'confirm') {
+            this.playBell(587.33, now, 0.4, 0.15, 2.76, 0.18); // D5
+            this.playBell(880.00, now + 0.12, 0.65, 0.20, 2.76, 0.22); // A5
+          } else if (type === 'alert' || type === 'notice' || type === 'logout') {
+            this.playBell(783.99, now, 0.35, 0.14, 2.0, 0.15); // G5
+            this.playBell(523.25, now + 0.11, 0.5, 0.16, 2.0, 0.18); // C5
+          } else if (type === 'order') {
+            this.playBell(523.25, now, 0.35, 0.14, 2.76, 0.2); // C5
+            this.playBell(659.25, now + 0.12, 0.4, 0.16, 2.76, 0.2); // E5
+            this.playBell(783.99, now + 0.24, 0.65, 0.20, 2.76, 0.25); // G5
+          } else {
+            this.playBell(659.25, now, 0.5, 0.15, 2.0, 0.18);
+          }
+        } else if (profile === 'marimba') {
+          // Warm Acoustic Marimba (Organic wooden mallet strikes)
+          if (type === 'success' || type === 'confirm') {
+            this.playBell(440.00, now, 0.28, 0.18, 3.0, 0.12, 'triangle'); // A4
+            this.playBell(659.25, now + 0.09, 0.35, 0.22, 3.0, 0.14, 'triangle'); // E5
+          } else if (type === 'alert' || type === 'notice' || type === 'logout') {
+            this.playBell(587.33, now, 0.25, 0.16, 3.0, 0.10, 'triangle'); // D5
+            this.playBell(440.00, now + 0.09, 0.32, 0.18, 3.0, 0.12, 'triangle'); // A4
+          } else if (type === 'order') {
+            this.playBell(440.00, now, 0.25, 0.16, 3.0, 0.12, 'triangle');
+            this.playBell(554.37, now + 0.10, 0.28, 0.18, 3.0, 0.12, 'triangle'); // C#5
+            this.playBell(659.25, now + 0.20, 0.40, 0.22, 3.0, 0.15, 'triangle'); // E5
+          } else {
+            this.playBell(554.37, now, 0.3, 0.16, 3.0, 0.12, 'triangle');
+          }
+        } else if (profile === 'minimal') {
+          // Subtle Discrete Glass / Modern Haptic (Quiet executive minimalism)
+          if (type === 'success' || type === 'confirm') {
+            this.playBell(1046.50, now, 0.12, 0.12, 1.5, 0.05); // C6
+            this.playBell(1318.51, now + 0.06, 0.18, 0.14, 1.5, 0.05); // E6
+          } else if (type === 'alert' || type === 'notice' || type === 'logout') {
+            this.playBell(1174.66, now, 0.12, 0.10, 1.5, 0.05); // D6
+            this.playBell(880.00, now + 0.06, 0.16, 0.12, 1.5, 0.05); // A5
+          } else {
+            this.playBell(1046.50, now, 0.15, 0.12, 1.5, 0.05);
+          }
+        } else {
+          // Default: 'executive' (Apple Pay / Square POS crystalline luxury chime)
+          if (type === 'success' || type === 'confirm') {
+            // Elegant two-note harmonic bell (Eb5 -> Bb5)
+            this.playBell(622.25, now, 0.4, 0.16, 2.0, 0.22); // Eb5
+            this.playBell(932.33, now + 0.11, 0.55, 0.20, 2.0, 0.25); // Bb5
+          } else if (type === 'alert' || type === 'notice' || type === 'logout') {
+            // Calm, executive downward dual chime (A5 -> E5) - no harsh alarms
+            this.playBell(880.00, now, 0.32, 0.14, 2.0, 0.18); // A5
+            this.playBell(659.25, now + 0.10, 0.45, 0.16, 2.0, 0.18); // E5
+          } else if (type === 'order') {
+            // High-end restaurant pass announcement (D5 -> A5 -> D6)
+            this.playBell(587.33, now, 0.35, 0.15, 2.0, 0.20); // D5
+            this.playBell(880.00, now + 0.11, 0.42, 0.18, 2.0, 0.22); // A5
+            this.playBell(1174.66, now + 0.22, 0.65, 0.22, 2.0, 0.26); // D6
+          } else {
+            this.playBell(880.00, now, 0.4, 0.15, 2.0, 0.20);
+          }
         }
       } catch (e) { }
     }
@@ -1961,6 +2052,17 @@
     const pendingCalls = state.staffRequests.filter(r => r.status === 'PENDING').length;
     const pendingBills = state.billRequests.filter(b => b.status === 'PENDING').length;
 
+    const currentTone = (state.settings && state.settings.toneProfile) || 'executive';
+    function getToneProfileLabel(profile) {
+      switch (profile) {
+        case 'concierge': return '🛎️ Concierge Bell';
+        case 'marimba': return '🪵 Warm Marimba';
+        case 'minimal': return '💎 Discrete Glass';
+        case 'mute': return '🔇 Muted';
+        default: return '✨ Executive Chime';
+      }
+    }
+
     container.innerHTML = `
       <!-- Admin Topbar -->
       <header class="df-topbar df-staff-topbar">
@@ -1977,6 +2079,9 @@
             <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Staff User'}</span>
             <span class="df-role-tag">${state.session?.role === 'SUPER_ADMIN' ? 'SUPER ADMIN' : 'STAFF'}</span>
           </div>
+          <button id="btn-admin-tone-cycle" class="df-pill-btn" title="Synthesized Audio Alert Profile (Click to preview & cycle)">
+            <span>${getToneProfileLabel(currentTone)}</span>
+          </button>
           <a href="#/r/${tenant.slug}/t/T12" target="_blank" class="df-pill-btn" title="Open Customer View for Table T12">
             <span>Customer QR ↗</span>
           </a>
@@ -2079,6 +2184,26 @@
       });
     });
 
+    // Bind Tone Cycle & Preview
+    document.getElementById('btn-admin-tone-cycle')?.addEventListener('click', () => {
+      state = DineFlowStore.get();
+      state.settings = state.settings || {};
+      const profiles = ['executive', 'concierge', 'marimba', 'minimal', 'mute'];
+      const curIndex = profiles.indexOf(state.settings.toneProfile || 'executive');
+      const nextIndex = (curIndex + 1) % profiles.length;
+      state.settings.toneProfile = profiles[nextIndex];
+      DineFlowStore.save(state);
+
+      const label = getToneProfileLabel(state.settings.toneProfile);
+      const btn = document.getElementById('btn-admin-tone-cycle');
+      if (btn) btn.innerHTML = `<span>${label}</span>`;
+
+      if (state.settings.toneProfile !== 'mute') {
+        SoundFX.chime('order', state.settings.toneProfile);
+      }
+      showToast(`Audio tone switched to: ${label}`, '🔊');
+    });
+
     // Bind Staff OS Logout
     document.getElementById('btn-admin-logout')?.addEventListener('click', () => {
       state = DineFlowStore.get();
@@ -2089,7 +2214,7 @@
         tenantId: tenant ? tenant.slug : 'the-urban-plate'
       };
       DineFlowStore.save(state);
-      SoundFX.chime('alert');
+      SoundFX.chime('notice');
       showToast('Signed out of Staff OS. Session secured.', '🔒');
       window.location.hash = '#/login';
       renderApp();
@@ -2860,6 +2985,8 @@
 
   // BRANDING SETTINGS
   function renderBrandingSettings(container, tenant) {
+    const currentTone = (state.settings && state.settings.toneProfile) || 'executive';
+
     container.innerHTML = `
       <div style="margin-bottom: 1.5rem;">
         <h2 style="font-size: 1.35rem; font-weight: 800;">Restaurant Configuration & Dynamic Branding</h2>
@@ -2912,7 +3039,60 @@
           </button>
         </div>
       </div>
+
+      <!-- Audio Notification Tone & Alert Profile -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; max-width: 650px; margin-top: 1.5rem;">
+        <div style="margin-bottom: 1.25rem;">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 0.35rem;">Staff OS Audio Alert Tone &amp; Profile</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Choose the synthesized acoustic tone played when new orders arrive, tables call, or actions complete.</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+          <select id="cfg-tone-profile" style="flex: 1; min-width: 240px; padding: 0.75rem 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: #fff; font-weight: 600; font-size: 0.85rem;">
+            <option value="executive" ${currentTone === 'executive' ? 'selected' : ''}>✨ Executive Chime (Apple Pay / Square POS)</option>
+            <option value="concierge" ${currentTone === 'concierge' ? 'selected' : ''}>🛎️ 5-Star Concierge (Hospitality Brass Bell)</option>
+            <option value="marimba" ${currentTone === 'marimba' ? 'selected' : ''}>🪵 Warm Marimba (Organic Acoustic Mallet)</option>
+            <option value="minimal" ${currentTone === 'minimal' ? 'selected' : ''}>💎 Discrete Minimalist (Subtle Glass Haptic)</option>
+            <option value="mute" ${currentTone === 'mute' ? 'selected' : ''}>🔇 Silent (Audio Muted)</option>
+          </select>
+          <button type="button" id="btn-preview-tone" class="df-pill-btn" style="padding: 0.75rem 1.2rem; border-color: var(--brand-primary); color: #fff;">
+            <span>Test Tone 🔊</span>
+          </button>
+        </div>
+      </div>
     `;
+
+    document.getElementById('btn-preview-tone')?.addEventListener('click', () => {
+      const selected = document.getElementById('cfg-tone-profile')?.value || 'executive';
+      if (selected === 'mute') {
+        showToast('Audio tone is currently set to Silent', '🔇');
+      } else {
+        SoundFX.chime('order', selected);
+        showToast('Playing tone preview...', '🔊');
+      }
+    });
+
+    document.getElementById('cfg-tone-profile')?.addEventListener('change', (e) => {
+      state.settings = state.settings || {};
+      state.settings.toneProfile = e.target.value;
+      DineFlowStore.save(state);
+      if (e.target.value !== 'mute') {
+        SoundFX.chime('order', e.target.value);
+      }
+      showToast(`Saved default tone: ${e.target.options[e.target.selectedIndex].text}`, '🔊');
+      const topbarBtn = document.getElementById('btn-admin-tone-cycle');
+      if (topbarBtn) {
+        function getLabel(profile) {
+          switch (profile) {
+            case 'concierge': return '🛎️ Concierge Bell';
+            case 'marimba': return '🪵 Warm Marimba';
+            case 'minimal': return '💎 Discrete Glass';
+            case 'mute': return '🔇 Muted';
+            default: return '✨ Executive Chime';
+          }
+        }
+        topbarBtn.innerHTML = `<span>${getLabel(e.target.value)}</span>`;
+      }
+    });
 
     document.getElementById('btn-save-branding')?.addEventListener('click', () => {
       tenant.name = document.getElementById('cfg-name')?.value.trim() || tenant.name;
@@ -2923,6 +3103,9 @@
       tenant.serviceChargeRate = parseFloat(document.getElementById('cfg-service')?.value) || 5;
       tenant.wifiName = document.getElementById('cfg-wifi-name')?.value.trim() || tenant.wifiName;
       tenant.wifiPass = document.getElementById('cfg-wifi-pass')?.value.trim() || tenant.wifiPass;
+
+      state.settings = state.settings || {};
+      state.settings.toneProfile = document.getElementById('cfg-tone-profile')?.value || state.settings.toneProfile || 'executive';
 
       DineFlowStore.save(state);
       applyTenantBranding(tenant);
@@ -3057,7 +3240,7 @@
         tenantId: 'the-urban-plate'
       };
       DineFlowStore.save(state);
-      SoundFX.chime('alert');
+      SoundFX.chime('notice');
       showToast('Signed out of Platform Super Admin.', '🔒');
       window.location.hash = '#/login';
       renderApp();
@@ -3282,7 +3465,7 @@
       const tenant = getCurrentTenant();
 
       // Audio notification for staff
-      SoundFX.chime(meta.action === 'NEW_ORDER' ? 'alert' : 'chime');
+      SoundFX.chime(meta.action === 'NEW_ORDER' ? 'order' : 'notice');
 
       // Staff Toast
       if (meta.action === 'NEW_ORDER') {

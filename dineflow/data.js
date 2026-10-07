@@ -20,6 +20,11 @@ const DINEFLOW_DEFAULT_DATA = {
     tenantId: 'the-urban-plate'
   },
 
+  // Operational Audio & Notification Settings
+  settings: {
+    toneProfile: 'executive' // 'executive' | 'concierge' | 'marimba' | 'minimal' | 'mute'
+  },
+
   // Pre-configured Staff & Admin Accounts for Instant Demo Access
   staffAccounts: [
     {
@@ -1220,6 +1225,10 @@ const DineFlowStore = {
           }
           if (!data.session) {
             data.session = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.session));
+            updated = true;
+          }
+          if (!data.settings || typeof data.settings.toneProfile !== 'string') {
+            data.settings = { toneProfile: 'executive' };
             updated = true;
           }
           if (updated || !localStorage.getItem(this.KEY)) {
