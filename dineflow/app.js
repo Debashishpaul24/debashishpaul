@@ -146,6 +146,11 @@
     const hash = window.location.hash.replace(/^#\/?/, '');
     const parts = hash.split('/');
 
+    // Handle /hub (Platform Showcase & Role Selector)
+    if (parts[0] === 'hub' || parts[0] === '') {
+      return { view: 'hub' };
+    }
+
     // Handle /login
     if (parts[0] === 'login') {
       return { view: 'login', target: parts[1] || 'admin' };
@@ -174,8 +179,8 @@
       return { view: 'onboarding' };
     }
 
-    // Default Customer Route: The Urban Plate Table T12
-    return { view: 'customer', tenantSlug: 'the-urban-plate', tableId: 'T12' };
+    // Default Route: Platform Showcase Hub
+    return { view: 'hub' };
   }
 
   // Get current tenant data
@@ -201,6 +206,42 @@
     document.title = `${tenant.name} | QR Digital Dining Experience`;
   }
 
+  // Floating Role Switcher Pill for Multi-Persona Exploration
+  function renderFloatingRoleSwitcher(activeView) {
+    let el = document.getElementById('df-floating-demo-bar');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'df-floating-demo-bar';
+      el.className = 'df-floating-demo-bar';
+      document.body.appendChild(el);
+    }
+    el.style.display = 'block';
+    el.innerHTML = `
+      <div class="df-demo-bar-inner">
+        <a href="#/hub" class="df-demo-bar-brand" title="Back to DineFlow Showcase Hub">
+          <span class="live-dot"></span>
+          <span>DineFlow Hub ↗</span>
+        </a>
+        <div class="df-demo-bar-links">
+          <a href="#/r/the-urban-plate/t/T12" class="df-demo-link ${activeView === 'customer' ? 'active' : ''}" title="Guest QR Menu (Table T12)">
+            <span>📱 Guest T12</span>
+          </a>
+          <a href="#/admin" class="df-demo-link ${activeView === 'admin' ? 'active' : ''}" title="Kitchen Staff OS & KDS">
+            <span>👨‍🍳 Staff OS</span>
+          </a>
+          <a href="#/super-admin" class="df-demo-link ${activeView === 'super-admin' ? 'active' : ''}" title="Platform Super Admin">
+            <span>⚡ SaaS HQ</span>
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
+  function removeFloatingRoleSwitcher() {
+    const el = document.getElementById('df-floating-demo-bar');
+    if (el) el.style.display = 'none';
+  }
+
   // ==============================================================================
   // VIEW RENDERERS & ROUTE GUARDS
   // ==============================================================================
@@ -213,12 +254,17 @@
     const isStaffAuth = state.session && state.session.isAuthenticated && (state.session.role === 'RESTAURANT_ADMIN' || state.session.role === 'SUPER_ADMIN');
     const isSuperAuth = state.session && state.session.isAuthenticated && state.session.role === 'SUPER_ADMIN';
 
-    if (route.view === 'customer') {
+    if (route.view === 'hub') {
+      removeFloatingRoleSwitcher();
+      renderShowcaseHubView(appEl);
+    } else if (route.view === 'customer') {
       state.currentTenantId = route.tenantSlug;
       state.currentTableId = route.tableId;
       applyTenantBranding(getCurrentTenant(route.tenantSlug));
       renderCustomerView(appEl, route.tenantSlug, route.tableId);
+      renderFloatingRoleSwitcher('customer');
     } else if (route.view === 'logout') {
+      removeFloatingRoleSwitcher();
       state.session = {
         isAuthenticated: false,
         role: 'CUSTOMER',
@@ -231,28 +277,177 @@
       window.location.hash = '#/login';
       return;
     } else if (route.view === 'login') {
+      removeFloatingRoleSwitcher();
       renderLoginView(appEl, route.target === 'super-admin' ? '#/super-admin' : '#/admin');
     } else if (route.view === 'admin') {
       if (!isStaffAuth) {
+        removeFloatingRoleSwitcher();
         renderLoginView(appEl, '#/admin', 'RESTAURANT_ADMIN');
         return;
       }
       const tenant = getCurrentTenant();
       applyTenantBranding(tenant);
       renderAdminView(appEl, tenant);
+      renderFloatingRoleSwitcher('admin');
     } else if (route.view === 'super-admin') {
       if (!isSuperAuth) {
+        removeFloatingRoleSwitcher();
         renderLoginView(appEl, '#/super-admin', 'SUPER_ADMIN');
         return;
       }
       renderSuperAdminView(appEl);
+      renderFloatingRoleSwitcher('super-admin');
     } else if (route.view === 'onboarding') {
       if (!isSuperAuth) {
+        removeFloatingRoleSwitcher();
         renderLoginView(appEl, '#/onboarding', 'SUPER_ADMIN');
         return;
       }
       renderOnboardingView(appEl);
+      removeFloatingRoleSwitcher();
     }
+  }
+
+  // ------------------------------------------------------------------------------
+  // 00. INTERACTIVE PLATFORM SHOWCASE HUB VIEW (#/hub)
+  // ------------------------------------------------------------------------------
+  function renderShowcaseHubView(container) {
+    document.title = 'DineFlow — QR Restaurant SaaS Platform Showcase & Operations Hub';
+
+    container.innerHTML = `
+      <header class="df-topbar df-hub-topbar">
+        <div class="df-brand-badge">
+          <div class="df-brand-icon" style="background: linear-gradient(135deg, #E5A93C, #FF5E3A); color: #fff;">🍽️</div>
+          <div class="df-brand-text">
+            <h1>DineFlow &mdash; QR Restaurant SaaS</h1>
+            <span class="df-brand-tagline">Multi-Tenant Hospitality Ecosystem &bull; Real-Time Operations</span>
+          </div>
+        </div>
+        <div class="df-top-actions">
+          <a href="../#projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
+            <span>← Back to Portfolio</span>
+          </a>
+          <a href="#/admin" class="df-pill-btn primary" title="Staff OS Login">
+            <span>Staff Portal 🔒</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="df-hub-layout">
+        <div class="df-hub-hero">
+          <div class="df-hub-badge">
+            <span class="live-indicator"></span>
+            <span>Production-Grade Hospitality SaaS Platform</span>
+          </div>
+          <h1 class="df-hub-headline">
+            Experience Next-Gen Digital Dining &amp; Kitchen Operations
+          </h1>
+          <p class="df-hub-subtext">
+            Engineered by <a href="../" style="color: var(--brand-primary); font-weight: 700; text-decoration: none;">Debashish Paul</a>. 
+            Choose an interactive portal below to test the full lifecycle in real-time with cross-tab live synchronization:
+          </p>
+        </div>
+
+        <div class="df-hub-grid">
+          <!-- Card 1: Guest Dining -->
+          <div class="df-hub-card guest-card">
+            <div class="df-hub-card-top">
+              <span class="df-hub-role-badge">Front-of-House &bull; Guest Experience</span>
+              <div class="df-hub-card-icon">📱</div>
+            </div>
+            <h2 class="df-hub-card-title">At-Table QR Dining</h2>
+            <div class="df-hub-card-sub">The Urban Plate &bull; Table T12</div>
+            <p class="df-hub-card-desc">
+              Zero-download mobile ordering experience. Browse 32 gourmet delicacies, filter Pure Veg, customize cooking instructions, and track live kitchen status.
+            </p>
+            <ul class="df-hub-features-list">
+              <li><span>✓</span> Instant QR scan simulation (Table T12)</li>
+              <li><span>✓</span> Real-time 5-stage order progress tracker</li>
+              <li><span>✓</span> 1-Touch Waiter Call &amp; Zero-Fee UPI billing</li>
+            </ul>
+            <div class="df-hub-card-cta">
+              <a href="#/r/the-urban-plate/t/T12" class="df-pill-btn primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
+                Launch Guest Menu (Table T12) →
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 2: Kitchen Staff OS -->
+          <div class="df-hub-card staff-card">
+            <div class="df-hub-card-top">
+              <span class="df-hub-role-badge staff">Back-of-House &bull; Operations</span>
+              <div class="df-hub-card-icon">👨‍🍳</div>
+            </div>
+            <h2 class="df-hub-card-title">Kitchen Staff OS &amp; KDS</h2>
+            <div class="df-hub-card-sub">Chef &amp; Floor Management Hub</div>
+            <p class="df-hub-card-desc">
+              Frontline operations console. Real-time Kitchen Display System (KDS) Kanban board, visual 20-table dining floor matrix, and service bell dispatcher.
+            </p>
+            <ul class="df-hub-features-list">
+              <li><span>✓</span> Real-time Kanban cross-tab sync without refresh</li>
+              <li><span>✓</span> Dynamic Table Tent Stand print generator</li>
+              <li><span>✓</span> Fast 4-digit PIN access (PIN: <strong>1234</strong>)</li>
+            </ul>
+            <div class="df-hub-card-cta">
+              <a href="#/admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;">
+                Launch Kitchen Staff OS →
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: SaaS Super Admin -->
+          <div class="df-hub-card admin-card">
+            <div class="df-hub-card-top">
+              <span class="df-hub-role-badge super">Multi-Tenant Platform HQ</span>
+              <div class="df-hub-card-icon">⚡</div>
+            </div>
+            <h2 class="df-hub-card-title">SaaS Platform Super Admin</h2>
+            <div class="df-hub-card-sub">Chain &amp; Franchise Governance</div>
+            <p class="df-hub-card-desc">
+              Multi-restaurant SaaS central dashboard. Monitor network GMV, tenant analytics, batch QR generation, and launch the 10-step restaurant onboarding wizard.
+            </p>
+            <ul class="df-hub-features-list">
+              <li><span>✓</span> 10-Step partner restaurant onboarding wizard</li>
+              <li><span>✓</span> Dynamic multi-tenant branding engine</li>
+              <li><span>✓</span> Executive HQ passcode access (PIN: <strong>9999</strong>)</li>
+            </ul>
+            <div class="df-hub-card-cta">
+              <a href="#/super-admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(99,102,241,0.15); border-color: #818CF8; color: #fff;">
+                Launch Platform Super Admin →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Testing Helper Box -->
+        <div class="df-hub-testing-banner">
+          <div class="df-testing-banner-header">
+            <span style="font-size: 1.35rem;">🧪</span>
+            <div>
+              <h3 style="font-size: 1rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">
+                Dual-Window Live Testing Recommendation
+              </h3>
+              <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">
+                For the best demo experience, open <strong>Guest Menu</strong> in one window and <strong>Staff OS</strong> in a second side-by-side window. When an order or waiter call is sent from Table T12, the kitchen board rings and updates instantaneously without page reloads!
+              </p>
+            </div>
+          </div>
+          <div class="df-testing-banner-actions">
+            <a href="#/r/the-urban-plate/t/T12" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+              <span>Window 1: Guest T12 ↗</span>
+            </a>
+            <a href="#/admin" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+              <span>Window 2: Staff OS ↗</span>
+            </a>
+          </div>
+        </div>
+
+        <footer style="margin-top: 3.5rem; text-align: center; font-size: 0.82rem; color: var(--text-dim);">
+          DineFlow &bull; Engineered with Vanilla JS, BroadcastChannel Real-Time Engine &amp; Luxury Glassmorphism by 
+          <a href="../" style="color: var(--brand-primary); font-weight: 700; text-decoration: none;">Debashish Paul</a>
+        </footer>
+      </main>
+    `;
   }
 
   // ------------------------------------------------------------------------------
@@ -3130,9 +3325,9 @@
 
   // Initial Boot
   window.addEventListener('DOMContentLoaded', () => {
-    // If no hash provided, route to default demo table
+    // If no hash provided, route to Platform Showcase Hub
     if (!window.location.hash) {
-      window.location.hash = '#/r/the-urban-plate/t/T12';
+      window.location.hash = '#/hub';
     } else {
       renderApp();
     }

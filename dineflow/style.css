@@ -2089,3 +2089,327 @@ input:focus, textarea:focus, select:focus {
   border-radius: 4px;
 }
 
+/* ==============================================================================
+   DineFlow — Interactive Platform Showcase Hub (#/hub)
+   ============================================================================== */
+.df-hub-layout {
+  padding: 100px 1.5rem 4rem;
+  max-width: 1240px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.df-hub-hero {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 3.5rem;
+}
+
+.df-hub-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  background: rgba(229, 169, 60, 0.1);
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.df-hub-headline {
+  font-size: clamp(1.85rem, 4vw, 2.75rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #FFFFFF 40%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.df-hub-subtext {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* 3-Column Hub Cards Grid */
+.df-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.df-hub-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.df-hub-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.df-hub-card.guest-card::before {
+  background: linear-gradient(90deg, #E5A93C, #F59E0B);
+}
+.df-hub-card.staff-card::before {
+  background: linear-gradient(90deg, #10B981, #059669);
+}
+.df-hub-card.admin-card::before {
+  background: linear-gradient(90deg, #6366F1, #818CF8);
+}
+
+.df-hub-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(229, 169, 60, 0.12);
+}
+
+.df-hub-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.df-hub-role-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  background: rgba(229, 169, 60, 0.12);
+  color: var(--brand-primary);
+  border: 1px solid rgba(229, 169, 60, 0.25);
+}
+
+.df-hub-role-badge.staff {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.df-hub-role-badge.super {
+  background: rgba(99, 102, 241, 0.12);
+  color: #818CF8;
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.df-hub-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+}
+
+.df-hub-card-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.df-hub-card-sub {
+  font-size: 0.8rem;
+  color: var(--brand-primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.df-hub-card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex: 1;
+}
+
+.df-hub-features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.25rem;
+}
+
+.df-hub-features-list li {
+  font-size: 0.8rem;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.df-hub-features-list li span {
+  color: #10B981;
+  font-weight: 700;
+}
+
+.df-hub-card-cta {
+  margin-top: auto;
+}
+
+/* Real-Time Testing Helper Banner */
+.df-hub-testing-banner {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(229, 169, 60, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-md);
+}
+
+.df-testing-banner-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+  min-width: 280px;
+}
+
+.df-testing-banner-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* In-App Floating Role Switcher Pill */
+.df-floating-demo-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(14, 19, 31, 0.92);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(229, 169, 60, 0.2);
+  border-radius: 999px;
+  padding: 6px 12px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: dfSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dfSlideUp {
+  from { opacity: 0; transform: translate(-50%, 15px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.df-demo-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.df-demo-bar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--brand-primary);
+  text-decoration: none;
+  padding-right: 0.75rem;
+  border-right: 1px solid var(--border-subtle);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.df-demo-bar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.df-demo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.df-demo-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.df-demo-link.active {
+  background: var(--brand-primary);
+  color: #000;
+  font-weight: 700;
+}
+
+@media (max-width: 960px) {
+  .df-hub-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  .df-hub-testing-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .df-floating-demo-bar {
+    bottom: 12px;
+    width: calc(100% - 24px);
+    max-width: 420px;
+    padding: 6px 8px;
+  }
+  .df-demo-bar-brand {
+    display: none;
+  }
+  .df-demo-bar-links {
+    width: 100%;
+    justify-content: space-around;
+  }
+  .df-demo-link {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.72rem;
+    padding: 0.35rem 0.5rem;
+  }
+}
+
+
