@@ -347,10 +347,28 @@
     if (!el) {
       el = document.createElement('div');
       el.id = 'df-floating-demo-bar';
-      el.className = 'df-floating-demo-bar';
       document.body.appendChild(el);
     }
     el.style.display = 'block';
+
+    const isCustomerView = (activeView === 'customer');
+    const isCollapsed = localStorage.getItem('dineflow_demo_bar_collapsed') === 'true';
+
+    el.className = `df-floating-demo-bar ${isCustomerView ? 'above-bottom-nav' : ''} ${isCollapsed ? 'is-collapsed' : ''}`;
+
+    if (isCollapsed) {
+      el.innerHTML = `
+        <button id="btn-expand-demo-bar" class="df-demo-bar-expand-btn" title="Click to expand Demo Portal Switcher">
+          <span>⚡ Switch Demo</span>
+        </button>
+      `;
+      document.getElementById('btn-expand-demo-bar')?.addEventListener('click', () => {
+        localStorage.setItem('dineflow_demo_bar_collapsed', 'false');
+        renderFloatingRoleSwitcher(activeView);
+      });
+      return;
+    }
+
     el.innerHTML = `
       <div class="df-demo-bar-inner">
         <a href="?view=hub" class="df-demo-bar-brand" title="Back to DineFlow Showcase Hub">
@@ -371,8 +389,14 @@
             <span>⚡ SaaS HQ</span>
           </a>
         </div>
+        <button id="btn-collapse-demo-bar" class="df-demo-bar-close" title="Minimize demo switcher to corner">✕</button>
       </div>
     `;
+
+    document.getElementById('btn-collapse-demo-bar')?.addEventListener('click', () => {
+      localStorage.setItem('dineflow_demo_bar_collapsed', 'true');
+      renderFloatingRoleSwitcher(activeView);
+    });
   }
 
   function removeFloatingRoleSwitcher() {
