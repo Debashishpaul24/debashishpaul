@@ -12,6 +12,54 @@
  */
 
 const DINEFLOW_DEFAULT_DATA = {
+  // Active Authentication Session
+  session: {
+    isAuthenticated: false,
+    role: 'CUSTOMER', // 'CUSTOMER' | 'RESTAURANT_ADMIN' | 'SUPER_ADMIN'
+    user: null,
+    tenantId: 'the-urban-plate'
+  },
+
+  // Pre-configured Staff & Admin Accounts for Instant Demo Access
+  staffAccounts: [
+    {
+      id: 'staff-01',
+      name: 'Chef Vikram Rao',
+      roleTitle: 'Kitchen Operations Manager',
+      role: 'RESTAURANT_ADMIN',
+      tenantId: 'the-urban-plate',
+      pin: '1234',
+      email: 'manager@theurbanplate.in',
+      password: 'admin',
+      avatarEmoji: '👨‍🍳',
+      department: 'Kitchen & Floor'
+    },
+    {
+      id: 'staff-02',
+      name: 'Debashish Paul',
+      roleTitle: 'SaaS Platform Super Admin',
+      role: 'SUPER_ADMIN',
+      tenantId: null,
+      pin: '9999',
+      email: 'debashish@dineflow.io',
+      password: 'admin',
+      avatarEmoji: '⚡',
+      department: 'Platform Operations & HQ'
+    },
+    {
+      id: 'staff-03',
+      name: 'Marco Rossi',
+      roleTitle: 'Trattoria Floor Manager',
+      role: 'RESTAURANT_ADMIN',
+      tenantId: 'bella-vista',
+      pin: '5678',
+      email: 'manager@bellavista.in',
+      password: 'admin',
+      avatarEmoji: '🍕',
+      department: 'Italian Cuisine Operations'
+    }
+  ],
+
   // Current active session / tenant
   currentTenantId: 'the-urban-plate',
   currentRole: 'CUSTOMER', // CUSTOMER | RESTAURANT_ADMIN | SUPER_ADMIN
@@ -1165,6 +1213,14 @@ const DineFlowStore = {
               data.tenants['sakura-asian'].coverImage = 'images/cover-sakura-asian.jpg';
               updated = true;
             }
+          }
+          if (!data.staffAccounts || !Array.isArray(data.staffAccounts)) {
+            data.staffAccounts = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.staffAccounts));
+            updated = true;
+          }
+          if (!data.session) {
+            data.session = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.session));
+            updated = true;
           }
           if (updated || !localStorage.getItem(this.KEY)) {
             this.save(data);

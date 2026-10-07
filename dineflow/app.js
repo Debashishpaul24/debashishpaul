@@ -146,6 +146,16 @@
     const hash = window.location.hash.replace(/^#\/?/, '');
     const parts = hash.split('/');
 
+    // Handle /login
+    if (parts[0] === 'login') {
+      return { view: 'login', target: parts[1] || 'admin' };
+    }
+
+    // Handle /logout
+    if (parts[0] === 'logout') {
+      return { view: 'logout' };
+    }
+
     // Handle /r/:slug/t/:tableId
     if (parts[0] === 'r' && parts[1]) {
       const tenantSlug = parts[1];
@@ -192,7 +202,7 @@
   }
 
   // ==============================================================================
-  // VIEW RENDERERS
+  // VIEW RENDERERS & ROUTE GUARDS
   // ==============================================================================
 
   function renderApp() {
@@ -200,20 +210,342 @@
     const appEl = document.getElementById('app');
     if (!appEl) return;
 
+    const isStaffAuth = state.session && state.session.isAuthenticated && (state.session.role === 'RESTAURANT_ADMIN' || state.session.role === 'SUPER_ADMIN');
+    const isSuperAuth = state.session && state.session.isAuthenticated && state.session.role === 'SUPER_ADMIN';
+
     if (route.view === 'customer') {
       state.currentTenantId = route.tenantSlug;
       state.currentTableId = route.tableId;
       applyTenantBranding(getCurrentTenant(route.tenantSlug));
       renderCustomerView(appEl, route.tenantSlug, route.tableId);
+    } else if (route.view === 'logout') {
+      state.session = {
+        isAuthenticated: false,
+        role: 'CUSTOMER',
+        user: null,
+        tenantId: state.currentTenantId || 'the-urban-plate'
+      };
+      DineFlowStore.save(state);
+      SoundFX.chime('alert');
+      showToast('Logged out of operations session.', '🔒');
+      window.location.hash = '#/login';
+      return;
+    } else if (route.view === 'login') {
+      renderLoginView(appEl, route.target === 'super-admin' ? '#/super-admin' : '#/admin');
     } else if (route.view === 'admin') {
+      if (!isStaffAuth) {
+        renderLoginView(appEl, '#/admin', 'RESTAURANT_ADMIN');
+        return;
+      }
       const tenant = getCurrentTenant();
       applyTenantBranding(tenant);
       renderAdminView(appEl, tenant);
     } else if (route.view === 'super-admin') {
+      if (!isSuperAuth) {
+        renderLoginView(appEl, '#/super-admin', 'SUPER_ADMIN');
+        return;
+      }
       renderSuperAdminView(appEl);
     } else if (route.view === 'onboarding') {
+      if (!isSuperAuth) {
+        renderLoginView(appEl, '#/onboarding', 'SUPER_ADMIN');
+        return;
+      }
       renderOnboardingView(appEl);
     }
+  }
+
+  // ------------------------------------------------------------------------------
+  // 0. AUTHENTICATION & LOGIN GATEWAY VIEW
+  // ------------------------------------------------------------------------------
+  function renderLoginView(container, redirectTarget = '#/admin', requestedRole = 'RESTAURANT_ADMIN') {
+    let currentAuthMode = 'pin'; // 'pin' | 'password'
+    let enteredPin = '';
+
+    const targetTenant = getCurrentTenant();
+
+    function updatePinDots() {
+      const dots = container.querySelectorAll('.df-pin-dot');
+      dots.forEach((dot, idx) => {
+        if (idx < enteredPin.length) {
+          dot.classList.add('filled');
+        } else {
+          dot.classList.remove('filled');
+        }
+      });
+    }
+
+    function triggerShake() {
+      const pinDisp = container.querySelector('.df-pin-display');
+      if (pinDisp) {
+        pinDisp.classList.add('shake');
+        setTimeout(() => pinDisp.classList.remove('shake'), 450);
+      }
+    }
+
+    function authenticateUser(account) {
+      if (!account) return false;
+      state.session = {
+        isAuthenticated: true,
+        role: account.role,
+        user: account,
+        tenantId: account.tenantId || state.currentTenantId
+      };
+      if (account.tenantId) {
+        state.currentTenantId = account.tenantId;
+      }
+      DineFlowStore.save(state);
+      SoundFX.chime('success');
+      showToast(`Welcome, ${account.name}! Authenticated as ${account.roleTitle}`, account.avatarEmoji || '🔑');
+
+      setTimeout(() => {
+        if (account.role === 'SUPER_ADMIN') {
+          window.location.hash = redirectTarget.includes('super-admin') ? redirectTarget : '#/super-admin';
+        } else {
+          window.location.hash = redirectTarget.includes('admin') ? redirectTarget : '#/admin';
+        }
+      }, 350);
+      return true;
+    }
+
+    function verifyPin() {
+      if (enteredPin.length < 4) {
+        showToast('Please enter full 4-digit PIN', '⚠️');
+        triggerShake();
+        return;
+      }
+      const match = (state.staffAccounts || []).find(acc => acc.pin === enteredPin);
+      if (match) {
+        authenticateUser(match);
+      } else {
+        SoundFX.chime('alert');
+        triggerShake();
+        showToast('Invalid PIN. Demo PINs: 1234 (Staff) or 9999 (Super Admin)', '❌');
+        enteredPin = '';
+        updatePinDots();
+      }
+    }
+
+    container.innerHTML = `
+      <header class="df-topbar">
+        <div class="df-brand-badge">
+          <div class="df-brand-icon" style="background: linear-gradient(135deg, #E5A93C, #F59E0B); color: #000;">🔐</div>
+          <div class="df-brand-text">
+            <h1>DineFlow Operations Gateway</h1>
+            <span class="df-brand-tagline">Secure Role-Based Access for Kitchen, Floor &amp; Super Admin</span>
+          </div>
+        </div>
+        <div class="df-top-actions">
+          <a href="#/r/${targetTenant.slug}/t/T12" class="df-pill-btn" title="Return to Guest Ordering">
+            <span>← Guest Dining</span>
+          </a>
+        </div>
+      </header>
+
+      <main class="df-login-container">
+        <div class="df-login-card">
+          <div class="df-login-header">
+            <div class="df-login-icon-badge">🛡️</div>
+            <h2 class="df-login-title">Operations Portal</h2>
+            <p class="df-login-subtitle">
+              Sign in to manage live orders, Kitchen Display System (KDS), or SaaS platform controls.
+            </p>
+          </div>
+
+          <!-- Quick 1-Click Demo Profiles -->
+          <div class="df-demo-box">
+            <div class="df-demo-box-label">
+              <span>⚡ One-Click Instant Demo Access</span>
+              <span style="font-size: 0.65rem; color: var(--text-dim);">No typing needed</span>
+            </div>
+            <div class="df-demo-profile-btns">
+              <button class="df-demo-btn btn-quick-login" data-pin="1234" title="Login as The Urban Plate Manager">
+                <div class="df-demo-btn-info">
+                  <span class="df-demo-btn-emoji">👨‍🍳</span>
+                  <div>
+                    <div class="df-demo-btn-title">Restaurant Staff / Kitchen OS</div>
+                    <div class="df-demo-btn-sub">The Urban Plate • Kitchen Kanban &amp; Tables</div>
+                  </div>
+                </div>
+                <div class="df-demo-btn-pin">PIN: 1234</div>
+              </button>
+
+              <button class="df-demo-btn btn-quick-login" data-pin="9999" title="Login as Platform Super Admin">
+                <div class="df-demo-btn-info">
+                  <span class="df-demo-btn-emoji">⚡</span>
+                  <div>
+                    <div class="df-demo-btn-title">SaaS Platform Super Admin</div>
+                    <div class="df-demo-btn-sub">Multi-Tenant HQ • Analytics &amp; Onboarding</div>
+                  </div>
+                </div>
+                <div class="df-demo-btn-pin">PIN: 9999</div>
+              </button>
+
+              <button class="df-demo-btn btn-quick-login" data-pin="5678" title="Login as Bella Vista Floor Manager">
+                <div class="df-demo-btn-info">
+                  <span class="df-demo-btn-emoji">🍕</span>
+                  <div>
+                    <div class="df-demo-btn-title">Bella Vista Trattoria Staff</div>
+                    <div class="df-demo-btn-sub">Park Street Branch • POS &amp; Dining Room</div>
+                  </div>
+                </div>
+                <div class="df-demo-btn-pin">PIN: 5678</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mode Tabs -->
+          <div class="df-auth-tabs">
+            <button class="df-auth-tab ${currentAuthMode === 'pin' ? 'active' : ''}" data-mode="pin">
+              🔢 Fast 4-Digit PIN
+            </button>
+            <button class="df-auth-tab ${currentAuthMode === 'password' ? 'active' : ''}" data-mode="password">
+              🔑 Email &amp; Password
+            </button>
+          </div>
+
+          <!-- PIN Pad Mode -->
+          <div id="df-pin-view" style="${currentAuthMode === 'pin' ? '' : 'display: none;'}">
+            <div class="df-pin-display">
+              <div class="df-pin-dot"></div>
+              <div class="df-pin-dot"></div>
+              <div class="df-pin-dot"></div>
+              <div class="df-pin-dot"></div>
+            </div>
+
+            <div class="df-pin-keypad">
+              <button class="df-keypad-btn btn-digit" data-digit="1">1</button>
+              <button class="df-keypad-btn btn-digit" data-digit="2">2</button>
+              <button class="df-keypad-btn btn-digit" data-digit="3">3</button>
+              <button class="df-keypad-btn btn-digit" data-digit="4">4</button>
+              <button class="df-keypad-btn btn-digit" data-digit="5">5</button>
+              <button class="df-keypad-btn btn-digit" data-digit="6">6</button>
+              <button class="df-keypad-btn btn-digit" data-digit="7">7</button>
+              <button class="df-keypad-btn btn-digit" data-digit="8">8</button>
+              <button class="df-keypad-btn btn-digit" data-digit="9">9</button>
+              <button class="df-keypad-btn action-btn btn-clear" title="Clear PIN">⌫</button>
+              <button class="df-keypad-btn btn-digit" data-digit="0">0</button>
+              <button class="df-keypad-btn submit-btn btn-submit-pin" title="Authenticate">✓</button>
+            </div>
+            <p style="text-align: center; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.5rem;">
+              You can also use physical keyboard numbers to enter PIN
+            </p>
+          </div>
+
+          <!-- Email & Password Mode -->
+          <form id="df-password-view" class="df-login-form" style="${currentAuthMode === 'password' ? '' : 'display: none;'}" onsubmit="return false;">
+            <div class="df-form-field">
+              <label>Staff / Admin Email</label>
+              <input type="email" id="login-email" placeholder="manager@theurbanplate.in" value="manager@theurbanplate.in" required>
+            </div>
+            <div class="df-form-field">
+              <label>Password</label>
+              <input type="password" id="login-password" placeholder="••••••••" value="admin" required>
+            </div>
+            <button class="df-pill-btn primary" id="btn-submit-password" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
+              Authenticate &amp; Enter Dashboard →
+            </button>
+          </form>
+
+          <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
+            <span>🔒 Role-Based Access Control Protected</span>
+            <a href="#/r/the-urban-plate/t/T12" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Guest Menu</a>
+          </div>
+        </div>
+      </main>
+    `;
+
+    // Event Listeners for 1-Click Demo Profiles
+    container.querySelectorAll('.btn-quick-login').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pin = btn.getAttribute('data-pin');
+        const match = (state.staffAccounts || []).find(acc => acc.pin === pin);
+        if (match) {
+          authenticateUser(match);
+        }
+      });
+    });
+
+    // Tab Switching
+    container.querySelectorAll('.df-auth-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        container.querySelectorAll('.df-auth-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentAuthMode = tab.getAttribute('data-mode');
+        const pinView = container.querySelector('#df-pin-view');
+        const passView = container.querySelector('#df-password-view');
+        if (currentAuthMode === 'pin') {
+          pinView.style.display = 'block';
+          passView.style.display = 'none';
+        } else {
+          pinView.style.display = 'none';
+          passView.style.display = 'flex';
+        }
+      });
+    });
+
+    // Keypad digits
+    container.querySelectorAll('.btn-digit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (enteredPin.length < 4) {
+          enteredPin += btn.getAttribute('data-digit');
+          updatePinDots();
+          if (enteredPin.length === 4) {
+            setTimeout(verifyPin, 150);
+          }
+        }
+      });
+    });
+
+    // Clear digit
+    container.querySelector('.btn-clear')?.addEventListener('click', () => {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDots();
+      }
+    });
+
+    // Submit PIN
+    container.querySelector('.btn-submit-pin')?.addEventListener('click', verifyPin);
+
+    // Password form submit
+    container.querySelector('#btn-submit-password')?.addEventListener('click', () => {
+      const email = container.querySelector('#login-email')?.value.trim();
+      const pass = container.querySelector('#login-password')?.value;
+      const match = (state.staffAccounts || []).find(acc => acc.email.toLowerCase() === email.toLowerCase());
+      if (match) {
+        authenticateUser(match);
+      } else {
+        SoundFX.chime('alert');
+        showToast('Invalid credentials. Check email or use 1-Click Demo above', '❌');
+      }
+    });
+
+    // Keyboard listener for PIN entry
+    const keyHandler = (e) => {
+      if (currentAuthMode !== 'pin') return;
+      if (e.key >= '0' && e.key <= '9') {
+        if (enteredPin.length < 4) {
+          enteredPin += e.key;
+          updatePinDots();
+          if (enteredPin.length === 4) {
+            setTimeout(verifyPin, 150);
+          }
+        }
+      } else if (e.key === 'Backspace') {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDots();
+      } else if (e.key === 'Enter') {
+        verifyPin();
+      }
+    };
+
+    window.addEventListener('keydown', keyHandler);
+    const cleanup = () => {
+      window.removeEventListener('keydown', keyHandler);
+      window.removeEventListener('hashchange', cleanup);
+    };
+    window.addEventListener('hashchange', cleanup);
   }
 
   // ------------------------------------------------------------------------------
@@ -1430,12 +1762,20 @@
           </div>
         </div>
         <div class="df-top-actions">
+          <div class="df-session-status-badge" title="Active Session: ${state.session?.user?.roleTitle || 'Staff Member'}">
+            <span>${state.session?.user?.avatarEmoji || '👨‍🍳'}</span>
+            <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Staff User'}</span>
+            <span class="df-role-tag">${state.session?.role === 'SUPER_ADMIN' ? 'SUPER ADMIN' : 'STAFF'}</span>
+          </div>
           <a href="#/r/${tenant.slug}/t/T12" target="_blank" class="df-pill-btn" title="Open Customer View for Table T12">
             <span>Customer QR ↗</span>
           </a>
           <a href="#/super-admin" class="df-pill-btn" title="Super Admin Platform">
             <span>SaaS Admin</span>
           </a>
+          <button id="btn-admin-logout" class="df-pill-btn danger" title="Sign Out of Staff OS" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08);">
+            <span>🔒 Logout</span>
+          </button>
         </div>
       </header>
 
@@ -2363,6 +2703,19 @@
       SoundFX.chime('success');
       showToast('Branding updated and published live!');
     });
+
+    document.getElementById('btn-admin-logout')?.addEventListener('click', () => {
+      state.session = {
+        isAuthenticated: false,
+        role: 'CUSTOMER',
+        user: null,
+        tenantId: tenant.slug
+      };
+      DineFlowStore.save(state);
+      SoundFX.chime('alert');
+      showToast('Signed out of Staff OS. Session secured.', '🔒');
+      window.location.hash = '#/login';
+    });
   }
 
   // ------------------------------------------------------------------------------
@@ -2381,12 +2734,20 @@
           </div>
         </div>
         <div class="df-top-actions">
+          <div class="df-session-status-badge" style="border-color: rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08);">
+            <span>⚡</span>
+            <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Super Admin'}</span>
+            <span class="df-role-tag" style="background: rgba(99, 102, 241, 0.2); color: #818CF8;">PLATFORM HQ</span>
+          </div>
           <a href="#/onboarding" class="df-pill-btn primary">
             + Onboard Restaurant
           </a>
           <a href="#/admin" class="df-pill-btn">
             Restaurant OS
           </a>
+          <button id="btn-superadmin-logout" class="df-pill-btn danger" title="Sign Out of Super Admin" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08);">
+            <span>🔒 Logout</span>
+          </button>
         </div>
       </header>
 
@@ -2469,6 +2830,19 @@
         window.location.hash = '#/admin';
         showToast(`Switched active tenant to ${state.tenants[slug].name}`);
       });
+    });
+
+    document.getElementById('btn-superadmin-logout')?.addEventListener('click', () => {
+      state.session = {
+        isAuthenticated: false,
+        role: 'CUSTOMER',
+        user: null,
+        tenantId: 'the-urban-plate'
+      };
+      DineFlowStore.save(state);
+      SoundFX.chime('alert');
+      showToast('Signed out of Platform Super Admin.', '🔒');
+      window.location.hash = '#/login';
     });
   }
 
