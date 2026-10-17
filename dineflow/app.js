@@ -409,6 +409,11 @@
   // ==============================================================================
 
   function renderApp() {
+    const activeEl = document.activeElement;
+    const isSearchFocused = activeEl && activeEl.id === 'df-search-input';
+    const cursorStart = isSearchFocused ? activeEl.selectionStart : null;
+    const cursorEnd = isSearchFocused ? activeEl.selectionEnd : null;
+
     state = DineFlowStore.get();
     const route = parseRoute();
     const appEl = document.getElementById('app');
@@ -468,6 +473,16 @@
       }
       renderOnboardingView(appEl);
       removeFloatingRoleSwitcher();
+    }
+
+    if (isSearchFocused) {
+      const newInput = document.getElementById('df-search-input');
+      if (newInput) {
+        newInput.focus();
+        if (cursorStart !== null) {
+          try { newInput.setSelectionRange(cursorStart, cursorEnd); } catch (e) {}
+        }
+      }
     }
   }
 
@@ -921,6 +936,68 @@
   // ------------------------------------------------------------------------------
   // 1. CUSTOMER EXPERIENCE VIEW
   // ------------------------------------------------------------------------------
+  function getFilteredCustomerItems(tenant) {
+    let items = (state.menuItems || []).filter(item => item.tenantId === tenant.id && item.isAvailable);
+    if (currentFilterCategory !== 'all') {
+      items = items.filter(item => item.categoryId === currentFilterCategory);
+    }
+    if (vegOnlyFilter) {
+      items = items.filter(item => item.isVeg);
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      items = items.filter(item => item.name.toLowerCase().includes(q) || item.description.toLowerCase().includes(q));
+    }
+    return items;
+  }
+
+  function renderFoodListHtml(items, tenant) {
+    if (!items || !items.length) {
+      return `
+        <div style="text-align: center; padding: 4rem 1rem; color: var(--text-dim);">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">🍽️</div>
+          <h4 style="font-size: 1.1rem; color: #fff; margin-bottom: 0.35rem;">No dishes match your search</h4>
+          <p style="font-size: 0.85rem;">Try clearing your search query or toggling filters.</p>
+        </div>
+      `;
+    }
+
+    return items.map(item => {
+      const inCart = cart.find(c => c.id === item.id);
+      return `
+        <article class="df-food-card" data-item-id="${item.id}">
+          <div class="df-food-info">
+            <div class="df-food-header-badges">
+              <span class="df-diet-badge ${item.isVeg ? 'veg' : 'nonveg'}" title="${item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"></span>
+              ${item.isBestseller ? `<span class="df-micro-badge bestseller">⭐ Bestseller</span>` : ''}
+              ${item.isRecommended ? `<span class="df-micro-badge chef">👨‍🍳 Chef Choice</span>` : ''}
+            </div>
+            <h4 class="df-food-title">${item.name}</h4>
+            <p class="df-food-desc">${item.description}</p>
+            <div class="df-food-footer">
+              <span class="df-food-price">${tenant.currency}${item.price}</span>
+            </div>
+          </div>
+
+          <div class="df-food-media">
+            <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-food-img" loading="lazy" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
+            ${inCart ? `
+              <div class="df-qty-stepper" style="position: absolute; bottom: 6px; right: 6px;" onclick="event.stopPropagation()">
+                <button class="df-qty-btn btn-cart-dec" data-id="${item.id}">−</button>
+                <span class="df-qty-value">${inCart.quantity}</span>
+                <button class="df-qty-btn btn-cart-inc" data-id="${item.id}">+</button>
+              </div>
+            ` : `
+              <button class="df-card-add-btn btn-quick-add" data-id="${item.id}">
+                <span>+</span> ADD
+              </button>
+            `}
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
   function renderCustomerView(container, tenantSlug, tableId) {
     const tenant = getCurrentTenant(tenantSlug);
     const table = state.tables.find(t => t.id === tableId) || { id: tableId, name: `Table ${tableId}`, section: 'Indoor' };
@@ -932,18 +1009,7 @@
 
     // Filter categories & menu items
     const tenantCategories = state.categories.filter(c => c.tenantId === tenant.id);
-    let items = state.menuItems.filter(item => item.tenantId === tenant.id && item.isAvailable);
-
-    if (currentFilterCategory !== 'all') {
-      items = items.filter(item => item.categoryId === currentFilterCategory);
-    }
-    if (vegOnlyFilter) {
-      items = items.filter(item => item.isVeg);
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase().trim();
-      items = items.filter(item => item.name.toLowerCase().includes(q) || item.description.toLowerCase().includes(q));
-    }
+    let items = getFilteredCustomerItems(tenant);
 
     container.innerHTML = `
       <!-- Top Sticky Bar -->
@@ -975,9 +1041,9 @@
               <div class="df-hero-title">
                 <h2>${tenant.name}</h2>
                 <div class="df-hero-meta">
-                  <span>📍 ${table.section}</span>
-                  <span>•</span>
-                  <span>📶 Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong></span>
+                  <span class="df-hero-item">📍 ${table.section}</span>
+                  <span class="df-hero-divider">•</span>
+                  <span class="df-hero-item">📶 Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong></span>
                 </div>
               </div>
               <div class="df-table-chip">
@@ -1007,12 +1073,12 @@
           <div class="df-search-wrapper">
             <div class="df-search-box">
               <span class="df-search-icon">🔍</span>
-              <input type="text" id="df-search-input" class="df-search-input" placeholder="Search dishes, biryani, pizzas, desserts..." value="${searchQuery}">
+              <input type="text" id="df-search-input" class="df-search-input" placeholder="Search dishes, biryani, pizzas, desserts..." value="${searchQuery}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
               <span class="df-search-clear ${searchQuery ? 'active' : ''}" id="df-search-clear">✕</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.65rem;">
               <span style="font-size: 0.78rem; color: var(--text-muted);">
-                Showing <strong>${items.length}</strong> delicacies
+                Showing <strong id="df-top-count">${items.length}</strong> delicacies
               </span>
               <button class="df-pill-btn ${vegOnlyFilter ? 'primary' : ''}" id="btn-toggle-veg" style="font-size: 0.72rem; padding: 0.25rem 0.75rem;">
                 <span class="df-diet-badge veg" style="width: 10px; height: 10px;"></span>
@@ -1052,51 +1118,12 @@
           <!-- Food Items Catalog -->
           <div class="df-menu-section">
             <div class="df-section-heading">
-              <h3>${currentFilterCategory === 'all' ? 'Signature Menu' : tenantCategories.find(c => c.id === currentFilterCategory)?.name || 'Menu'}</h3>
-              <span class="df-section-count">${items.length} items</span>
+              <h3 id="df-section-title">${currentFilterCategory === 'all' ? 'Signature Menu' : (tenantCategories.find(c => c.id === currentFilterCategory)?.name || 'Menu')}</h3>
+              <span class="df-section-count" id="df-section-count">${items.length} items</span>
             </div>
 
-            <div class="df-food-list">
-              ${items.length ? items.map(item => {
-                const inCart = cart.find(c => c.id === item.id);
-                return `
-                  <article class="df-food-card" data-item-id="${item.id}">
-                    <div class="df-food-info">
-                      <div class="df-food-header-badges">
-                        <span class="df-diet-badge ${item.isVeg ? 'veg' : 'nonveg'}" title="${item.isVeg ? 'Vegetarian' : 'Non-Vegetarian'}"></span>
-                        ${item.isBestseller ? `<span class="df-micro-badge bestseller">⭐ Bestseller</span>` : ''}
-                        ${item.isRecommended ? `<span class="df-micro-badge chef">👨‍🍳 Chef Choice</span>` : ''}
-                      </div>
-                      <h4 class="df-food-title">${item.name}</h4>
-                      <p class="df-food-desc">${item.description}</p>
-                      <div class="df-food-footer">
-                        <span class="df-food-price">${tenant.currency}${item.price}</span>
-                      </div>
-                    </div>
-
-                    <div class="df-food-media">
-                      <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" class="df-food-img" loading="lazy" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')">
-                      ${inCart ? `
-                        <div class="df-qty-stepper" style="position: absolute; bottom: 6px; right: 6px;" onclick="event.stopPropagation()">
-                          <button class="df-qty-btn btn-cart-dec" data-id="${item.id}">−</button>
-                          <span class="df-qty-value">${inCart.quantity}</span>
-                          <button class="df-qty-btn btn-cart-inc" data-id="${item.id}">+</button>
-                        </div>
-                      ` : `
-                        <button class="df-card-add-btn btn-quick-add" data-id="${item.id}">
-                          <span>+</span> ADD
-                        </button>
-                      `}
-                    </div>
-                  </article>
-                `;
-              }).join('') : `
-                <div style="text-align: center; padding: 4rem 1rem; color: var(--text-dim);">
-                  <div style="font-size: 3rem; margin-bottom: 0.5rem;">🍽️</div>
-                  <h4 style="font-size: 1.1rem; color: #fff; margin-bottom: 0.35rem;">No dishes match your filter</h4>
-                  <p style="font-size: 0.85rem;">Try clearing your search query or toggling filters.</p>
-                </div>
-              `}
+            <div class="df-food-list" id="df-food-list">
+              ${renderFoodListHtml(items, tenant)}
             </div>
           </div>
 
@@ -1201,15 +1228,115 @@
       });
     }
 
+    function updateNavCartBadge() {
+      const cCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+      const cTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+      const navCart = document.getElementById('nav-tab-cart');
+      if (navCart) {
+        navCart.innerHTML = `
+          <div class="df-nav-icon">
+            🛒
+            ${cCount > 0 ? `<span class="df-cart-pill-count">${cCount}</span>` : ''}
+          </div>
+          <span class="df-nav-label">Cart ${cCount > 0 ? `(${tenant.currency}${cTotal})` : ''}</span>
+        `;
+      }
+    }
+
+    function bindFoodCardEvents() {
+      // Food Card Click -> Open Detail Modal
+      document.querySelectorAll('.df-food-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-quick-add') || e.target.closest('.df-qty-stepper')) return;
+          const itemId = card.getAttribute('data-item-id');
+          const item = state.menuItems.find(m => m.id === itemId);
+          if (item) openFoodDetailModal(item, tenant);
+        });
+      });
+
+      // Quick Add Button
+      document.querySelectorAll('.btn-quick-add').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const itemId = btn.getAttribute('data-id');
+          const item = state.menuItems.find(m => m.id === itemId);
+          if (item) {
+            if (item.addOns && item.addOns.length) {
+              openFoodDetailModal(item, tenant);
+            } else {
+              addToCart(item, 1, {}, '');
+              SoundFX.chime('success');
+              showToast(`Added ${item.name} to cart`);
+              updateNavCartBadge();
+              refreshCustomerMenuCatalog();
+            }
+          }
+        });
+      });
+
+      // Stepper buttons in cards
+      document.querySelectorAll('.btn-cart-inc').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const itemId = btn.getAttribute('data-id');
+          const cartItem = cart.find(c => c.id === itemId);
+          if (cartItem) {
+            cartItem.quantity++;
+            SoundFX.chime('success');
+            updateNavCartBadge();
+            refreshCustomerMenuCatalog();
+          }
+        });
+      });
+
+      document.querySelectorAll('.btn-cart-dec').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const itemId = btn.getAttribute('data-id');
+          const index = cart.findIndex(c => c.id === itemId);
+          if (index > -1) {
+            if (cart[index].quantity > 1) {
+              cart[index].quantity--;
+            } else {
+              cart.splice(index, 1);
+            }
+            updateNavCartBadge();
+            refreshCustomerMenuCatalog();
+          }
+        });
+      });
+    }
+
+    function refreshCustomerMenuCatalog() {
+      const filtered = getFilteredCustomerItems(tenant);
+      const listContainer = document.getElementById('df-food-list');
+      const topCount = document.getElementById('df-top-count');
+      const secCount = document.getElementById('df-section-count');
+      const secTitle = document.getElementById('df-section-title');
+
+      if (listContainer) {
+        listContainer.innerHTML = renderFoodListHtml(filtered, tenant);
+        bindFoodCardEvents();
+      }
+      if (topCount) topCount.textContent = filtered.length;
+      if (secCount) secCount.textContent = `${filtered.length} items`;
+      if (secTitle) {
+        const tenantCategories = state.categories.filter(c => c.tenantId === tenant.id);
+        const cat = tenantCategories.find(c => c.id === currentFilterCategory);
+        secTitle.textContent = currentFilterCategory === 'all' ? 'Signature Menu' : (cat ? cat.name : 'Menu');
+      }
+    }
+
     // Category Tabs
     document.querySelectorAll('.df-cat-pill').forEach(btn => {
       btn.addEventListener('click', () => {
         currentFilterCategory = btn.getAttribute('data-cat');
-        renderApp();
+        document.querySelectorAll('.df-cat-pill').forEach(b => b.classList.toggle('active', b === btn));
+        refreshCustomerMenuCatalog();
       });
     });
 
-    // Search Input
+    // Search Input with Real-Time Non-Destructive Filtering
     const searchInput = document.getElementById('df-search-input');
     const searchClear = document.getElementById('df-search-clear');
     if (searchInput) {
@@ -1218,13 +1345,18 @@
         if (searchClear) {
           searchClear.classList.toggle('active', searchQuery.length > 0);
         }
-        renderApp();
+        refreshCustomerMenuCatalog();
       });
     }
     if (searchClear) {
       searchClear.addEventListener('click', () => {
         searchQuery = '';
-        renderApp();
+        if (searchInput) {
+          searchInput.value = '';
+          searchInput.focus();
+        }
+        searchClear.classList.remove('active');
+        refreshCustomerMenuCatalog();
       });
     }
 
@@ -1233,69 +1365,15 @@
     if (vegBtn) {
       vegBtn.addEventListener('click', () => {
         vegOnlyFilter = !vegOnlyFilter;
-        renderApp();
+        vegBtn.classList.toggle('primary', vegOnlyFilter);
+        const span = vegBtn.querySelector('span:last-child');
+        if (span) span.textContent = vegOnlyFilter ? 'Pure Veg Only' : 'Veg Filter';
+        refreshCustomerMenuCatalog();
       });
     }
 
-    // Food Card Click -> Open Detail Modal
-    document.querySelectorAll('.df-food-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.btn-quick-add') || e.target.closest('.df-qty-stepper')) return;
-        const itemId = card.getAttribute('data-item-id');
-        const item = state.menuItems.find(m => m.id === itemId);
-        if (item) openFoodDetailModal(item, tenant);
-      });
-    });
-
-    // Quick Add Button
-    document.querySelectorAll('.btn-quick-add').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const itemId = btn.getAttribute('data-id');
-        const item = state.menuItems.find(m => m.id === itemId);
-        if (item) {
-          if (item.addOns && item.addOns.length) {
-            // Open modal to choose customizations
-            openFoodDetailModal(item, tenant);
-          } else {
-            addToCart(item, 1, {}, '');
-            SoundFX.chime('success');
-            showToast(`Added ${item.name} to cart`);
-            renderApp();
-          }
-        }
-      });
-    });
-
-    // Stepper buttons in cards
-    document.querySelectorAll('.btn-cart-inc').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const itemId = btn.getAttribute('data-id');
-        const cartItem = cart.find(c => c.id === itemId);
-        if (cartItem) {
-          cartItem.quantity++;
-          SoundFX.chime('success');
-          renderApp();
-        }
-      });
-    });
-
-    document.querySelectorAll('.btn-cart-dec').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const itemId = btn.getAttribute('data-id');
-        const index = cart.findIndex(c => c.id === itemId);
-        if (index > -1) {
-          if (cart[index].quantity > 1) {
-            cart[index].quantity--;
-          } else {
-            cart.splice(index, 1);
-          }
-          renderApp();
-        }
-      });
-    });
+    // Bind initial food cards
+    bindFoodCardEvents();
 
     // Navigation Tabs
     document.getElementById('nav-tab-cart')?.addEventListener('click', () => openCartModal(tenant, table));
@@ -3597,7 +3675,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.6.6').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.6.8').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

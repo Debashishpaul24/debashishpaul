@@ -405,7 +405,20 @@ body.splash-active {
   gap: 0.5rem;
   font-size: 0.78rem;
   color: var(--text-muted);
-  margin-top: 0.2rem;
+  margin-top: 0.25rem;
+}
+
+.df-hero-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.df-hero-divider {
+  color: var(--text-dim);
+  opacity: 0.6;
+  line-height: 1;
 }
 
 .df-table-chip {
@@ -417,9 +430,11 @@ body.splash-active {
   font-size: 0.82rem;
   font-weight: 700;
   backdrop-filter: blur(8px);
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .df-table-chip .live-indicator {
@@ -473,6 +488,7 @@ body.splash-active {
   font-size: 0.76rem;
   font-weight: 600;
   color: var(--text-main);
+  white-space: nowrap;
 }
 
 /* Search Bar */
@@ -611,6 +627,7 @@ body.splash-active {
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
@@ -690,7 +707,8 @@ body.splash-active {
 .df-food-header-badges {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  flex-wrap: wrap;
+  gap: 0.35rem;
   margin-bottom: 0.35rem;
 }
 
@@ -736,6 +754,10 @@ body.splash-active {
   font-weight: 700;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-full);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .df-micro-badge.bestseller {
@@ -926,6 +948,7 @@ body.splash-active {
 .df-nav-label {
   font-size: 0.68rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .df-cart-pill-count {
@@ -1834,6 +1857,38 @@ body.splash-active {
     width: 95px;
     height: 95px;
   }
+  .df-hero-content {
+    align-items: center;
+    bottom: 0.85rem;
+    left: 0.85rem;
+    right: 0.85rem;
+  }
+  .df-hero-title h2 {
+    font-size: 1.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 150px);
+  }
+  .df-hero-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    margin-top: 0.2rem;
+  }
+  .df-hero-divider {
+    display: none;
+  }
+  .df-hero-item {
+    font-size: 0.73rem;
+    white-space: nowrap;
+  }
+  .df-table-chip {
+    padding: 0.32rem 0.65rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 }
 
 /* ==============================================================================
@@ -1971,11 +2026,15 @@ body.splash-active {
   font-size: 0.84rem;
   font-weight: 700;
   color: #fff;
+  white-space: nowrap;
 }
 
 .df-demo-btn-sub {
   font-size: 0.72rem;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .df-demo-btn-pin {
@@ -1987,6 +2046,8 @@ body.splash-active {
   border-radius: 6px;
   color: var(--brand-primary);
   border: 1px solid rgba(229, 169, 60, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Auth Tabs */
@@ -2283,6 +2344,7 @@ body.splash-active {
   background: rgba(229, 169, 60, 0.12);
   color: var(--brand-primary);
   border: 1px solid rgba(229, 169, 60, 0.25);
+  white-space: nowrap;
 }
 
 .df-hub-role-badge.staff {
