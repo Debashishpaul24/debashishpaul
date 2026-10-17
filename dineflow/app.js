@@ -1157,22 +1157,22 @@
         <div class="df-splash-logo-card">
           ${tenant.logoEmoji || '🍽️'}
         </div>
-        <h2 style="font-size: 1.85rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">
+        <h2 class="df-splash-title">
           Welcome to ${tenant.name}
         </h2>
-        <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 300px;">
+        <p class="df-splash-tagline">
           ${tenant.tagline}
         </p>
         <div class="df-splash-table-badge">
-          <span>📍 Table ${table.id}</span>
-          <span>•</span>
-          <span>${table.section}</span>
+          <span class="df-badge-table">📍 Table ${table.id}</span>
+          <span class="df-badge-divider">•</span>
+          <span class="df-badge-section">${table.section}</span>
         </div>
         <button class="df-splash-btn" id="btn-enter-menu">
           Explore Digital Menu ↗
         </button>
-        <p style="font-size: 0.72rem; color: var(--text-dim); margin-top: 1.5rem;">
-          Instant QR Dining Experience • Powered by DineFlow
+        <p class="df-splash-footer-note">
+          Instant QR Dining Experience &bull; Powered by DineFlow
         </p>
       </div>
     `;
@@ -1188,8 +1188,14 @@
     const enterBtn = document.getElementById('btn-enter-menu');
     const splash = document.getElementById('splash-screen');
     if (enterBtn && splash) {
+      if (!sessionStorage.getItem('df_splash_dismissed')) {
+        document.body.classList.add('splash-active');
+      } else {
+        document.body.classList.remove('splash-active');
+      }
       enterBtn.addEventListener('click', () => {
         splash.classList.add('hidden');
+        document.body.classList.remove('splash-active');
         sessionStorage.setItem('df_splash_dismissed', 'true');
         SoundFX.chime('success');
       });
@@ -3591,7 +3597,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.6.5').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.6.6').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

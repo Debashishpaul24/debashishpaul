@@ -213,6 +213,12 @@ input:focus, textarea:focus, select:focus {
   position: relative;
 }
 
+body.splash-active {
+  overflow: hidden !important;
+  height: 100vh !important;
+  touch-action: none;
+}
+
 /* Welcome / Splash Screen Overlay */
 .df-splash-screen {
   position: fixed;
@@ -223,8 +229,10 @@ input:focus, textarea:focus, select:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem 1.25rem calc(110px + env(safe-area-inset-bottom, 0px));
   text-align: center;
+  overflow: hidden;
+  touch-action: none;
   transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
@@ -235,18 +243,19 @@ input:focus, textarea:focus, select:focus {
 }
 
 .df-splash-logo-card {
-  width: 96px;
-  height: 96px;
-  border-radius: 28px;
+  width: 90px;
+  height: 90px;
+  border-radius: 26px;
   background: linear-gradient(135deg, rgba(229, 169, 60, 0.2), rgba(255, 255, 255, 0.05));
   border: 1px solid rgba(var(--brand-primary-rgb), 0.5);
   box-shadow: 0 0 45px rgba(var(--brand-primary-rgb), 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
+  font-size: 2.75rem;
+  margin-bottom: 1.25rem;
   animation: pulseGlow 2.5s infinite ease-in-out;
+  flex-shrink: 0;
 }
 
 @keyframes pulseGlow {
@@ -254,37 +263,106 @@ input:focus, textarea:focus, select:focus {
   50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(var(--brand-primary-rgb), 0.5); }
 }
 
+.df-splash-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.35rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.df-splash-tagline {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  max-width: 290px;
+  line-height: 1.45;
+  margin: 0 auto;
+}
+
 .df-splash-table-badge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   background: rgba(var(--brand-primary-rgb), 0.15);
   border: 1px solid rgba(var(--brand-primary-rgb), 0.4);
   color: var(--brand-primary);
   font-weight: 700;
-  font-size: 0.88rem;
-  padding: 0.45rem 1.1rem;
+  font-size: 0.82rem;
+  padding: 0.45rem 1.15rem;
   border-radius: var(--radius-full);
-  margin: 1.25rem 0 2rem;
-  letter-spacing: 0.05em;
+  margin: 1.25rem 0 1.75rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  white-space: nowrap;
+  max-width: calc(100vw - 40px);
+}
+
+.df-splash-table-badge .df-badge-table {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.df-splash-table-badge .df-badge-divider {
+  opacity: 0.6;
+  line-height: 1;
+}
+
+.df-splash-table-badge .df-badge-section {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .df-splash-btn {
   background: linear-gradient(135deg, var(--brand-primary), #D49B2E);
   color: #080C14;
   font-weight: 800;
-  font-size: 1.05rem;
-  padding: 0.95rem 2.5rem;
+  font-size: 1rem;
+  padding: 0.88rem 2.25rem;
   border-radius: var(--radius-full);
   box-shadow: 0 8px 25px rgba(var(--brand-primary-rgb), 0.45);
   transition: transform 0.2s, box-shadow 0.2s;
   letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: none;
+  cursor: pointer;
 }
 
 .df-splash-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 30px rgba(var(--brand-primary-rgb), 0.6);
+}
+
+.df-splash-footer-note {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 1.25rem;
+  max-width: 280px;
+  line-height: 1.4;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 380px) {
+  .df-splash-title {
+    font-size: 1.45rem;
+  }
+  .df-splash-table-badge {
+    font-size: 0.74rem;
+    padding: 0.38rem 0.85rem;
+    gap: 0.35rem;
+  }
+  .df-splash-btn {
+    font-size: 0.92rem;
+    padding: 0.8rem 1.8rem;
+  }
 }
 
 /* Customer Home Header */
