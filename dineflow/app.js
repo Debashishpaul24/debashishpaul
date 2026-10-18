@@ -502,7 +502,7 @@
           </div>
         </div>
         <div class="df-top-actions">
-          <a href="../#projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
+          <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
             <span>← Back to Portfolio</span>
           </a>
           <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
@@ -1145,7 +1145,7 @@
                   <p class="df-footer-branch">${tenant.branch}</p>
                 </div>
               </div>
-              <a href="../#projects" class="df-back-portfolio-btn" title="Return to Debashish Paul Portfolio">
+              <a href="../projects" class="df-back-portfolio-btn" title="Return to Debashish Paul Portfolio">
                 <span>← Back to Portfolio</span>
               </a>
             </div>
@@ -2489,7 +2489,7 @@
               <div style="font-size: 0.82rem; color: var(--text-dim);">
                 Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow Restaurant OS
               </div>
-              <a href="../#projects" class="df-back-portfolio-btn">
+              <a href="../projects" class="df-back-portfolio-btn">
                 <span>← Back to Portfolio</span>
               </a>
             </footer>
@@ -3562,7 +3562,7 @@
           <div style="font-size: 0.85rem; color: var(--text-muted);">
             Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow SaaS Platform
           </div>
-          <a href="../#projects" class="df-back-portfolio-btn">
+          <a href="../projects" class="df-back-portfolio-btn">
             <span>← Back to Portfolio</span>
           </a>
         </footer>

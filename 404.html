@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debashish Paul — Senior Software Engineer</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script>
+    (function () {
+      var pathname = window.location.pathname.replace(/^\/+|\/+$/g, '');
+      var segments = pathname.split('/');
+      var firstSegment = segments[0] || '';
+      var validSections = ['about', 'projects', 'services', 'testimonials', 'contact'];
+
+      if (validSections.indexOf(firstSegment) !== -1) {
+        sessionStorage.setItem('df_target_section', firstSegment);
+        window.location.replace('/' + (window.location.search || ''));
+      } else {
+        // Unknown route, fallback to root portfolio
+        window.location.replace('/');
+      }
+    })();
+  </script>
+</head>
+<body style="background:#07090e;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+  <p>Redirecting to <a href="/" style="color:#38bdf8;">Debashish Paul Portfolio</a>...</p>
+</body>
+</html>

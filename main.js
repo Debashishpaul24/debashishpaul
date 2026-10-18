@@ -231,7 +231,10 @@
     updateActiveNav();
   }
 
-  // Update active navigation pill based on viewport position (100% reliable)
+  // Track active section to prevent excessive replaceState calls
+  let lastActiveSectionId = '';
+
+  // Update active navigation pill based on viewport position & sync clean path URL (No '#')
   function updateActiveNav() {
     let currentSectionId = '';
     const triggerPoint = window.innerHeight * 0.35;
@@ -245,7 +248,8 @@
 
     if (currentSectionId) {
       navLinks.forEach((link) => {
-        if (link.getAttribute('href') === `#${currentSectionId}`) {
+        const h = link.getAttribute('href') || '';
+        if (h === `#${currentSectionId}` || h === `/${currentSectionId}` || h.endsWith(`/${currentSectionId}`)) {
           link.classList.add('active');
         } else {
           link.classList.remove('active');
@@ -254,34 +258,66 @@
 
       const mobileLinks = document.querySelectorAll('.mobile-nav-link');
       mobileLinks.forEach((link) => {
-        if (link.getAttribute('href') === `#${currentSectionId}`) {
+        const h = link.getAttribute('href') || '';
+        const sec = link.getAttribute('data-section') || '';
+        if (h === `#${currentSectionId}` || h === `/${currentSectionId}` || sec === currentSectionId) {
           link.classList.add('active');
         } else {
           link.classList.remove('active');
         }
       });
+
+      // Synchronize Clean Path URL without '#' when crossing section boundary
+      if (currentSectionId !== lastActiveSectionId) {
+        lastActiveSectionId = currentSectionId;
+        const cleanPath = (currentSectionId === 'hero') ? '/' : `/${currentSectionId}`;
+        const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+        const targetClean = cleanPath.replace(/\/$/, '') || '/';
+        if (currentPath !== targetClean || window.location.hash) {
+          try {
+            window.history.replaceState(null, '', cleanPath);
+          } catch (_) {}
+        }
+      }
     }
   }
 
-  // Smooth Scroll Link Hook Handler for Header, Footer & CTA Buttons
+  // Smooth Scroll Link Hook Handler for Header, Footer & CTA Buttons (Routes to clean paths without '#')
   function initSmoothScrollLinks() {
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    document.querySelectorAll('a[href^="#"], a[href^="/about"], a[href^="/projects"], a[href^="/services"], a[href^="/testimonials"], a[href^="/contact"]').forEach((anchor) => {
       anchor.addEventListener('click', function (e) {
-        const hash = this.getAttribute('href');
-        if (!hash || hash === '#') {
+        const rawHref = this.getAttribute('href') || '';
+        let sectionId = '';
+        if (rawHref.startsWith('#')) {
+          sectionId = rawHref.slice(1);
+        } else if (rawHref.startsWith('/')) {
+          sectionId = rawHref.split('/')[1]?.split('#')[0] || '';
+        }
+
+        if (!sectionId || sectionId === 'hero') {
           e.preventDefault();
           window.scrollTo({ top: 0, behavior: 'smooth' });
+          lastActiveSectionId = 'hero';
+          try {
+            window.history.pushState(null, '', '/');
+          } catch (_) {}
           return;
         }
 
-        const targetEl = document.querySelector(hash);
+        const targetEl = document.getElementById(sectionId);
         if (targetEl) {
           e.preventDefault();
           targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+          lastActiveSectionId = sectionId;
+          try {
+            window.history.pushState(null, '', `/${sectionId}`);
+          } catch (_) {}
+
           // Update active link state
           navLinks.forEach((link) => {
-            if (link.getAttribute('href') === hash) {
+            const lHref = link.getAttribute('href') || '';
+            if (lHref === `#${sectionId}` || lHref === `/${sectionId}` || lHref.endsWith(`/${sectionId}`)) {
               link.classList.add('active');
             } else {
               link.classList.remove('active');
@@ -1498,20 +1534,71 @@
     }, { passive: true });
   }
 
-  // Handle initial page load scroll position (Hero by default, or specific section if hashed)
+  // Handle initial page load scroll position (Hero by default, or specific section if hashed/routed)
   function handleInitialHashOrScroll() {
-    const hash = window.location.hash;
-    if (hash && hash !== '#' && hash !== '#hero') {
-      const targetEl = document.querySelector(hash);
+    let targetSectionId = '';
+
+    // 1. Check if redirected from a clean route folder or 404 (sessionStorage)
+    const storedSection = sessionStorage.getItem('df_target_section');
+    if (storedSection) {
+      sessionStorage.removeItem('df_target_section');
+      targetSectionId = storedSection;
+    }
+
+    // 2. Check query parameter '?p=...' from 404 router
+    if (!targetSectionId) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const querySection = urlParams.get('p') || urlParams.get('section');
+      if (querySection) {
+        targetSectionId = querySection.replace(/^\/+|\/+$/g, '').split('/')[0];
+      }
+    }
+
+    // 3. Check clean pathname (e.g. /projects or /about)
+    if (!targetSectionId) {
+      const cleanPath = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[0];
+      const validSections = ['about', 'projects', 'services', 'testimonials', 'contact'];
+      if (validSections.includes(cleanPath)) {
+        targetSectionId = cleanPath;
+      }
+    }
+
+    // 4. Fallback to legacy hash (e.g. #projects)
+    if (!targetSectionId && window.location.hash) {
+      const h = window.location.hash.slice(1);
+      if (h && h !== 'hero') {
+        targetSectionId = h;
+      }
+    }
+
+    if (targetSectionId && targetSectionId !== 'hero') {
+      const targetEl = document.getElementById(targetSectionId);
       if (targetEl) {
+        lastActiveSectionId = targetSectionId;
+        try {
+          window.history.replaceState(null, '', `/${targetSectionId}`);
+        } catch (_) {}
         setTimeout(() => {
           targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 150);
         return;
       }
     }
+
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
+
+  // Handle browser back / forward navigation buttons
+  window.addEventListener('popstate', () => {
+    const path = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/')[0];
+    if (path && document.getElementById(path)) {
+      lastActiveSectionId = path;
+      document.getElementById(path).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      lastActiveSectionId = 'hero';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
 
   // 3D Kinetic Text Flip Carousel (Hero Subheadline)
   function initHeroFlip() {
