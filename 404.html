@@ -12,16 +12,7 @@
       var firstSegment = segments[0] || '';
       var validSections = ['about', 'projects', 'services', 'testimonials', 'contact'];
 
-      if (firstSegment === 'dineflow') {
-        var secondSegment = segments[1] || '';
-        var validDineFlowViews = ['admin', 'super-admin', 'login', 'onboarding', 'menu'];
-        if (validDineFlowViews.indexOf(secondSegment) !== -1) {
-          sessionStorage.setItem('df_dineflow_view', secondSegment);
-          window.location.replace('/dineflow/' + (window.location.search || ''));
-        } else {
-          window.location.replace('/dineflow/');
-        }
-      } else if (validSections.indexOf(firstSegment) !== -1) {
+      if (validSections.indexOf(firstSegment) !== -1) {
         sessionStorage.setItem('df_target_section', firstSegment);
         window.location.replace('/' + (window.location.search || ''));
       } else {

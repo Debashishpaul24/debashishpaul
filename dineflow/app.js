@@ -232,35 +232,19 @@
     }, 2800);
   }
 
-  // Dynamic DineFlow base path detector
-  function getDineFlowBase() {
-    const path = window.location.pathname.replace(/\/+$/, '');
-    const idx = path.indexOf('/dineflow');
-    if (idx !== -1) {
-      return path.substring(0, idx + '/dineflow'.length);
-    }
-    return '';
-  }
-
-  // URL Builders & Navigation (Clean Path URLs without '#' or query params)
+  // URL Builders & Navigation (Query-parameter routing without '#')
   function buildRouteUrl(route) {
-    const base = getDineFlowBase();
-    if (!route || route.view === 'hub') return base ? `${base}/` : './';
+    if (!route || route.view === 'hub') return './';
     if (route.view === 'customer') {
-      const isDefault = (!route.tenantSlug || route.tenantSlug === 'the-urban-plate') && (!route.tableId || route.tableId === 'T12');
-      if (isDefault) {
-        return base ? `${base}/menu` : 'menu';
-      }
-      return `${base ? base + '/' : ''}menu?r=${encodeURIComponent(route.tenantSlug || 'the-urban-plate')}&t=${encodeURIComponent(route.tableId || 'T12')}`;
+      return `?r=${encodeURIComponent(route.tenantSlug || 'the-urban-plate')}&t=${encodeURIComponent(route.tableId || 'T12')}`;
     }
     if (route.view === 'login') {
-      const targetQuery = route.target && route.target !== 'admin' ? `?target=${encodeURIComponent(route.target)}` : '';
-      return `${base ? base + '/' : ''}login${targetQuery}`;
+      return route.target && route.target !== 'admin' ? `?view=login&target=${encodeURIComponent(route.target)}` : '?view=login';
     }
-    if (route.view === 'admin') return `${base ? base + '/' : ''}admin`;
-    if (route.view === 'super-admin') return `${base ? base + '/' : ''}super-admin`;
-    if (route.view === 'onboarding') return `${base ? base + '/' : ''}onboarding`;
-    return base ? `${base}/` : './';
+    if (route.view === 'admin') return '?view=admin';
+    if (route.view === 'super-admin') return '?view=super-admin';
+    if (route.view === 'onboarding') return '?view=onboarding';
+    return './';
   }
 
   function navigateTo(route) {
@@ -269,24 +253,9 @@
     renderApp();
   }
 
-  // Router Parser (Clean Path URLs, Session Handoffs, Query Params & Legacy Hash cleanup)
+  // Router Parser (Supports Query Parameters like ?view=admin and auto-migrates legacy '#' hashes)
   function parseRoute() {
-    // 0. Session Storage Handoff from static entry directories (e.g. dineflow/admin/index.html)
-    try {
-      const storedView = sessionStorage.getItem('df_dineflow_view');
-      if (storedView) {
-        sessionStorage.removeItem('df_dineflow_view');
-        let handoffRoute = { view: storedView };
-        if (storedView === 'menu') {
-          handoffRoute = { view: 'customer', tenantSlug: 'the-urban-plate', tableId: 'T12' };
-        }
-        const cleanUrl = buildRouteUrl(handoffRoute);
-        window.history.replaceState({}, '', cleanUrl);
-        return handoffRoute;
-      }
-    } catch (_) {}
-
-    // 1. Backward Compatibility: Auto-clean legacy '#' hashes
+    // 1. Backward Compatibility: If legacy hash exists (e.g. #/admin or #/r/the-urban-plate/t/T12)
     const hash = window.location.hash.replace(/^#\/?/, '').trim();
     if (hash) {
       const parts = hash.split('/');
@@ -301,70 +270,48 @@
         legacyRoute = { view: 'super-admin' };
       } else if (parts[0] === 'onboarding') {
         legacyRoute = { view: 'onboarding' };
-      } else if (parts[0] === 'menu') {
-        legacyRoute = { view: 'customer', tenantSlug: 'the-urban-plate', tableId: 'T12' };
       }
+      // Clean up URL in address bar by removing hash and applying query params
       const cleanUrl = buildRouteUrl(legacyRoute);
       window.history.replaceState({}, '', cleanUrl);
       return legacyRoute;
     }
 
-    // 2. Clean Pathname Routing (e.g. /dineflow/admin, /dineflow/super-admin, /dineflow/menu)
-    const cleanPath = window.location.pathname.replace(/\/+$/, '');
-    const segments = cleanPath.split('/').filter(Boolean);
-    const lastSegment = segments[segments.length - 1] || '';
-
-    if (lastSegment === 'admin') {
-      return { view: 'admin' };
-    }
-    if (lastSegment === 'super-admin') {
-      return { view: 'super-admin' };
-    }
-    if (lastSegment === 'onboarding') {
-      return { view: 'onboarding' };
-    }
-    if (lastSegment === 'login') {
-      const searchParams = new URLSearchParams(window.location.search);
-      return { view: 'login', target: searchParams.get('target') || 'admin' };
-    }
-    if (lastSegment === 'menu') {
-      const searchParams = new URLSearchParams(window.location.search);
-      return {
-        view: 'customer',
-        tenantSlug: searchParams.get('r') || 'the-urban-plate',
-        tableId: searchParams.get('t') || 'T12'
-      };
-    }
-
-    // 3. Query Parameters routing for backward compatibility (?view=admin, ?r=the-urban-plate&t=T12, etc.)
+    // 2. Query Parameters routing (?view=admin, ?r=the-urban-plate&t=T12, etc.)
     const searchParams = new URLSearchParams(window.location.search);
     const viewParam = searchParams.get('view');
     const rParam = searchParams.get('r');
     const tParam = searchParams.get('t');
 
     if (rParam) {
-      const customerRoute = {
+      return {
         view: 'customer',
         tenantSlug: rParam,
         tableId: tParam || 'T12'
       };
-      if (rParam === 'the-urban-plate' && (tParam === 'T12' || !tParam)) {
-        try {
-          window.history.replaceState({}, '', buildRouteUrl(customerRoute));
-        } catch (_) {}
-      }
-      return customerRoute;
     }
 
-    if (viewParam) {
-      let queryRoute = { view: viewParam };
-      if (viewParam === 'login') {
-        queryRoute.target = searchParams.get('target') || 'admin';
-      }
-      try {
-        window.history.replaceState({}, '', buildRouteUrl(queryRoute));
-      } catch (_) {}
-      return queryRoute;
+    if (viewParam === 'login') {
+      return {
+        view: 'login',
+        target: searchParams.get('target') || 'admin'
+      };
+    }
+
+    if (viewParam === 'admin') {
+      return { view: 'admin' };
+    }
+
+    if (viewParam === 'super-admin') {
+      return { view: 'super-admin' };
+    }
+
+    if (viewParam === 'onboarding') {
+      return { view: 'onboarding' };
+    }
+
+    if (viewParam === 'hub') {
+      return { view: 'hub' };
     }
 
     // Default Route: Platform Showcase Hub
@@ -422,24 +369,23 @@
       return;
     }
 
-    const base = getDineFlowBase();
     el.innerHTML = `
       <div class="df-demo-bar-inner">
-        <a href="${base ? base + '/' : './'}" class="df-demo-bar-brand" title="Back to DineFlow Showcase Hub">
+        <a href="?view=hub" class="df-demo-bar-brand" title="Back to DineFlow Showcase Hub">
           <span class="live-dot"></span>
           <span>DineFlow Hub ↗</span>
         </a>
         <div class="df-demo-bar-links">
-          <a href="${base ? base + '/menu' : 'menu'}" class="df-demo-link ${activeView === 'customer' ? 'active' : ''}" title="Guest QR Menu (Table T12)">
+          <a href="?r=the-urban-plate&t=T12" class="df-demo-link ${activeView === 'customer' ? 'active' : ''}" title="Guest QR Menu (Table T12)">
             <span>📱 Guest T12</span>
           </a>
-          <a href="${base ? base + '/login' : 'login'}" class="df-demo-link ${activeView === 'login' ? 'active' : ''}" title="Staff & Admin Login Portal">
+          <a href="?view=login" class="df-demo-link ${activeView === 'login' ? 'active' : ''}" title="Staff & Admin Login Portal">
             <span>🔐 Login</span>
           </a>
-          <a href="${base ? base + '/admin' : 'admin'}" class="df-demo-link ${activeView === 'admin' ? 'active' : ''}" title="Kitchen Staff OS & KDS">
+          <a href="?view=admin" class="df-demo-link ${activeView === 'admin' ? 'active' : ''}" title="Kitchen Staff OS & KDS">
             <span>👨‍🍳 Staff OS</span>
           </a>
-          <a href="${base ? base + '/super-admin' : 'super-admin'}" class="df-demo-link ${activeView === 'super-admin' ? 'active' : ''}" title="Platform Super Admin">
+          <a href="?view=super-admin" class="df-demo-link ${activeView === 'super-admin' ? 'active' : ''}" title="Platform Super Admin">
             <span>⚡ SaaS HQ</span>
           </a>
         </div>
@@ -499,12 +445,12 @@
       navigateTo({ view: 'login' });
       return;
     } else if (route.view === 'login') {
-      renderLoginView(appEl, route.target === 'super-admin' ? 'super-admin' : 'admin');
+      renderLoginView(appEl, route.target === 'super-admin' ? '?view=super-admin' : '?view=admin');
       renderFloatingRoleSwitcher('login');
     } else if (route.view === 'admin') {
       if (!isStaffAuth) {
         removeFloatingRoleSwitcher();
-        renderLoginView(appEl, 'admin', 'RESTAURANT_ADMIN');
+        renderLoginView(appEl, '?view=admin', 'RESTAURANT_ADMIN');
         return;
       }
       const tenant = getCurrentTenant();
@@ -514,7 +460,7 @@
     } else if (route.view === 'super-admin') {
       if (!isSuperAuth) {
         removeFloatingRoleSwitcher();
-        renderLoginView(appEl, 'super-admin', 'SUPER_ADMIN');
+        renderLoginView(appEl, '?view=super-admin', 'SUPER_ADMIN');
         return;
       }
       renderSuperAdminView(appEl);
@@ -522,7 +468,7 @@
     } else if (route.view === 'onboarding') {
       if (!isSuperAuth) {
         removeFloatingRoleSwitcher();
-        renderLoginView(appEl, 'onboarding', 'SUPER_ADMIN');
+        renderLoginView(appEl, '?view=onboarding', 'SUPER_ADMIN');
         return;
       }
       renderOnboardingView(appEl);
@@ -559,7 +505,7 @@
           <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
             <span>← Back to Portfolio</span>
           </a>
-          <a href="admin" class="df-pill-btn primary" title="Staff OS Login">
+          <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
             <span>Staff Portal 🔒</span>
           </a>
         </div>
@@ -598,7 +544,7 @@
               <li><span>✓</span> 1-Touch Waiter Call &amp; Zero-Fee UPI billing</li>
             </ul>
             <div class="df-hub-card-cta">
-              <a href="menu" class="df-pill-btn primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
+              <a href="?r=the-urban-plate&t=T12" class="df-pill-btn primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
                 Launch Guest Menu (Table T12) →
               </a>
             </div>
@@ -621,7 +567,7 @@
               <li><span>✓</span> Fast 4-digit PIN access (PIN: <strong>1234</strong>)</li>
             </ul>
             <div class="df-hub-card-cta">
-              <a href="admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;">
+              <a href="?view=admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;">
                 Launch Kitchen Staff OS →
               </a>
             </div>
@@ -644,7 +590,7 @@
               <li><span>✓</span> Executive HQ passcode access (PIN: <strong>9999</strong>)</li>
             </ul>
             <div class="df-hub-card-cta">
-              <a href="super-admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(99,102,241,0.15); border-color: #818CF8; color: #fff;">
+              <a href="?view=super-admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(99,102,241,0.15); border-color: #818CF8; color: #fff;">
                 Launch Platform Super Admin →
               </a>
             </div>
@@ -665,10 +611,10 @@
             </div>
           </div>
           <div class="df-testing-banner-actions">
-            <a href="menu" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+            <a href="?r=the-urban-plate&t=T12" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
               <span>Window 1: Guest T12 ↗</span>
             </a>
-            <a href="admin" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+            <a href="?view=admin" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
               <span>Window 2: Staff OS ↗</span>
             </a>
           </div>
@@ -685,7 +631,7 @@
   // ------------------------------------------------------------------------------
   // 0. AUTHENTICATION & LOGIN GATEWAY VIEW
   // ------------------------------------------------------------------------------
-  function renderLoginView(container, redirectTarget = 'admin', requestedRole = 'RESTAURANT_ADMIN') {
+  function renderLoginView(container, redirectTarget = '?view=admin', requestedRole = 'RESTAURANT_ADMIN') {
     let currentAuthMode = 'pin'; // 'pin' | 'password'
     let enteredPin = '';
 
@@ -766,7 +712,7 @@
           </div>
         </div>
         <div class="df-top-actions">
-          <a href="menu" class="df-pill-btn" title="Return to Guest Ordering">
+          <a href="?r=${targetTenant.slug}&t=T12" class="df-pill-btn" title="Return to Guest Ordering">
             <span>← Guest Dining</span>
           </a>
         </div>
@@ -879,7 +825,7 @@
 
           <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
             <span>🔒 Role-Based Access Control Protected</span>
-            <a href="menu" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Guest Menu</a>
+            <a href="?r=the-urban-plate&t=T12" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Guest Menu</a>
           </div>
         </div>
       </main>
@@ -1079,7 +1025,7 @@
           <button class="df-pill-btn" id="btn-call-staff-top">
             <span>🔔</span> Staff
           </button>
-          <a href="admin" class="df-pill-btn primary" title="Open Restaurant Kitchen / Admin Portal">
+          <a href="?view=admin" class="df-pill-btn primary" title="Open Restaurant Kitchen / Admin Portal">
             <span>Staff Portal ↗</span>
           </a>
         </div>
@@ -2458,10 +2404,10 @@
           <button id="btn-admin-tone-cycle" class="df-pill-btn" title="Synthesized Audio Alert Profile (Click to preview & cycle)">
             <span>${getToneProfileLabel(currentTone)}</span>
           </button>
-          <a href="menu" target="_blank" class="df-pill-btn" title="Open Customer View for Table T12">
+          <a href="?r=${tenant.slug}&t=T12" target="_blank" class="df-pill-btn" title="Open Customer View for Table T12">
             <span>Customer QR ↗</span>
           </a>
-          <a href="super-admin" class="df-pill-btn" title="Super Admin Platform">
+          <a href="?view=super-admin" class="df-pill-btn" title="Super Admin Platform">
             <span>SaaS Admin</span>
           </a>
           <button id="btn-admin-logout" class="df-pill-btn danger" title="Sign Out of Staff OS" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08);">
@@ -3540,10 +3486,10 @@
             <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Super Admin'}</span>
             <span class="df-role-tag" style="background: rgba(99, 102, 241, 0.2); color: #818CF8;">PLATFORM HQ</span>
           </div>
-          <a href="onboarding" class="df-pill-btn primary">
+          <a href="?view=onboarding" class="df-pill-btn primary">
             + Onboard Restaurant
           </a>
-          <a href="admin" class="df-pill-btn">
+          <a href="?view=admin" class="df-pill-btn">
             Restaurant OS
           </a>
           <button id="btn-superadmin-logout" class="df-pill-btn danger" title="Sign Out of Super Admin" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08);">
@@ -3578,7 +3524,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
           <h2 style="font-size: 1.35rem; font-weight: 800;">Managed Restaurant Partners</h2>
-          <a href="onboarding" class="df-pill-btn primary">+ Launch 10-Step Onboarding</a>
+          <a href="?view=onboarding" class="df-pill-btn primary">+ Launch 10-Step Onboarding</a>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
@@ -3679,7 +3625,7 @@
             </div>
           </div>
           <div class="df-top-actions">
-            <a href="super-admin" class="df-pill-btn">✕ Exit</a>
+            <a href="?view=super-admin" class="df-pill-btn">✕ Exit</a>
           </div>
         </header>
 
@@ -3937,31 +3883,20 @@
     });
   }
 
-  // Intercept internal navigation links for instant SPA transitions without full page reloads
+  // Intercept internal query links for instant SPA transitions without full page reloads
   document.addEventListener('click', (e) => {
     const link = e.target.closest('a');
     if (!link) return;
     const href = link.getAttribute('href');
     if (!href) return;
-    if (link.target === '_blank' || href.startsWith('http') || href.startsWith('//') || href.startsWith('../') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+    if (link.target === '_blank' || href.startsWith('http') || href.startsWith('//') || href.startsWith('../')) {
       return;
     }
-    const base = getDineFlowBase();
-    const cleanMatches = ['admin', 'super-admin', 'login', 'onboarding', 'menu', './', '/dineflow/', '/dineflow/admin', '/dineflow/super-admin', '/dineflow/login', '/dineflow/onboarding', '/dineflow/menu'];
-    const isCleanMatch = cleanMatches.includes(href) || 
-      href.startsWith('?') || 
-      (base && (href === `${base}/` || href.startsWith(`${base}/`)));
-
-    if (isCleanMatch) {
+    if (href.startsWith('?') || href === './') {
       e.preventDefault();
       window.history.pushState({}, '', href);
       renderApp();
     }
-  });
-
-  // Handle browser Back / Forward history buttons
-  window.addEventListener('popstate', () => {
-    renderApp();
   });
 
   // Initial Boot
