@@ -415,6 +415,15 @@ body.splash-active {
   white-space: nowrap;
 }
 
+.df-wifi-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--brand-primary);
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .df-hero-divider {
   color: var(--text-dim);
   opacity: 0.6;

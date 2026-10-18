@@ -1043,7 +1043,15 @@
                 <div class="df-hero-meta">
                   <span class="df-hero-item">📍 ${table.section}</span>
                   <span class="df-hero-divider">•</span>
-                  <span class="df-hero-item">📶 Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong></span>
+                  <span class="df-hero-item">
+                    <svg class="df-wifi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                      <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                      <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                      <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="2.5"></line>
+                    </svg>
+                    <span>Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong></span>
+                  </span>
                 </div>
               </div>
               <div class="df-table-chip">
@@ -1990,10 +1998,103 @@
     const modalContainer = document.getElementById('modal-container');
     if (!modalContainer) return;
 
-    // Find table active orders
-    const tableOrders = state.orders.filter(o => o.tableId === table.id && o.tenantId === tenant.id);
-    const totalAmount = tableOrders.reduce((acc, o) => acc + o.total, 0) || 1161.6;
+    // Find table active UNPAID orders
+    const unpaidOrders = state.orders.filter(o =>
+      o.tableId === table.id &&
+      (!o.tenantId || o.tenantId === tenant.id) &&
+      o.paymentStatus !== 'PAID' &&
+      o.status !== 'COMPLETED'
+    );
+    const totalAmount = unpaidOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
 
+    // Find settled orders & bill requests for history/receipt
+    const settledOrders = state.orders.filter(o =>
+      o.tableId === table.id &&
+      (!o.tenantId || o.tenantId === tenant.id) &&
+      (o.paymentStatus === 'PAID' || o.status === 'COMPLETED')
+    );
+    const latestSettledBill = state.billRequests.find(b => b.tableId === table.id && b.status === 'PAID');
+    const pendingBill = state.billRequests.find(b => b.tableId === table.id && b.status === 'PENDING');
+
+    // CASE 1: Bill is already paid & settled (No outstanding balance)
+    if (totalAmount <= 0) {
+      const settledTotal = latestSettledBill ? latestSettledBill.amount : settledOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
+
+      modalContainer.innerHTML = `
+        <div class="df-modal-backdrop active" id="bill-backdrop">
+          <div class="df-bottom-sheet">
+            <div class="df-sheet-handle"></div>
+            <div class="df-sheet-header">
+              <div>
+                <h3 style="font-size: 1.2rem; font-weight: 700;">Table Bill Status</h3>
+                <span style="font-size: 0.75rem; color: var(--brand-primary); font-weight: 700;">Table ${table.id} • ${table.section}</span>
+              </div>
+              <button class="df-sheet-close" id="btn-close-bill">✕</button>
+            </div>
+
+            <div class="df-sheet-body">
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 1.5rem 1.25rem; text-align: center; margin-bottom: 1.25rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.35rem;">✅</div>
+                <span class="df-micro-badge" style="background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.75rem; padding: 0.2rem 0.65rem; margin-bottom: 0.5rem;">
+                  Paid &amp; Settled ✓
+                </span>
+                <div style="font-size: 2.2rem; font-weight: 800; font-family: var(--font-heading); color: #10B981; margin: 0.35rem 0 0.2rem;">
+                  ${tenant.currency}0.00
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+                  All dues cleared! No outstanding balance for Table ${table.id}.
+                </p>
+              </div>
+
+              ${settledOrders.length > 0 || latestSettledBill ? `
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Settled Receipt Summary</span>
+                    <span style="font-size: 0.75rem; color: #10B981; font-weight: 700;">Completed</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.25rem 0; color: #fff;">
+                    <span>Total Amount Paid</span>
+                    <strong style="color: var(--brand-primary);">${tenant.currency}${settledTotal > 0 ? settledTotal.toFixed(2) : '0.00'}</strong>
+                  </div>
+                  ${latestSettledBill ? `
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.2rem;">
+                      <span>Payment Method</span>
+                      <span>${latestSettledBill.paymentMethod} • Settled</span>
+                    </div>
+                  ` : ''}
+                </div>
+              ` : `
+                <p style="font-size: 0.82rem; color: var(--text-dim); text-align: center; margin-bottom: 1.25rem;">
+                  No active orders have been placed yet for this table.
+                </p>
+              `}
+
+              <div style="display: flex; gap: 0.75rem;">
+                <button class="df-pill-btn" id="btn-bill-add-more" style="flex: 1; padding: 0.85rem; justify-content: center; font-weight: 700;">
+                  + Order More Dishes
+                </button>
+                <button class="df-pill-btn primary" id="btn-bill-feedback" style="flex: 1; padding: 0.85rem; justify-content: center; font-weight: 700;">
+                  ⭐ Leave Review
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('btn-close-bill')?.addEventListener('click', () => modalContainer.innerHTML = '');
+      document.getElementById('bill-backdrop')?.addEventListener('click', (e) => {
+        if (e.target.id === 'bill-backdrop') modalContainer.innerHTML = '';
+      });
+      document.getElementById('btn-bill-add-more')?.addEventListener('click', () => modalContainer.innerHTML = '');
+      document.getElementById('btn-bill-feedback')?.addEventListener('click', () => {
+        modalContainer.innerHTML = '';
+        openFeedbackModal(tenant, table);
+      });
+      return;
+    }
+
+    // CASE 2: Active balance exists (totalAmount > 0)
     let selectedPayment = 'UPI';
 
     modalContainer.innerHTML = `
@@ -2009,16 +2110,36 @@
           </div>
 
           <div class="df-sheet-body">
-            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; margin-bottom: 1.5rem;">
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;">
               <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Total Table Balance</span>
               <div style="font-size: 2.25rem; font-weight: 800; font-family: var(--font-heading); color: var(--brand-primary); margin: 0.25rem 0 0.5rem;">
                 ${tenant.currency}${totalAmount.toFixed(2)}
               </div>
-              <p style="font-size: 0.75rem; color: var(--text-muted);">Includes 5% GST and 5% Service Charge</p>
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Includes 5% GST and 5% Service Charge</p>
             </div>
 
+            <!-- Ordered Dishes Summary Breakdown -->
+            <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 0.5rem;">Unpaid Items (${unpaidOrders.length} order${unpaidOrders.length > 1 ? 's' : ''})</div>
+              ${unpaidOrders.flatMap(o => o.items || []).map(item => `
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; padding: 0.25rem 0; color: #e2e8f0;">
+                  <span>${item.quantity} × ${item.name}</span>
+                  <strong>${tenant.currency}${(item.price * item.quantity).toFixed(2)}</strong>
+                </div>
+              `).join('')}
+            </div>
+
+            ${pendingBill ? `
+              <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.65rem;">
+                <span style="font-size: 1.25rem;">⏳</span>
+                <div style="font-size: 0.8rem; color: #F59E0B;">
+                  <strong>Bill Request Pending:</strong> Server notified (${pendingBill.paymentMethod}). Bringing bill to Table ${table.id}.
+                </div>
+              </div>
+            ` : ''}
+
             <h4 class="df-option-title">Select Preferred Payment Mode</h4>
-            <div class="df-choice-list" style="margin-bottom: 1.5rem;">
+            <div class="df-choice-list" style="margin-bottom: 1.25rem;">
               <label class="df-choice-item selected" data-pay="UPI">
                 <div class="df-choice-left">
                   <input type="radio" name="pay-method" value="UPI" checked>
@@ -2046,14 +2167,17 @@
             </div>
 
             <!-- Dynamic Mock UPI QR if selected -->
-            <div id="upi-qr-preview-box" style="text-align: center; margin-bottom: 1.5rem; background: #fff; padding: 1.25rem; border-radius: 16px; color: #0b0f17;">
+            <div id="upi-qr-preview-box" style="text-align: center; margin-bottom: 1.25rem; background: #fff; padding: 1.25rem; border-radius: 16px; color: #0b0f17;">
               <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a;">Scan to Pay via Any UPI App</div>
               <div id="upi-qr-holder" style="width: 160px; height: 160px; margin: 0 auto;"></div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">UPI ID: <strong>urbanplate@hdfcbank</strong></div>
+              <button class="df-pill-btn primary" id="btn-simulate-upi-paid" style="margin-top: 0.85rem; width: 100%; justify-content: center; font-size: 0.82rem; padding: 0.5rem 1rem;">
+                ✓ I Have Paid via UPI (Complete Settlement)
+              </button>
             </div>
 
             <button class="df-splash-btn" id="btn-submit-bill-req" style="width: 100%; text-align: center; padding: 0.95rem;">
-              Send Bill Request to Staff 💳
+              ${pendingBill ? 'Update Bill Request 💳' : 'Send Bill Request to Staff 💳'}
             </button>
           </div>
         </div>
@@ -2077,16 +2201,61 @@
     document.getElementById('btn-close-bill')?.addEventListener('click', () => {
       modalContainer.innerHTML = '';
     });
+    document.getElementById('bill-backdrop')?.addEventListener('click', (e) => {
+      if (e.target.id === 'bill-backdrop') modalContainer.innerHTML = '';
+    });
+
+    // Instant UPI settlement simulation
+    document.getElementById('btn-simulate-upi-paid')?.addEventListener('click', () => {
+      // Mark all table orders as PAID & COMPLETED
+      state.orders.forEach(o => {
+        if (o.tableId === table.id && (!o.tenantId || o.tenantId === tenant.id)) {
+          o.paymentStatus = 'PAID';
+          o.status = 'COMPLETED';
+        }
+      });
+      // Settle any pending bill request
+      if (pendingBill) {
+        pendingBill.status = 'PAID';
+        pendingBill.amount = totalAmount;
+      } else {
+        state.billRequests.unshift({
+          id: `BILL-${Math.floor(100 + Math.random() * 900)}`,
+          tableId: table.id,
+          amount: totalAmount,
+          paymentMethod: 'UPI',
+          status: 'PAID',
+          time: 'Just now'
+        });
+      }
+      const tObj = state.tables.find(t => t.id === table.id);
+      if (tObj) tObj.status = 'available';
+
+      DineFlowStore.save(state, {
+        action: 'BILL_SETTLED',
+        source: 'customer',
+        tableId: table.id
+      });
+      SoundFX.chime('success');
+      showToast(`Payment received! Table ${table.id} bill settled.`, '✅');
+      openRequestBillModal(tenant, table);
+    });
 
     document.getElementById('btn-submit-bill-req')?.addEventListener('click', () => {
-      state.billRequests.unshift({
-        id: `BILL-${Math.floor(100 + Math.random() * 900)}`,
-        tableId: table.id,
-        amount: totalAmount,
-        paymentMethod: selectedPayment,
-        status: 'PENDING',
-        time: 'Just now'
-      });
+      if (pendingBill) {
+        pendingBill.paymentMethod = selectedPayment;
+        pendingBill.amount = totalAmount;
+        pendingBill.time = 'Just now';
+      } else {
+        state.billRequests.unshift({
+          id: `BILL-${Math.floor(100 + Math.random() * 900)}`,
+          tableId: table.id,
+          amount: totalAmount,
+          paymentMethod: selectedPayment,
+          status: 'PENDING',
+          time: 'Just now'
+        });
+      }
 
       DineFlowStore.save(state, {
         action: 'BILL_REQUEST',
@@ -2501,6 +2670,16 @@
         const order = state.orders.find(o => o.id === orderId);
         if (order) {
           order.status = nextStatus;
+          if (nextStatus === 'COMPLETED') {
+            order.paymentStatus = 'PAID';
+            const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && b.status === 'PENDING');
+            if (pendingBill) pendingBill.status = 'PAID';
+            const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.status !== 'COMPLETED');
+            if (!hasMoreOrders) {
+              const tableObj = state.tables.find(t => t.id === order.tableId);
+              if (tableObj) tableObj.status = 'available';
+            }
+          }
           DineFlowStore.save(state, {
             action: 'ORDER_STATUS_CHANGED',
             source: 'staff',
@@ -2643,8 +2822,14 @@
               <div class="df-print-instructions">
                 Scan • Browse • Order • Enjoy
               </div>
-              <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.65rem;">
-                Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong> (Pass: ${tenant.wifiPass})
+              <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.65rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <svg class="df-wifi-icon" style="color: #64748b; width: 12px; height: 12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                  <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                  <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                  <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="2.5"></line>
+                </svg>
+                <span>Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong> (Pass: ${tenant.wifiPass})</span>
               </div>
             </div>
 
@@ -2969,7 +3154,18 @@
           b.status = 'PAID';
           const table = state.tables.find(t => t.id === b.tableId);
           if (table) table.status = 'available';
-          DineFlowStore.save(state);
+          // Mark all orders for this table as PAID and COMPLETED
+          state.orders.forEach(o => {
+            if (o.tableId === b.tableId) {
+              o.paymentStatus = 'PAID';
+              o.status = 'COMPLETED';
+            }
+          });
+          DineFlowStore.save(state, {
+            action: 'BILL_SETTLED',
+            source: 'staff',
+            tableId: b.tableId
+          });
           SoundFX.chime('success');
           showToast(`Table ${b.tableId} bill settled and table cleared!`);
           renderBillRequestsFeed(container, tenant);
@@ -3667,6 +3863,10 @@
       if (activeTrackingOrderId || document.getElementById('orders-backdrop')) {
         openOrdersModal(tenant, table, activeTrackingOrderId || meta.orderId);
       }
+      // REFRESH BILL MODAL LIVE IF OPEN WHEN BILL IS SETTLED BY STAFF
+      if (document.getElementById('bill-backdrop')) {
+        openRequestBillModal(tenant, table);
+      }
     } else {
       renderApp();
     }
@@ -3675,7 +3875,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.6.8').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.7.0').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
