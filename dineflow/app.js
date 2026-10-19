@@ -505,6 +505,9 @@
           <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
             <span>← Back to Portfolio</span>
           </a>
+          <a href="demo.html" class="df-pill-btn" style="background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;" title="Dual-Device Live Operations Sandbox">
+            <span>⚡ Dual-Device Demo</span>
+          </a>
           <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
             <span>Staff Portal 🔒</span>
           </a>
@@ -522,8 +525,63 @@
           </h1>
           <p class="df-hub-subtext">
             Engineered by <a href="../" style="color: var(--brand-primary); font-weight: 700; text-decoration: none;">Debashish Paul</a>. 
-            Choose an interactive portal below to test the full lifecycle in real-time with cross-tab live synchronization:
+            Choose an interactive portal below or launch the unified side-by-side simulator to test real-time cross-device event synchronization:
           </p>
+        </div>
+
+        <!-- Interactive Dual-Device Sandbox Feature Banner -->
+        <div class="df-hub-sandbox-banner">
+          <div class="df-sandbox-banner-badge">
+            <span class="live-indicator"></span>
+            <span>RECOMMENDED INTERACTIVE EXPERIENCE</span>
+          </div>
+          <div class="df-sandbox-banner-body">
+            <div class="df-sandbox-banner-info">
+              <h2 class="df-sandbox-banner-title">
+                Dual-Device Operations Sandbox
+              </h2>
+              <p class="df-sandbox-banner-desc">
+                Experience the entire restaurant ecosystem side-by-side on a single screen! Watch live cross-frame sync as a guest orders on an iPhone 16 Pro and the Kitchen KDS Kanban rings &amp; dispatches in real-time.
+              </p>
+              <div class="df-sandbox-features">
+                <span class="df-sandbox-chip">⚡ Live BroadcastChannel Sync</span>
+                <span class="df-sandbox-chip">📱 Customer iPhone Simulator</span>
+                <span class="df-sandbox-chip">👨‍🍳 Kitchen KDS Kanban</span>
+                <span class="df-sandbox-chip">🔊 Acoustic Hotel Chimes</span>
+              </div>
+
+              <!-- 4-Step Interactive Architecture Pipeline -->
+              <div class="df-sandbox-pipeline">
+                <div class="df-pipeline-step">
+                  <span class="df-pipeline-num">Step 1</span>
+                  <span class="df-pipeline-title">📱 QR Mobile Scan</span>
+                  <span class="df-pipeline-desc">Guest opens Table T12 menu, customizes dishes &amp; places order</span>
+                </div>
+                <div class="df-pipeline-step">
+                  <span class="df-pipeline-num">Step 2</span>
+                  <span class="df-pipeline-title">⚡ Real-Time Bus</span>
+                  <span class="df-pipeline-desc">BroadcastChannel event dispatches instantly across windows</span>
+                </div>
+                <div class="df-pipeline-step">
+                  <span class="df-pipeline-num">Step 3</span>
+                  <span class="df-pipeline-title">👨‍🍳 Kitchen KDS Chime</span>
+                  <span class="df-pipeline-desc">Kitchen Kanban rings, receives ticket &amp; starts preparation</span>
+                </div>
+                <div class="df-pipeline-step">
+                  <span class="df-pipeline-num">Step 4</span>
+                  <span class="df-pipeline-title">🔔 5-Stage Tracking</span>
+                  <span class="df-pipeline-desc">Guest phone displays live cooking milestones with zero refresh</span>
+                </div>
+              </div>
+            </div>
+            <div class="df-sandbox-banner-cta">
+              <a href="demo.html" class="df-sandbox-launch-btn">
+                <span>Launch Dual-Device Sandbox</span>
+                <span class="btn-arrow">→</span>
+              </a>
+              <span class="df-sandbox-subhint">1-Click Auto Simulation &bull; Zero Configuration</span>
+            </div>
+          </div>
         </div>
 
         <div class="df-hub-grid">

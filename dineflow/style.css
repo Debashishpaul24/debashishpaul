@@ -70,6 +70,48 @@ html, body {
   line-height: 1.5;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#app::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+/* Global scrollbar refinement - Eliminates default Windows white track */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+/* Mobile & Customer View Scrollbar Neutralization */
+.df-customer-layout,
+.df-menu-catalog,
+.df-category-strip,
+.df-modal-body,
+.df-cart-sheet,
+.df-cart-items,
+.df-orders-list {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.df-customer-layout::-webkit-scrollbar,
+.df-menu-catalog::-webkit-scrollbar,
+.df-category-strip::-webkit-scrollbar,
+.df-modal-body::-webkit-scrollbar,
+.df-cart-sheet::-webkit-scrollbar,
+.df-cart-items::-webkit-scrollbar,
+.df-orders-list::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -2436,6 +2478,213 @@ body.splash-active {
 
 .df-hub-card-cta {
   margin-top: auto;
+}
+
+/* Dual-Device Operations Sandbox Feature Banner */
+.df-hub-sandbox-banner {
+  background: linear-gradient(135deg, rgba(229, 169, 60, 0.08) 0%, rgba(14, 19, 31, 0.88) 50%, rgba(99, 102, 241, 0.08) 100%);
+  border: 1px solid rgba(229, 169, 60, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(229, 169, 60, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.df-hub-sandbox-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #E5A93C, #FF5E3A, #818CF8);
+}
+
+.df-sandbox-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(229, 169, 60, 0.15);
+  border: 1px solid var(--border-glow);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+.df-sandbox-banner-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.df-sandbox-banner-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.df-sandbox-banner-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.df-sandbox-banner-desc {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 680px;
+  margin-bottom: 1.25rem;
+}
+
+.df-sandbox-features {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.df-sandbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+/* 4-Step Interactive Architecture Pipeline */
+.df-sandbox-pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.df-pipeline-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  position: relative;
+}
+
+.df-pipeline-step:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--brand-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+  opacity: 0.6;
+}
+
+.df-pipeline-num {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.df-pipeline-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.df-pipeline-desc {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  line-height: 1.35;
+}
+
+.df-sandbox-banner-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.df-sandbox-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1rem 1.75rem;
+  background: linear-gradient(135deg, #E5A93C, #F59E0B);
+  color: #07090E;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(229, 169, 60, 0.4);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.df-sandbox-launch-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(229, 169, 60, 0.55);
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.df-sandbox-launch-btn .btn-arrow {
+  transition: transform 0.2s;
+  font-size: 1.1rem;
+}
+
+.df-sandbox-launch-btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+.df-sandbox-subhint {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .df-sandbox-pipeline {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .df-pipeline-step:not(:last-child)::after {
+    display: none;
+  }
+  .df-sandbox-banner-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .df-sandbox-banner-cta {
+    align-items: stretch;
+  }
+  .df-sandbox-launch-btn {
+    justify-content: center;
+  }
 }
 
 /* Real-Time Testing Helper Banner */
