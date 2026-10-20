@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ==============================================================================
  * DineFlow - Core Application Engine
  * Pure Vanilla JavaScript SPA Architecture with Multi-Tenant Routing,
@@ -3933,7 +3933,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.7.0').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.7.2').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
