@@ -60,6 +60,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html, body {
   width: 100%;
   min-height: 100%;
@@ -3014,6 +3018,13 @@ body.splash-active {
 /* ==============================================================================
    RESTAURANT OPERATOR ROI CALCULATOR & PAIN-POINT RESOLUTION SYSTEM
    ============================================================================== */
+#demo-sandbox,
+#explore-roles,
+#roi-calculator,
+#why-dineflow {
+  scroll-margin-top: 80px;
+}
+
 .df-hub-roi-wrapper {
   margin: 3.5rem 0 2rem;
   background: linear-gradient(145deg, rgba(20, 26, 41, 0.85), rgba(14, 19, 31, 0.95));
@@ -3023,6 +3034,26 @@ body.splash-active {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(229, 169, 60, 0.08);
   position: relative;
   overflow: hidden;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+#roi-calculator:target {
+  animation: df-roi-target-pulse 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes df-roi-target-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(229, 169, 60, 0.85), 0 20px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(229, 169, 60, 0.9);
+  }
+  40% {
+    box-shadow: 0 0 45px 8px rgba(229, 169, 60, 0.45), 0 20px 40px rgba(0, 0, 0, 0.5);
+    border-color: var(--brand-primary);
+  }
+  100% {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(229, 169, 60, 0.08);
+    border-color: rgba(229, 169, 60, 0.25);
+  }
 }
 
 .df-hub-roi-wrapper::before {

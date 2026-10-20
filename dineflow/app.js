@@ -255,11 +255,11 @@
 
   // Router Parser (Supports Query Parameters like ?view=admin and auto-migrates legacy '#' hashes)
   function parseRoute() {
-    // 1. Backward Compatibility: If legacy hash exists (e.g. #/admin or #/r/the-urban-plate/t/T12)
+    // 1. Backward Compatibility: If legacy hash matches SPA routing (e.g. #/admin or #/r/the-urban-plate/t/T12)
     const hash = window.location.hash.replace(/^#\/?/, '').trim();
     if (hash) {
       const parts = hash.split('/');
-      let legacyRoute = { view: 'hub' };
+      let legacyRoute = null;
       if (parts[0] === 'login') {
         legacyRoute = { view: 'login', target: parts[1] || 'admin' };
       } else if (parts[0] === 'r' && parts[1]) {
@@ -271,10 +271,13 @@
       } else if (parts[0] === 'onboarding') {
         legacyRoute = { view: 'onboarding' };
       }
-      // Clean up URL in address bar by removing hash and applying query params
-      const cleanUrl = buildRouteUrl(legacyRoute);
-      window.history.replaceState({}, '', cleanUrl);
-      return legacyRoute;
+      if (legacyRoute) {
+        // Clean up URL in address bar by removing hash and applying query params
+        const cleanUrl = buildRouteUrl(legacyRoute);
+        window.history.replaceState({}, '', cleanUrl);
+        return legacyRoute;
+      }
+      // Non-routing anchor hashes (such as #roi-calculator, #demo-sandbox, #why-dineflow) must be preserved
     }
 
     // 2. Query Parameters routing (?view=admin, ?r=the-urban-plate&t=T12, etc.)
@@ -409,6 +412,41 @@
     if (el) el.style.display = 'none';
   }
 
+  function handleHubAnchorNavigation() {
+    const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    if (!rawHash) return;
+
+    if (rawHash === 'pilot' || rawHash === 'free-pilot') {
+      const calcEl = document.getElementById('roi-calculator');
+      if (calcEl) {
+        calcEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const leadModal = document.getElementById('lead-modal-backdrop');
+      if (leadModal) {
+        setTimeout(() => {
+          const rangeTables = document.getElementById('range-tables');
+          const leadTables = document.getElementById('lead-tables');
+          if (rangeTables && leadTables) {
+            leadTables.value = rangeTables.value;
+          }
+          leadModal.classList.add('active');
+        }, 350);
+      }
+      return;
+    }
+
+    const targetEl = document.getElementById(rawHash);
+    if (targetEl) {
+      setTimeout(() => {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 120);
+    }
+  }
+
+  window.addEventListener('hashchange', () => {
+    handleHubAnchorNavigation();
+  });
+
   // ==============================================================================
   // VIEW RENDERERS & ROUTE GUARDS
   // ==============================================================================
@@ -432,6 +470,7 @@
       if (!document.getElementById('demo-sandbox')) {
         renderShowcaseHubView(appEl);
       }
+      handleHubAnchorNavigation();
     } else if (route.view === 'customer') {
       state.currentTenantId = route.tenantSlug;
       state.currentTableId = route.tableId;
@@ -3932,7 +3971,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.8.3').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.8.4').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
