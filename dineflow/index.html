@@ -102,7 +102,7 @@
   </script>
 
   <!-- Design Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=1.8.4">
+  <link rel="stylesheet" href="style.css?v=1.8.5">
 </head>
 
 <body>
@@ -148,10 +148,10 @@
 
         <!-- Quick 1st-Time Visitor Guide Pills -->
         <div class="df-quick-nav-bar">
-          <a href="#demo-sandbox" class="df-nav-pill active">⚡ Live Dual-Device Sandbox</a>
-          <a href="#explore-roles" class="df-nav-pill">👥 Explore 3 Modules</a>
-          <a href="#roi-calculator" class="df-nav-pill">📊 ROI Calculator</a>
-          <a href="#why-dineflow" class="df-nav-pill">⚖️ Why DineFlow vs POS</a>
+          <a href="?section=demo-sandbox" class="df-nav-pill active">⚡ Live Dual-Device Sandbox</a>
+          <a href="?section=explore-roles" class="df-nav-pill">👥 Explore 3 Modules</a>
+          <a href="?section=roi-calculator" class="df-nav-pill">📊 ROI Calculator</a>
+          <a href="?section=why-dineflow" class="df-nav-pill">⚖️ Why DineFlow vs POS</a>
         </div>
       </div>
 
@@ -571,7 +571,7 @@
   <!-- Client-Side Modules (Zero external network dependencies for QR & Storage) -->
   <script src="qr-engine.js?v=1.7.0"></script>
   <script src="data.js?v=1.7.0"></script>
-  <script src="app.js?v=1.8.4"></script>
+  <script src="app.js?v=1.8.5"></script>
 
   <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
   <script>
@@ -633,8 +633,9 @@
         });
       });
 
-      // Auto-open modal if URL specifies ?pilot=true or #pilot
-      if (window.location.search.includes('pilot=true') || window.location.hash.toLowerCase().includes('pilot')) {
+      // Auto-open modal if URL specifies ?pilot=true or ?section=pilot (with fallback for legacy #pilot)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('pilot') === 'true' || urlParams.get('section') === 'pilot' || window.location.hash.toLowerCase().includes('pilot')) {
         setTimeout(() => {
           if (rangeTables && document.getElementById('lead-tables')) {
             document.getElementById('lead-tables').value = rangeTables.value;

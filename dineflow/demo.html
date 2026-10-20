@@ -1362,7 +1362,7 @@
       <button id="btn-open-arch" class="btn-action" title="View technical architecture">
         <span>📐 Architecture</span>
       </button>
-      <a href="./#roi-calculator" class="btn-action primary" title="Simulate revenue gains and claim 14-day free pilot">
+      <a href="./?section=roi-calculator" class="btn-action primary" title="Simulate revenue gains and claim 14-day free pilot">
         <span>📊 Free Pilot &rarr;</span>
       </a>
     </div>
@@ -1506,7 +1506,7 @@
             </div>
           </div>
 
-          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.8.4" title="DineFlow Guest Mobile Ordering"></iframe>
+          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.8.5" title="DineFlow Guest Mobile Ordering"></iframe>
         </div>
 
         <!-- iOS Home Indicator -->
@@ -1561,7 +1561,7 @@
         </div>
 
         <!-- Desktop Screen Iframe -->
-        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=1.8.4" title="DineFlow Operations & Governance Console"></iframe>
+        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=1.8.5" title="DineFlow Operations & Governance Console"></iframe>
       </div>
     </section>
 
@@ -2257,7 +2257,7 @@
                 }, 600);
 
                 playChime('success');
-                showSpotlight('<strong>🎉 5-Star Review Submitted!</strong> Dining loop complete. <a href="./?view=hub#roi-calculator" style="color:#E5A93C;text-decoration:underline;margin-left:6px;font-weight:700;">Calculate Your ROI &amp; Claim Pilot &rarr;</a>', '⭐', 8000);
+                showSpotlight('<strong>🎉 5-Star Review Submitted!</strong> Dining loop complete. <a href="./?section=roi-calculator" style="color:#E5A93C;text-decoration:underline;margin-left:6px;font-weight:700;">Calculate Your ROI &amp; Claim Pilot &rarr;</a>', '⭐', 8000);
                 logTelemetry('Guest submitted 5-Star review! Saved into restaurant CRM & analytics. Ready for dining room deployment.', '🌟');
 
                 if (callback) callback();

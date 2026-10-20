@@ -234,7 +234,13 @@
 
   // URL Builders & Navigation (Query-parameter routing without '#')
   function buildRouteUrl(route) {
-    if (!route || route.view === 'hub') return './';
+    if (!route) return './';
+    if (route.view === 'hub') {
+      if (route.section) {
+        return `?section=${encodeURIComponent(route.section)}`;
+      }
+      return './';
+    }
     if (route.view === 'customer') {
       return `?r=${encodeURIComponent(route.tenantSlug || 'the-urban-plate')}&t=${encodeURIComponent(route.tableId || 'T12')}`;
     }
@@ -253,38 +259,43 @@
     renderApp();
   }
 
-  // Router Parser (Supports Query Parameters like ?view=admin and auto-migrates legacy '#' hashes)
+  // Router Parser (Supports Query Parameters like ?view=admin, ?section=roi-calculator and auto-migrates legacy '#' hashes)
   function parseRoute() {
-    // 1. Backward Compatibility: If legacy hash matches SPA routing (e.g. #/admin or #/r/the-urban-plate/t/T12)
-    const hash = window.location.hash.replace(/^#\/?/, '').trim();
-    if (hash) {
-      const parts = hash.split('/');
-      let legacyRoute = null;
+    // 1. Backward Compatibility & Complete '#' Elimination:
+    // If any legacy or in-page hash exists (e.g. #roi-calculator, #pilot, #admin, #r/the-urban-plate/t/T12),
+    // immediately rewrite the address bar to a clean query URL without '#' via history.replaceState.
+    const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    if (rawHash) {
+      const parts = rawHash.split('/');
+      let targetQuery = '';
       if (parts[0] === 'login') {
-        legacyRoute = { view: 'login', target: parts[1] || 'admin' };
+        targetQuery = parts[1] && parts[1] !== 'admin' ? `?view=login&target=${encodeURIComponent(parts[1])}` : '?view=login';
       } else if (parts[0] === 'r' && parts[1]) {
-        legacyRoute = { view: 'customer', tenantSlug: parts[1], tableId: (parts[2] === 't' && parts[3]) ? parts[3] : 'T12' };
+        targetQuery = `?r=${encodeURIComponent(parts[1])}&t=${encodeURIComponent((parts[2] === 't' && parts[3]) ? parts[3] : 'T12')}`;
       } else if (parts[0] === 'admin') {
-        legacyRoute = { view: 'admin' };
+        targetQuery = '?view=admin';
       } else if (parts[0] === 'super-admin') {
-        legacyRoute = { view: 'super-admin' };
+        targetQuery = '?view=super-admin';
       } else if (parts[0] === 'onboarding') {
-        legacyRoute = { view: 'onboarding' };
+        targetQuery = '?view=onboarding';
+      } else if (rawHash === 'pilot' || rawHash === 'free-pilot') {
+        targetQuery = '?pilot=true';
+      } else {
+        // Any in-page anchor section (e.g. #roi-calculator, #demo-sandbox, #why-dineflow)
+        targetQuery = `?section=${encodeURIComponent(rawHash)}`;
       }
-      if (legacyRoute) {
-        // Clean up URL in address bar by removing hash and applying query params
-        const cleanUrl = buildRouteUrl(legacyRoute);
-        window.history.replaceState({}, '', cleanUrl);
-        return legacyRoute;
-      }
-      // Non-routing anchor hashes (such as #roi-calculator, #demo-sandbox, #why-dineflow) must be preserved
+
+      // Immediately clear '#' from the browser address bar
+      window.history.replaceState({}, '', targetQuery);
     }
 
-    // 2. Query Parameters routing (?view=admin, ?r=the-urban-plate&t=T12, etc.)
+    // 2. Query Parameters routing (?view=admin, ?section=roi-calculator, ?r=the-urban-plate&t=T12, etc.)
     const searchParams = new URLSearchParams(window.location.search);
     const viewParam = searchParams.get('view');
     const rParam = searchParams.get('r');
     const tParam = searchParams.get('t');
+    const sectionParam = searchParams.get('section');
+    const pilotParam = searchParams.get('pilot');
 
     if (rParam) {
       return {
@@ -313,12 +324,11 @@
       return { view: 'onboarding' };
     }
 
-    if (viewParam === 'hub') {
-      return { view: 'hub' };
-    }
-
-    // Default Route: Platform Showcase Hub
-    return { view: 'hub' };
+    // Default Route: Platform Showcase Hub (with optional query section)
+    return {
+      view: 'hub',
+      section: sectionParam || (pilotParam === 'true' ? 'pilot' : null)
+    };
   }
 
   // Get current tenant data
@@ -412,14 +422,22 @@
     if (el) el.style.display = 'none';
   }
 
-  function handleHubAnchorNavigation() {
-    const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
-    if (!rawHash) return;
+  function handleHubQueryNavigation(section) {
+    if (!section) return;
 
-    if (rawHash === 'pilot' || rawHash === 'free-pilot') {
+    // Sync active state on navigation guide pills
+    document.querySelectorAll('.df-nav-pill').forEach(pill => {
+      const href = pill.getAttribute('href') || '';
+      const isMatch = href.includes(`section=${section}`);
+      pill.classList.toggle('active', isMatch);
+    });
+
+    if (section === 'pilot' || section === 'free-pilot') {
       const calcEl = document.getElementById('roi-calculator');
       if (calcEl) {
         calcEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        calcEl.classList.add('df-roi-highlight-pulse');
+        setTimeout(() => calcEl.classList.remove('df-roi-highlight-pulse'), 2500);
       }
       const leadModal = document.getElementById('lead-modal-backdrop');
       if (leadModal) {
@@ -435,17 +453,17 @@
       return;
     }
 
-    const targetEl = document.getElementById(rawHash);
+    const targetEl = document.getElementById(section);
     if (targetEl) {
       setTimeout(() => {
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 120);
+        if (section === 'roi-calculator') {
+          targetEl.classList.add('df-roi-highlight-pulse');
+          setTimeout(() => targetEl.classList.remove('df-roi-highlight-pulse'), 2500);
+        }
+      }, 100);
     }
   }
-
-  window.addEventListener('hashchange', () => {
-    handleHubAnchorNavigation();
-  });
 
   // ==============================================================================
   // VIEW RENDERERS & ROUTE GUARDS
@@ -470,7 +488,7 @@
       if (!document.getElementById('demo-sandbox')) {
         renderShowcaseHubView(appEl);
       }
-      handleHubAnchorNavigation();
+      handleHubQueryNavigation(route.section);
     } else if (route.view === 'customer') {
       state.currentTenantId = route.tenantSlug;
       state.currentTableId = route.tableId;
@@ -3971,7 +3989,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.8.4').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.8.5').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
@@ -3993,6 +4011,11 @@
       window.history.pushState({}, '', href);
       renderApp();
     }
+  });
+
+  // Browser Back/Forward Navigation
+  window.addEventListener('popstate', () => {
+    renderApp();
   });
 
   // Initial Boot

@@ -3037,7 +3037,8 @@ body.splash-active {
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-#roi-calculator:target {
+#roi-calculator:target,
+.df-hub-roi-wrapper.df-roi-highlight-pulse {
   animation: df-roi-target-pulse 2.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
