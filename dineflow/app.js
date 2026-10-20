@@ -1,6 +1,6 @@
-/**
+﻿/**
  * ==============================================================================
- * DineFlow — Core Application Engine
+ * DineFlow - Core Application Engine
  * Pure Vanilla JavaScript SPA Architecture with Multi-Tenant Routing,
  * Real-Time Cross-Tab State Sync, Cart, Ordering, QR Generation,
  * Kitchen Kanban, and Admin Portals.
@@ -490,14 +490,14 @@
   // 00. INTERACTIVE PLATFORM SHOWCASE HUB VIEW (#/hub)
   // ------------------------------------------------------------------------------
   function renderShowcaseHubView(container) {
-    document.title = 'DineFlow — QR Restaurant SaaS Platform Showcase & Operations Hub';
+    document.title = 'DineFlow - QR Restaurant SaaS Platform Showcase & Operations Hub';
 
     container.innerHTML = `
       <header class="df-topbar df-hub-topbar">
         <div class="df-brand-badge">
           <div class="df-brand-icon" style="background: linear-gradient(135deg, #E5A93C, #FF5E3A); color: #fff;">🍽️</div>
           <div class="df-brand-text">
-            <h1>DineFlow &mdash; QR Restaurant SaaS</h1>
+            <h1>DineFlow - QR Restaurant SaaS</h1>
             <span class="df-brand-tagline">Multi-Tenant Hospitality Ecosystem &bull; Real-Time Operations</span>
           </div>
         </div>
@@ -758,7 +758,7 @@
       }
     }
 
-    document.title = 'DineFlow — Operations & Staff Login Gateway';
+    document.title = 'DineFlow - Operations & Staff Login Gateway';
 
     container.innerHTML = `
       <header class="df-topbar">
@@ -2449,7 +2449,7 @@
         <div class="df-brand-badge">
           <div class="df-brand-icon">${tenant.logoEmoji || '🍽️'}</div>
           <div class="df-brand-text">
-            <h1 title="${tenant.name} Staff OS">${tenant.name} &mdash; Staff OS</h1>
+            <h1 title="${tenant.name} Staff OS">${tenant.name} - Staff OS</h1>
             <span class="df-brand-tagline">${tenant.branch}</span>
           </div>
         </div>
@@ -3134,7 +3134,7 @@
                 ${req.type === 'WATER' ? '💧' : req.type === 'CUTLERY' ? '🍴' : req.type === 'NAPKINS' ? '🧻' : '🔔'}
               </div>
               <div>
-                <h4 style="font-size: 1rem; font-weight: 800; color: #fff;">Table ${req.tableId} &mdash; ${req.label}</h4>
+                <h4 style="font-size: 1rem; font-weight: 800; color: #fff;">Table ${req.tableId} - ${req.label}</h4>
                 <span style="font-size: 0.75rem; color: var(--text-dim);">${req.time} • Alert ID: #${req.id}</span>
               </div>
             </div>
@@ -3524,7 +3524,7 @@
   // 3. SUPER ADMIN PLATFORM VIEW (Multi-Tenant Overview)
   // ------------------------------------------------------------------------------
   function renderSuperAdminView(container) {
-    document.title = 'DineFlow — Platform Super Admin Operations & Analytics';
+    document.title = 'DineFlow - Platform Super Admin Operations & Analytics';
     state = DineFlowStore.get();
     const tenantsList = state.tenants ? Object.values(state.tenants) : [];
     const totalOrdersRev = (state.orders || []).reduce((a, b) => a + (b.total || 0), 0);
@@ -3679,7 +3679,7 @@
             <div class="df-brand-icon">🚀</div>
             <div class="df-brand-text">
               <h1>Partner Restaurant Onboarding</h1>
-              <span class="df-brand-tagline">Step ${currentStep} of ${totalSteps} &mdash; ${stepTitles[currentStep - 1]}</span>
+              <span class="df-brand-tagline">Step ${currentStep} of ${totalSteps} - ${stepTitles[currentStep - 1]}</span>
             </div>
           </div>
           <div class="df-top-actions">

@@ -1,4 +1,4 @@
-# Debashish Paul — Personal Portfolio Website
+﻿# Debashish Paul - Personal Portfolio Website
 
 🌐 **Live URL**: [https://www.debashishpaul.in](https://www.debashishpaul.in)
 

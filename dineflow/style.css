@@ -1,5 +1,5 @@
 /* ==============================================================================
-   DineFlow — Premium QR Restaurant SaaS Design System
+   DineFlow - Premium QR Restaurant SaaS Design System
    "Scan. Order. Enjoy."
    Modern Luxury Glassmorphic & Mobile-First Restaurant UI
    ============================================================================== */
@@ -1943,7 +1943,7 @@ body.splash-active {
 }
 
 /* ==============================================================================
-   DineFlow — Staff & Admin Login Gateway Styles
+   DineFlow - Staff & Admin Login Gateway Styles
    ============================================================================== */
 .df-login-container {
   min-height: 100vh;
@@ -2280,7 +2280,7 @@ body.splash-active {
 }
 
 /* ==============================================================================
-   DineFlow — Interactive Platform Showcase Hub (#/hub)
+   DineFlow - Interactive Platform Showcase Hub (#/hub)
    ============================================================================== */
 .df-hub-layout {
   padding: 100px 1.5rem 4rem;
@@ -2738,7 +2738,7 @@ body.splash-active {
   bottom: calc(78px + env(safe-area-inset-bottom, 0px));
 }
 
-/* Collapsed Compact State — Docked cleanly in corner without blocking anything */
+/* Collapsed Compact State - Docked cleanly in corner without blocking anything */
 .df-floating-demo-bar.is-collapsed {
   left: auto;
   right: 18px;
@@ -2920,5 +2920,460 @@ body.splash-active {
     flex-shrink: 0;
   }
 }
+
+/* ==============================================================================
+   RESTAURANT OPERATOR ROI CALCULATOR & PAIN-POINT RESOLUTION SYSTEM
+   ============================================================================== */
+.df-hub-roi-wrapper {
+  margin: 3.5rem 0 2rem;
+  background: linear-gradient(145deg, rgba(20, 26, 41, 0.85), rgba(14, 19, 31, 0.95));
+  border: 1px solid rgba(229, 169, 60, 0.25);
+  border-radius: 16px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(229, 169, 60, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.df-hub-roi-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+}
+
+.df-roi-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 2.25rem;
+}
+
+.df-roi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.85rem;
+  background: rgba(229, 169, 60, 0.12);
+  border: 1px solid rgba(229, 169, 60, 0.3);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.75rem;
+}
+
+.df-roi-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.65rem;
+  line-height: 1.25;
+}
+
+.df-roi-subtitle {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.df-roi-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2.25rem;
+  align-items: center;
+}
+
+.df-roi-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.df-roi-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.df-slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.df-slider-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--brand-primary);
+  font-family: var(--font-mono, monospace);
+}
+
+.df-range-input {
+  width: 100%;
+  accent-color: var(--brand-primary);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+}
+
+.df-roi-results {
+  background: linear-gradient(135deg, rgba(229, 169, 60, 0.06), rgba(16, 185, 129, 0.04));
+  border: 1px solid rgba(229, 169, 60, 0.25);
+  border-radius: 14px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+}
+
+.df-roi-highlight-box {
+  text-align: center;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.df-roi-highlight-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.df-roi-highlight-number {
+  font-size: 2.35rem;
+  font-weight: 900;
+  color: #34D399;
+  letter-spacing: -0.02em;
+  font-family: var(--font-mono, monospace);
+}
+
+.df-roi-metric-rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.df-roi-metric-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 0.85rem;
+}
+
+.df-roi-metric-item span.title {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.df-roi-metric-item strong.val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.df-btn-claim-pilot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.95rem;
+  background: linear-gradient(135deg, #E5A93C, #F59E0B);
+  color: #07090E;
+  font-size: 0.92rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(229, 169, 60, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.df-btn-claim-pilot:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(229, 169, 60, 0.45);
+}
+
+/* Pain Point Matrix */
+.df-pain-matrix-wrapper {
+  margin: 3.5rem 0 2rem;
+}
+
+.df-pain-matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.df-pain-matrix-table th {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem 1.25rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #E2E8F0;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.df-pain-matrix-table td {
+  padding: 1.15rem 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+}
+
+.df-pain-matrix-table tr:last-child td {
+  border-bottom: none;
+}
+
+.df-pain-matrix-table td.highlight-dineflow {
+  background: rgba(229, 169, 60, 0.04);
+  color: #F8FAFC;
+  font-weight: 600;
+  border-left: 1px solid rgba(229, 169, 60, 0.2);
+}
+
+/* Smart Lead Capture Modal */
+.df-lead-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 14, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+}
+
+.df-lead-modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.df-lead-modal-card {
+  background: linear-gradient(145deg, #121826, #0a0e17);
+  border: 1px solid rgba(229, 169, 60, 0.4);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(229, 169, 60, 0.2);
+  overflow: hidden;
+  position: relative;
+  transform: translateY(20px) scale(0.97);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.df-lead-modal-backdrop.active .df-lead-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.df-lead-modal-header {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.df-lead-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.df-lead-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.df-lead-form-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.df-lead-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.88rem;
+  color: #fff;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.df-lead-input:focus {
+  border-color: var(--brand-primary);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 2px rgba(229, 169, 60, 0.2);
+}
+
+.df-lead-success-box {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+  display: none;
+}
+
+.df-lead-success-box.active {
+  display: block;
+}
+
+.df-lead-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.df-lead-grid-row.df-lead-grid-split {
+  grid-template-columns: 1fr 1.3fr;
+}
+
+.df-lead-modal-card {
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 900px) {
+  .df-roi-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .df-pain-matrix-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .df-pain-matrix-table {
+    min-width: 620px;
+  }
+}
+
+@media (max-width: 768px) {
+  .df-hide-mobile {
+    display: none !important;
+  }
+  .df-hub-roi-wrapper {
+    margin: 2.5rem 0 1.5rem;
+    padding: 1.5rem 1.25rem;
+    border-radius: 14px;
+  }
+  .df-roi-title {
+    font-size: 1.45rem;
+  }
+  .df-roi-subtitle {
+    font-size: 0.84rem;
+  }
+  .df-roi-highlight-number {
+    font-size: clamp(1.6rem, 6vw, 2.1rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .df-topbar.df-hub-topbar {
+    height: 56px;
+    padding: 0 0.5rem;
+  }
+  .df-topbar.df-hub-topbar .df-top-actions {
+    gap: 0.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-width: calc(100vw - 75px);
+  }
+  .df-topbar.df-hub-topbar .df-top-actions::-webkit-scrollbar {
+    display: none;
+  }
+  .df-topbar.df-hub-topbar .df-pill-btn {
+    padding: 0.28rem 0.45rem;
+    font-size: 0.68rem;
+    flex-shrink: 0;
+  }
+  .df-topbar.df-hub-topbar .df-brand-tagline {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .df-lead-grid-row,
+  .df-lead-grid-row.df-lead-grid-split {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .df-lead-modal-card {
+    border-radius: 14px;
+    margin: 0.5rem;
+  }
+  .df-lead-modal-header {
+    padding: 1.15rem 1.15rem 0.85rem;
+  }
+  .df-lead-modal-body {
+    padding: 1.15rem;
+    gap: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .df-hub-roi-wrapper {
+    padding: 1.25rem 0.85rem;
+  }
+  .df-roi-controls {
+    padding: 1rem 0.75rem;
+  }
+  .df-roi-results {
+    padding: 1.15rem 0.75rem;
+  }
+  .df-roi-metric-rows {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+  .df-roi-metric-item {
+    padding: 0.65rem;
+  }
+  .df-roi-highlight-number {
+    font-size: 1.65rem;
+  }
+}
+
 
 

@@ -112,19 +112,22 @@
       <div class="df-brand-badge">
         <div class="df-brand-icon" style="background: linear-gradient(135deg, #E5A93C, #FF5E3A); color: #fff;">🍽️</div>
         <div class="df-brand-text">
-          <h1>DineFlow &mdash; QR Restaurant SaaS</h1>
+          <h1>DineFlow - QR Restaurant SaaS</h1>
           <span class="df-brand-tagline">Multi-Tenant Hospitality Ecosystem &bull; Real-Time Operations</span>
         </div>
       </div>
       <div class="df-top-actions">
         <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
-          <span>← Back to Portfolio</span>
+          <span>← Back<span class="df-hide-mobile"> to Portfolio</span></span>
         </a>
         <a href="demo.html" class="df-pill-btn" style="background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;" title="Dual-Device Live Operations Sandbox">
-          <span>⚡ Dual-Device Demo</span>
+          <span>⚡ <span class="df-hide-mobile">Dual-Device </span>Demo</span>
         </a>
+        <button class="df-pill-btn" id="btn-open-pilot-top" style="background: linear-gradient(135deg, #E5A93C, #F59E0B); color: #07090E; font-weight: 800; border: none; box-shadow: 0 4px 14px rgba(229,169,60,0.35); cursor: pointer;" title="Request Free 14-Day Pilot for Your Restaurant">
+          <span>🚀 <span class="df-hide-mobile">Request </span>Free Pilot</span>
+        </button>
         <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
-          <span>Staff Portal 🔒</span>
+          <span>Staff<span class="df-hide-mobile"> Portal</span> 🔒</span>
         </a>
       </div>
     </header>
@@ -270,6 +273,147 @@
         </div>
       </div>
 
+      <!-- ==================================================================== -->
+      <!-- RESTAURANT ROI CALCULATOR FOR OWNERS & GENERAL MANAGERS              -->
+      <!-- ==================================================================== -->
+      <section class="df-hub-roi-wrapper" id="roi-calculator">
+        <div class="df-roi-header">
+          <div class="df-roi-badge">
+            <span>📊</span>
+            <span>Commercial Impact Simulator</span>
+          </div>
+          <h2 class="df-roi-title">
+            Calculate Your Restaurant's Revenue Lift
+          </h2>
+          <p class="df-roi-subtitle">
+            See how accelerating table turns from 70 mins to 48 mins, eliminating handwritten order errors, and bypassing 25% aggregator eat-in commissions expands your net profits.
+          </p>
+        </div>
+
+        <div class="df-roi-grid">
+          <!-- Controls Column -->
+          <div class="df-roi-controls">
+            <!-- Slider 1: Tables Count -->
+            <div class="df-roi-slider-group">
+              <div class="df-slider-label-row">
+                <span>Number of Dining Tables</span>
+                <span class="df-slider-val" id="val-tables">20 Tables</span>
+              </div>
+              <input type="range" min="5" max="80" value="20" step="1" class="df-range-input" id="range-tables">
+            </div>
+
+            <!-- Slider 2: Average Spend -->
+            <div class="df-roi-slider-group">
+              <div class="df-slider-label-row">
+                <span>Average Spend per Guest</span>
+                <span class="df-slider-val" id="val-spend">₹450 / guest</span>
+              </div>
+              <input type="range" min="150" max="1500" value="450" step="25" class="df-range-input" id="range-spend">
+            </div>
+
+            <!-- Slider 3: Daily Covers -->
+            <div class="df-roi-slider-group">
+              <div class="df-slider-label-row">
+                <span>Current Daily Guests (Covers)</span>
+                <span class="df-slider-val" id="val-covers">140 Guests/day</span>
+              </div>
+              <input type="range" min="30" max="450" value="140" step="10" class="df-range-input" id="range-covers">
+            </div>
+          </div>
+
+          <!-- Dynamic Results Box -->
+          <div class="df-roi-results">
+            <div class="df-roi-highlight-box">
+              <div class="df-roi-highlight-label">Estimated Monthly Bottom-Line Uplift</div>
+              <div class="df-roi-highlight-number" id="calc-monthly-gain">+₹3,27,000 / mo</div>
+              <span style="font-size: 0.78rem; color: #94A3B8; margin-top: 0.35rem; display: block;">
+                Annual Run-Rate Upside: <strong style="color: #F8FAFC;" id="calc-annual-gain">+₹39,24,000 / year</strong>
+              </span>
+            </div>
+
+            <div class="df-roi-metric-rows">
+              <div class="df-roi-metric-item">
+                <span class="title">Table Turn Velocity</span>
+                <strong class="val" style="color: #38BDF8;">31% Faster (48 mins)</strong>
+              </div>
+              <div class="df-roi-metric-item">
+                <span class="title">Peak-Rush Extra Covers</span>
+                <strong class="val" style="color: #10B981;" id="calc-extra-covers">+22 guests / day</strong>
+              </div>
+              <div class="df-roi-metric-item">
+                <span class="title">Kitchen Food Waste Saved</span>
+                <strong class="val" style="color: #E5A93C;" id="calc-waste-saved">₹22,000 / mo</strong>
+              </div>
+              <div class="df-roi-metric-item">
+                <span class="title">Aggregator Dine-in Tax</span>
+                <strong class="val" style="color: #F59E0B;">₹0 Commission</strong>
+              </div>
+            </div>
+
+            <button class="df-btn-claim-pilot" id="btn-open-pilot-from-calc">
+              <span>🚀 Claim 14-Day Free Pilot for Your Restaurant</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- PAIN-POINT RESOLUTION MATRIX                                         -->
+      <!-- ==================================================================== -->
+      <section class="df-pain-matrix-wrapper">
+        <div style="text-align: center; max-width: 720px; margin: 0 auto 2rem;">
+          <h2 style="font-size: 1.65rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">
+            Why Modern Operators Choose DineFlow Over Traditional POS
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            Engineered to remove friction points between front-of-house guests and back-of-house kitchen operations.
+          </p>
+        </div>
+
+        <table class="df-pain-matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 28%;">Operational Bottleneck</th>
+              <th style="width: 36%;">Traditional Dining &amp; Paper KOT</th>
+              <th style="width: 36%; color: var(--brand-primary);">DineFlow™ Real-Time Platform</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Table Dwell Time</td>
+              <td>Diners wait 8-12m for menus, 10m to order, 12m for bill. Total: <strong>65-75 mins</strong>.</td>
+              <td class="highlight-dineflow">Compressed to <strong>42-48 mins</strong> via instant QR self-ordering and 1-tap checkout (+30% table capacity).</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Staffing Pressure &amp; Turn-over</td>
+              <td>Waitstaff run around as transactional order-takers. High burnout &amp; staff attrition.</td>
+              <td class="highlight-dineflow">Waiters become high-touch hospitality hosts; 1 server comfortably manages 8-10 tables with zero order lag.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Order Mistakes &amp; Food Waste</td>
+              <td>Verbal errors, illegible handwriting, and missed allergy notices cost ₹15k-40k/mo in voided plates.</td>
+              <td class="highlight-dineflow"><strong>99.4% precision</strong>: guest spice meters, dietary badges, and chef notes dispatch straight to kitchen KDS.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Menu Updates &amp; 86ing Dishes</td>
+              <td>Reprinting 100 laminate menus costs ₹15k-25k; sold-out dishes cause awkward table delays.</td>
+              <td class="highlight-dineflow">1-Click cloud updates: 86ing sold-out items or updating seasonal prices syncs across all tables in <strong>&lt;150ms</strong>.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Customer Service Calls</td>
+              <td>Guests wave hands across noisy dining rooms for water, napkins, or extra plates.</td>
+              <td class="highlight-dineflow"><strong>Digital Concierge Bell</strong>: Guests tap 🛎️ Call Staff; acoustic chime rings floor console and records resolution.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Third-Party Commission Fees</td>
+              <td>Food aggregators charge 15%-25% commission on dine-in discounts and own your guest data.</td>
+              <td class="highlight-dineflow"><strong>₹0 Aggregator Cut</strong>: 100% direct revenue retention with instant zero-commission UPI, and CRM data is 100% yours.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
       <!-- Real-Time Testing Helper Box -->
       <div class="df-hub-testing-banner">
         <div class="df-testing-banner-header">
@@ -300,9 +444,87 @@
     </main>
   </div>
 
+  <!-- ======================================================================== -->
+  <!-- HIGH-CONVERTING AI SMART LEAD CAPTURE MODAL                              -->
+  <!-- ======================================================================== -->
+  <div class="df-lead-modal-backdrop" id="lead-modal-backdrop">
+    <div class="df-lead-modal-card">
+      <div class="df-lead-modal-header">
+        <div>
+          <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--brand-primary); letter-spacing: 0.06em;">Restaurant Expansion Program</span>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 0.2rem;">Claim 14-Day Free Pilot</h3>
+        </div>
+        <button id="btn-close-lead-modal" style="background: none; border: none; color: #94A3B8; font-size: 1.25rem; cursor: pointer; padding: 0.25rem;">✕</button>
+      </div>
+
+      <div class="df-lead-modal-body">
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.5rem;">
+          Deploy DineFlow in your dining room with zero setup fees, free branded table tent stands, and personalized menu onboarding by Debashish Paul.
+        </p>
+
+        <form id="lead-capture-form" onsubmit="return false;">
+          <div class="df-lead-form-group">
+            <label for="lead-restaurant-name">Restaurant / Cafe Name *</label>
+            <input type="text" id="lead-restaurant-name" class="df-lead-input" placeholder="e.g. The Urban Plate, Cafe Mocha" required>
+          </div>
+
+          <div class="df-lead-grid-row">
+            <div class="df-lead-form-group">
+              <label for="lead-owner-name">Your Name *</label>
+              <input type="text" id="lead-owner-name" class="df-lead-input" placeholder="Owner / General Manager" required>
+            </div>
+            <div class="df-lead-form-group">
+              <label for="lead-city">City / Location *</label>
+              <input type="text" id="lead-city" class="df-lead-input" placeholder="e.g. Kolkata, Bangalore, Mumbai" required>
+            </div>
+          </div>
+
+          <div class="df-lead-grid-row df-lead-grid-split">
+            <div class="df-lead-form-group">
+              <label for="lead-tables">Dining Tables *</label>
+              <input type="number" id="lead-tables" class="df-lead-input" value="20" min="2" max="200" required>
+            </div>
+            <div class="df-lead-form-group">
+              <label for="lead-contact">WhatsApp / Phone *</label>
+              <input type="tel" id="lead-contact" class="df-lead-input" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <div class="df-lead-form-group" style="margin-top: 0.25rem;">
+            <label for="lead-email">Email Address <span style="font-size: 0.72rem; color: #94A3B8; font-weight: normal;">(Optional - for digital blueprint copy)</span></label>
+            <input type="email" id="lead-email" class="df-lead-input" placeholder="owner@restaurant.com">
+          </div>
+
+          <button type="submit" id="btn-submit-lead" class="df-btn-claim-pilot" style="margin-top: 0.85rem;">
+            <span>🚀 Generate Custom Restaurant Blueprint</span>
+          </button>
+        </form>
+
+        <!-- Dynamic Success Box with Direct WhatsApp Hook -->
+        <div class="df-lead-success-box" id="lead-success-box">
+          <div style="font-size: 2rem; margin-bottom: 0.35rem;">🎉</div>
+          <h4 style="font-size: 1.05rem; font-weight: 800; color: #34D399; margin-bottom: 0.35rem;">
+            Pilot Blueprint Configured!
+          </h4>
+          <p style="font-size: 0.82rem; color: #E2E8F0; line-height: 1.45; margin-bottom: 1rem;" id="lead-success-summary">
+            We've calculated an estimated +₹3,27,000/mo extra revenue capacity for your restaurant.
+          </p>
+          <div style="display: flex; gap: 0.65rem; flex-direction: column;">
+            <a href="#" id="lead-whatsapp-btn" target="_blank" class="df-btn-claim-pilot" style="background: #25D366; color: #fff; font-size: 0.86rem; padding: 0.75rem;">
+              <span>💬 Connect with Debashish Paul via WhatsApp</span>
+            </a>
+            <button id="lead-modal-dismiss" class="df-pill-btn" style="justify-content: center; font-size: 0.78rem;">
+              <span>Close Window</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <noscript>
     <div style="background: #0f172a; color: #f8fafc; padding: 2rem; max-width: 800px; margin: 2rem auto; border-radius: 12px; border: 1px solid rgba(229,169,60,0.3); font-family: sans-serif; text-align: center;">
-      <h2 style="color: #E5A93C; margin-bottom: 0.5rem;">DineFlow — QR Restaurant SaaS Platform</h2>
+      <h2 style="color: #E5A93C; margin-bottom: 0.5rem;">DineFlow - QR Restaurant SaaS Platform</h2>
       <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
         DineFlow is a production-grade digital dining and kitchen operations SaaS engineered by Debashish Paul. Please enable JavaScript in your browser to experience real-time at-table QR ordering, Kitchen Display System (KDS), and SaaS multi-tenant governance.
       </p>
@@ -320,6 +542,156 @@
   <script src="qr-engine.js?v=1.7.0"></script>
   <script src="data.js?v=1.7.0"></script>
   <script src="app.js?v=1.7.0"></script>
-</body>
 
+  <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
+  <script>
+    (function() {
+      const rangeTables = document.getElementById('range-tables');
+      const rangeSpend = document.getElementById('range-spend');
+      const rangeCovers = document.getElementById('range-covers');
+
+      const valTables = document.getElementById('val-tables');
+      const valSpend = document.getElementById('val-spend');
+      const valCovers = document.getElementById('val-covers');
+
+      const calcMonthlyGain = document.getElementById('calc-monthly-gain');
+      const calcAnnualGain = document.getElementById('calc-annual-gain');
+      const calcExtraCovers = document.getElementById('calc-extra-covers');
+      const calcWasteSaved = document.getElementById('calc-waste-saved');
+
+      function updateROI() {
+        if (!rangeTables || !rangeSpend || !rangeCovers) return;
+        const tables = parseInt(rangeTables.value, 10);
+        const spend = parseInt(rangeSpend.value, 10);
+        const covers = parseInt(rangeCovers.value, 10);
+
+        valTables.textContent = `${tables} Tables`;
+        valSpend.textContent = `₹${spend} / guest`;
+        valCovers.textContent = `${covers} Guests/day`;
+
+        // 31% faster table turn yields ~15.7% more peak-hour capacity
+        const extraCovers = Math.round(covers * 0.157);
+        const monthlyTurnoverGain = extraCovers * spend * 30;
+        // Misordered food waste saved (~₹1,100 per table/mo in traditional ops)
+        const wasteSaved = tables * 1100;
+        const totalMonthlyGain = monthlyTurnoverGain + wasteSaved;
+        const annualGain = totalMonthlyGain * 12;
+
+        calcExtraCovers.textContent = `+${extraCovers} guests / day`;
+        calcWasteSaved.textContent = `₹${wasteSaved.toLocaleString('en-IN')} / mo`;
+        calcMonthlyGain.textContent = `+₹${totalMonthlyGain.toLocaleString('en-IN')} / mo`;
+        calcAnnualGain.textContent = `+₹${annualGain.toLocaleString('en-IN')} / year`;
+      }
+
+      rangeTables?.addEventListener('input', updateROI);
+      rangeSpend?.addEventListener('input', updateROI);
+      rangeCovers?.addEventListener('input', updateROI);
+
+      // Lead Modal Triggers
+      const leadModal = document.getElementById('lead-modal-backdrop');
+      const openButtons = [
+        document.getElementById('btn-open-pilot-top'),
+        document.getElementById('btn-open-pilot-from-calc')
+      ];
+
+      openButtons.forEach(btn => {
+        btn?.addEventListener('click', () => {
+          if (rangeTables && document.getElementById('lead-tables')) {
+            document.getElementById('lead-tables').value = rangeTables.value;
+          }
+          leadModal?.classList.add('active');
+        });
+      });
+
+      // Auto-open modal if URL specifies ?pilot=true or #pilot
+      if (window.location.search.includes('pilot=true') || window.location.hash.toLowerCase().includes('pilot')) {
+        setTimeout(() => {
+          if (rangeTables && document.getElementById('lead-tables')) {
+            document.getElementById('lead-tables').value = rangeTables.value;
+          }
+          leadModal?.classList.add('active');
+        }, 350);
+      }
+
+      document.getElementById('btn-close-lead-modal')?.addEventListener('click', () => {
+        leadModal?.classList.remove('active');
+      });
+      document.getElementById('lead-modal-dismiss')?.addEventListener('click', () => {
+        leadModal?.classList.remove('active');
+      });
+      leadModal?.addEventListener('click', (e) => {
+        if (e.target === leadModal) leadModal.classList.remove('active');
+      });
+
+      // Submit Lead Form
+      document.getElementById('lead-capture-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rName = document.getElementById('lead-restaurant-name')?.value.trim() || 'My Restaurant';
+        const oName = document.getElementById('lead-owner-name')?.value.trim() || 'Operator';
+        const city = document.getElementById('lead-city')?.value.trim() || 'India';
+        const tables = document.getElementById('lead-tables')?.value || '20';
+        const contact = document.getElementById('lead-contact')?.value.trim() || '';
+        const email = document.getElementById('lead-email')?.value.trim() || '';
+
+        // Store locally in CRM
+        try {
+          const leads = JSON.parse(localStorage.getItem('dineflow_leads') || '[]');
+          leads.unshift({
+            id: 'LEAD-' + Date.now(),
+            restaurant: rName,
+            name: oName,
+            city,
+            tables,
+            contact,
+            email,
+            timestamp: new Date().toISOString()
+          });
+          localStorage.setItem('dineflow_leads', JSON.stringify(leads));
+        } catch(err) {}
+
+        // Send to Debashish's Google Apps Script Webhook (Google Sheets + Instant Gmail alert)
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzaWRIAD6dz6M2uqDyA6_xKQRvRI6ZWRrFJc5WERO66nZFjhMDmh_ZBiKubz-jyYZGh9A/exec';
+        const payload = {
+          name: oName,
+          business_name: `${rName} (${city})`,
+          email: email || `${contact.replace(/\D/g, '') || 'pilot'}@dineflow-lead.in`,
+          phone: contact,
+          service: 'DineFlow 14-Day Free Pilot',
+          requirement_tier: `Hospitality QR SaaS Onboarding (${tables} Dining Tables)`,
+          budget: '₹0 - 14-Day Free Pilot',
+          message: `DineFlow 14-Day Free Pilot Request from ${oName} (${rName}, ${city}). Venue has ${tables} dining tables. Requested free acrylic QR table stands and live menu onboarding.`
+        };
+
+        try {
+          fetch(scriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }).catch(() => {});
+        } catch (fetchErr) {}
+
+        // Format direct WhatsApp lead message
+        const waMsg = encodeURIComponent(
+          `Hi Debashish! I run ${rName} in ${city} with ${tables} tables. ` +
+          `I tested your DineFlow platform demo and would like to claim a 14-day free pilot / custom table stands for our dining room. ` +
+          `Name: ${oName}, Contact: ${contact}${email ? ', Email: ' + email : ''}`
+        );
+        const waLink = `https://wa.me/919905608257?text=${waMsg}`;
+        const waBtn = document.getElementById('lead-whatsapp-btn');
+        if (waBtn) waBtn.href = waLink;
+
+        document.getElementById('lead-capture-form').style.display = 'none';
+        const successBox = document.getElementById('lead-success-box');
+        if (successBox) successBox.classList.add('active');
+        const summary = document.getElementById('lead-success-summary');
+        if (summary) {
+          summary.innerHTML = `Personalized pilot blueprint generated for <strong>${rName} (${tables} tables, ${city})</strong>. Our team has received your pilot request. Connect directly on WhatsApp to receive your acrylic table tent mockups and schedule onboarding!`;
+        }
+      });
+    })();
+  </script>
+</body>
 </html>

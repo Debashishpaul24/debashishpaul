@@ -1,5 +1,5 @@
-/**
- * Across The Street — The Dining Room (New Town, Kolkata)
+﻿/**
+ * Across The Street - The Dining Room (New Town, Kolkata)
  * Serene Editorial Dining Sanctuary Controller
  */
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
@@ -8,7 +8,7 @@
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://www.debashishpaul.in/assets/og-preview.png</image:loc>
-      <image:title>Debashish Paul — Senior Software Engineer &amp; Global Web Consultant</image:title>
+      <image:title>Debashish Paul - Senior Software Engineer &amp; Global Web Consultant</image:title>
       <image:caption>Portfolio of Debashish Paul, Senior Software Engineer &amp; Global Web Consultant</image:caption>
     </image:image>
     <image:image>
@@ -17,11 +17,11 @@
     </image:image>
     <image:image>
       <image:loc>https://www.debashishpaul.in/assets/project1.jpg</image:loc>
-      <image:title>Sterling &amp; Vance LLP — Legal Practice Platform</image:title>
+      <image:title>Sterling &amp; Vance LLP - Legal Practice Platform</image:title>
     </image:image>
     <image:image>
       <image:loc>https://www.debashishpaul.in/assets/project3.jpg</image:loc>
-      <image:title>Hebrew Marketing Agency — B2B Digital Platform</image:title>
+      <image:title>Hebrew Marketing Agency - B2B Digital Platform</image:title>
     </image:image>
     <image:image>
       <image:loc>https://www.debashishpaul.in/assets/project4.jpg</image:loc>

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * NEXUS ENGINEERING & ADVISORY SERVICES
  * Architectural, Structural & Interior Engineering Experience Controller
  */
@@ -660,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const file = fileInput.files[0];
         const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
         fileStatus.style.display = 'block';
-        fileStatus.textContent = `✓ Selected: ${file.name} (${sizeMb} MB) — Ready for submission`;
+        fileStatus.textContent = `✓ Selected: ${file.name} (${sizeMb} MB) - Ready for submission`;
       } else {
         fileStatus.style.display = 'none';
       }

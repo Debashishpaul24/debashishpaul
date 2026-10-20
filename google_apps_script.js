@@ -1,6 +1,6 @@
-/**
+﻿/**
  * ==============================================================================
- * GOOGLE APPS SCRIPT — LEAD CAPTURE TO GOOGLE SHEETS + GOOGLE DRIVE + GMAIL ALERTS
+ * GOOGLE APPS SCRIPT - LEAD CAPTURE TO GOOGLE SHEETS + GOOGLE DRIVE + GMAIL ALERTS
  * ==============================================================================
  * 
  * 📁 AUTOMATIC FILE ATTACHMENT SAVING TO GOOGLE DRIVE:
@@ -167,7 +167,7 @@ function sendEmailNotification(name, business, email, phone, service, requiremen
     var recipient = CUSTOM_RECIPIENT_EMAIL.trim() || Session.getActiveUser().getEmail() || Session.getEffectiveUser().getEmail();
     if (!recipient) return;
 
-    var subject = "🚀 New Portfolio Consultation: " + name + (business ? " (" + business + ")" : "") + " — " + service;
+    var subject = "🚀 New Portfolio Consultation: " + name + (business ? " (" + business + ")" : "") + " - " + service;
 
     var attachmentSection = '';
     if (attachmentUrl) {
@@ -204,7 +204,7 @@ function sendEmailNotification(name, business, email, phone, service, requiremen
         '</div>' +
         
         '<div style="text-align: center; margin-top: 25px;">' +
-          '<a href="mailto:' + email + '?subject=' + encodeURIComponent('Re: Project Inquiry — ' + service) + '" style="background: linear-gradient(135deg, #ff6b35 0%, #e8590c 100%); color: #ffffff; padding: 13px 28px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);">Reply to ' + name + '</a>' +
+          '<a href="mailto:' + email + '?subject=' + encodeURIComponent('Re: Project Inquiry - ' + service) + '" style="background: linear-gradient(135deg, #ff6b35 0%, #e8590c 100%); color: #ffffff; padding: 13px 28px; border-radius: 999px; text-decoration: none; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);">Reply to ' + name + '</a>' +
         '</div>' +
       '</div>';
 

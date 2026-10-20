@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>DineFlow™ — Dual-Device Interactive Operations Sandbox</title>
+  <title>DineFlow™ - Dual-Device Interactive Operations Sandbox</title>
   <meta name="description" content="Experience real-time sync between Customer QR ordering on mobile and Kitchen Staff OS / SaaS Platform Admin on desktop.">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1074,6 +1074,87 @@
         height: 720px;
       }
     }
+
+    @media (max-width: 768px) {
+      .sandbox-header {
+        padding: 0.65rem 0.85rem;
+        gap: 0.65rem;
+      }
+      .brand-info p {
+        display: none;
+      }
+      .header-actions {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+      }
+      .header-actions::-webkit-scrollbar {
+        display: none;
+      }
+      .btn-action {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.6rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .mission-bar {
+        padding: 0.5rem 0.75rem;
+        gap: 0.5rem;
+      }
+      .mission-hint {
+        display: none;
+      }
+      .mission-buttons {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+        width: 100%;
+      }
+      .mission-buttons::-webkit-scrollbar {
+        display: none;
+      }
+      .mission-btn {
+        flex-shrink: 0;
+        font-size: 0.72rem;
+        padding: 0.35rem 0.6rem;
+      }
+      .desktop-window {
+        height: 560px;
+      }
+      .iphone-frame {
+        height: 640px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand-info h1 {
+        font-size: 0.88rem;
+      }
+      .brand-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+      }
+      .sync-status {
+        display: none;
+      }
+      .desktop-window {
+        height: 480px;
+      }
+      .iphone-frame {
+        height: 580px;
+        max-width: 100%;
+        border-radius: 28px;
+        padding: 10px;
+      }
+      .arch-modal {
+        padding: 1.25rem 1rem;
+        border-radius: 14px;
+      }
+    }
   </style>
 </head>
 
@@ -1096,6 +1177,9 @@
     </div>
 
     <div class="header-actions">
+      <a href="./?view=hub#roi-calculator" class="btn-action" style="border-color: rgba(229, 169, 60, 0.5); color: var(--brand-primary); font-weight: 700;" title="Simulate revenue gains and claim 14-day free pilot">
+        <span>📊 ROI Calculator &amp; Pilot</span>
+      </a>
       <button id="btn-auto-demo" class="btn-action primary" title="Run full automated 6-stage end-to-end walkthrough">
         <span>⚡ Run Full Walkthrough</span>
       </button>
@@ -2020,8 +2104,8 @@
                 }, 600);
 
                 playChime('success');
-                showSpotlight('<strong>🎉 5-Star Review Submitted!</strong> Full end-to-end restaurant lifecycle complete!', '⭐', 5000);
-                logTelemetry('Guest submitted 5-Star review! Saved into restaurant CRM & analytics.', '🌟');
+                showSpotlight('<strong>🎉 5-Star Review Submitted!</strong> Dining loop complete. <a href="./?view=hub#roi-calculator" style="color:#E5A93C;text-decoration:underline;margin-left:6px;font-weight:700;">Calculate Your ROI &amp; Claim Pilot &rarr;</a>', '⭐', 8000);
+                logTelemetry('Guest submitted 5-Star review! Saved into restaurant CRM & analytics. Ready for dining room deployment.', '🌟');
 
                 if (callback) callback();
               }, 900);

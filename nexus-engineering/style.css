@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    NEXUS ENGINEERING & ADVISORY SERVICES
    Architectural, Structural & Interior Engineering Design System
    Theme: Warm Travertine, French Alabaster & Aged Champagne Bronze
@@ -7,7 +7,7 @@
 
 /* Design Tokens & CSS Variables */
 :root {
-  /* Color Palette — Warm Alabaster, Travertine & Linen */
+  /* Color Palette - Warm Alabaster, Travertine & Linen */
   --bg-primary: #FBF9F5;
   --bg-surface: #FFFFFF;
   --bg-card: #FFFFFF;
@@ -17,7 +17,7 @@
   --bg-light: #FFFFFF;
   --bg-terracotta-tint: rgba(199, 137, 102, 0.08);
 
-  /* Accents — Aged Champagne Bronze & Architectural Brass */
+  /* Accents - Aged Champagne Bronze & Architectural Brass */
   --accent-gold: #A57B43;
   --accent-gold-light: #946C34;
   --accent-gold-dark: #6E4D20;
@@ -1268,7 +1268,7 @@ ul, ol {
 }
 
 /* ==========================================================================
-   OUR EXPERTISE — INTERACTIVE JOURNEY
+   OUR EXPERTISE - INTERACTIVE JOURNEY
    ========================================================================== */
 .expertise-flow {
   display: grid;
@@ -1373,7 +1373,7 @@ ul, ol {
 }
 
 /* ==========================================================================
-   DESIGN PROCESS (01 — 08 Timeline)
+   DESIGN PROCESS (01 - 08 Timeline)
    ========================================================================== */
 .process-timeline {
   display: grid;

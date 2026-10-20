@@ -1,5 +1,5 @@
-/**
- * DineFlow Service Worker — PWA Offline Shell & Asset Caching
+﻿/**
+ * DineFlow Service Worker - PWA Offline Shell & Asset Caching
  */
 
 const CACHE_NAME = 'dineflow-v1.7.0';

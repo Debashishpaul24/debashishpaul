@@ -337,6 +337,25 @@
 
     if (!form) return;
 
+    // Auto-select DineFlow OS if query string or hash specifies service=dineflow
+    function checkDineFlowServiceParam() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const hash = window.location.hash || '';
+        const serviceParam = urlParams.get('service') || (hash.toLowerCase().includes('dineflow') ? 'dineflow' : '');
+        const serviceSelect = document.getElementById('lead-service');
+        if (serviceSelect && serviceParam && serviceParam.toLowerCase().includes('dineflow')) {
+          serviceSelect.value = 'DineFlow QR Restaurant OS & Pilot';
+          const msgField = document.getElementById('lead-message');
+          if (msgField && !msgField.value) {
+            msgField.placeholder = "Tell us about your restaurant / venue, city, and approximate number of tables...";
+          }
+        }
+      } catch(err) {}
+    }
+    checkDineFlowServiceParam();
+    window.addEventListener('hashchange', checkDineFlowServiceParam);
+
     let isSubmitting = false;
 
     function isValidEmail(val) {
