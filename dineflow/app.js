@@ -343,6 +343,11 @@
 
   // Floating Role Switcher Pill for Multi-Persona Exploration
   function renderFloatingRoleSwitcher(activeView) {
+    if (window.self !== window.top || activeView === 'customer') {
+      removeFloatingRoleSwitcher();
+      return;
+    }
+
     let el = document.getElementById('df-floating-demo-bar');
     if (!el) {
       el = document.createElement('div');
@@ -424,7 +429,9 @@
 
     if (route.view === 'hub') {
       removeFloatingRoleSwitcher();
-      renderShowcaseHubView(appEl);
+      if (!document.getElementById('demo-sandbox')) {
+        renderShowcaseHubView(appEl);
+      }
     } else if (route.view === 'customer') {
       state.currentTenantId = route.tenantSlug;
       state.currentTableId = route.tableId;
@@ -1079,14 +1086,6 @@
             <span class="df-brand-tagline">${tenant.branch}</span>
           </div>
         </div>
-        <div class="df-top-actions">
-          <button class="df-pill-btn" id="btn-call-staff-top">
-            <span>🔔</span> Staff
-          </button>
-          <a href="?view=admin" class="df-pill-btn primary" title="Open Restaurant Kitchen / Admin Portal">
-            <span>Staff Portal ↗</span>
-          </a>
-        </div>
       </header>
 
       <main class="df-app-viewport">
@@ -1121,16 +1120,16 @@
 
           <!-- Quick Actions Hub -->
           <div class="df-quick-actions-bar">
-            <button class="df-action-card" id="act-call-staff">
-              <span class="df-action-icon">🔔</span>
-              <span class="df-action-label">Call Staff</span>
+            <button class="df-action-card" id="act-call-staff" title="Summon Waiter for Table Assistance">
+              <span class="df-action-icon">🛎️</span>
+              <span class="df-action-label">Call Waiter</span>
             </button>
-            <button class="df-action-card" id="act-track-orders">
+            <button class="df-action-card" id="act-track-orders" title="Track Placed Orders Live">
               <span class="df-action-icon">📋</span>
               <span class="df-action-label">My Orders</span>
             </button>
-            <button class="df-action-card" id="act-request-bill">
-              <span class="df-action-icon">💳</span>
+            <button class="df-action-card" id="act-request-bill" title="Request & Settle Table Bill">
+              <span class="df-action-icon">🧾</span>
               <span class="df-action-label">Request Bill</span>
             </button>
           </div>
@@ -1215,7 +1214,7 @@
                 Designed &amp; Engineered by <a href="../" class="df-credit-link">Debashish Paul</a>
               </div>
               <div class="df-footer-tech">
-                <span>DineFlow Platform</span> • <span>QR Dining Experience</span>
+                <span>DineFlow Platform</span> • <span>QR Dining Experience</span> • <a href="?view=login" style="color: var(--text-dim); text-decoration: underline;" title="Restaurant Staff &amp; Manager Gateway">Staff Access</a>
               </div>
             </div>
           </footer>

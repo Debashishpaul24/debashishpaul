@@ -52,61 +52,85 @@
       overflow-x: hidden;
     }
 
-    /* Top Control Header */
+    /* Consolidated Theater Sandbox Header (Single Sleek Bar) */
     .sandbox-header {
-      background: rgba(14, 19, 31, 0.92);
+      background: rgba(10, 14, 23, 0.94);
       border-bottom: 1px solid var(--border-subtle);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      padding: 0.85rem 1.5rem;
+      padding: 0.5rem 1.25rem;
       position: sticky;
       top: 0;
       z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      gap: 0.75rem;
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .btn-back-hub {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-back-hub:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     .brand-pill {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
+      gap: 0.5rem;
       text-decoration: none;
       color: #fff;
     }
 
     .brand-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       background: linear-gradient(135deg, #E5A93C, #FF5E3A);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.15rem;
-      box-shadow: 0 4px 12px rgba(229, 169, 60, 0.35);
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(229, 169, 60, 0.3);
+      flex-shrink: 0;
     }
 
     .brand-info h1 {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      white-space: nowrap;
     }
 
     .brand-info h1 span.tag {
-      font-size: 0.68rem;
-      padding: 0.15rem 0.45rem;
+      font-size: 0.64rem;
+      padding: 0.12rem 0.45rem;
       background: rgba(229, 169, 60, 0.15);
       border: 1px solid var(--border-glow);
       color: var(--brand-primary);
@@ -114,31 +138,120 @@
       font-weight: 700;
     }
 
-    .brand-info p {
-      font-size: 0.76rem;
+    /* Center: Hero Simulation Launcher & Compact Timeline Track */
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: nowrap;
+    }
+
+    .btn-hero-sim {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.42rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #07090E;
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      border: 1px solid #E5A93C;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 16px rgba(229, 169, 60, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .btn-hero-sim:hover {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 0 24px rgba(229, 169, 60, 0.55);
+    }
+
+    .btn-hero-sim .sim-play {
+      font-size: 0.72rem;
+    }
+
+    .mission-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.18rem 0.35rem;
+    }
+
+    .mission-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.24rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
       color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .mission-btn:hover {
+      background: rgba(229, 169, 60, 0.15);
+      color: #fff;
+    }
+
+    .mission-btn.active {
+      background: rgba(229, 169, 60, 0.25);
+      color: var(--brand-primary);
+    }
+
+    .mission-step {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: rgba(229, 169, 60, 0.2);
+      color: var(--brand-primary);
+      font-size: 0.6rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Right: Utilities & Free Pilot CTA */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-shrink: 0;
     }
 
     .sync-status {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 0.35rem 0.8rem;
+      gap: 0.35rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      padding: 0.28rem 0.6rem;
       border-radius: 999px;
-      font-size: 0.74rem;
+      font-size: 0.68rem;
       color: #34D399;
-      font-weight: 600;
+      font-weight: 700;
       font-family: var(--font-mono);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
     }
 
     .sync-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       background: #10B981;
       border-radius: 50%;
-      box-shadow: 0 0 8px #10B981;
+      box-shadow: 0 0 6px #10B981;
       animation: pulseGlow 1.8s infinite;
     }
 
@@ -147,32 +260,27 @@
       50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
-    }
-
     .btn-action {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      padding: 0.5rem 0.95rem;
-      font-size: 0.8rem;
+      gap: 0.35rem;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.74rem;
       font-weight: 700;
-      color: #fff;
+      color: #E2E8F0;
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      border-radius: 7px;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.18s;
+      white-space: nowrap;
     }
 
     .btn-action:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
       transform: translateY(-1px);
     }
 
@@ -180,126 +288,37 @@
       background: linear-gradient(135deg, #E5A93C, #F59E0B);
       color: #07090E;
       border-color: #E5A93C;
-      box-shadow: 0 4px 14px rgba(229, 169, 60, 0.35);
+      box-shadow: 0 4px 12px rgba(229, 169, 60, 0.3);
     }
 
     .btn-action.primary:hover {
       background: linear-gradient(135deg, #F59E0B, #D97706);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(229, 169, 60, 0.45);
-    }
-
-    /* 6-Stage Guided Timeline Bar */
-    .mission-bar {
-      background: rgba(14, 19, 31, 0.88);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.65rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      z-index: 95;
-    }
-
-    .mission-intro {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .mission-badge {
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.25rem 0.65rem;
-      border-radius: 999px;
-      background: rgba(229, 169, 60, 0.15);
-      border: 1px solid var(--border-glow);
-      color: var(--brand-primary);
-    }
-
-    .mission-hint {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    .mission-buttons {
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      flex-wrap: wrap;
-    }
-
-    .mission-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.76rem;
-      font-weight: 700;
-      color: #E2E8F0;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-      white-space: nowrap;
-    }
-
-    .mission-btn:hover {
-      background: rgba(229, 169, 60, 0.15);
-      border-color: var(--brand-primary);
-      color: #fff;
       transform: translateY(-1px);
-    }
-
-    .mission-btn.active {
-      background: rgba(229, 169, 60, 0.25);
-      border-color: var(--brand-primary);
-      color: var(--brand-primary);
-      box-shadow: 0 0 12px rgba(229, 169, 60, 0.3);
-    }
-
-    .mission-step {
-      width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      background: rgba(229, 169, 60, 0.25);
-      color: var(--brand-primary);
-      font-size: 0.65rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      box-shadow: 0 6px 16px rgba(229, 169, 60, 0.45);
     }
 
     /* Live Visual Spotlight HUD Toast */
     .spotlight-toast {
       position: fixed;
-      top: 130px;
+      top: 72px;
       left: 50%;
-      transform: translateX(-50%) translateY(-20px);
+      transform: translateX(-50%) translateY(-15px);
       background: rgba(14, 19, 31, 0.96);
       border: 1px solid var(--border-glow);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px rgba(229, 169, 60, 0.3);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(229, 169, 60, 0.3);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      padding: 0.75rem 1.4rem;
+      padding: 0.65rem 1.3rem;
       border-radius: 999px;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.84rem;
+      gap: 0.7rem;
+      font-size: 0.82rem;
       color: #fff;
       z-index: 1000;
       opacity: 0;
       pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       max-width: 90vw;
     }
 
@@ -310,7 +329,7 @@
     }
 
     .spotlight-icon {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       animation: pulseGlow 1.5s infinite;
     }
 
@@ -355,7 +374,7 @@
       display: grid;
       grid-template-columns: 420px 1fr;
       gap: 2rem;
-      padding: 1.5rem 2rem;
+      padding: 1.75rem 2rem 4rem;
       max-width: 1720px;
       margin: 0 auto;
       width: 100%;
@@ -367,7 +386,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: 0.65rem;
       width: 100%;
     }
 
@@ -377,17 +396,60 @@
       justify-content: space-between;
       width: 100%;
       max-width: 390px;
-      padding: 0.4rem 0.6rem;
+      padding: 0.4rem 0.75rem;
       font-size: 0.78rem;
       color: var(--text-muted);
       font-weight: 600;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
     }
 
-    .device-title-badge strong {
-      color: #fff;
+    .badge-identity {
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.5rem;
+    }
+
+    .role-icon {
+      font-size: 1.15rem;
+    }
+
+    .badge-identity strong {
+      display: block;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .role-caption {
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .role-tag {
+      font-size: 0.64rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .guest-tag {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+    }
+
+    .staff-tag {
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      color: var(--brand-primary);
     }
 
     /* iPhone 16 Pro Photorealistic Chassis */
@@ -474,6 +536,20 @@
       display: none;
       width: 0;
       height: 0;
+    }
+
+    /* Bottom Home Indicator Bar */
+    .home-indicator {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      z-index: 60;
+      pointer-events: none;
     }
 
     /* --------------------------------------------------------------------------
@@ -775,9 +851,13 @@
     .device-column-desktop {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.65rem;
       width: 100%;
       height: 100%;
+    }
+
+    .device-column-desktop .device-title-badge {
+      max-width: 100%;
     }
 
     /* MacBook Pro / Studio Browser Window */
@@ -900,37 +980,109 @@
       background: #07090E;
     }
 
-    /* Desktop Back-of-House Actions */
-    .desktop-actions-tray {
+    /* ==========================================================================
+       BOTTOM COLLAPSIBLE DEVELOPER / MANUAL CONTROLS DRAWER
+       ========================================================================== */
+    .dev-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 95;
+      background: rgba(10, 14, 23, 0.96);
+      border-top: 1px solid var(--border-subtle);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dev-drawer.collapsed .drawer-body {
+      display: none;
+    }
+
+    .drawer-toggle {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0.45rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-      width: 100%;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 700;
+      transition: all 0.15s;
     }
 
-    .desktop-quick-actions {
+    .drawer-toggle:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .drawer-title {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--text-dim);
+    }
+
+    .drawer-toggle:hover .drawer-title {
+      color: var(--text-muted);
+    }
+
+    .drawer-toggle-state {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--brand-primary);
+    }
+
+    .drawer-body {
+      padding: 0.75rem 1.5rem 0.95rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .drawer-controls-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .drawer-section {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       flex-wrap: wrap;
     }
 
-    /* Bottom Event Log Bar */
-    .telemetry-tray {
-      background: rgba(14, 19, 31, 0.95);
-      border-top: 1px solid var(--border-subtle);
-      padding: 0.75rem 1.5rem;
+    .drawer-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .drawer-btn-group {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .drawer-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
-      position: sticky;
-      bottom: 0;
-      z-index: 90;
-      backdrop-filter: blur(16px);
+      font-size: 0.72rem;
     }
 
     .telemetry-label {
@@ -949,11 +1101,11 @@
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
     }
 
     .telemetry-item {
-      padding: 0.2rem 0.5rem;
+      padding: 0.18rem 0.5rem;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 4px;
       border: 1px solid var(--border-subtle);
@@ -1042,19 +1194,25 @@
       transition: all 0.2s;
     }
 
-    .arch-modal-close:hover {
-      background: rgba(239, 68, 68, 0.25);
-      color: #EF4444;
-    }
-
     /* Responsive Adaptation */
     @media (max-width: 1100px) {
+      .sandbox-header {
+        flex-wrap: wrap;
+        padding: 0.5rem 1rem;
+      }
+      .header-center {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        overflow-x: auto;
+        padding-top: 0.35rem;
+      }
       .device-switcher-bar {
         display: flex;
       }
       .sandbox-stage {
         grid-template-columns: 1fr;
-        padding: 1rem;
+        padding: 1rem 1rem 4rem;
       }
       .device-column-mobile,
       .device-column-desktop {
@@ -1077,49 +1235,24 @@
 
     @media (max-width: 768px) {
       .sandbox-header {
-        padding: 0.65rem 0.85rem;
-        gap: 0.65rem;
+        padding: 0.45rem 0.75rem;
       }
-      .brand-info p {
-        display: none;
-      }
-      .header-actions {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding-bottom: 2px;
-      }
-      .header-actions::-webkit-scrollbar {
-        display: none;
-      }
-      .btn-action {
-        font-size: 0.72rem;
-        padding: 0.35rem 0.6rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-      .mission-bar {
-        padding: 0.5rem 0.75rem;
-        gap: 0.5rem;
-      }
-      .mission-hint {
-        display: none;
+      .btn-hero-sim {
+        font-size: 0.76rem;
+        padding: 0.35rem 0.75rem;
       }
       .mission-buttons {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        flex-wrap: nowrap;
-        width: 100%;
+        max-width: 100%;
       }
-      .mission-buttons::-webkit-scrollbar {
-        display: none;
+      .mission-btn span:last-child {
+        display: none; /* Show only step numbers on mobile to save space */
       }
       .mission-btn {
-        flex-shrink: 0;
-        font-size: 0.72rem;
-        padding: 0.35rem 0.6rem;
+        padding: 0.2rem 0.35rem;
+      }
+      .btn-action span {
+        font-size: 0.7rem;
       }
       .desktop-window {
         height: 560px;
@@ -1127,16 +1260,21 @@
       .iphone-frame {
         height: 640px;
       }
+      .drawer-controls-grid {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
     }
 
     @media (max-width: 480px) {
       .brand-info h1 {
-        font-size: 0.88rem;
+        font-size: 0.85rem;
       }
       .brand-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 1rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.95rem;
       }
       .sync-status {
         display: none;
@@ -1160,77 +1298,75 @@
 
 <body>
 
-  <!-- Top Control Header -->
+  <!-- Top Consolidated Theater Header -->
   <header class="sandbox-header">
     <div class="header-left">
-      <a href="./?view=hub" class="brand-pill" title="Back to DineFlow Hub">
+      <a href="./?view=hub" class="btn-back-hub" title="Back to DineFlow Hub">
+        <span>← Hub</span>
+      </a>
+      <div class="brand-pill">
         <div class="brand-icon">🍽️</div>
         <div class="brand-info">
-          <h1>DineFlow™ Operations Sandbox <span class="tag">Dual-Device Demo</span></h1>
-          <p>Front-of-House (Mobile) &bull; Back-of-House (Desktop Manager / SaaS HQ)</p>
+          <h1>DineFlow™ <span class="tag">Dual-Device Sandbox</span></h1>
         </div>
-      </a>
-      <div class="sync-status" title="Real-time cross-frame BroadcastChannel link active">
-        <span class="sync-dot"></span>
-        <span>BROADCAST SYNC: ACTIVE</span>
       </div>
     </div>
 
-    <div class="header-actions">
-      <a href="./?view=hub#roi-calculator" class="btn-action" style="border-color: rgba(229, 169, 60, 0.5); color: var(--brand-primary); font-weight: 700;" title="Simulate revenue gains and claim 14-day free pilot">
-        <span>📊 ROI Calculator &amp; Pilot</span>
-      </a>
-      <button id="btn-auto-demo" class="btn-action primary" title="Run full automated 6-stage end-to-end walkthrough">
-        <span>⚡ Run Full Walkthrough</span>
+    <!-- Center: Primary Walkthrough Action & 6 Dining Steps -->
+    <div class="header-center">
+      <button id="btn-auto-demo" class="btn-hero-sim" title="Run full automated 6-stage end-to-end walkthrough">
+        <span class="sim-play">▶</span>
+        <span>Play 30s Simulation</span>
       </button>
+
+      <div class="mission-buttons">
+        <button id="mission-1" class="mission-btn" title="Stage 1: Scan Table T12 QR Stand">
+          <span class="mission-step">1</span>
+          <span>Scan</span>
+        </button>
+        <button id="mission-2" class="mission-btn" title="Stage 2: Guest places food order via UPI">
+          <span class="mission-step">2</span>
+          <span>Order</span>
+        </button>
+        <button id="mission-3" class="mission-btn" title="Stage 3: Kitchen KDS cooks and serves with live tracking">
+          <span class="mission-step">3</span>
+          <span>Cook</span>
+        </button>
+        <button id="mission-4" class="mission-btn" title="Stage 4: Guest calls waiter for table service">
+          <span class="mission-step">4</span>
+          <span>Call</span>
+        </button>
+        <button id="mission-5" class="mission-btn" title="Stage 5: Guest requests bill &amp; cashier settles payment">
+          <span class="mission-step">5</span>
+          <span>Bill</span>
+        </button>
+        <button id="mission-6" class="mission-btn" title="Stage 6: Guest submits 5-star review">
+          <span class="mission-step">6</span>
+          <span>Review</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Utilities & Pilot CTA -->
+    <div class="header-right">
+      <div class="sync-status" title="Real-time cross-frame BroadcastChannel link active (<50ms)">
+        <span class="sync-dot"></span>
+        <span>&lt;50ms SYNC</span>
+      </div>
       <button id="btn-reset-demo" class="btn-action" title="Reset all orders and restore pristine table scan state">
-        <span>🔄 Reset to Table</span>
+        <span>🔄 Reset</span>
       </button>
       <button id="btn-toggle-sound" class="btn-action" title="Toggle synthesized acoustic chimes">
-        <span id="sound-icon">🔊 Sound: ON</span>
+        <span id="sound-icon">🔊 Sound</span>
       </button>
-      <a href="../projects" class="btn-action" title="Return to Debashish Paul Portfolio">
-        <span>← Back to Portfolio</span>
+      <button id="btn-open-arch" class="btn-action" title="View technical architecture">
+        <span>📐 Architecture</span>
+      </button>
+      <a href="./?view=hub#roi-calculator" class="btn-action primary" title="Simulate revenue gains and claim 14-day free pilot">
+        <span>📊 Free Pilot &rarr;</span>
       </a>
     </div>
   </header>
-
-  <!-- 6-Stage Guided Timeline Bar: Step-by-Step Customer & Kitchen Sync -->
-  <div class="mission-bar">
-    <div class="mission-intro">
-      <span class="mission-badge">OPERATIONS TIMELINE</span>
-      <span class="mission-hint">Follow the full dining journey step-by-step:</span>
-    </div>
-    <div class="mission-buttons">
-      <button id="mission-1" class="mission-btn" title="Stage 1: Scan Table T12 QR Stand">
-        <span class="mission-step">1</span>
-        <span>📷 Scan QR</span>
-      </button>
-      <button id="mission-2" class="mission-btn" title="Stage 2: Guest places food order via UPI">
-        <span class="mission-step">2</span>
-        <span>🍕 Place Order</span>
-      </button>
-      <button id="mission-3" class="mission-btn" title="Stage 3: Kitchen KDS cooks and serves with live tracking">
-        <span class="mission-step">3</span>
-        <span>👨‍🍳 Cook &amp; Serve</span>
-      </button>
-      <button id="mission-4" class="mission-btn" title="Stage 4: Guest calls waiter for table service">
-        <span class="mission-step">4</span>
-        <span>🛎️ Call Staff</span>
-      </button>
-      <button id="mission-5" class="mission-btn" title="Stage 5: Guest requests bill &amp; cashier settles payment">
-        <span class="mission-step">5</span>
-        <span>💳 Settle Bill</span>
-      </button>
-      <button id="mission-6" class="mission-btn" title="Stage 6: Guest submits 5-star review">
-        <span class="mission-step">6</span>
-        <span>⭐ Rate &amp; Review</span>
-      </button>
-      <button id="btn-open-arch" class="mission-btn" style="border-color: rgba(99, 102, 241, 0.4); color: #818CF8;" title="View architecture diagram">
-        <span>📐 How It Works</span>
-      </button>
-    </div>
-  </div>
 
   <!-- Live Visual Spotlight HUD Toast -->
   <div id="spotlight-toast" class="spotlight-toast">
@@ -1254,8 +1390,14 @@
     <!-- Left: Mobile Customer Device (iPhone 16 Pro) -->
     <section id="column-mobile" class="device-column-mobile active-mobile-view">
       <div class="device-title-badge">
-        <strong>📱 Front-of-House: Guest View</strong>
-        <span>Table T12 &bull; The Urban Plate</span>
+        <div class="badge-identity">
+          <span class="role-icon">📱</span>
+          <div>
+            <strong>CUSTOMER'S PHONE (Table T12)</strong>
+            <p class="role-caption">Scan Table QR &bull; Contactless UPI Ordering</p>
+          </div>
+        </div>
+        <span class="role-tag guest-tag">Front-of-House</span>
       </div>
 
       <!-- iPhone Frame -->
@@ -1364,41 +1506,26 @@
             </div>
           </div>
 
-          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12" title="DineFlow Guest Mobile Ordering"></iframe>
+          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.8.2" title="DineFlow Guest Mobile Ordering"></iframe>
         </div>
 
         <!-- iOS Home Indicator -->
         <div class="home-indicator"></div>
       </div>
 
-      <!-- Quick Interactive Triggers for Reviewers -->
-      <div class="quick-actions-tray">
-        <div class="quick-actions-label">📱 Customer Quick Triggers:</div>
-        <div class="quick-actions-row">
-          <button id="btn-trigger-add" class="btn-quick" title="Add Truffle Risotto to mobile cart">
-            <span>➕ Add Dish</span>
-          </button>
-          <button id="btn-trigger-cart" class="btn-quick" title="Open slide-over cart modal">
-            <span>🛒 View Cart</span>
-          </button>
-          <button id="btn-trigger-order" class="btn-quick" title="Place and pay for Table T12 order">
-            <span>💳 Order UPI</span>
-          </button>
-          <button id="btn-trigger-call" class="btn-quick" title="Ring Service Bell for waiter assistance">
-            <span>🛎️ Call Staff</span>
-          </button>
-          <button id="btn-trigger-bill" class="btn-quick" title="Request table bill">
-            <span>🧾 Request Bill</span>
-          </button>
-        </div>
-      </div>
     </section>
-
+ 
     <!-- Right: Desktop Back-of-House / SaaS Admin Window -->
     <section id="column-desktop" class="device-column-desktop">
       <div class="device-title-badge">
-        <strong>💻 Back-of-House: Operations &amp; HQ</strong>
-        <span>Unified Kitchen KDS &amp; Franchise Governance</span>
+        <div class="badge-identity">
+          <span class="role-icon">👨‍🍳</span>
+          <div>
+            <strong>KITCHEN STAFF KDS &amp; SAAS HQ</strong>
+            <p class="role-caption">Live Cooking Tickets &bull; Waiter Calls &bull; Multi-Role Ops</p>
+          </div>
+        </div>
+        <span class="role-tag staff-tag">Back-of-House</span>
       </div>
 
       <!-- Studio Browser Frame -->
@@ -1436,35 +1563,61 @@
         <!-- Desktop Screen Iframe -->
         <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin" title="DineFlow Operations & Governance Console"></iframe>
       </div>
-
-      <!-- Desktop Back-of-House Quick Actions -->
-      <div class="desktop-actions-tray">
-        <div class="desktop-quick-actions">
-          <span class="quick-actions-label">👨‍🍳 Kitchen Actions:</span>
-          <button id="btn-kitchen-advance" class="btn-quick" title="Advance latest order status in KDS">
-            <span>🍲 Advance Order Stage</span>
-          </button>
-          <button id="btn-kitchen-ack" class="btn-quick" title="Acknowledge waiter call">
-            <span>🛎️ Resolve Staff Call</span>
-          </button>
-          <button id="btn-kitchen-settle" class="btn-quick" title="Mark Table T12 bill as settled">
-            <span>💳 Settle T12 Bill</span>
-          </button>
-        </div>
-      </div>
     </section>
 
   </main>
 
-  <!-- Bottom Telemetry Event Stream -->
-  <footer class="telemetry-tray">
-    <div class="telemetry-label">
-      <span>📡 LIVE BUS:</span>
+  <!-- Collapsible Developer Controls & Live Event Bus Drawer -->
+  <div id="dev-drawer" class="dev-drawer collapsed">
+    <button id="btn-toggle-drawer" class="drawer-toggle" title="Toggle Manual Triggers and Event Stream">
+      <span class="drawer-title">⚙️ Manual Test Triggers &amp; Live Event Bus</span>
+      <span class="drawer-toggle-state" id="drawer-toggle-icon">▲ Show Controls &amp; Event Bus</span>
+    </button>
+    <div class="drawer-body">
+      <div class="drawer-controls-grid">
+        <div class="drawer-section">
+          <span class="drawer-section-title">📱 Customer Triggers:</span>
+          <div class="drawer-btn-group">
+            <button id="btn-trigger-add" class="btn-quick" title="Add Truffle Risotto to mobile cart">
+              <span>➕ Add Dish</span>
+            </button>
+            <button id="btn-trigger-cart" class="btn-quick" title="Open slide-over cart modal">
+              <span>🛒 View Cart</span>
+            </button>
+            <button id="btn-trigger-order" class="btn-quick" title="Place and pay for Table T12 order">
+              <span>💳 Order UPI</span>
+            </button>
+            <button id="btn-trigger-call" class="btn-quick" title="Ring Service Bell for waiter assistance">
+              <span>🛎️ Call Staff</span>
+            </button>
+            <button id="btn-trigger-bill" class="btn-quick" title="Request table bill">
+              <span>🧾 Request Bill</span>
+            </button>
+          </div>
+        </div>
+        <div class="drawer-section">
+          <span class="drawer-section-title">👨‍🍳 Kitchen Triggers:</span>
+          <div class="drawer-btn-group">
+            <button id="btn-kitchen-advance" class="btn-quick" title="Advance latest order status in KDS">
+              <span>🍲 Advance Order Stage</span>
+            </button>
+            <button id="btn-kitchen-ack" class="btn-quick" title="Acknowledge waiter call">
+              <span>🛎️ Resolve Staff Call</span>
+            </button>
+            <button id="btn-kitchen-settle" class="btn-quick" title="Mark Table T12 bill as settled">
+              <span>💳 Settle T12 Bill</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-telemetry">
+        <span class="telemetry-label">📡 LIVE BUS:</span>
+        <div id="telemetry-feed" class="telemetry-feed">
+          <span class="telemetry-item">⚡ <strong>Sandbox Initialized</strong> &bull; Ready for dual-device real-time event simulation</span>
+        </div>
+      </div>
     </div>
-    <div id="telemetry-feed" class="telemetry-feed">
-      <span class="telemetry-item">⚡ <strong>Sandbox Initialized</strong> &bull; Ready for dual-device real-time event simulation</span>
-    </div>
-  </footer>
+  </div>
 
   <!-- Architecture & How It Works Modal -->
   <div id="arch-modal-backdrop" class="arch-modal-backdrop">
@@ -2191,7 +2344,7 @@
           showSpotlight('<strong>Restored to Table Stand!</strong> Ready to scan Table T12 QR again.', '🔄');
           logTelemetry('Demo restored to initial at-table state with QR stand', '🔄');
 
-          mobileIframe.src = './?r=the-urban-plate&t=T12';
+          mobileIframe.src = './?r=the-urban-plate&t=T12&v=1.7.4';
           ensureDemoAuth('RESTAURANT_ADMIN');
           tabStaff.click();
         } catch (e) {}
@@ -2275,6 +2428,19 @@
 
       document.getElementById('btn-kitchen-settle')?.addEventListener('click', () => {
         executeStage5_SettleBill();
+      });
+
+      // Developer Drawer Toggle
+      const devDrawer = document.getElementById('dev-drawer');
+      const btnToggleDrawer = document.getElementById('btn-toggle-drawer');
+      const drawerToggleIcon = document.getElementById('drawer-toggle-icon');
+
+      btnToggleDrawer?.addEventListener('click', () => {
+        devDrawer?.classList.toggle('collapsed');
+        const isCollapsed = devDrawer?.classList.contains('collapsed');
+        if (drawerToggleIcon) {
+          drawerToggleIcon.textContent = isCollapsed ? '▲ Show Controls & Event Bus' : '▼ Hide Controls';
+        }
       });
 
       // BroadcastChannel Live Event Listener

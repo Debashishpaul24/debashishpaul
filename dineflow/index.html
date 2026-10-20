@@ -139,19 +139,27 @@
           <span>Production-Grade Hospitality SaaS Platform</span>
         </div>
         <h1 class="df-hub-headline">
-          Experience Next-Gen Digital Dining &amp; Kitchen Operations
+          Turn Dining Tables into Instant Revenue &amp; 30% Faster Turns
         </h1>
         <p class="df-hub-subtext">
           Engineered by <a href="../" style="color: var(--brand-primary); font-weight: 700; text-decoration: none;">Debashish Paul</a>. 
-          Choose an interactive portal below or launch the unified side-by-side simulator to test real-time cross-device event synchronization:
+          Bypass 25% delivery aggregator eat-in commissions, stop handwritten kitchen errors, and let guests order and pay directly from their phones with zero app installs.
         </p>
+
+        <!-- Quick 1st-Time Visitor Guide Pills -->
+        <div class="df-quick-nav-bar">
+          <a href="#demo-sandbox" class="df-nav-pill active">⚡ Live Dual-Device Sandbox</a>
+          <a href="#explore-roles" class="df-nav-pill">👥 Explore 3 Modules</a>
+          <a href="#roi-calculator" class="df-nav-pill">📊 ROI Calculator</a>
+          <a href="#why-dineflow" class="df-nav-pill">⚖️ Why DineFlow vs POS</a>
+        </div>
       </div>
 
       <!-- Interactive Dual-Device Sandbox Feature Banner -->
-      <div class="df-hub-sandbox-banner">
+      <div class="df-hub-sandbox-banner" id="demo-sandbox">
         <div class="df-sandbox-banner-badge">
           <span class="live-indicator"></span>
-          <span>RECOMMENDED INTERACTIVE EXPERIENCE</span>
+          <span>RECOMMENDED 1-CLICK INTERACTIVE EXPERIENCE</span>
         </div>
         <div class="df-sandbox-banner-body">
           <div class="df-sandbox-banner-info">
@@ -202,7 +210,20 @@
         </div>
       </div>
 
-      <div class="df-hub-grid">
+      <!-- Audience Perspective Switcher: Restaurant Operator vs Technical Architecture -->
+      <div class="df-audience-switch-container">
+        <span class="df-audience-switch-label">Perspective:</span>
+        <div class="df-audience-toggle-group">
+          <button type="button" class="df-audience-toggle-btn active" id="btn-persp-business" data-persp="business">
+            <span>🏨 Restaurant Owner / Operator</span>
+          </button>
+          <button type="button" class="df-audience-toggle-btn" id="btn-persp-tech" data-persp="tech">
+            <span>💻 Tech Lead / Architecture</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="df-hub-grid" id="explore-roles">
         <!-- Card 1: Guest Dining -->
         <div class="df-hub-card guest-card">
           <div class="df-hub-card-top">
@@ -214,10 +235,13 @@
           <p class="df-hub-card-desc">
             Zero-download mobile ordering experience. Browse 32 gourmet delicacies, filter Pure Veg, customize cooking instructions, and track live kitchen status.
           </p>
-          <ul class="df-hub-features-list">
-            <li><span>✓</span> Instant QR scan simulation (Table T12)</li>
-            <li><span>✓</span> Real-time 5-stage order progress tracker</li>
-            <li><span>✓</span> 1-Touch Waiter Call &amp; Zero-Fee UPI billing</li>
+          <ul class="df-hub-features-list" id="features-guest">
+            <li class="persp-biz"><span>✓</span> Instant QR scan on phone (Zero app download)</li>
+            <li class="persp-biz"><span>✓</span> Dynamic dietary badges &amp; spice customizer</li>
+            <li class="persp-biz"><span>✓</span> 1-Touch Waiter Call &amp; zero-fee UPI checkout</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Zero-dependency client-side PWA architecture</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> BroadcastChannel cross-window pub/sub engine</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Sub-50ms reactive state updates with Vanilla JS</li>
           </ul>
           <div class="df-hub-card-cta">
             <a href="?r=the-urban-plate&t=T12" class="df-pill-btn primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
@@ -237,10 +261,13 @@
           <p class="df-hub-card-desc">
             Frontline operations console. Real-time Kitchen Display System (KDS) Kanban board, visual 20-table dining floor matrix, and service bell dispatcher.
           </p>
-          <ul class="df-hub-features-list">
-            <li><span>✓</span> Real-time Kanban cross-tab sync without refresh</li>
-            <li><span>✓</span> Dynamic Table Tent Stand print generator</li>
-            <li><span>✓</span> Fast 4-digit PIN access (PIN: <strong>1234</strong>)</li>
+          <ul class="df-hub-features-list" id="features-staff">
+            <li class="persp-biz"><span>✓</span> Real-time Kitchen KDS board stops missed orders</li>
+            <li class="persp-biz"><span>✓</span> Acoustic chime rings kitchen when tickets arrive</li>
+            <li class="persp-biz"><span>✓</span> 20-Table floor map with live guest status</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Event-driven KDS Kanban state machine</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Web Audio API synthesized alert chimes</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Dynamic vector SVG QR tent card generator</li>
           </ul>
           <div class="df-hub-card-cta">
             <a href="?view=admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;">
@@ -260,10 +287,13 @@
           <p class="df-hub-card-desc">
             Multi-restaurant SaaS central dashboard. Monitor network GMV, tenant analytics, batch QR generation, and launch the 10-step restaurant onboarding wizard.
           </p>
-          <ul class="df-hub-features-list">
-            <li><span>✓</span> 10-Step partner restaurant onboarding wizard</li>
-            <li><span>✓</span> Dynamic multi-tenant branding engine</li>
-            <li><span>✓</span> Executive HQ passcode access (PIN: <strong>9999</strong>)</li>
+          <ul class="df-hub-features-list" id="features-admin">
+            <li class="persp-biz"><span>✓</span> 100% direct revenue retention (0% aggregator cuts)</li>
+            <li class="persp-biz"><span>✓</span> Live GMV, peak rush &amp; cover volume analytics</li>
+            <li class="persp-biz"><span>✓</span> 10-Step instant restaurant onboarding wizard</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Multi-tenant isolated workspace state schemas</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Service Worker offline-first asset caching</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Zero cloud database bills &amp; local persistence</li>
           </ul>
           <div class="df-hub-card-cta">
             <a href="?view=super-admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(99,102,241,0.15); border-color: #818CF8; color: #fff;">
@@ -361,7 +391,7 @@
       <!-- ==================================================================== -->
       <!-- PAIN-POINT RESOLUTION MATRIX                                         -->
       <!-- ==================================================================== -->
-      <section class="df-pain-matrix-wrapper">
+      <section class="df-pain-matrix-wrapper" id="why-dineflow">
         <div style="text-align: center; max-width: 720px; margin: 0 auto 2rem;">
           <h2 style="font-size: 1.65rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">
             Why Modern Operators Choose DineFlow Over Traditional POS
@@ -541,7 +571,7 @@
   <!-- Client-Side Modules (Zero external network dependencies for QR & Storage) -->
   <script src="qr-engine.js?v=1.7.0"></script>
   <script src="data.js?v=1.7.0"></script>
-  <script src="app.js?v=1.7.2"></script>
+  <script src="app.js?v=1.7.4"></script>
 
   <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
   <script>
@@ -691,6 +721,18 @@
           summary.innerHTML = `Personalized pilot blueprint generated for <strong>${rName} (${tables} tables, ${city})</strong>. Our team has received your pilot request. Connect directly on WhatsApp to receive your acrylic table tent mockups and schedule onboarding!`;
         }
       });
+      // Perspective Switcher Handler (Restaurant Owner vs Tech Lead)
+      const btnBiz = document.getElementById('btn-persp-business');
+      const btnTech = document.getElementById('btn-persp-tech');
+      function setPerspective(persp) {
+        const isBiz = persp === 'business';
+        btnBiz?.classList.toggle('active', isBiz);
+        btnTech?.classList.toggle('active', !isBiz);
+        document.querySelectorAll('.persp-biz').forEach(el => el.style.display = isBiz ? 'flex' : 'none');
+        document.querySelectorAll('.persp-tech').forEach(el => el.style.display = isBiz ? 'none' : 'flex');
+      }
+      btnBiz?.addEventListener('click', () => setPerspective('business'));
+      btnTech?.addEventListener('click', () => setPerspective('tech'));
     })();
   </script>
 </body>

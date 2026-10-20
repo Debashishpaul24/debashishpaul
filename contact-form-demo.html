@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Enhanced Contact Form — Full Desktop Web View Demo</title>
+  <title>Enhanced Contact Form - Full Desktop Web View Demo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -421,7 +421,7 @@
     <div class="demo-bar-left">
       <div class="demo-title-tag">
         <span class="demo-live-dot"></span>
-        Portfolio Contact Form — Live Architecture Demo
+        Portfolio Contact Form - Live Architecture Demo
       </div>
 
       <!-- Viewport Toggle: Full Desktop vs Mobile -->
@@ -563,6 +563,7 @@
                   <div class="form-group">
                     <label for="lead-service" class="form-label">Service Required</label>
                     <select id="lead-service" name="service" class="form-select">
+                      <option value="DineFlow QR Restaurant OS & Pilot">DineFlow OS - QR Restaurant SaaS & Free Pilot</option>
                       <option value="New Website Development" selected>New Website Development</option>
                       <option value="Website Redesign & Modernization">Website Redesign & Modernization</option>
                       <option value="UI/UX Design">UI/UX Design</option>
@@ -907,6 +908,20 @@
           feedback.style.display = 'block';
         }, 1200);
       });
+
+      // Auto-select DineFlow OS if query string specifies service=dineflow
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceParam = urlParams.get('service') || (window.location.hash.includes('service=dineflow') ? 'dineflow' : '');
+        const serviceSelect = document.getElementById('lead-service');
+        if (serviceSelect && serviceParam && serviceParam.toLowerCase().includes('dineflow')) {
+          serviceSelect.value = 'DineFlow QR Restaurant OS & Pilot';
+          const msgField = document.getElementById('lead-message');
+          if (msgField && !msgField.value) {
+            msgField.placeholder = "Tell us about your restaurant / venue, city, and approximate number of tables...";
+          }
+        }
+      } catch(err) {}
 
       // Initialize
       updateInspector();
