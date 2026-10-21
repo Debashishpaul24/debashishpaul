@@ -1670,14 +1670,14 @@
   // Card Video Previews on Hover / Tap (Option A)
   function initCardVideoPreviews() {
     document.querySelectorAll('.has-video-preview').forEach(wrapper => {
-      const videoImg = wrapper.querySelector('.card-video-preview');
+      const videoImg = wrapper.querySelector('.card-video-preview, .flagship-video-preview');
       if (!videoImg) return;
       const loadVideo = () => {
         if (videoImg.dataset.src && !videoImg.src) {
           videoImg.src = videoImg.dataset.src;
         }
       };
-      const card = wrapper.closest('.project-card') || wrapper;
+      const card = wrapper.closest('.project-card, .signature-flagship-card') || wrapper;
       card.addEventListener('mouseenter', loadVideo, { once: true });
       card.addEventListener('touchstart', loadVideo, { once: true, passive: true });
     });
