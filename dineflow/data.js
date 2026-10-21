@@ -719,25 +719,25 @@ const DINEFLOW_DEFAULT_DATA = {
 
   // 20 Tables for The Urban Plate
   tables: [
-    { id: 'T01', name: 'Table T01', section: 'Indoor AC Dining', capacity: 2, status: 'occupied', qrScans: 48, lastScanned: '10 mins ago' },
+    { id: 'T01', name: 'Table T01', section: 'Indoor AC Dining', capacity: 2, status: 'available', qrScans: 48, lastScanned: '10 mins ago' },
     { id: 'T02', name: 'Table T02', section: 'Indoor AC Dining', capacity: 2, status: 'available', qrScans: 35, lastScanned: '25 mins ago' },
-    { id: 'T03', name: 'Table T03', section: 'Indoor AC Dining', capacity: 4, status: 'occupied', qrScans: 82, lastScanned: 'Just now' },
-    { id: 'T04', name: 'Table T04', section: 'Indoor AC Dining', capacity: 4, status: 'occupied', qrScans: 64, lastScanned: '5 mins ago' },
+    { id: 'T03', name: 'Table T03', section: 'Indoor AC Dining', capacity: 4, status: 'available', qrScans: 82, lastScanned: 'Just now' },
+    { id: 'T04', name: 'Table T04', section: 'Indoor AC Dining', capacity: 4, status: 'occupied', qrScans: 64, lastScanned: '5 mins ago' }, // ORD-1047 (CONFIRMED)
     { id: 'T05', name: 'Table T05', section: 'Indoor AC Dining', capacity: 6, status: 'available', qrScans: 41, lastScanned: '1 hr ago' },
-    { id: 'T06', name: 'Table T06', section: 'Indoor AC Dining', capacity: 6, status: 'occupied', qrScans: 59, lastScanned: '15 mins ago' },
-    { id: 'T07', name: 'Table T07', section: 'Indoor Family Booth', capacity: 8, status: 'occupied', qrScans: 93, lastScanned: '8 mins ago' },
+    { id: 'T06', name: 'Table T06', section: 'Indoor AC Dining', capacity: 6, status: 'available', qrScans: 59, lastScanned: '15 mins ago' },
+    { id: 'T07', name: 'Table T07', section: 'Indoor Family Booth', capacity: 8, status: 'occupied', qrScans: 93, lastScanned: '8 mins ago' }, // ORD-1046 (READY)
     { id: 'T08', name: 'Table T08', section: 'Indoor Family Booth', capacity: 8, status: 'available', qrScans: 27, lastScanned: '3 hrs ago' },
     { id: 'T09', name: 'Table T09', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'available', qrScans: 52, lastScanned: '45 mins ago' },
-    { id: 'T10', name: 'Table T10', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'occupied', qrScans: 77, lastScanned: '12 mins ago' },
-    { id: 'T11', name: 'Table T11', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'occupied', qrScans: 68, lastScanned: '2 mins ago' },
-    { id: 'T12', name: 'Table T12', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'occupied', qrScans: 142, lastScanned: 'Just now' }, // Primary demo table
+    { id: 'T10', name: 'Table T10', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'available', qrScans: 77, lastScanned: '12 mins ago' },
+    { id: 'T11', name: 'Table T11', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'available', qrScans: 68, lastScanned: '2 mins ago' },
+    { id: 'T12', name: 'Table T12', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'occupied', qrScans: 142, lastScanned: 'Just now' }, // Primary demo table (ORD-1048 PREPARING)
     { id: 'T13', name: 'Table T13', section: 'Garden Patio (Outdoor)', capacity: 6, status: 'available', qrScans: 39, lastScanned: '2 hrs ago' },
-    { id: 'T14', name: 'Table T14', section: 'Garden Patio (Outdoor)', capacity: 6, status: 'occupied', qrScans: 51, lastScanned: '18 mins ago' },
-    { id: 'T15', name: 'Table T15', section: 'Rooftop Lounge', capacity: 2, status: 'occupied', qrScans: 110, lastScanned: '4 mins ago' },
+    { id: 'T14', name: 'Table T14', section: 'Garden Patio (Outdoor)', capacity: 6, status: 'available', qrScans: 51, lastScanned: '18 mins ago' },
+    { id: 'T15', name: 'Table T15', section: 'Rooftop Lounge', capacity: 2, status: 'occupied', qrScans: 110, lastScanned: '4 mins ago' }, // ORD-1045 (SERVED)
     { id: 'T16', name: 'Table T16', section: 'Rooftop Lounge', capacity: 2, status: 'available', qrScans: 89, lastScanned: '30 mins ago' },
-    { id: 'T17', name: 'Table T17', section: 'Rooftop Lounge', capacity: 4, status: 'occupied', qrScans: 95, lastScanned: '7 mins ago' },
-    { id: 'T18', name: 'Table T18', section: 'Rooftop Lounge', capacity: 4, status: 'occupied', qrScans: 84, lastScanned: '14 mins ago' },
-    { id: 'T19', name: 'Table T19', section: 'Private Dining Cabana', capacity: 10, status: 'occupied', qrScans: 62, lastScanned: '20 mins ago' },
+    { id: 'T17', name: 'Table T17', section: 'Rooftop Lounge', capacity: 4, status: 'available', qrScans: 95, lastScanned: '7 mins ago' },
+    { id: 'T18', name: 'Table T18', section: 'Rooftop Lounge', capacity: 4, status: 'available', qrScans: 84, lastScanned: '14 mins ago' },
+    { id: 'T19', name: 'Table T19', section: 'Private Dining Cabana', capacity: 10, status: 'available', qrScans: 62, lastScanned: '20 mins ago' },
     { id: 'T20', name: 'Table T20', section: 'Private Dining Cabana', capacity: 12, status: 'available', qrScans: 44, lastScanned: '5 hrs ago' }
   ],
 
@@ -1231,6 +1231,35 @@ const DineFlowStore = {
             data.settings = { toneProfile: 'executive' };
             updated = true;
           }
+
+          // Auto-reconcile table statuses with actual active orders & requests (clears zombie occupied tables)
+          if (Array.isArray(data.tables) && Array.isArray(data.orders)) {
+            const activeTableIds = new Set(
+              data.orders
+                .filter(o => o.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED')
+                .map(o => o.tableId)
+            );
+            if (Array.isArray(data.billRequests)) {
+              data.billRequests.filter(b => b.status === 'PENDING').forEach(b => activeTableIds.add(b.tableId));
+            }
+            if (Array.isArray(data.staffRequests)) {
+              data.staffRequests.filter(s => s.status === 'PENDING').forEach(s => activeTableIds.add(s.tableId));
+            }
+            data.tables.forEach(table => {
+              if (activeTableIds.has(table.id) || table.manuallyOccupied === true) {
+                if (table.status !== 'occupied') {
+                  table.status = 'occupied';
+                  updated = true;
+                }
+              } else {
+                if (table.status !== 'available') {
+                  table.status = 'available';
+                  updated = true;
+                }
+              }
+            });
+          }
+
           if (updated || !localStorage.getItem(this.KEY)) {
             this.save(data);
           }

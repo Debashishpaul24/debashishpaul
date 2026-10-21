@@ -2481,6 +2481,35 @@
   // 2. RESTAURANT ADMIN PORTAL VIEW
   // ------------------------------------------------------------------------------
   function renderAdminView(container, tenant) {
+    // Reconcile table statuses with actual active orders & requests
+    const activeOrderTableIds = new Set();
+    state.orders.forEach(o => {
+      if (o.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+        activeOrderTableIds.add(o.tableId);
+      }
+    });
+    state.billRequests.forEach(b => {
+      if (b.status === 'PENDING') activeOrderTableIds.add(b.tableId);
+    });
+    state.staffRequests.forEach(s => {
+      if (s.status === 'PENDING') activeOrderTableIds.add(s.tableId);
+    });
+
+    let tableStatusChanged = false;
+    state.tables.forEach(t => {
+      const shouldBeOccupied = activeOrderTableIds.has(t.id) || t.manuallyOccupied === true;
+      if (shouldBeOccupied && t.status !== 'occupied') {
+        t.status = 'occupied';
+        tableStatusChanged = true;
+      } else if (!shouldBeOccupied && t.status === 'occupied') {
+        t.status = 'available';
+        tableStatusChanged = true;
+      }
+    });
+    if (tableStatusChanged) {
+      DineFlowStore.save(state);
+    }
+
     const todayOrdersCount = state.orders.length;
     const todayRevenue = state.orders.reduce((acc, o) => acc + o.total, 0);
     const activeTablesCount = state.tables.filter(t => t.status === 'occupied').length;
@@ -2703,7 +2732,10 @@
           <h2 style="font-size: 1.35rem; font-weight: 800;">Live Kitchen Display System (KDS)</h2>
           <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time status changes sync live to the customer's phone screen.</p>
         </div>
-        <div style="display: flex; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button class="df-pill-btn" id="btn-admin-clear-all" title="Clear all active tables and mark them available">
+            🧹 Clear All Tables
+          </button>
           <button class="df-pill-btn" id="btn-admin-refresh">🔄 Refresh Feed</button>
         </div>
       </div>
@@ -2791,7 +2823,10 @@
             const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.status !== 'COMPLETED');
             if (!hasMoreOrders) {
               const tableObj = state.tables.find(t => t.id === order.tableId);
-              if (tableObj) tableObj.status = 'available';
+              if (tableObj) {
+                tableObj.status = 'available';
+                delete tableObj.manuallyOccupied;
+              }
             }
           }
           DineFlowStore.save(state, {
@@ -2803,13 +2838,33 @@
           });
           SoundFX.chime('success');
           showToast(`Order #${orderId} moved to ${nextStatus}`);
-          renderKitchenKanban(container, tenant);
+          // Re-render whole admin view so top stats cards update in real time
+          renderAdminView(document.getElementById('app'), tenant);
         }
       });
     });
 
+    document.getElementById('btn-admin-clear-all')?.addEventListener('click', () => {
+      state.tables.forEach(t => {
+        t.status = 'available';
+        delete t.manuallyOccupied;
+      });
+      state.orders.forEach(o => {
+        if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+          o.status = 'COMPLETED';
+          o.paymentStatus = 'PAID';
+        }
+      });
+      state.billRequests.forEach(b => { b.status = 'PAID'; });
+      state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
+      DineFlowStore.save(state, { action: 'TABLES_CLEARED_ALL', source: 'staff' });
+      SoundFX.chime('success');
+      showToast('All 20 dining tables cleared & marked Available!', '🧹');
+      renderAdminView(document.getElementById('app'), tenant);
+    });
+
     document.getElementById('btn-admin-refresh')?.addEventListener('click', () => {
-      renderKitchenKanban(container, tenant);
+      renderAdminView(document.getElementById('app'), tenant);
       showToast('Kitchen feed refreshed');
     });
   }
@@ -2817,14 +2872,19 @@
   // TABLES & QR CODE MANAGEMENT
   function renderTablesAndQRs(container, tenant) {
     container.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
         <div>
           <h2 style="font-size: 1.35rem; font-weight: 800;">Table Management & QR Tent Cards</h2>
           <p style="font-size: 0.8rem; color: var(--text-muted);">Generate, preview, download, and print table tent cards with unique QR URLs.</p>
         </div>
-        <button class="df-pill-btn primary" id="btn-add-table">
-          + Add New Table
-        </button>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="df-pill-btn" id="btn-clear-all-tables-tab" title="Reset all tables to Available status">
+            🧹 Clear All Tables
+          </button>
+          <button class="df-pill-btn primary" id="btn-add-table">
+            + Add New Table
+          </button>
+        </div>
       </div>
 
       <div class="df-tables-grid">
@@ -2855,6 +2915,9 @@
                 <button class="df-pill-btn btn-view-tent" data-id="${table.id}" style="flex: 1; font-size: 0.72rem; padding: 0.35rem; justify-content: center;">
                   🖨️ Print Tent
                 </button>
+                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="${table.status === 'occupied' ? 'Click to Clear Table (Mark Available)' : 'Click to Seat Guests (Mark Occupied)'}">
+                  ${table.status === 'occupied' ? '🧹 Clear' : '🪑 Seat'}
+                </button>
                 <a href="?r=${tenant.slug}&t=${table.id}" target="_blank" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Test Customer Experience">
                   ↗
                 </a>
@@ -2883,6 +2946,54 @@
       });
     });
 
+    // Toggle Table Status (Clear Table / Seat Guests)
+    document.querySelectorAll('.btn-toggle-table').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tableId = btn.getAttribute('data-id');
+        const table = state.tables.find(t => t.id === tableId);
+        if (table) {
+          if (table.status === 'occupied') {
+            table.status = 'available';
+            delete table.manuallyOccupied;
+            state.orders.forEach(o => {
+              if (o.tableId === table.id && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+                o.status = 'COMPLETED';
+                o.paymentStatus = 'PAID';
+              }
+            });
+            showToast(`${table.name} cleared & marked Available`, '🧹');
+          } else {
+            table.status = 'occupied';
+            table.manuallyOccupied = true;
+            showToast(`${table.name} marked Occupied`, '🪑');
+          }
+          DineFlowStore.save(state, { action: 'TABLE_STATUS_TOGGLED', tableId: table.id });
+          SoundFX.chime('success');
+          renderAdminView(document.getElementById('app'), tenant);
+        }
+      });
+    });
+
+    // Clear All Tables
+    document.getElementById('btn-clear-all-tables-tab')?.addEventListener('click', () => {
+      state.tables.forEach(t => {
+        t.status = 'available';
+        delete t.manuallyOccupied;
+      });
+      state.orders.forEach(o => {
+        if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+          o.status = 'COMPLETED';
+          o.paymentStatus = 'PAID';
+        }
+      });
+      state.billRequests.forEach(b => { b.status = 'PAID'; });
+      state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
+      DineFlowStore.save(state, { action: 'ALL_TABLES_CLEARED' });
+      SoundFX.chime('success');
+      showToast('All 20 tables cleared & marked Available!', '🧹');
+      renderAdminView(document.getElementById('app'), tenant);
+    });
+
     // Add Table
     document.getElementById('btn-add-table')?.addEventListener('click', () => {
       const nextId = `T${String(state.tables.length + 1).padStart(2, '0')}`;
@@ -2898,7 +3009,7 @@
       DineFlowStore.save(state);
       SoundFX.chime('success');
       showToast(`Added ${nextId} to tables grid`);
-      renderTablesAndQRs(container, tenant);
+      renderAdminView(document.getElementById('app'), tenant);
     });
   }
 
@@ -3267,7 +3378,10 @@
         if (b) {
           b.status = 'PAID';
           const table = state.tables.find(t => t.id === b.tableId);
-          if (table) table.status = 'available';
+          if (table) {
+            table.status = 'available';
+            delete table.manuallyOccupied;
+          }
           // Mark all orders for this table as PAID and COMPLETED
           state.orders.forEach(o => {
             if (o.tableId === b.tableId) {
@@ -3282,7 +3396,7 @@
           });
           SoundFX.chime('success');
           showToast(`Table ${b.tableId} bill settled and table cleared!`);
-          renderBillRequestsFeed(container, tenant);
+          renderAdminView(document.getElementById('app'), tenant);
         }
       });
     });
