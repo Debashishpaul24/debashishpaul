@@ -869,34 +869,54 @@ const DINEFLOW_DEFAULT_DATA = {
     }
   ],
 
-  // 20 Tables for The Urban Plate
+  // Tables partitioned by restaurant tenantId
   tables: [
-    { id: 'T01', name: 'Table T01', section: 'Indoor AC Dining', capacity: 2, status: 'available', qrScans: 48, lastScanned: '10 mins ago' },
-    { id: 'T02', name: 'Table T02', section: 'Indoor AC Dining', capacity: 2, status: 'available', qrScans: 35, lastScanned: '25 mins ago' },
-    { id: 'T03', name: 'Table T03', section: 'Indoor AC Dining', capacity: 4, status: 'available', qrScans: 82, lastScanned: 'Just now' },
-    { id: 'T04', name: 'Table T04', section: 'Indoor AC Dining', capacity: 4, status: 'occupied', qrScans: 64, lastScanned: '5 mins ago' }, // ORD-1047 (CONFIRMED)
-    { id: 'T05', name: 'Table T05', section: 'Indoor AC Dining', capacity: 6, status: 'available', qrScans: 41, lastScanned: '1 hr ago' },
-    { id: 'T06', name: 'Table T06', section: 'Indoor AC Dining', capacity: 6, status: 'available', qrScans: 59, lastScanned: '15 mins ago' },
-    { id: 'T07', name: 'Table T07', section: 'Indoor Family Booth', capacity: 8, status: 'occupied', qrScans: 93, lastScanned: '8 mins ago' }, // ORD-1046 (READY)
-    { id: 'T08', name: 'Table T08', section: 'Indoor Family Booth', capacity: 8, status: 'available', qrScans: 27, lastScanned: '3 hrs ago' },
-    { id: 'T09', name: 'Table T09', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'available', qrScans: 52, lastScanned: '45 mins ago' },
-    { id: 'T10', name: 'Table T10', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'available', qrScans: 77, lastScanned: '12 mins ago' },
-    { id: 'T11', name: 'Table T11', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'available', qrScans: 68, lastScanned: '2 mins ago' },
-    { id: 'T12', name: 'Table T12', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'occupied', qrScans: 142, lastScanned: 'Just now' }, // Primary demo table (ORD-1048 PREPARING)
-    { id: 'T13', name: 'Table T13', section: 'Garden Patio (Outdoor)', capacity: 6, status: 'available', qrScans: 39, lastScanned: '2 hrs ago' },
-    { id: 'T14', name: 'Table T14', section: 'Garden Patio (Outdoor)', capacity: 6, status: 'available', qrScans: 51, lastScanned: '18 mins ago' },
-    { id: 'T15', name: 'Table T15', section: 'Rooftop Lounge', capacity: 2, status: 'occupied', qrScans: 110, lastScanned: '4 mins ago' }, // ORD-1045 (SERVED)
-    { id: 'T16', name: 'Table T16', section: 'Rooftop Lounge', capacity: 2, status: 'available', qrScans: 89, lastScanned: '30 mins ago' },
-    { id: 'T17', name: 'Table T17', section: 'Rooftop Lounge', capacity: 4, status: 'available', qrScans: 95, lastScanned: '7 mins ago' },
-    { id: 'T18', name: 'Table T18', section: 'Rooftop Lounge', capacity: 4, status: 'available', qrScans: 84, lastScanned: '14 mins ago' },
-    { id: 'T19', name: 'Table T19', section: 'Private Dining Cabana', capacity: 10, status: 'available', qrScans: 62, lastScanned: '20 mins ago' },
-    { id: 'T20', name: 'Table T20', section: 'Private Dining Cabana', capacity: 12, status: 'available', qrScans: 44, lastScanned: '5 hrs ago' }
+    // --------------------------------------------------------------------------
+    // The Urban Plate (12 Private Tables) - Bandra West
+    // --------------------------------------------------------------------------
+    { id: 'T01', tenantId: 'the-urban-plate', name: 'Table T01', section: 'Indoor AC Dining', capacity: 2, status: 'available', qrScans: 48, lastScanned: '10 mins ago' },
+    { id: 'T02', tenantId: 'the-urban-plate', name: 'Table T02', section: 'Indoor AC Dining', capacity: 2, status: 'available', qrScans: 35, lastScanned: '25 mins ago' },
+    { id: 'T03', tenantId: 'the-urban-plate', name: 'Table T03', section: 'Indoor AC Dining', capacity: 4, status: 'available', qrScans: 82, lastScanned: 'Just now' },
+    { id: 'T04', tenantId: 'the-urban-plate', name: 'Table T04', section: 'Indoor AC Dining', capacity: 4, status: 'occupied', qrScans: 64, lastScanned: '5 mins ago' }, // ORD-1047
+    { id: 'T05', tenantId: 'the-urban-plate', name: 'Table T05', section: 'Indoor AC Dining', capacity: 6, status: 'available', qrScans: 41, lastScanned: '1 hr ago' },
+    { id: 'T06', tenantId: 'the-urban-plate', name: 'Table T06', section: 'Indoor AC Dining', capacity: 6, status: 'available', qrScans: 59, lastScanned: '15 mins ago' },
+    { id: 'T07', tenantId: 'the-urban-plate', name: 'Table T07', section: 'Indoor Family Booth', capacity: 8, status: 'occupied', qrScans: 93, lastScanned: '8 mins ago' }, // ORD-1046
+    { id: 'T08', tenantId: 'the-urban-plate', name: 'Table T08', section: 'Indoor Family Booth', capacity: 8, status: 'available', qrScans: 27, lastScanned: '3 hrs ago' },
+    { id: 'T09', tenantId: 'the-urban-plate', name: 'Table T09', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'available', qrScans: 52, lastScanned: '45 mins ago' },
+    { id: 'T10', tenantId: 'the-urban-plate', name: 'Table T10', section: 'Garden Patio (Outdoor)', capacity: 2, status: 'available', qrScans: 77, lastScanned: '12 mins ago' },
+    { id: 'T11', tenantId: 'the-urban-plate', name: 'Table T11', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'available', qrScans: 68, lastScanned: '2 mins ago' },
+    { id: 'T12', tenantId: 'the-urban-plate', name: 'Table T12', section: 'Garden Patio (Outdoor)', capacity: 4, status: 'occupied', qrScans: 142, lastScanned: 'Just now' }, // ORD-1048 primary demo
+
+    // --------------------------------------------------------------------------
+    // Bella Vista Trattoria (8 Private Tables) - Park Street
+    // --------------------------------------------------------------------------
+    { id: 'BV-01', tenantId: 'bella-vista', name: 'Terrazza 01', section: 'Main Trattoria', capacity: 2, status: 'available', qrScans: 38, lastScanned: '15 mins ago' },
+    { id: 'BV-02', tenantId: 'bella-vista', name: 'Terrazza 02', section: 'Main Trattoria', capacity: 4, status: 'occupied', qrScans: 62, lastScanned: '3 mins ago' }, // ORD-2001
+    { id: 'BV-03', tenantId: 'bella-vista', name: 'Terrazza 03', section: 'Main Trattoria', capacity: 4, status: 'available', qrScans: 29, lastScanned: '40 mins ago' },
+    { id: 'BV-04', tenantId: 'bella-vista', name: 'Patio Fresco 04', section: 'Patio Fresco', capacity: 2, status: 'available', qrScans: 44, lastScanned: '1 hr ago' },
+    { id: 'BV-05', tenantId: 'bella-vista', name: 'Patio Fresco 05', section: 'Patio Fresco', capacity: 6, status: 'occupied', qrScans: 81, lastScanned: '8 mins ago' }, // ORD-2002
+    { id: 'BV-06', tenantId: 'bella-vista', name: 'Sala Privata 06', section: 'Sala Privata', capacity: 8, status: 'available', qrScans: 19, lastScanned: '2 hrs ago' },
+    { id: 'BV-07', tenantId: 'bella-vista', name: 'Cantina 07', section: 'Wine Cellar', capacity: 2, status: 'available', qrScans: 53, lastScanned: '25 mins ago' },
+    { id: 'BV-08', tenantId: 'bella-vista', name: 'Cantina 08', section: 'Wine Cellar', capacity: 4, status: 'available', qrScans: 67, lastScanned: '18 mins ago' },
+
+    // --------------------------------------------------------------------------
+    // Sakura Asian Delights (8 Private Tables) - Indiranagar
+    // --------------------------------------------------------------------------
+    { id: 'SK-01', tenantId: 'sakura-asian', name: 'Tatami 01', section: 'Tatami Room', capacity: 4, status: 'occupied', qrScans: 42, lastScanned: '5 mins ago' }, // ORD-3001
+    { id: 'SK-02', tenantId: 'sakura-asian', name: 'Tatami 02', section: 'Tatami Room', capacity: 4, status: 'available', qrScans: 31, lastScanned: '35 mins ago' },
+    { id: 'SK-03', tenantId: 'sakura-asian', name: 'Sushi Bar 03', section: 'Counter Seating', capacity: 2, status: 'available', qrScans: 55, lastScanned: '12 mins ago' },
+    { id: 'SK-04', tenantId: 'sakura-asian', name: 'Sushi Bar 04', section: 'Counter Seating', capacity: 2, status: 'available', qrScans: 63, lastScanned: '20 mins ago' },
+    { id: 'SK-05', tenantId: 'sakura-asian', name: 'Zen Dining 05', section: 'Zen Hall', capacity: 6, status: 'available', qrScans: 37, lastScanned: '1 hr ago' },
+    { id: 'SK-06', tenantId: 'sakura-asian', name: 'Zen Dining 06', section: 'Zen Hall', capacity: 6, status: 'available', qrScans: 48, lastScanned: '45 mins ago' },
+    { id: 'SK-07', tenantId: 'sakura-asian', name: 'Bamboo Garden 07', section: 'Outdoor Bamboo', capacity: 4, status: 'available', qrScans: 22, lastScanned: '3 hrs ago' },
+    { id: 'SK-08', tenantId: 'sakura-asian', name: 'Bamboo Garden 08', section: 'Outdoor Bamboo', capacity: 8, status: 'available', qrScans: 18, lastScanned: '4 hrs ago' }
   ],
 
-  // 5 Active Promotional Offers
+  // Promotional Offers partitioned by tenantId
   offers: [
     {
       id: 'off-1',
+      tenantId: 'the-urban-plate',
       code: 'LUNCH20',
       title: '20% OFF on Mains & Biryanis',
       description: 'Valid everyday from 12:00 PM to 4:00 PM on orders above ₹500.',
@@ -910,6 +930,7 @@ const DINEFLOW_DEFAULT_DATA = {
     },
     {
       id: 'off-2',
+      tenantId: 'the-urban-plate',
       code: 'FIRSTBITE',
       title: 'Flat ₹100 OFF First Order',
       description: 'Exclusive welcome treat for first-time digital QR diners.',
@@ -923,7 +944,8 @@ const DINEFLOW_DEFAULT_DATA = {
     },
     {
       id: 'off-3',
-      code: 'PIZZA50',
+      tenantId: 'bella-vista',
+      code: 'BELLAPIZZA',
       title: 'Buy 1 Gourmet Pizza, Get 50% on 2nd',
       description: 'Applies automatically to any two artisanal pizzas in cart.',
       type: 'percentage',
@@ -936,8 +958,9 @@ const DINEFLOW_DEFAULT_DATA = {
     },
     {
       id: 'off-4',
-      code: 'SWEET50',
-      title: 'Flat ₹50 OFF on All Desserts',
+      tenantId: 'bella-vista',
+      code: 'DOLCE50',
+      title: 'Flat ₹50 OFF on Italian Desserts',
       description: 'Satisfy your sweet tooth with our chef-crafted gourmet desserts.',
       type: 'flat',
       value: 50,
@@ -949,13 +972,14 @@ const DINEFLOW_DEFAULT_DATA = {
     },
     {
       id: 'off-5',
-      code: 'URBANVIP',
-      title: '15% OFF Total Bill for VIP Tables',
-      description: 'Special weekend indulgence for table orders above ₹1,500.',
+      tenantId: 'sakura-asian',
+      code: 'SAKURA15',
+      title: '15% OFF Sushi & Asian Specialties',
+      description: 'Exclusive dining privilege on orders above ₹800.',
       type: 'percentage',
       value: 15,
-      minOrder: 1500,
-      maxDiscount: 400,
+      minOrder: 800,
+      maxDiscount: 300,
       categoryScope: 'all',
       expiry: '31 Dec 2026',
       isActive: true
@@ -1175,20 +1199,87 @@ const DINEFLOW_DEFAULT_DATA = {
       total: 2468.4,
       paymentMethod: 'CARD',
       paymentStatus: 'PAID'
+    },
+    // Bella Vista Trattoria Sample Orders
+    {
+      id: 'ORD-2001',
+      tenantId: 'bella-vista',
+      tableId: 'BV-02',
+      customerName: 'Giulia Moretti',
+      customerPhone: '+91 98201 44552',
+      status: 'CONFIRMED',
+      timestamp: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
+      items: [
+        { id: 'item-bv-01', name: 'Woodfired Margherita Burrata Pizza', price: 480, quantity: 1, customizations: { crust: 'Neapolitan' } },
+        { id: 'item-bv-02', name: 'Truffle Porcini Fettuccine', price: 410, quantity: 1, customizations: {} }
+      ],
+      subtotal: 890,
+      discount: 0,
+      tax: 44.5,
+      serviceCharge: 44.5,
+      total: 979.0,
+      paymentMethod: 'CARD',
+      paymentStatus: 'PENDING',
+      estimatedMinutes: 18
+    },
+    {
+      id: 'ORD-2002',
+      tenantId: 'bella-vista',
+      tableId: 'BV-05',
+      customerName: 'Alessandro Conti',
+      customerPhone: '+91 98203 99881',
+      status: 'PREPARING',
+      timestamp: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
+      items: [
+        { id: 'item-bv-03', name: 'Four Cheese Quattro Formaggi', price: 520, quantity: 1, customizations: {} },
+        { id: 'item-bv-04', name: 'Traditional Espresso Tiramisu', price: 290, quantity: 2, customizations: {} }
+      ],
+      subtotal: 1100,
+      discount: 50,
+      tax: 52.5,
+      serviceCharge: 52.5,
+      total: 1155.0,
+      paymentMethod: 'UPI',
+      paymentStatus: 'PENDING',
+      estimatedMinutes: 22
+    },
+    // Sakura Asian Kitchen Sample Orders
+    {
+      id: 'ORD-3001',
+      tenantId: 'sakura-asian',
+      tableId: 'SK-01',
+      customerName: 'Kenji Tanaka',
+      customerPhone: '+91 98199 11224',
+      status: 'PREPARING',
+      timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+      items: [
+        { id: 'item-sk-01', name: 'Salmon & Bluefin Nigiri Combo (8 pcs)', price: 680, quantity: 1, customizations: {} },
+        { id: 'item-sk-02', name: 'Black Garlic Tonkotsu Ramen', price: 480, quantity: 1, customizations: { broth: 'Rich Tonkotsu' } }
+      ],
+      subtotal: 1160,
+      discount: 100,
+      tax: 53.0,
+      serviceCharge: 53.0,
+      total: 1166.0,
+      paymentMethod: 'UPI',
+      paymentStatus: 'PENDING',
+      estimatedMinutes: 15
     }
   ],
 
-  // Active Staff Call Requests
+  // Active Staff Call Requests partitioned by tenantId
   staffRequests: [
-    { id: 'REQ-101', tableId: 'T12', type: 'WATER', label: 'Need Chilled Water', status: 'PENDING', time: '2 mins ago' },
-    { id: 'REQ-102', tableId: 'T04', type: 'CUTLERY', label: 'Need Extra Spoons & Napkins', status: 'PENDING', time: '6 mins ago' },
-    { id: 'REQ-103', tableId: 'T11', type: 'WAITER', label: 'Call Server to Table', status: 'ATTENDING', time: '10 mins ago' }
+    { id: 'REQ-101', tenantId: 'the-urban-plate', tableId: 'T12', type: 'WATER', label: 'Need Chilled Water', status: 'PENDING', time: '2 mins ago' },
+    { id: 'REQ-102', tenantId: 'the-urban-plate', tableId: 'T04', type: 'CUTLERY', label: 'Need Extra Spoons & Napkins', status: 'PENDING', time: '6 mins ago' },
+    { id: 'REQ-103', tenantId: 'the-urban-plate', tableId: 'T11', type: 'WAITER', label: 'Call Server to Table', status: 'ATTENDING', time: '10 mins ago' },
+    { id: 'REQ-201', tenantId: 'bella-vista', tableId: 'BV-05', type: 'WAITER', label: 'Call Server for Sommelier / Wine List', status: 'PENDING', time: '4 mins ago' },
+    { id: 'REQ-301', tenantId: 'sakura-asian', tableId: 'SK-01', type: 'WASABI', label: 'Extra Fresh Grated Wasabi & Pickled Ginger', status: 'PENDING', time: '5 mins ago' }
   ],
 
-  // Active Bill Requests
+  // Active Bill Requests partitioned by tenantId
   billRequests: [
-    { id: 'BILL-101', tableId: 'T15', amount: 1195.7, paymentMethod: 'UPI', status: 'PENDING', time: '3 mins ago' },
-    { id: 'BILL-102', tableId: 'T06', amount: 845.0, paymentMethod: 'CARD', status: 'PENDING', time: '8 mins ago' }
+    { id: 'BILL-101', tenantId: 'the-urban-plate', tableId: 'T07', amount: 1381.6, paymentMethod: 'UPI', status: 'PENDING', time: '3 mins ago' },
+    { id: 'BILL-201', tenantId: 'bella-vista', tableId: 'BV-02', amount: 979.0, paymentMethod: 'CARD', status: 'PENDING', time: '5 mins ago' }
   ],
 
   // 10 Customer Profiles (CRM)
@@ -1388,21 +1479,90 @@ const DineFlowStore = {
             updated = true;
           }
 
-          // Auto-reconcile table statuses with actual active orders & requests (clears zombie occupied tables)
+          // Multi-Tenant Isolation Migration: Ensure partitioned tables exist
+          if (!Array.isArray(data.tables) || !data.tables.some(t => t.tenantId === 'bella-vista')) {
+            data.tables = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.tables));
+            updated = true;
+          } else {
+            // Ensure every table has tenantId
+            data.tables.forEach(t => {
+              if (!t.tenantId) {
+                t.tenantId = 'the-urban-plate';
+                updated = true;
+              }
+            });
+          }
+
+          // Multi-Tenant Isolation Migration: Ensure offers are partitioned
+          if (!Array.isArray(data.offers) || !data.offers.some(o => o.tenantId === 'bella-vista')) {
+            data.offers = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.offers));
+            updated = true;
+          }
+
+          // Multi-Tenant Isolation Migration: Ensure orders have tenantId and other restaurants have sample orders
+          if (Array.isArray(data.orders)) {
+            data.orders.forEach(o => {
+              if (!o.tenantId) {
+                o.tenantId = 'the-urban-plate';
+                updated = true;
+              }
+            });
+            if (!data.orders.some(o => o.tenantId === 'bella-vista')) {
+              const bvOrders = DINEFLOW_DEFAULT_DATA.orders.filter(o => o.tenantId === 'bella-vista');
+              data.orders.push(...JSON.parse(JSON.stringify(bvOrders)));
+              updated = true;
+            }
+            if (!data.orders.some(o => o.tenantId === 'sakura-asian')) {
+              const skOrders = DINEFLOW_DEFAULT_DATA.orders.filter(o => o.tenantId === 'sakura-asian');
+              data.orders.push(...JSON.parse(JSON.stringify(skOrders)));
+              updated = true;
+            }
+          }
+
+          // Multi-Tenant Isolation Migration: Ensure staffRequests & billRequests have tenantId
+          if (Array.isArray(data.staffRequests)) {
+            data.staffRequests.forEach(r => {
+              if (!r.tenantId) {
+                r.tenantId = 'the-urban-plate';
+                updated = true;
+              }
+            });
+            if (!data.staffRequests.some(r => r.tenantId === 'bella-vista')) {
+              const bvReqs = DINEFLOW_DEFAULT_DATA.staffRequests.filter(r => r.tenantId === 'bella-vista' || r.tenantId === 'sakura-asian');
+              data.staffRequests.push(...JSON.parse(JSON.stringify(bvReqs)));
+              updated = true;
+            }
+          }
+          if (Array.isArray(data.billRequests)) {
+            data.billRequests.forEach(b => {
+              if (!b.tenantId) {
+                b.tenantId = 'the-urban-plate';
+                updated = true;
+              }
+            });
+            if (!data.billRequests.some(b => b.tenantId === 'bella-vista')) {
+              const bvBills = DINEFLOW_DEFAULT_DATA.billRequests.filter(b => b.tenantId === 'bella-vista');
+              data.billRequests.push(...JSON.parse(JSON.stringify(bvBills)));
+              updated = true;
+            }
+          }
+
+          // Tenant-Isolated Auto-reconciliation of table statuses using composite keys: `${tenantId}::${tableId}`
           if (Array.isArray(data.tables) && Array.isArray(data.orders)) {
-            const activeTableIds = new Set(
+            const activeTableKeys = new Set(
               data.orders
                 .filter(o => o.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED')
-                .map(o => o.tableId)
+                .map(o => `${o.tenantId || 'the-urban-plate'}::${o.tableId}`)
             );
             if (Array.isArray(data.billRequests)) {
-              data.billRequests.filter(b => b.status === 'PENDING').forEach(b => activeTableIds.add(b.tableId));
+              data.billRequests.filter(b => b.status === 'PENDING').forEach(b => activeTableKeys.add(`${b.tenantId || 'the-urban-plate'}::${b.tableId}`));
             }
             if (Array.isArray(data.staffRequests)) {
-              data.staffRequests.filter(s => s.status === 'PENDING').forEach(s => activeTableIds.add(s.tableId));
+              data.staffRequests.filter(s => s.status === 'PENDING').forEach(s => activeTableKeys.add(`${s.tenantId || 'the-urban-plate'}::${s.tableId}`));
             }
             data.tables.forEach(table => {
-              if (activeTableIds.has(table.id) || table.manuallyOccupied === true) {
+              const tableKey = `${table.tenantId || 'the-urban-plate'}::${table.id}`;
+              if (activeTableKeys.has(tableKey) || table.manuallyOccupied === true) {
                 if (table.status !== 'occupied') {
                   table.status = 'occupied';
                   updated = true;

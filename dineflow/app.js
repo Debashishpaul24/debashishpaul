@@ -577,10 +577,15 @@
     if (route.view === 'customer') {
       return `?r=${encodeURIComponent(route.tenantSlug || 'the-urban-plate')}&t=${encodeURIComponent(route.tableId || 'T12')}`;
     }
-    if (route.view === 'login') {
-      return route.target && route.target !== 'admin' ? `?view=login&target=${encodeURIComponent(route.target)}` : '?view=login';
+    if (route.view === 'login' || route.view === 'staff-login') {
+      const isOwner = route.target === 'super-admin' || route.portal === 'owner';
+      const tenant = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+      return isOwner ? '?view=owner-login' : `?r=${encodeURIComponent(tenant)}&view=staff-login`;
     }
-    if (route.view === 'admin') return '?view=admin';
+    if (route.view === 'admin') {
+      const tenant = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+      return `?r=${encodeURIComponent(tenant)}&view=admin`;
+    }
     if (route.view === 'super-admin') return '?view=super-admin';
     if (route.view === 'onboarding') return '?view=onboarding';
     return './';
@@ -630,25 +635,32 @@
     const sectionParam = searchParams.get('section');
     const pilotParam = searchParams.get('pilot');
 
+    // Tenant-isolated Staff OS view: ?r=<tenant>&view=admin
+    if (viewParam === 'admin') {
+      return {
+        view: 'admin',
+        tenantSlug: rParam || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate'
+      };
+    }
+
+    // Tenant-isolated Staff Login view: ?r=<tenant>&view=staff-login
+    if (viewParam === 'login' || viewParam === 'staff-login' || viewParam === 'owner-login') {
+      const isOwner = viewParam === 'owner-login' || searchParams.get('target') === 'super-admin' || searchParams.get('portal') === 'owner';
+      return {
+        view: 'login',
+        target: isOwner ? 'super-admin' : 'admin',
+        portal: isOwner ? 'owner' : 'staff',
+        tenantSlug: rParam || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate'
+      };
+    }
+
+    // Customer Guest Menu: ?r=<tenant>&t=<tableId>
     if (rParam) {
       return {
         view: 'customer',
         tenantSlug: rParam,
         tableId: tParam || 'T12'
       };
-    }
-
-    if (viewParam === 'login' || viewParam === 'staff-login' || viewParam === 'owner-login') {
-      const isOwner = viewParam === 'owner-login' || searchParams.get('target') === 'super-admin' || searchParams.get('portal') === 'owner';
-      return {
-        view: 'login',
-        target: isOwner ? 'super-admin' : 'admin',
-        portal: isOwner ? 'owner' : 'staff'
-      };
-    }
-
-    if (viewParam === 'admin') {
-      return { view: 'admin' };
     }
 
     if (viewParam === 'super-admin') {
@@ -870,30 +882,50 @@
       return;
     } else if (route.view === 'login') {
       const isOwner = route.target === 'super-admin' || route.portal === 'owner';
-      renderLoginView(appEl, isOwner ? '?view=super-admin' : '?view=admin', isOwner ? 'SUPER_ADMIN' : 'RESTAURANT_ADMIN', isOwner ? 'owner' : 'staff');
+      const targetTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+      renderLoginView(
+        appEl,
+        isOwner ? '?view=super-admin' : `?r=${targetTenantSlug}&view=admin`,
+        isOwner ? 'SUPER_ADMIN' : 'RESTAURANT_ADMIN',
+        isOwner ? 'owner' : 'staff',
+        targetTenantSlug
+      );
       renderFloatingRoleSwitcher('login');
     } else if (route.view === 'admin') {
+      const targetTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+      const tenant = getCurrentTenant(targetTenantSlug);
+
       // 1. Session Revocation Check: If staff was revoked in Owner HQ, terminate session immediately!
       const currentStaff = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
       if (state.session && state.session.isAuthenticated && state.session.role === 'RESTAURANT_ADMIN') {
         const isStillValid = currentStaff.some(acc => acc.id === state.session.user?.id && acc.role === 'RESTAURANT_ADMIN');
         if (!isStillValid) {
-          state.session = { isAuthenticated: false, role: 'CUSTOMER', user: null, tenantId: 'the-urban-plate' };
+          state.session = { isAuthenticated: false, role: 'CUSTOMER', user: null, tenantId: targetTenantSlug };
           DineFlowStore.save(state);
           removeFloatingRoleSwitcher();
           SoundFX.chime('alert');
           showToast('Session Terminated: Your staff profile was revoked by the restaurant owner.', '🔒');
-          renderLoginView(appEl, '?view=admin', 'RESTAURANT_ADMIN', 'staff');
+          renderLoginView(appEl, `?r=${targetTenantSlug}&view=admin`, 'RESTAURANT_ADMIN', 'staff', targetTenantSlug);
+          return;
+        }
+
+        // 2. Strict Cross-Tenant RBAC Barrier:
+        // A restaurant staff account is strictly bound to its assigned restaurant tenantId!
+        if (state.session.tenantId && state.session.tenantId !== tenant.slug) {
+          const staffHomeTenant = (state.tenants && state.tenants[state.session.tenantId]?.name) || state.session.tenantId;
+          SoundFX.chime('alert');
+          showToast(`Access Restricted: Your staff account belongs to ${staffHomeTenant}. You cannot access ${tenant.name}'s Staff OS.`, '🚫');
+          navigateTo({ view: 'admin', tenantSlug: state.session.tenantId });
           return;
         }
       }
 
       if (!isStaffAuth) {
         removeFloatingRoleSwitcher();
-        renderLoginView(appEl, '?view=admin', 'RESTAURANT_ADMIN', 'staff');
+        renderLoginView(appEl, `?r=${targetTenantSlug}&view=admin`, 'RESTAURANT_ADMIN', 'staff', targetTenantSlug);
         return;
       }
-      const tenant = getCurrentTenant();
+      state.currentTenantId = tenant.slug;
       applyTenantBranding(tenant);
       renderAdminView(appEl, tenant);
       renderFloatingRoleSwitcher('admin');
@@ -1139,11 +1171,11 @@
   // ------------------------------------------------------------------------------
   // 0. AUTHENTICATION & LOGIN GATEWAY VIEW
   // ------------------------------------------------------------------------------
-  function renderLoginView(container, redirectTarget = '?view=admin', requestedRole = 'RESTAURANT_ADMIN', portalType = 'staff') {
+  function renderLoginView(container, redirectTarget = '?view=admin', requestedRole = 'RESTAURANT_ADMIN', portalType = 'staff', tenantSlug = null) {
     let currentAuthMode = 'pin'; // 'pin' | 'password'
     let enteredPin = '';
 
-    const targetTenant = getCurrentTenant();
+    const targetTenant = getCurrentTenant(tenantSlug || parseRoute().tenantSlug);
     const isStaffPortal = requestedRole === 'RESTAURANT_ADMIN' || portalType === 'staff';
 
     function updatePinDots() {
@@ -1179,12 +1211,19 @@
         return false;
       }
 
-      // 2. Strict Role Authorization
+      // 2. Strict Role & Cross-Tenant Authorization
       if (isStaffPortal) {
         if (account.role !== 'RESTAURANT_ADMIN') {
           SoundFX.chime('alert');
           triggerShake();
           showToast('Access Denied: Owner HQ credentials detected. Super Admins must use the Owner HQ Gateway (?view=super-admin).', '🔒');
+          return false;
+        }
+        if (account.tenantId && targetTenant.slug && account.tenantId !== targetTenant.slug) {
+          const homeName = (state.tenants && state.tenants[account.tenantId]?.name) || account.tenantId;
+          SoundFX.chime('alert');
+          triggerShake();
+          showToast(`Access Denied: Your staff profile belongs to ${homeName}. You cannot access ${targetTenant.name}.`, '🚫');
           return false;
         }
       } else {
@@ -1227,7 +1266,7 @@
 
       const targetView = (account.role === 'SUPER_ADMIN') ? 'super-admin' : 'admin';
       setTimeout(() => {
-        navigateTo({ view: targetView });
+        navigateTo({ view: targetView, tenantSlug: account.tenantId || targetTenant.slug });
       }, 200);
       return true;
     }
@@ -1258,10 +1297,10 @@
       ? `${targetTenant.name} - Restaurant Staff Portal & Kitchen Login Gateway`
       : 'DineFlow - Owner HQ & Platform Super Admin Gateway';
 
-    // Filter accounts specifically for this portal:
+    // Filter accounts specifically for this portal & tenant:
     const allAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
     const authorizedProfiles = isStaffPortal
-      ? allAccounts.filter(acc => acc.role === 'RESTAURANT_ADMIN')
+      ? allAccounts.filter(acc => acc.role === 'RESTAURANT_ADMIN' && (!acc.tenantId || acc.tenantId === targetTenant.slug))
       : allAccounts.filter(acc => acc.role === 'SUPER_ADMIN');
 
     container.innerHTML = `
@@ -2566,6 +2605,7 @@
 
         const newReq = {
           id: `REQ-${Math.floor(100 + Math.random() * 900)}`,
+          tenantId: tenant.slug || tenant.id,
           tableId: table.id,
           type,
           label,
@@ -2819,6 +2859,7 @@
       } else {
         state.billRequests.unshift({
           id: `BILL-${Math.floor(100 + Math.random() * 900)}`,
+          tenantId: tenant.slug || tenant.id,
           tableId: table.id,
           amount: totalAmount,
           paymentMethod: 'UPI',
@@ -2826,7 +2867,7 @@
           time: 'Just now'
         });
       }
-      const tObj = state.tables.find(t => t.id === table.id);
+      const tObj = state.tables.find(t => t.id === table.id && (!t.tenantId || t.tenantId === (tenant.slug || tenant.id)));
       if (tObj) tObj.status = 'available';
 
       DineFlowStore.save(state, {
@@ -2849,6 +2890,7 @@
       } else {
         activeBillObj = {
           id: `BILL-${Math.floor(100 + Math.random() * 900)}`,
+          tenantId: tenant.slug || tenant.id,
           tableId: table.id,
           amount: totalAmount,
           paymentMethod: selectedPayment,
@@ -2970,22 +3012,24 @@
   // 2. RESTAURANT ADMIN PORTAL VIEW
   // ------------------------------------------------------------------------------
   function renderAdminView(container, tenant) {
-    // Reconcile table statuses with actual active orders & requests
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantOrders = state.orders.filter(o => !o.tenantId || o.tenantId === tenantSlug);
+    const tenantTables = state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug);
+    const tenantCalls = state.staffRequests.filter(r => (!r.tenantId || r.tenantId === tenantSlug) && r.status === 'PENDING');
+    const tenantBills = state.billRequests.filter(b => (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
+
+    // Reconcile table statuses specifically for this tenant
     const activeOrderTableIds = new Set();
-    state.orders.forEach(o => {
+    tenantOrders.forEach(o => {
       if (o.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
         activeOrderTableIds.add(o.tableId);
       }
     });
-    state.billRequests.forEach(b => {
-      if (b.status === 'PENDING') activeOrderTableIds.add(b.tableId);
-    });
-    state.staffRequests.forEach(s => {
-      if (s.status === 'PENDING') activeOrderTableIds.add(s.tableId);
-    });
+    tenantBills.forEach(b => activeOrderTableIds.add(b.tableId));
+    tenantCalls.forEach(s => activeOrderTableIds.add(s.tableId));
 
     let tableStatusChanged = false;
-    state.tables.forEach(t => {
+    tenantTables.forEach(t => {
       const shouldBeOccupied = activeOrderTableIds.has(t.id) || t.manuallyOccupied === true;
       if (shouldBeOccupied && t.status !== 'occupied') {
         t.status = 'occupied';
@@ -2999,12 +3043,12 @@
       DineFlowStore.save(state);
     }
 
-    const todayOrdersCount = state.orders.length;
-    const todayRevenue = state.orders.reduce((acc, o) => acc + o.total, 0);
-    const activeTablesCount = state.tables.filter(t => t.status === 'occupied').length;
-    const pendingOrders = state.orders.filter(o => o.status === 'RECEIVED' || o.status === 'CONFIRMED' || o.status === 'PREPARING');
-    const pendingCalls = state.staffRequests.filter(r => r.status === 'PENDING').length;
-    const pendingBills = state.billRequests.filter(b => b.status === 'PENDING').length;
+    const todayOrdersCount = tenantOrders.length;
+    const todayRevenue = tenantOrders.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
+    const activeTablesCount = tenantTables.filter(t => t.status === 'occupied').length;
+    const pendingOrders = tenantOrders.filter(o => o.status === 'RECEIVED' || o.status === 'CONFIRMED' || o.status === 'PREPARING');
+    const pendingCalls = tenantCalls.length;
+    const pendingBills = tenantBills.length;
 
     const currentTone = (state.settings && state.settings.toneProfile) || 'executive';
     function getToneProfileLabel(profile) {
@@ -3113,8 +3157,8 @@
               </div>
               <div class="df-stat-card">
                 <span class="df-stat-label">Active Tables</span>
-                <div class="df-stat-val">${activeTablesCount} / ${state.tables.length}</div>
-                <span class="df-stat-change" style="color: var(--brand-primary);">${((activeTablesCount / state.tables.length) * 100).toFixed(0)}% Occupancy</span>
+                <div class="df-stat-val">${activeTablesCount} / ${tenantTables.length}</div>
+                <span class="df-stat-change" style="color: var(--brand-primary);">${((activeTablesCount / (tenantTables.length || 1)) * 100).toFixed(0)}% Occupancy</span>
               </div>
               <div class="df-stat-card">
                 <span class="df-stat-label">Pending Staff Calls</span>
@@ -3250,30 +3294,33 @@
         </div>
       </div>
 
-      ${state.staffRequests && state.staffRequests.some(r => r.status === 'PENDING') ? `
-        <div class="df-active-calls-banner" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(245, 158, 11, 0.16)); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: var(--radius-md); padding: 0.65rem 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; animation: pulse 2s infinite;">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <span style="font-size: 1.4rem;">🔔</span>
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">
-                Active Waiter / Table Requests (${state.staffRequests.filter(r => r.status === 'PENDING').length})
-              </div>
-              <div style="font-size: 0.72rem; color: #FCA5A5; font-weight: 600;">
-                ${state.staffRequests.filter(r => r.status === 'PENDING').map(r => `<strong>Table ${r.tableId}</strong>: ${r.label}`).join(' • ')}
+      ${(() => {
+        const tenantPendingCalls = (state.staffRequests || []).filter(r => (!r.tenantId || r.tenantId === tenant.slug || r.tenantId === tenant.id) && r.status === 'PENDING');
+        return tenantPendingCalls.length > 0 ? `
+          <div class="df-active-calls-banner" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(245, 158, 11, 0.16)); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: var(--radius-md); padding: 0.65rem 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; animation: pulse 2s infinite;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 1.4rem;">🔔</span>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">
+                  Active Waiter / Table Requests (${tenantPendingCalls.length})
+                </div>
+                <div style="font-size: 0.72rem; color: #FCA5A5; font-weight: 600;">
+                  ${tenantPendingCalls.map(r => `<strong>Table ${r.tableId}</strong>: ${r.label}`).join(' • ')}
+                </div>
               </div>
             </div>
+            <div style="display: flex; gap: 0.35rem;">
+              <button class="df-pill-btn btn-admin-view-calls" style="font-size: 0.72rem; padding: 0.3rem 0.75rem; background: #EF4444; border-color: #EF4444; color: #fff; font-weight: 700;">
+                View & Attend All →
+              </button>
+            </div>
           </div>
-          <div style="display: flex; gap: 0.35rem;">
-            <button class="df-pill-btn btn-admin-view-calls" style="font-size: 0.72rem; padding: 0.3rem 0.75rem; background: #EF4444; border-color: #EF4444; color: #fff; font-weight: 700;">
-              View & Attend All →
-            </button>
-          </div>
-        </div>
-      ` : ''}
+        ` : '';
+      })()}
 
       <div class="df-kanban-board">
         ${cols.map(col => {
-          const orders = state.orders.filter(o => o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED'));
+          const orders = state.orders.filter(o => (!o.tenantId || o.tenantId === tenant.slug || o.tenantId === tenant.id) && (o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED')));
           return `
             <div class="df-kanban-col">
               <div class="df-kanban-col-header">
@@ -3349,11 +3396,11 @@
           order.status = nextStatus;
           if (nextStatus === 'COMPLETED') {
             order.paymentStatus = 'PAID';
-            const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && b.status === 'PENDING');
+            const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && (!b.tenantId || b.tenantId === order.tenantId) && b.status === 'PENDING');
             if (pendingBill) pendingBill.status = 'PAID';
-            const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.status !== 'COMPLETED');
+            const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === order.tenantId) && o.status !== 'COMPLETED');
             if (!hasMoreOrders) {
-              const tableObj = state.tables.find(t => t.id === order.tableId);
+              const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === order.tenantId));
               if (tableObj) {
                 tableObj.status = 'available';
                 delete tableObj.manuallyOccupied;
@@ -3382,25 +3429,36 @@
     });
 
     document.getElementById('btn-admin-clear-all')?.addEventListener('click', () => {
+      const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
       state.tables.forEach(t => {
-        t.status = 'available';
-        delete t.manuallyOccupied;
+        if (!t.tenantId || t.tenantId === tenantSlug) {
+          t.status = 'available';
+          delete t.manuallyOccupied;
+        }
       });
       state.orders.forEach(o => {
-        if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+        if ((!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
           o.status = 'COMPLETED';
           o.paymentStatus = 'PAID';
         }
       });
-      state.billRequests.forEach(b => { b.status = 'PAID'; });
-      state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
+      state.billRequests.forEach(b => {
+        if (!b.tenantId || b.tenantId === tenantSlug) {
+          b.status = 'PAID';
+        }
+      });
+      state.staffRequests.forEach(s => {
+        if (!s.tenantId || s.tenantId === tenantSlug) {
+          s.status = 'RESOLVED';
+        }
+      });
       DineFlowStore.save(state, {
         action: 'TABLES_CLEARED_ALL',
         source: 'staff',
-        tenantSlug: tenant.slug || tenant.id
+        tenantSlug: tenantSlug
       });
       SoundFX.chime('success');
-      showToast('All 20 dining tables cleared & marked Available!', '🧹');
+      showToast(`All ${tenant.name} dining tables cleared & marked Available!`, '🧹');
       renderAdminView(document.getElementById('app'), tenant);
     });
 
@@ -3412,15 +3470,18 @@
 
   // TABLES & QR CODE MANAGEMENT
   function renderTablesAndQRs(container, tenant) {
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantTables = state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug);
+
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
         <div>
-          <h2 style="font-size: 1.35rem; font-weight: 800;">Table Management & QR Tent Cards</h2>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Generate, preview, download, and print table tent cards with unique QR URLs.</p>
+          <h2 style="font-size: 1.35rem; font-weight: 800;">Table Management & QR Tent Cards (${tenantTables.length} Tables)</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Generate, preview, download, and print table tent cards with unique QR URLs for ${tenant.name}.</p>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
           <button class="df-pill-btn" id="btn-batch-print-all" title="Export & Print all tables to high-precision PDF batch">
-            📄 Batch Print All (PDF)
+            📄 Batch Print All (${tenantTables.length} PDFs)
           </button>
           <button class="df-pill-btn" id="btn-clear-all-tables-tab" title="Reset all tables to Available status">
             🧹 Clear All Tables
@@ -3432,7 +3493,7 @@
       </div>
 
       <div class="df-tables-grid">
-        ${state.tables.map(table => {
+        ${tenantTables.map(table => {
           // Construct normalized target URL for table
           const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
           return `
@@ -3473,7 +3534,7 @@
     `;
 
     // Generate real QR codes into each table preview box
-    state.tables.forEach(table => {
+    tenantTables.forEach(table => {
       const el = document.getElementById(`qr-table-${table.id}`);
       if (el && window.DineFlowQR) {
         const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
@@ -3485,7 +3546,7 @@
     document.querySelectorAll('.btn-view-tent').forEach(btn => {
       btn.addEventListener('click', () => {
         const tableId = btn.getAttribute('data-id');
-        const table = state.tables.find(t => t.id === tableId);
+        const table = state.tables.find(t => t.id === tableId && (!t.tenantId || t.tenantId === tenantSlug));
         if (table) openPrintTentModal(table, tenant);
       });
     });
@@ -3494,13 +3555,13 @@
     document.querySelectorAll('.btn-toggle-table').forEach(btn => {
       btn.addEventListener('click', () => {
         const tableId = btn.getAttribute('data-id');
-        const table = state.tables.find(t => t.id === tableId);
+        const table = state.tables.find(t => t.id === tableId && (!t.tenantId || t.tenantId === tenantSlug));
         if (table) {
           if (table.status === 'occupied') {
             table.status = 'available';
             delete table.manuallyOccupied;
             state.orders.forEach(o => {
-              if (o.tableId === table.id && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+              if (o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
                 o.status = 'COMPLETED';
                 o.paymentStatus = 'PAID';
               }
@@ -3515,10 +3576,10 @@
             action: 'TABLE_STATUS_TOGGLED',
             tableId: table.id,
             isOccupied: table.status === 'occupied',
-            tenantSlug: tenant.slug || tenant.id
+            tenantSlug: tenantSlug
           });
           DineFlowStore.recordLog({
-            tenantId: tenant.slug || tenant.id,
+            tenantId: tenantSlug,
             tenantName: tenant.name,
             managerId: state.session?.user?.id || 'staff-01',
             managerName: state.session?.user?.name || 'Chef Vikram Rao',
@@ -3540,37 +3601,49 @@
     // Clear All Tables
     document.getElementById('btn-clear-all-tables-tab')?.addEventListener('click', () => {
       state.tables.forEach(t => {
-        t.status = 'available';
-        delete t.manuallyOccupied;
+        if (!t.tenantId || t.tenantId === tenantSlug) {
+          t.status = 'available';
+          delete t.manuallyOccupied;
+        }
       });
       state.orders.forEach(o => {
-        if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+        if ((!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
           o.status = 'COMPLETED';
           o.paymentStatus = 'PAID';
         }
       });
-      state.billRequests.forEach(b => { b.status = 'PAID'; });
-      state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
+      state.billRequests.forEach(b => {
+        if (!b.tenantId || b.tenantId === tenantSlug) {
+          b.status = 'PAID';
+        }
+      });
+      state.staffRequests.forEach(s => {
+        if (!s.tenantId || s.tenantId === tenantSlug) {
+          s.status = 'RESOLVED';
+        }
+      });
       DineFlowStore.save(state, {
         action: 'ALL_TABLES_CLEARED',
         source: 'staff',
-        tenantSlug: tenant.slug || tenant.id
+        tenantSlug: tenantSlug
       });
       SoundFX.chime('success');
-      showToast('All 20 tables cleared & marked Available!', '🧹');
+      showToast(`All ${tenant.name} tables cleared & marked Available!`, '🧹');
       renderAdminView(document.getElementById('app'), tenant);
     });
 
     // Batch Print All Tables (PDF)
     document.getElementById('btn-batch-print-all')?.addEventListener('click', () => {
-      batchPrintAllTables(state.tables, tenant);
+      batchPrintAllTables(tenantTables, tenant);
     });
 
     // Add Table
     document.getElementById('btn-add-table')?.addEventListener('click', () => {
-      const nextId = `T${String(state.tables.length + 1).padStart(2, '0')}`;
+      const prefix = tenantSlug === 'bella-vista' ? 'BV-' : (tenantSlug === 'sakura-asian' ? 'SK-' : 'T');
+      const nextId = `${prefix}${String(tenantTables.length + 1).padStart(2, '0')}`;
       state.tables.push({
         id: nextId,
+        tenantId: tenantSlug,
         name: `Table ${nextId}`,
         section: 'Indoor AC Dining',
         capacity: 4,
@@ -3580,7 +3653,7 @@
       });
       DineFlowStore.save(state);
       SoundFX.chime('success');
-      showToast(`Added ${nextId} to tables grid`);
+      showToast(`Added ${nextId} to ${tenant.name} tables`);
       renderAdminView(document.getElementById('app'), tenant);
     });
   }
@@ -4306,14 +4379,17 @@
 
   // SERVICE REQUESTS FEED
   function renderStaffRequestsFeed(container, tenant) {
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantCalls = state.staffRequests.filter(req => !req.tenantId || req.tenantId === tenantSlug);
+
     container.innerHTML = `
       <div style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.35rem; font-weight: 800;">Table Service & Call Staff Notifications</h2>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time alerts triggered by diners requesting waiter, water, cutlery, or napkins.</p>
+        <h2 style="font-size: 1.35rem; font-weight: 800;">Table Service & Call Staff Notifications (${tenantCalls.length})</h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time alerts triggered by diners at ${tenant.name} requesting waiter, water, cutlery, or napkins.</p>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 0.85rem;">
-        ${state.staffRequests.map(req => `
+        ${tenantCalls.length > 0 ? tenantCalls.map(req => `
           <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 1rem;">
               <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(229,169,60,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
@@ -4335,7 +4411,13 @@
               `}
             </div>
           </div>
-        `).join('')}
+        `).join('') : `
+          <div style="text-align: center; padding: 3rem 1rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-dim);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔔</div>
+            <h4 style="font-size: 1rem; color: #fff; margin-bottom: 0.25rem;">No Pending Service Requests</h4>
+            <p style="font-size: 0.78rem;">All customer table calls for ${tenant.name} have been attended to.</p>
+          </div>
+        `}
       </div>
     `;
 
@@ -4356,14 +4438,17 @@
 
   // BILL REQUESTS FEED
   function renderBillRequestsFeed(container, tenant) {
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantBills = state.billRequests.filter(bill => !bill.tenantId || bill.tenantId === tenantSlug);
+
     container.innerHTML = `
       <div style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.35rem; font-weight: 800;">Incoming Bill Requests</h2>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Tables ready for payment and receipt generation.</p>
+        <h2 style="font-size: 1.35rem; font-weight: 800;">Incoming Bill Requests (${tenantBills.length})</h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">${tenant.name} dining tables ready for payment and receipt generation.</p>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 0.85rem;">
-        ${state.billRequests.map(bill => `
+        ${tenantBills.length > 0 ? tenantBills.map(bill => `
           <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
             <div>
               <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -4386,7 +4471,13 @@
               `}
             </div>
           </div>
-        `).join('')}
+        `).join('') : `
+          <div style="text-align: center; padding: 3rem 1rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-dim);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💳</div>
+            <h4 style="font-size: 1rem; color: #fff; margin-bottom: 0.25rem;">No Pending Bill Requests</h4>
+            <p style="font-size: 0.78rem;">All active bills for ${tenant.name} are settled or in progress.</p>
+          </div>
+        `}
       </div>
     `;
 
@@ -4396,14 +4487,14 @@
         const b = state.billRequests.find(req => req.id === id);
         if (b) {
           b.status = 'PAID';
-          const table = state.tables.find(t => t.id === b.tableId);
+          const table = state.tables.find(t => t.id === b.tableId && (!t.tenantId || t.tenantId === tenantSlug));
           if (table) {
             table.status = 'available';
             delete table.manuallyOccupied;
           }
           // Mark all orders for this table as PAID and COMPLETED
           state.orders.forEach(o => {
-            if (o.tableId === b.tableId) {
+            if (o.tableId === b.tableId && (!o.tenantId || o.tenantId === tenantSlug)) {
               o.paymentStatus = 'PAID';
               o.status = 'COMPLETED';
             }
@@ -4412,7 +4503,7 @@
             action: 'BILL_SETTLED',
             source: 'staff',
             tableId: b.tableId,
-            tenantSlug: tenant.slug || tenant.id
+            tenantSlug: tenantSlug
           });
           SoundFX.chime('success');
           showToast(`Table ${b.tableId} bill settled and table cleared!`);
@@ -4424,16 +4515,19 @@
 
   // OFFERS & COUPONS MANAGER
   function renderOffersManager(container, tenant) {
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantOffers = state.offers.filter(off => !off.tenantId || off.tenantId === tenantSlug);
+
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <div>
-          <h2 style="font-size: 1.35rem; font-weight: 800;">Promotional Offers & Digital Coupons</h2>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Configure discount rules, flat discounts, and category coupons for mobile diners.</p>
+          <h2 style="font-size: 1.35rem; font-weight: 800;">Promotional Offers & Digital Coupons (${tenantOffers.length} Active)</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Configure discount rules, flat discounts, and category coupons for ${tenant.name}.</p>
         </div>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
-        ${state.offers.map(off => `
+        ${tenantOffers.map(off => `
           <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
               <span class="df-coupon-code" style="font-size: 0.85rem; padding: 0.25rem 0.65rem;">${off.code}</span>
@@ -5876,7 +5970,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=2.1.0').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=2.3.0').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
