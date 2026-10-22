@@ -4200,6 +4200,52 @@ body.splash-active {
 .df-sec-flag.warning { color: #E5A93C; }
 .df-sec-flag.verified { color: #10B981; }
 
+/* Staff Profile Provisioning & RBAC Badges */
+.btn-revoke-staff {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: #F87171;
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s ease;
+}
+
+.btn-revoke-staff:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #EF4444;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.df-staff-scope-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.df-staff-scope-pill.staff-only {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+}
+
+.df-staff-scope-pill.owner-hq {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #818CF8;
+}
+
+
 
 
 

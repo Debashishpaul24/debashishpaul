@@ -882,6 +882,11 @@
     } else if (route.view === 'super-admin') {
       if (!isSuperAuth) {
         removeFloatingRoleSwitcher();
+        if (state.session && state.session.isAuthenticated) {
+          showToast(`Access Restricted: Staff account (${state.session.user?.name || 'Staff'}) is restricted to Restaurant Staff OS.`, '🔒');
+          navigateTo({ view: 'admin' });
+          return;
+        }
         renderLoginView(appEl, '?view=super-admin', 'SUPER_ADMIN');
         return;
       }
@@ -1143,6 +1148,15 @@
 
     function authenticateUser(account) {
       if (!account) return false;
+
+      // Strict RBAC Guardrail: Staff accounts can NEVER access Super Admin Owner HQ
+      if (requestedRole === 'SUPER_ADMIN' && account.role !== 'SUPER_ADMIN') {
+        SoundFX.chime('alert');
+        triggerShake();
+        showToast(`Access Denied: ${account.name} is a Staff account and can only access Restaurant Staff OS.`, '🔒');
+        return false;
+      }
+
       state = DineFlowStore.get();
       state.session = {
         isAuthenticated: true,
@@ -1179,7 +1193,7 @@
       } else {
         SoundFX.chime('alert');
         triggerShake();
-        showToast('Invalid PIN. Demo PINs: 1234 (Staff) or 9999 (Super Admin)', '❌');
+        showToast('Invalid PIN. Please check your assigned 4-digit PIN.', '❌');
         enteredPin = '';
         updatePinDots();
       }
@@ -1220,38 +1234,27 @@
               <span style="font-size: 0.65rem; color: var(--text-dim);">No typing needed</span>
             </div>
             <div class="df-demo-profile-btns">
-              <button class="df-demo-btn btn-quick-login" data-pin="1234" title="Login as The Urban Plate Manager">
-                <div class="df-demo-btn-info">
-                  <span class="df-demo-btn-emoji">👨‍🍳</span>
-                  <div>
-                    <div class="df-demo-btn-title">Restaurant Staff / Kitchen OS</div>
-                    <div class="df-demo-btn-sub">The Urban Plate • Kitchen Kanban &amp; Tables</div>
-                  </div>
-                </div>
-                <div class="df-demo-btn-pin">PIN: 1234</div>
-              </button>
-
-              <button class="df-demo-btn btn-quick-login" data-pin="9999" title="Login as Platform Super Admin">
-                <div class="df-demo-btn-info">
-                  <span class="df-demo-btn-emoji">⚡</span>
-                  <div>
-                    <div class="df-demo-btn-title">SaaS Platform Super Admin</div>
-                    <div class="df-demo-btn-sub">Multi-Tenant HQ • Analytics &amp; Onboarding</div>
-                  </div>
-                </div>
-                <div class="df-demo-btn-pin">PIN: 9999</div>
-              </button>
-
-              <button class="df-demo-btn btn-quick-login" data-pin="5678" title="Login as Bella Vista Floor Manager">
-                <div class="df-demo-btn-info">
-                  <span class="df-demo-btn-emoji">🍕</span>
-                  <div>
-                    <div class="df-demo-btn-title">Bella Vista Trattoria Staff</div>
-                    <div class="df-demo-btn-sub">Park Street Branch • POS &amp; Dining Room</div>
-                  </div>
-                </div>
-                <div class="df-demo-btn-pin">PIN: 5678</div>
-              </button>
+              ${((state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts).map(acc => {
+                const isSuper = acc.role === 'SUPER_ADMIN';
+                const tenantName = isSuper ? 'Multi-Tenant HQ • Owner Controls' : ((state.tenants && state.tenants[acc.tenantId]?.name) || 'Restaurant Staff OS');
+                const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Staff OS Only 🔒';
+                const badgeColor = isSuper ? '#818CF8' : '#10B981';
+                return `
+                  <button class="df-demo-btn btn-quick-login" data-pin="${acc.pin}" title="Login as ${acc.name}">
+                    <div class="df-demo-btn-info">
+                      <span class="df-demo-btn-emoji">${acc.avatarEmoji || (isSuper ? '⚡' : '👨‍🍳')}</span>
+                      <div>
+                        <div class="df-demo-btn-title" style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                          <span>${acc.name}</span>
+                          <span style="font-size: 0.62rem; padding: 0.1rem 0.35rem; border-radius: 4px; background: rgba(255,255,255,0.08); color: ${badgeColor}; font-weight: 700;">${badgeLabel}</span>
+                        </div>
+                        <div class="df-demo-btn-sub">${acc.roleTitle} • ${tenantName}</div>
+                      </div>
+                    </div>
+                    <div class="df-demo-btn-pin">PIN: ${acc.pin}</div>
+                  </button>
+                `;
+              }).join('')}
             </div>
           </div>
 
@@ -4595,6 +4598,264 @@
   }
 
   // ------------------------------------------------------------------------------
+  // MODAL: CREATE RESTAURANT STAFF / MANAGER PROFILE (OWNER DASHBOARD)
+  // Strictly restricted to Restaurant Staff OS (RESTAURANT_ADMIN).
+  // ------------------------------------------------------------------------------
+  function openCreateStaffModal(onCreatedCallback, preselectedTenant = null) {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
+
+    state = DineFlowStore.get();
+    const tenantsList = state.tenants ? Object.values(state.tenants) : [];
+    const defaultTenantSlug = preselectedTenant || state.currentTenantId || tenantsList[0]?.slug || 'the-urban-plate';
+
+    // Generates a random 4-digit PIN that is not already in use
+    function generateUniquePin() {
+      const existingPins = new Set(((state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts).map(a => a.pin));
+      let pin = '';
+      for (let attempts = 0; attempts < 1000; attempts++) {
+        pin = Math.floor(1000 + Math.random() * 9000).toString();
+        if (!existingPins.has(pin)) break;
+      }
+      return pin || '2468';
+    }
+
+    const defaultPin = generateUniquePin();
+
+    modalContainer.innerHTML = `
+      <div class="df-modal-backdrop active">
+        <div class="df-bottom-sheet" style="max-width: 560px; align-self: center; border-radius: 20px; background: #0E131F; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 24px 60px rgba(0,0,0,0.85); overflow: hidden;">
+          <div class="df-sheet-header" style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(16, 185, 129, 0.15); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                👤
+              </div>
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Create Staff Profile</h3>
+                <span style="font-size: 0.72rem; color: var(--text-dim);">Role-Based Access Control • Operations Provisioning</span>
+              </div>
+            </div>
+            <button class="df-sheet-close" id="btn-close-create-staff" style="background: none; border: none; font-size: 1.25rem; color: var(--text-dim); cursor: pointer;">✕</button>
+          </div>
+
+          <div class="df-sheet-body" style="padding: 1.25rem 1.5rem; max-height: 80vh; overflow-y: auto;">
+            <!-- Strict RBAC Security Callout -->
+            <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+              <span style="font-size: 1.25rem;">🔒</span>
+              <div style="font-size: 0.74rem; color: #CBD5E1; line-height: 1.45;">
+                <strong style="color: #fff; display: block; margin-bottom: 0.2rem;">Strict Restaurant OS Restriction Enforced</strong>
+                This user will be provisioned with operational permissions (<span style="color: #818CF8; font-weight: 700;">RESTAURANT_ADMIN</span>) and can <strong>only</strong> log into <strong>Restaurant Staff OS</strong> (?view=admin). Direct navigation or credentials entry into Owner HQ (?view=super-admin) is strictly blocked by RBAC route guards.
+              </div>
+            </div>
+
+            <form id="df-create-staff-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
+              <!-- Target Outlet -->
+              <div>
+                <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Assigned Restaurant Outlet *</label>
+                <select id="staff-outlet-select" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                  ${tenantsList.map(t => `<option value="${t.slug}" ${t.slug === defaultTenantSlug ? 'selected' : ''}>🏢 ${t.name} (${t.branch || 'Main'})</option>`).join('')}
+                </select>
+              </div>
+
+              <!-- Name & Role Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Full Name *</label>
+                  <input type="text" id="staff-full-name" placeholder="e.g. Priya Sharma" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Role Title *</label>
+                  <input type="text" id="staff-role-title" placeholder="e.g. Floor Supervisor" value="Floor Supervisor" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+              </div>
+
+              <!-- Department & Avatar Emoji Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Department</label>
+                  <select id="staff-dept-select" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                    <option value="Floor &amp; Guest Dining">Floor &amp; Guest Dining</option>
+                    <option value="Kitchen &amp; KDS Kanban">Kitchen &amp; KDS Kanban</option>
+                    <option value="Cash &amp; POS Billing">Cash &amp; POS Billing</option>
+                    <option value="Bar &amp; Craft Beverage">Bar &amp; Craft Beverage</option>
+                    <option value="General Store Operations">General Store Operations</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Avatar Emoji</label>
+                  <select id="staff-emoji-select" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                    <option value="👨‍🍳">👨‍🍳 Head Chef</option>
+                    <option value="👩‍🍳">👩‍🍳 Sous Chef</option>
+                    <option value="🤵">🤵 Floor Lead / Host</option>
+                    <option value="🍕">🍕 Kitchen Specialist</option>
+                    <option value="🍹">🍹 Mixologist / Bar</option>
+                    <option value="🧑‍💼">🧑‍💼 Operations Lead</option>
+                    <option value="💼">💼 Store Manager</option>
+                    <option value="⚡">⚡ Shift Cashier</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Fast 4-Digit PIN with Auto-Generate -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0;">4-Digit Fast Access PIN *</label>
+                  <button type="button" id="btn-generate-pin" style="background: none; border: none; color: var(--brand-primary); font-size: 0.72rem; cursor: pointer; text-decoration: underline;">
+                    🎲 Generate New PIN
+                  </button>
+                </div>
+                <div style="position: relative;">
+                  <input type="text" id="staff-pin-input" maxlength="4" placeholder="4 Digits (e.g. 2468)" value="${defaultPin}" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 1rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px;" required>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.25rem; display: block;">
+                  Staff can authenticate on the keypad in 1 second using this PIN.
+                </span>
+              </div>
+
+              <!-- Email & Password Credentials -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Staff Email *</label>
+                  <input type="email" id="staff-email-input" placeholder="e.g. priya@theurbanplate.in" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Default Password *</label>
+                  <input type="text" id="staff-pass-input" value="staff123" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+                <button type="button" id="btn-cancel-create-staff" class="df-pill-btn" style="padding: 0.65rem 1.15rem;">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-create-staff" class="df-pill-btn primary" style="padding: 0.65rem 1.4rem; font-weight: 700; background: linear-gradient(135deg, #10B981, #059669); border: none;">
+                  Create Staff Profile ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Event Listeners
+    const closeModal = () => {
+      modalContainer.innerHTML = '';
+    };
+
+    document.getElementById('btn-close-create-staff')?.addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-create-staff')?.addEventListener('click', closeModal);
+
+    document.getElementById('btn-generate-pin')?.addEventListener('click', () => {
+      const pinInput = document.getElementById('staff-pin-input');
+      if (pinInput) pinInput.value = generateUniquePin();
+    });
+
+    // Auto-fill suggested email based on name
+    document.getElementById('staff-full-name')?.addEventListener('input', (e) => {
+      const emailInput = document.getElementById('staff-email-input');
+      const outletSlug = document.getElementById('staff-outlet-select')?.value || 'the-urban-plate';
+      if (emailInput && (!emailInput.dataset.dirty || emailInput.value === '')) {
+        const cleanName = e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (cleanName) {
+          const domain = outletSlug.replace(/[^a-z0-9]/g, '');
+          emailInput.value = `${cleanName}@${domain}.in`;
+        }
+      }
+    });
+
+    document.getElementById('staff-email-input')?.addEventListener('focus', function () {
+      this.dataset.dirty = 'true';
+    });
+
+    document.getElementById('df-create-staff-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const outletSlug = document.getElementById('staff-outlet-select')?.value;
+      const fullName = document.getElementById('staff-full-name')?.value.trim();
+      const roleTitle = document.getElementById('staff-role-title')?.value.trim();
+      const dept = document.getElementById('staff-dept-select')?.value;
+      const emoji = document.getElementById('staff-emoji-select')?.value;
+      const pin = document.getElementById('staff-pin-input')?.value.trim();
+      const email = document.getElementById('staff-email-input')?.value.trim().toLowerCase();
+      const pass = document.getElementById('staff-pass-input')?.value.trim();
+
+      if (!fullName) {
+        showToast('Please enter staff full name.', '⚠️');
+        return;
+      }
+      if (!pin || !/^\d{4}$/.test(pin)) {
+        showToast('PIN must be exactly 4 numeric digits.', '⚠️');
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        showToast('Please provide a valid staff email address.', '⚠️');
+        return;
+      }
+
+      state = DineFlowStore.get();
+      const existingAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+
+      // Check PIN uniqueness
+      if (existingAccounts.some(a => a.pin === pin)) {
+        showToast(`PIN "${pin}" is already allocated to another staff member. Please pick another.`, '❌');
+        return;
+      }
+
+      // Check Email uniqueness
+      if (existingAccounts.some(a => a.email && a.email.toLowerCase() === email)) {
+        showToast(`Email "${email}" is already registered.`, '❌');
+        return;
+      }
+
+      const tenantObj = state.tenants ? state.tenants[outletSlug] : null;
+      const tenantName = tenantObj ? tenantObj.name : 'Restaurant Outlet';
+
+      const newAccount = {
+        id: 'staff-' + Date.now().toString(36),
+        name: fullName,
+        roleTitle: roleTitle || 'Floor Operations Lead',
+        role: 'RESTAURANT_ADMIN', // Strictly restricted to Staff OS!
+        tenantId: outletSlug,
+        pin: pin,
+        email: email,
+        password: pass || 'staff123',
+        avatarEmoji: emoji || '👨‍🍳',
+        department: dept || 'Floor & Guest Dining',
+        createdAt: new Date().toISOString()
+      };
+
+      if (!state.staffAccounts || !Array.isArray(state.staffAccounts)) {
+        state.staffAccounts = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.staffAccounts));
+      }
+      state.staffAccounts.push(newAccount);
+
+      // Record immutable security audit log
+      DineFlowStore.recordLog({
+        tenantId: outletSlug,
+        tenantName: tenantName,
+        managerId: state.session?.user?.id || 'staff-02',
+        managerName: state.session?.user?.name || 'Debashish Paul (Super Admin)',
+        category: 'SECURITY',
+        action: 'Staff Profile Provisioned',
+        details: `Provisioned new operational profile for "${newAccount.name}" (${newAccount.roleTitle}, PIN: ${newAccount.pin}) assigned to ${tenantName}. Access policy: Restaurant Staff OS only.`,
+        amount: 0,
+        paymentMethod: null,
+        securityFlag: '✓ Staff OS Only',
+        severity: 'info'
+      });
+
+      DineFlowStore.save(state);
+      SoundFX.chime('success');
+      showToast(`Staff profile created for ${newAccount.name}! Restricted to Staff OS.`, newAccount.avatarEmoji);
+      closeModal();
+
+      if (typeof onCreatedCallback === 'function') {
+        onCreatedCallback(newAccount);
+      }
+    });
+  }
+
+  // ------------------------------------------------------------------------------
   // 3. SUPER ADMIN PLATFORM VIEW (Multi-Tenant Overview)
   // ------------------------------------------------------------------------------
   function renderSuperAdminView(container) {
@@ -4668,6 +4929,9 @@
               <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Super Admin'}</span>
               <span class="df-role-tag" style="background: rgba(99, 102, 241, 0.2); color: #818CF8;">OWNER HQ</span>
             </div>
+            <button id="btn-open-create-user-modal" class="df-pill-btn" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #10B981; font-weight: 700;" title="Create new restaurant staff profile">
+              <span>+ Create Staff Profile</span>
+            </button>
             <a href="?view=onboarding" class="df-pill-btn primary">
               + Onboard Restaurant
             </a>
@@ -4791,9 +5055,14 @@
                 <div class="df-ledger-header">
                   <div>
                     <h3 class="df-ledger-title">Manager Shift Ledger</h3>
-                    <span style="font-size: 0.72rem; color: var(--text-dim);">Payment custody by store lead</span>
+                    <span style="font-size: 0.72rem; color: var(--text-dim);">Staff operational accounts &amp; payment custody</span>
                   </div>
-                  <span class="df-micro-badge status-available">${allManagers.length} ACTIVE</span>
+                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button id="btn-add-staff-from-ledger" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Provision new staff member">
+                      + Add Staff
+                    </button>
+                    <span class="df-micro-badge status-available">${allManagers.length} ACTIVE</span>
+                  </div>
                 </div>
 
                 ${allManagers.map((m, idx) => {
@@ -4809,10 +5078,25 @@
                       <div class="df-manager-top">
                         <div class="df-manager-avatar">${m.avatarEmoji || '👨‍🍳'}</div>
                         <div class="df-manager-info">
-                          <div class="df-manager-name">${m.name}</div>
+                          <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                            <span class="df-manager-name">${m.name}</span>
+                            ${m.role === 'SUPER_ADMIN' 
+                              ? '<span class="df-staff-scope-pill owner-hq">Owner HQ ⚡</span>' 
+                              : '<span class="df-staff-scope-pill staff-only">Staff OS Only 🔒</span>'}
+                          </div>
                           <div class="df-manager-sub">${m.roleTitle} • ${m.department || 'Floor'}</div>
+                          <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem;">
+                            🏢 ${m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform Operations'} &bull; <span style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); font-weight: 700;">PIN: ${m.pin}</span>
+                          </div>
                         </div>
-                        <span class="df-manager-status-pill">Active (${shiftTime})</span>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
+                          <span class="df-manager-status-pill">Active (${shiftTime})</span>
+                          ${m.role !== 'SUPER_ADMIN' ? `
+                            <button class="btn-revoke-staff" data-id="${m.id}" data-name="${m.name}" title="Revoke staff account">
+                              🗑️ Revoke
+                            </button>
+                          ` : ''}
+                        </div>
                       </div>
 
                       <div class="df-manager-stats-row">
@@ -4951,6 +5235,9 @@
                   <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
                     <button class="df-pill-btn primary btn-switch-tenant" data-slug="${t.slug}" style="flex: 1; justify-content: center; font-size: 0.78rem;">
                       Switch & Manage
+                    </button>
+                    <button class="df-pill-btn btn-add-outlet-staff" data-slug="${t.slug}" style="font-size: 0.78rem; background: rgba(16, 185, 129, 0.15); color: #10B981; border-color: rgba(16, 185, 129, 0.35);" title="Add staff member to this outlet">
+                      + Staff
                     </button>
                     <a href="?r=${t.slug}&t=T12" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
                       QR View ↗
@@ -5094,6 +5381,57 @@
           showToast('Audit logs exported to CSV successfully!', '📥');
         });
       }
+
+      // Open Create Staff Modal
+      container.querySelector('#btn-open-create-user-modal')?.addEventListener('click', () => {
+        openCreateStaffModal(() => renderMain());
+      });
+
+      container.querySelector('#btn-add-staff-from-ledger')?.addEventListener('click', () => {
+        openCreateStaffModal(() => renderMain());
+      });
+
+      container.querySelectorAll('.btn-add-outlet-staff').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const slug = btn.getAttribute('data-slug');
+          openCreateStaffModal(() => renderMain(), slug);
+        });
+      });
+
+      // Revoke Staff Profile Listener
+      container.querySelectorAll('.btn-revoke-staff').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const staffId = btn.getAttribute('data-id');
+          const staffName = btn.getAttribute('data-name');
+          if (confirm(`Are you sure you want to revoke staff access for "${staffName}"? This will immediately disable their login and PIN access to Restaurant Staff OS.`)) {
+            state = DineFlowStore.get();
+            const targetAccount = (state.staffAccounts || []).find(a => a.id === staffId);
+            state.staffAccounts = (state.staffAccounts || []).filter(a => a.id !== staffId);
+
+            // Record security audit log
+            DineFlowStore.recordLog({
+              tenantId: targetAccount?.tenantId || 'the-urban-plate',
+              tenantName: (targetAccount?.tenantId && state.tenants[targetAccount.tenantId]?.name) || 'Outlet',
+              managerId: state.session?.user?.id || 'staff-02',
+              managerName: state.session?.user?.name || 'Debashish Paul (Super Admin)',
+              category: 'SECURITY',
+              action: 'Staff Profile Revoked',
+              details: `Revoked operational access for "${staffName}" (${targetAccount?.roleTitle || 'Staff'}). Account deleted from staff directory.`,
+              amount: 0,
+              paymentMethod: null,
+              securityFlag: '⚠️ Profile Revoked',
+              severity: 'warning'
+            });
+
+            DineFlowStore.save(state);
+            SoundFX.chime('notice');
+            showToast(`Staff profile for "${staffName}" revoked.`, '🗑️');
+            renderMain();
+          }
+        });
+      });
 
       // Switch Tenant Listener
       container.querySelectorAll('.btn-switch-tenant').forEach(btn => {
