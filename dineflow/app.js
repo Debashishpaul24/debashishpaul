@@ -222,13 +222,13 @@
     }
     const toast = document.createElement('div');
     toast.className = 'df-toast';
-    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+    toast.innerHTML = `<span class="df-toast-icon">${icon}</span><span class="df-toast-msg">${message}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
-      toast.style.transition = 'opacity 0.3s, transform 0.3s';
+      toast.style.transition = 'opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
       toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
-      setTimeout(() => toast.remove(), 350);
+      toast.style.transform = 'translateY(-14px) scale(0.96)';
+      setTimeout(() => toast.remove(), 300);
     }, 2800);
   }
 
@@ -2615,17 +2615,27 @@
 
           <!-- Main Content Area -->
           <section class="df-admin-main" id="admin-main-content">
+            <!-- Compact Metrics Bar Header with Toggle -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; padding: 0 0.15rem;">
+              <span style="font-size: 0.68rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.35rem;">
+                <span>📊</span> Shift Operations Telemetry
+              </span>
+              <button id="btn-toggle-stats-bar" type="button" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-subtle); color: var(--brand-primary); font-size: 0.65rem; font-weight: 700; cursor: pointer; padding: 0.15rem 0.5rem; border-radius: 99px; display: inline-flex; align-items: center; gap: 0.25rem;" title="Collapse/Expand metrics to maximize ticket viewing area">
+                <span id="stats-toggle-icon">▲ Hide Metrics</span>
+              </button>
+            </div>
+
             <!-- Top Metric Stat Cards -->
-            <div class="df-stats-grid">
+            <div class="df-stats-grid" id="admin-stats-grid">
               <div class="df-stat-card">
                 <span class="df-stat-label">Today's Revenue</span>
                 <div class="df-stat-val">${tenant.currency}${todayRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
-                <span class="df-stat-change">↑ +14.2% from yesterday</span>
+                <span class="df-stat-change">↑ +14.2% vs yesterday</span>
               </div>
               <div class="df-stat-card">
                 <span class="df-stat-label">Total Orders</span>
                 <div class="df-stat-val">${todayOrdersCount}</div>
-                <span class="df-stat-change">↑ 84 QR scans today</span>
+                <span class="df-stat-change">↑ 84 QR scans</span>
               </div>
               <div class="df-stat-card">
                 <span class="df-stat-label">Active Tables</span>
@@ -2643,7 +2653,7 @@
             <div id="admin-tab-body"></div>
 
             <!-- Operations OS Footer -->
-            <footer class="df-admin-footer" style="margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <footer class="df-admin-footer" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
               <div style="font-size: 0.82rem; color: var(--text-dim);">
                 Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow Restaurant OS
               </div>
@@ -2662,6 +2672,17 @@
         currentAdminTab = btn.getAttribute('data-tab');
         renderAdminView(container, tenant);
       });
+    });
+
+    // Bind Metrics Bar Collapse / Expand Toggle
+    document.getElementById('btn-toggle-stats-bar')?.addEventListener('click', () => {
+      const grid = document.getElementById('admin-stats-grid');
+      const icon = document.getElementById('stats-toggle-icon');
+      if (grid) {
+        grid.classList.toggle('collapsed');
+        const isCollapsed = grid.classList.contains('collapsed');
+        if (icon) icon.textContent = isCollapsed ? '▼ Show Metrics' : '▲ Hide Metrics';
+      }
     });
 
     // Bind Tone Cycle & Preview
@@ -2742,16 +2763,16 @@
     ];
 
     container.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; flex-wrap: wrap; gap: 0.5rem;">
         <div>
-          <h2 style="font-size: 1.35rem; font-weight: 800;">Live Kitchen Display System (KDS)</h2>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time status changes sync live to the customer's phone screen.</p>
+          <h2 style="font-size: 1.12rem; font-weight: 800; margin: 0; line-height: 1.2;">Live Kitchen Display System (KDS)</h2>
+          <p style="font-size: 0.72rem; color: var(--text-muted); margin: 2px 0 0 0;">Real-time status changes sync live to customer phone.</p>
         </div>
-        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-          <button class="df-pill-btn" id="btn-admin-clear-all" title="Clear all active tables and mark them available">
-            🧹 Clear All Tables
+        <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+          <button class="df-pill-btn" id="btn-admin-clear-all" title="Clear all active tables and mark them available" style="font-size: 0.68rem; padding: 0.2rem 0.55rem;">
+            🧹 Clear Tables
           </button>
-          <button class="df-pill-btn" id="btn-admin-refresh">🔄 Refresh Feed</button>
+          <button class="df-pill-btn" id="btn-admin-refresh" style="font-size: 0.68rem; padding: 0.2rem 0.55rem;">🔄 Refresh</button>
         </div>
       </div>
 
@@ -4118,7 +4139,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.0').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.2').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

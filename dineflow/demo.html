@@ -300,7 +300,7 @@
     /* Live Visual Spotlight HUD Toast */
     .spotlight-toast {
       position: fixed;
-      top: 72px;
+      top: 66px;
       left: 50%;
       transform: translateX(-50%) translateY(-15px);
       background: rgba(14, 19, 31, 0.96);
@@ -308,18 +308,22 @@
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(229, 169, 60, 0.3);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      padding: 0.65rem 1.3rem;
-      border-radius: 999px;
+      padding: 0.6rem 1.15rem;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       gap: 0.7rem;
       font-size: 0.82rem;
+      line-height: 1.4;
       color: #fff;
       z-index: 1000;
       opacity: 0;
       pointer-events: none;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      max-width: 90vw;
+      width: max-content;
+      max-width: min(520px, calc(100vw - 2rem));
+      box-sizing: border-box;
+      text-align: left;
     }
 
     .spotlight-toast.visible {
@@ -1681,7 +1685,7 @@
             </div>
           </div>
 
-          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.9.0" title="DineFlow Guest Mobile Ordering"></iframe>
+          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.9.2" title="DineFlow Guest Mobile Ordering"></iframe>
         </div>
 
         <!-- iOS Home Indicator -->
@@ -1736,7 +1740,7 @@
         </div>
 
         <!-- Desktop Screen Iframe -->
-        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=1.9.0" title="DineFlow Operations & Governance Console"></iframe>
+        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=1.9.2" title="DineFlow Operations & Governance Console"></iframe>
       </div>
     </section>
 
@@ -2549,7 +2553,7 @@
           showSpotlight('<strong>Restored to Table Stand!</strong> Ready to scan Table T12 QR again.', '🔄');
           logTelemetry('Demo restored to initial at-table state with QR stand', '🔄');
 
-          mobileIframe.src = './?r=the-urban-plate&t=T12&v=1.9.0';
+          mobileIframe.src = './?r=the-urban-plate&t=T12&v=1.9.2';
           ensureDemoAuth('RESTAURANT_ADMIN');
           tabStaff.click();
           updateSandboxUrlQuery({ step: null, sim: null, role: 'staff' });

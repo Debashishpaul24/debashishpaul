@@ -1531,7 +1531,7 @@ body.splash-active {
 
 .df-admin-main {
   flex: 1;
-  padding: 1.25rem 1rem;
+  padding: 0.65rem 0.85rem;
   overflow-y: auto;
   max-width: 1400px;
 }
@@ -1575,46 +1575,72 @@ body.splash-active {
   }
 }
 
-/* Stat Metric Cards */
+/* Stat Metric Cards - Compact High-Density Operations Bar */
 .df-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.25rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  transition: all 0.25s ease;
+}
+
+.df-stats-grid.collapsed {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .df-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+  }
 }
 
 .df-stat-card {
-  background: var(--bg-card);
+  background: rgba(14, 19, 31, 0.7);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.12rem;
   box-shadow: var(--shadow-sm);
+  min-width: 0;
+  transition: all 0.2s ease;
+}
+
+.df-stat-card:hover {
+  border-color: rgba(var(--brand-primary-rgb), 0.4);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .df-stat-label {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.64rem;
+  font-weight: 700;
   text-transform: uppercase;
   color: var(--text-muted);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .df-stat-val {
-  font-size: 1.75rem;
+  font-size: 1.12rem;
   font-weight: 800;
   font-family: var(--font-heading);
   color: #fff;
+  line-height: 1.15;
 }
 
 .df-stat-change {
-  font-size: 0.75rem;
+  font-size: 0.62rem;
   color: #10B981;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Live Kitchen Kanban */
@@ -1622,17 +1648,17 @@ body.splash-active {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.45rem;
-  margin-top: 0.85rem;
+  margin-top: 0.35rem;
 }
 
 .df-kanban-col {
   background: rgba(14, 19, 31, 0.6);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 0.65rem 0.45rem;
+  padding: 0.45rem 0.45rem;
   display: flex;
   flex-direction: column;
-  min-height: 500px;
+  min-height: 480px;
   min-width: 0;
 }
 
@@ -1641,8 +1667,8 @@ body.splash-active {
   align-items: center;
   justify-content: space-between;
   gap: 0.25rem;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.45rem;
   border-bottom: 1px solid var(--border-subtle);
   min-width: 0;
 }
@@ -1813,38 +1839,81 @@ body.splash-active {
   }
 }
 
-/* Toasts */
+/* Toasts & System Notification Banners */
 .df-toast-container {
   position: fixed;
-  bottom: calc(135px + env(safe-area-inset-bottom, 0px));
+  top: calc(16px + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10001;
+  z-index: 10005;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.5rem;
   pointer-events: none;
+  width: 90%;
+  max-width: 400px;
+  box-sizing: border-box;
 }
 
 .df-toast {
-  background: var(--bg-glass-heavy);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glow);
+  background: rgba(14, 19, 31, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(229, 169, 60, 0.4);
   color: #fff;
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--radius-full);
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
   font-weight: 600;
   font-size: 0.82rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  line-height: 1.38;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75), 0 0 16px rgba(229, 169, 60, 0.15);
   animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
+  width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.df-toast-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.df-toast-msg {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  color: #F8FAFC;
 }
 
 @keyframes toastIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .df-toast-container {
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    width: calc(100% - 24px);
+    max-width: 360px;
+  }
+  .df-toast {
+    padding: 0.52rem 0.82rem;
+    font-size: 0.78rem;
+    border-radius: 10px;
+  }
+  .df-toast-icon {
+    font-size: 1.05rem;
+  }
 }
 
 /* Responsive Media Queries */
