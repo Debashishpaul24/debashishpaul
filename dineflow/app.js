@@ -638,10 +638,12 @@
       };
     }
 
-    if (viewParam === 'login') {
+    if (viewParam === 'login' || viewParam === 'staff-login' || viewParam === 'owner-login') {
+      const isOwner = viewParam === 'owner-login' || searchParams.get('target') === 'super-admin' || searchParams.get('portal') === 'owner';
       return {
         view: 'login',
-        target: searchParams.get('target') || 'admin'
+        target: isOwner ? 'super-admin' : 'admin',
+        portal: isOwner ? 'owner' : 'staff'
       };
     }
 
@@ -867,12 +869,28 @@
       navigateTo({ view: 'login' });
       return;
     } else if (route.view === 'login') {
-      renderLoginView(appEl, route.target === 'super-admin' ? '?view=super-admin' : '?view=admin');
+      const isOwner = route.target === 'super-admin' || route.portal === 'owner';
+      renderLoginView(appEl, isOwner ? '?view=super-admin' : '?view=admin', isOwner ? 'SUPER_ADMIN' : 'RESTAURANT_ADMIN', isOwner ? 'owner' : 'staff');
       renderFloatingRoleSwitcher('login');
     } else if (route.view === 'admin') {
+      // 1. Session Revocation Check: If staff was revoked in Owner HQ, terminate session immediately!
+      const currentStaff = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+      if (state.session && state.session.isAuthenticated && state.session.role === 'RESTAURANT_ADMIN') {
+        const isStillValid = currentStaff.some(acc => acc.id === state.session.user?.id && acc.role === 'RESTAURANT_ADMIN');
+        if (!isStillValid) {
+          state.session = { isAuthenticated: false, role: 'CUSTOMER', user: null, tenantId: 'the-urban-plate' };
+          DineFlowStore.save(state);
+          removeFloatingRoleSwitcher();
+          SoundFX.chime('alert');
+          showToast('Session Terminated: Your staff profile was revoked by the restaurant owner.', '🔒');
+          renderLoginView(appEl, '?view=admin', 'RESTAURANT_ADMIN', 'staff');
+          return;
+        }
+      }
+
       if (!isStaffAuth) {
         removeFloatingRoleSwitcher();
-        renderLoginView(appEl, '?view=admin', 'RESTAURANT_ADMIN');
+        renderLoginView(appEl, '?view=admin', 'RESTAURANT_ADMIN', 'staff');
         return;
       }
       const tenant = getCurrentTenant();
@@ -887,7 +905,7 @@
           navigateTo({ view: 'admin' });
           return;
         }
-        renderLoginView(appEl, '?view=super-admin', 'SUPER_ADMIN');
+        renderLoginView(appEl, '?view=super-admin', 'SUPER_ADMIN', 'owner');
         return;
       }
       renderSuperAdminView(appEl);
@@ -1121,11 +1139,12 @@
   // ------------------------------------------------------------------------------
   // 0. AUTHENTICATION & LOGIN GATEWAY VIEW
   // ------------------------------------------------------------------------------
-  function renderLoginView(container, redirectTarget = '?view=admin', requestedRole = 'RESTAURANT_ADMIN') {
+  function renderLoginView(container, redirectTarget = '?view=admin', requestedRole = 'RESTAURANT_ADMIN', portalType = 'staff') {
     let currentAuthMode = 'pin'; // 'pin' | 'password'
     let enteredPin = '';
 
     const targetTenant = getCurrentTenant();
+    const isStaffPortal = requestedRole === 'RESTAURANT_ADMIN' || portalType === 'staff';
 
     function updatePinDots() {
       const dots = container.querySelectorAll('.df-pin-dot');
@@ -1148,21 +1167,41 @@
 
     function authenticateUser(account) {
       if (!account) return false;
+      state = DineFlowStore.get();
+      const currentAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
 
-      // Strict RBAC Guardrail: Staff accounts can NEVER access Super Admin Owner HQ
-      if (requestedRole === 'SUPER_ADMIN' && account.role !== 'SUPER_ADMIN') {
+      // 1. Strict Existence Check: Account must exist in owner-managed directory
+      const existsInDirectory = currentAccounts.some(a => a.id === account.id || a.pin === account.pin);
+      if (!existsInDirectory) {
         SoundFX.chime('alert');
         triggerShake();
-        showToast(`Access Denied: ${account.name} is a Staff account and can only access Restaurant Staff OS.`, '🔒');
+        showToast('Access Denied: This account does not exist or has been revoked by the owner.', '🚫');
         return false;
       }
 
-      state = DineFlowStore.get();
+      // 2. Strict Role Authorization
+      if (isStaffPortal) {
+        if (account.role !== 'RESTAURANT_ADMIN') {
+          SoundFX.chime('alert');
+          triggerShake();
+          showToast('Access Denied: Owner HQ credentials detected. Super Admins must use the Owner HQ Gateway (?view=super-admin).', '🔒');
+          return false;
+        }
+      } else {
+        if (account.role !== 'SUPER_ADMIN') {
+          SoundFX.chime('alert');
+          triggerShake();
+          showToast(`Access Denied: ${account.name} is a Staff account and can only access the Restaurant Staff Portal.`, '🔒');
+          return false;
+        }
+      }
+
+      // 3. Establish Authenticated Session
       state.session = {
         isAuthenticated: true,
         role: account.role,
         user: account,
-        tenantId: account.tenantId || 'the-urban-plate'
+        tenantId: account.tenantId || targetTenant.slug
       };
       if (account.tenantId) {
         state.currentTenantId = account.tenantId;
@@ -1171,8 +1210,22 @@
       SoundFX.chime('success');
       showToast(`Welcome, ${account.name}! Authenticated as ${account.roleTitle}`, account.avatarEmoji || '🔑');
 
-      const targetView = (account.role === 'SUPER_ADMIN') ? 'super-admin' : 'admin';
+      // 4. Record Immutable Security Audit Log
+      DineFlowStore.recordLog({
+        tenantId: account.tenantId || targetTenant.slug,
+        tenantName: (state.tenants && state.tenants[account.tenantId]?.name) || targetTenant.name,
+        managerId: account.id,
+        managerName: account.name,
+        category: 'SHIFT',
+        action: isStaffPortal ? 'Staff Portal Login' : 'Owner HQ Login',
+        details: `${account.name} (${account.roleTitle}) authenticated into ${isStaffPortal ? 'Restaurant Staff OS' : 'Owner HQ'}. Authorized by owner directory.`,
+        amount: 0,
+        paymentMethod: null,
+        securityFlag: '✓ Authorized Session',
+        severity: 'info'
+      });
 
+      const targetView = (account.role === 'SUPER_ADMIN') ? 'super-admin' : 'admin';
       setTimeout(() => {
         navigateTo({ view: targetView });
       }, 200);
@@ -1188,56 +1241,111 @@
       state = DineFlowStore.get();
       const accounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
       const match = accounts.find(acc => acc.pin === enteredPin);
-      if (match) {
-        authenticateUser(match);
-      } else {
+
+      if (!match) {
         SoundFX.chime('alert');
         triggerShake();
-        showToast('Invalid PIN. Please check your assigned 4-digit PIN.', '❌');
+        showToast(isStaffPortal ? 'Authentication Failed: Unrecognized staff PIN. Only staff created by the restaurant owner can log in.' : 'Invalid Super Admin PIN.', '❌');
         enteredPin = '';
         updatePinDots();
+        return;
       }
+
+      authenticateUser(match);
     }
 
-    document.title = 'DineFlow - Operations & Staff Login Gateway';
+    document.title = isStaffPortal 
+      ? `${targetTenant.name} - Restaurant Staff Portal & Kitchen Login Gateway`
+      : 'DineFlow - Owner HQ & Platform Super Admin Gateway';
+
+    // Filter accounts specifically for this portal:
+    const allAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+    const authorizedProfiles = isStaffPortal
+      ? allAccounts.filter(acc => acc.role === 'RESTAURANT_ADMIN')
+      : allAccounts.filter(acc => acc.role === 'SUPER_ADMIN');
 
     container.innerHTML = `
       <header class="df-topbar">
         <div class="df-brand-badge">
-          <div class="df-brand-icon" style="background: linear-gradient(135deg, #E5A93C, #F59E0B); color: #000;">🔐</div>
+          <div class="df-brand-icon" style="${isStaffPortal ? 'background: linear-gradient(135deg, #10B981, #059669); color: #fff;' : 'background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff;'}">${isStaffPortal ? '👨‍🍳' : '⚡'}</div>
           <div class="df-brand-text">
-            <h1>DineFlow Operations Gateway</h1>
-            <span class="df-brand-tagline">Secure Role-Based Access for Kitchen, Floor &amp; Super Admin</span>
+            <h1>${isStaffPortal ? `${targetTenant.name} Staff Portal` : 'DineFlow Platform Owner HQ'}</h1>
+            <span class="df-brand-tagline">${isStaffPortal ? 'Authorized Floor, Kitchen KDS &amp; Billing Terminal' : 'Executive Multi-Tenant Governance &amp; Controls'}</span>
           </div>
         </div>
         <div class="df-top-actions">
           <a href="?r=${targetTenant.slug}&t=T12" class="df-pill-btn" title="Return to Guest Ordering">
             <span>← Guest Dining</span>
           </a>
+          ${isStaffPortal ? `
+            <a href="?view=super-admin" class="df-pill-btn" style="border-color: rgba(99,102,241,0.4); color: #818CF8;" title="Go to Platform Owner HQ">
+              <span>Owner HQ ⚡</span>
+            </a>
+          ` : `
+            <a href="?view=admin" class="df-pill-btn" style="border-color: rgba(16,185,129,0.4); color: #10B981;" title="Go to Restaurant Staff Portal">
+              <span>Staff Portal 👨‍🍳</span>
+            </a>
+          `}
         </div>
       </header>
 
       <main class="df-login-container">
         <div class="df-login-card">
           <div class="df-login-header">
-            <div class="df-login-icon-badge">🛡️</div>
-            <h2 class="df-login-title">Operations Portal</h2>
+            <div class="df-login-icon-badge" style="${isStaffPortal ? 'background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3);' : 'background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.3);'}">
+              ${isStaffPortal ? '👨‍🍳' : '⚡'}
+            </div>
+            <h2 class="df-login-title">${isStaffPortal ? 'Restaurant Staff Portal' : 'Owner HQ Security Gateway'}</h2>
             <p class="df-login-subtitle">
-              Sign in to manage live orders, Kitchen Display System (KDS), or SaaS platform controls.
+              ${isStaffPortal 
+                ? 'Sign in to access live dining tables, kitchen KDS tickets, and at-table guest requests.'
+                : 'Sign in to manage multi-tenant restaurants, financial audit logs, and owner controls.'}
             </p>
           </div>
 
-          <!-- Quick 1-Click Demo Profiles -->
+          <!-- Scope Context & Security Banner -->
+          ${isStaffPortal ? `
+            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.55rem 0.85rem; margin-bottom: 0.85rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.15rem;">🏢</span>
+                <div>
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #fff;">${targetTenant.name}</div>
+                  <div style="font-size: 0.68rem; color: var(--text-dim);">${targetTenant.branch || 'Main Branch'} &bull; Restaurant Staff Terminal</div>
+                </div>
+              </div>
+              <span class="df-staff-scope-pill staff-only">Staff Terminal 🔒</span>
+            </div>
+
+            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 10px; padding: 0.75rem 0.95rem; margin-bottom: 1.25rem; display: flex; gap: 0.65rem; align-items: flex-start;">
+              <span style="font-size: 1.15rem; line-height: 1;">🛡️</span>
+              <div style="font-size: 0.73rem; color: #CBD5E1; line-height: 1.45;">
+                <strong style="color: #10B981; display: block; margin-bottom: 0.15rem;">Owner-Provisioned Staff Access Only</strong>
+                Only staff accounts created and authorized by the restaurant owner in Owner HQ are permitted to log in.
+              </div>
+            </div>
+          ` : `
+            <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.28); border-radius: 10px; padding: 0.75rem 0.95rem; margin-bottom: 1.25rem; display: flex; gap: 0.65rem; align-items: flex-start;">
+              <span style="font-size: 1.15rem; line-height: 1;">⚡</span>
+              <div style="font-size: 0.73rem; color: #CBD5E1; line-height: 1.45;">
+                <strong style="color: #818CF8; display: block; margin-bottom: 0.15rem;">Platform Owner &amp; Super Admin Access</strong>
+                Strictly restricted to platform owners. Staff members cannot access Owner HQ and must use the Staff Portal.
+              </div>
+            </div>
+          `}
+
+          <!-- Quick 1-Click Authorized Profiles -->
           <div class="df-demo-box">
             <div class="df-demo-box-label">
-              <span>⚡ One-Click Instant Demo Access</span>
-              <span style="font-size: 0.65rem; color: var(--text-dim);">No typing needed</span>
+              <span>${isStaffPortal ? '⚡ Owner-Authorized Staff Profiles' : '⚡ Platform Owner Profile'}</span>
+              <span style="font-size: 0.65rem; color: ${isStaffPortal ? '#10B981' : '#818CF8'}; font-weight: 700;">
+                ${isStaffPortal ? `${authorizedProfiles.length} Active Staff` : 'Super Admin'}
+              </span>
             </div>
             <div class="df-demo-profile-btns">
-              ${((state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts).map(acc => {
+              ${authorizedProfiles.length > 0 ? authorizedProfiles.map(acc => {
                 const isSuper = acc.role === 'SUPER_ADMIN';
-                const tenantName = isSuper ? 'Multi-Tenant HQ • Owner Controls' : ((state.tenants && state.tenants[acc.tenantId]?.name) || 'Restaurant Staff OS');
-                const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Staff OS Only 🔒';
+                const tenantName = isSuper ? 'Multi-Tenant HQ • Owner Controls' : ((state.tenants && state.tenants[acc.tenantId]?.name) || targetTenant.name);
+                const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Owner Authorized ✓';
                 const badgeColor = isSuper ? '#818CF8' : '#10B981';
                 return `
                   <button class="df-demo-btn btn-quick-login" data-pin="${acc.pin}" title="Login as ${acc.name}">
@@ -1251,10 +1359,14 @@
                         <div class="df-demo-btn-sub">${acc.roleTitle} • ${tenantName}</div>
                       </div>
                     </div>
-                    <div class="df-demo-btn-pin">PIN: ${acc.pin}</div>
+                    <div class="df-demo-btn-pin" style="color: ${badgeColor}; border-color: rgba(255,255,255,0.15);">PIN: ${acc.pin}</div>
                   </button>
                 `;
-              }).join('')}
+              }).join('') : `
+                <div style="text-align: center; padding: 1.25rem; font-size: 0.78rem; color: var(--text-dim); background: rgba(255,255,255,0.03); border-radius: 8px;">
+                  No staff profiles created yet. Please ask your restaurant owner to create your profile in Owner HQ.
+                </div>
+              `}
             </div>
           </div>
 
@@ -1299,21 +1411,21 @@
           <!-- Email & Password Mode -->
           <form id="df-password-view" class="df-login-form" style="${currentAuthMode === 'password' ? '' : 'display: none;'}" onsubmit="return false;">
             <div class="df-form-field">
-              <label>Staff / Admin Email</label>
-              <input type="email" id="login-email" placeholder="manager@theurbanplate.in" value="manager@theurbanplate.in" required>
+              <label>${isStaffPortal ? 'Staff Email' : 'Owner / Super Admin Email'}</label>
+              <input type="email" id="login-email" placeholder="${isStaffPortal ? 'manager@theurbanplate.in' : 'debashish@dineflow.io'}" value="${isStaffPortal ? (authorizedProfiles[0]?.email || 'manager@theurbanplate.in') : 'debashish@dineflow.io'}" required>
             </div>
             <div class="df-form-field">
               <label>Password</label>
               <input type="password" id="login-password" placeholder="••••••••" value="admin" required>
             </div>
-            <button class="df-pill-btn primary" id="btn-submit-password" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
-              Authenticate &amp; Enter Dashboard →
+            <button class="df-pill-btn primary" id="btn-submit-password" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; ${isStaffPortal ? 'background: linear-gradient(135deg, #10B981, #059669); border: none;' : ''}">
+              ${isStaffPortal ? 'Authenticate & Enter Staff OS →' : 'Authenticate & Enter Owner HQ →'}
             </button>
           </form>
 
           <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
-            <span>🔒 Role-Based Access Control Protected</span>
-            <a href="?r=the-urban-plate&t=T12" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Guest Menu</a>
+            <span>🔒 ${isStaffPortal ? 'Owner-Provisioned Staff Only' : 'Owner Executive Access Only'}</span>
+            <a href="?r=${targetTenant.slug}&t=T12" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Guest Menu</a>
           </div>
         </div>
       </main>
@@ -1383,12 +1495,13 @@
       const pass = container.querySelector('#login-password')?.value;
       state = DineFlowStore.get();
       const accounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
-      const match = accounts.find(acc => acc.email.toLowerCase() === email.toLowerCase());
-      if (match) {
+      const match = accounts.find(acc => acc.email && acc.email.toLowerCase() === email.toLowerCase());
+      if (match && (match.password === pass || !match.password)) {
         authenticateUser(match);
       } else {
         SoundFX.chime('alert');
-        showToast('Invalid credentials. Check email or use 1-Click Demo above', '❌');
+        triggerShake();
+        showToast(isStaffPortal ? 'Authentication Failed: Invalid staff credentials. Only owner-created staff can log in.' : 'Invalid credentials.', '❌');
       }
     });
 
