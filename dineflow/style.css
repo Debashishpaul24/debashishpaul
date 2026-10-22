@@ -834,6 +834,18 @@ body.splash-active {
   border: 1px solid rgba(var(--brand-primary-rgb), 0.4);
 }
 
+.df-micro-badge.status-available {
+  background: rgba(16, 185, 129, 0.16);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.df-micro-badge.status-occupied {
+  background: rgba(239, 68, 68, 0.16);
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
 .df-food-title {
   font-size: 1rem;
   font-weight: 700;

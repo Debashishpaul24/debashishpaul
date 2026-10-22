@@ -3318,7 +3318,7 @@
             <div class="df-table-admin-card">
               <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff;">${table.name}</h4>
-                <span class="df-micro-badge ${table.status === 'occupied' ? 'bestseller' : 'chef'}" style="text-transform: uppercase;">
+                <span class="df-micro-badge ${table.status === 'occupied' ? 'status-occupied' : 'status-available'}" style="text-transform: uppercase;">
                   ${table.status}
                 </span>
               </div>
@@ -5007,7 +5007,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.7').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.8').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
