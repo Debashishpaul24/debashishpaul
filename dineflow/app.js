@@ -629,6 +629,16 @@
 
     // 2. Query Parameters routing (?view=admin, ?section=roi-calculator, ?r=the-urban-plate&t=T12, etc.)
     const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get('clear') === 'true' || searchParams.get('reset') === 'true' || searchParams.get('cache') === 'clear') {
+      DineFlowStore.clearAllCache();
+      searchParams.delete('clear');
+      searchParams.delete('reset');
+      searchParams.delete('cache');
+      const cleanSearch = searchParams.toString();
+      window.history.replaceState({}, '', window.location.pathname + (cleanSearch ? '?' + cleanSearch : ''));
+      state = DineFlowStore.get();
+    }
+
     const viewParam = searchParams.get('view');
     const rParam = searchParams.get('r');
     const tParam = searchParams.get('t');
@@ -5970,7 +5980,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=2.3.0').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=2.3.1').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

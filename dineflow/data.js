@@ -1413,7 +1413,7 @@ const DINEFLOW_DEFAULT_DATA = {
 
 // Store helper for localStorage persistence with state change broadcast
 const DineFlowStore = {
-  KEY: 'DINEFLOW_SaaS_STORE_v3',
+  KEY: 'DINEFLOW_SaaS_STORE_v4',
   broadcastChannel: null,
 
   init() {
@@ -1432,11 +1432,7 @@ const DineFlowStore = {
 
   get() {
     try {
-      // Migrate previous v1 / v2 localStorage stores if v3 is not yet populated
       let stored = localStorage.getItem(this.KEY);
-      if (!stored) {
-        stored = localStorage.getItem('DINEFLOW_SaaS_STORE_v2') || localStorage.getItem('DINEFLOW_SaaS_STORE_v1');
-      }
       if (stored) {
         const data = JSON.parse(stored);
         // Resilient corporate VPN migration: ensure all dish images reference local bundled assets
@@ -1662,6 +1658,30 @@ const DineFlowStore = {
   reset() {
     localStorage.removeItem(this.KEY);
     return this.get();
+  },
+
+  clearAllCache() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('DINEFLOW') || key.startsWith('dineflow')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
+      if (typeof window !== 'undefined' && 'caches' in window) {
+        caches.keys().then(keys => {
+          keys.forEach(k => caches.delete(k));
+        });
+      }
+      if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(r => r.unregister());
+        });
+      }
+    } catch (e) {
+      console.warn('Cache clear error:', e);
+    }
   }
 };
 
