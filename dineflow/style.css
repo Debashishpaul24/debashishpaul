@@ -260,6 +260,60 @@ input:focus, textarea:focus, select:focus {
   border-color: rgba(239, 68, 68, 0.55);
 }
 
+/* Deep-Route Boot Shield: Conceals pre-rendered landing page when visiting Guest Menu or Staff OS directly */
+html.df-deep-loading #app {
+  display: none !important;
+}
+
+html.df-deep-loading #df-boot-loader {
+  display: flex !important;
+}
+
+#df-boot-loader {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: #07090E;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.df-boot-logo {
+  font-size: 2.5rem;
+  animation: df-boot-pulse 1.4s ease-in-out infinite;
+}
+
+.df-boot-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgba(229, 169, 60, 0.2);
+  border-top-color: #E5A93C;
+  border-radius: 50%;
+  animation: df-boot-spin 0.75s linear infinite;
+}
+
+.df-boot-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+@keyframes df-boot-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes df-boot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
 /* Master Container */
 .df-app-viewport {
   padding-top: 60px;

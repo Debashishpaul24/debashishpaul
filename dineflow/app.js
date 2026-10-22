@@ -823,6 +823,11 @@
     const appEl = document.getElementById('app');
     if (!appEl) return;
 
+    // Dismiss deep-route boot shield to smoothly reveal view
+    document.documentElement.classList.remove('df-deep-loading');
+    const bootLoader = document.getElementById('df-boot-loader');
+    if (bootLoader) bootLoader.style.display = 'none';
+
     // Ensure active tenant cloud synchronization across mobile and desktop
     if (typeof DineFlowCloudSync !== 'undefined') {
       if (route.view === 'admin' || route.view === 'super-admin') {
@@ -5007,7 +5012,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.9').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=2.0.0').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

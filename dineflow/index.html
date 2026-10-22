@@ -14,6 +14,22 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- Instant Boot Shield: Eliminates pre-rendered landing page flash when launching Guest Menu or Staff OS directly -->
+  <script>
+    (function() {
+      try {
+        var s = window.location.search || '';
+        var h = window.location.hash || '';
+        if (s.indexOf('view=demo') !== -1 || s.indexOf('view=sandbox') !== -1) {
+          window.location.replace('demo.html' + s);
+          return;
+        }
+        if (s.indexOf('r=') !== -1 || s.indexOf('view=') !== -1 || (h.length > 1 && h.indexOf('section') === -1)) {
+          document.documentElement.classList.add('df-deep-loading');
+        }
+      } catch(e) {}
+    })();
+  </script>
   <!-- Primary SEO Metadata -->
   <title>DineFlow - QR Restaurant SaaS & Digital Dining Platform</title>
   <meta name="title" content="DineFlow - QR Restaurant SaaS & Digital Dining Platform">
@@ -102,10 +118,17 @@
   </script>
 
   <!-- Design Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=1.9.9">
+  <link rel="stylesheet" href="style.css?v=2.0.0">
 </head>
 
 <body>
+  <!-- Instant Boot Shield Overlay -->
+  <div id="df-boot-loader" aria-hidden="true">
+    <div class="df-boot-logo">🍽️</div>
+    <div class="df-boot-spinner"></div>
+    <div class="df-boot-text">Loading DineFlow...</div>
+  </div>
+
   <!-- Dynamic Single Page Application Mount Point with Pre-Rendered Semantic SEO Content -->
   <div id="app">
     <header class="df-topbar df-hub-topbar">
@@ -570,9 +593,9 @@
 
   <!-- Client-Side Modules (Zero external network dependencies for QR, PubSub & Storage) -->
   <script src="qr-engine.js?v=1.8.0"></script>
-  <script src="mqttws31.min.js?v=1.9.9"></script>
-  <script src="data.js?v=1.9.9"></script>
-  <script src="app.js?v=1.9.9"></script>
+  <script src="mqttws31.min.js?v=2.0.0"></script>
+  <script src="data.js?v=2.0.0"></script>
+  <script src="app.js?v=2.0.0"></script>
 
   <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
   <script>
