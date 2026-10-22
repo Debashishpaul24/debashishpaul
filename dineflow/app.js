@@ -320,6 +320,16 @@
       return { view: 'super-admin' };
     }
 
+    if (viewParam === 'demo' || viewParam === 'sandbox') {
+      return {
+        view: 'demo',
+        role: searchParams.get('role') || 'staff',
+        step: searchParams.get('step') || null,
+        autostart: searchParams.get('autostart') === 'true' || searchParams.get('sim') === 'true',
+        sound: searchParams.get('sound') !== 'false' && searchParams.get('sound') !== '0'
+      };
+    }
+
     if (viewParam === 'onboarding') {
       return { view: 'onboarding' };
     }
@@ -537,6 +547,11 @@
       }
       renderOnboardingView(appEl);
       removeFloatingRoleSwitcher();
+    } else if (route.view === 'demo' || route.view === 'sandbox') {
+      removeFloatingRoleSwitcher();
+      const search = window.location.search || '?view=demo';
+      window.location.replace('demo.html' + search);
+      return;
     }
 
     if (isSearchFocused) {
@@ -569,7 +584,7 @@
           <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
             <span>← Back to Portfolio</span>
           </a>
-          <a href="demo.html" class="df-pill-btn" style="background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;" title="Dual-Device Live Operations Sandbox">
+          <a href="?view=demo" class="df-pill-btn" style="background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;" title="Dual-Device Live Operations Sandbox">
             <span>⚡ Dual-Device Demo</span>
           </a>
           <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
@@ -639,7 +654,7 @@
               </div>
             </div>
             <div class="df-sandbox-banner-cta">
-              <a href="demo.html" class="df-sandbox-launch-btn">
+              <a href="?view=demo" class="df-sandbox-launch-btn">
                 <span>Launch Dual-Device Sandbox</span>
                 <span class="btn-arrow">→</span>
               </a>
@@ -2746,8 +2761,8 @@
           return `
             <div class="df-kanban-col">
               <div class="df-kanban-col-header">
-                <span class="df-kanban-col-title" style="color: ${col.color};">${col.title}</span>
-                <span style="font-size: 0.8rem; font-weight: 800; background: rgba(255,255,255,0.08); padding: 0.15rem 0.5rem; border-radius: 99px;">
+                <span class="df-kanban-col-title" style="color: ${col.color};" title="${col.title}">${col.title}</span>
+                <span class="df-kanban-col-count">
                   ${orders.length}
                 </span>
               </div>

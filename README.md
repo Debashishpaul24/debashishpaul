@@ -1,7 +1,7 @@
 # Debashish Paul — Enterprise Web Engineering & Flagship SaaS Portfolio
 
 [![Live Production](https://img.shields.io/badge/Live-debashishpaul.in-0ea5e9?style=for-the-badge&logo=googlechrome&logoColor=white)](https://www.debashishpaul.in/)
-[![Dual-Device Sandbox](https://img.shields.io/badge/DineFlow_Sandbox-Live_Demo-E5A93C?style=for-the-badge&logo=fastapi&logoColor=white)](https://www.debashishpaul.in/dineflow/demo.html)
+[![Dual-Device Sandbox](https://img.shields.io/badge/DineFlow_Sandbox-Live_Demo-E5A93C?style=for-the-badge&logo=fastapi&logoColor=white)](https://www.debashishpaul.in/dineflow/?view=demo)
 [![Rating](https://img.shields.io/badge/Client_Rating-5.0_★_(47_Reviews)-ffd700?style=for-the-badge)](https://www.debashishpaul.in/)
 [![Architecture](https://img.shields.io/badge/Tech_Stack-Vanilla_HTML5_•_CSS3_•_ES6+-6366f1?style=for-the-badge)](https://www.debashishpaul.in/)
 
@@ -34,7 +34,7 @@ Built entirely with zero heavy frontend framework dependencies—delivering ligh
 | :--- | :--- | :--- |
 | **Main Portfolio Hub** | [`/`](https://www.debashishpaul.in/) | Interactive 3D canvas hero, featured projects, client proof, and consulting inquiry form. |
 | **DineFlow™ SaaS Hub** | [`/dineflow/`](https://www.debashishpaul.in/dineflow/) | Production QR restaurant platform, interactive ROI financial calculator, and lead intake. |
-| **Dual-Device Operations Sandbox** | [`/dineflow/demo.html`](https://www.debashishpaul.in/dineflow/demo.html) | Side-by-side live simulator syncing an iPhone 16 Pro diner view with a Kitchen KDS Kanban. |
+| **Dual-Device Operations Sandbox** | [`/dineflow/?view=demo`](https://www.debashishpaul.in/dineflow/?view=demo) | Side-by-side live simulator syncing an iPhone 16 Pro diner view with a Kitchen KDS Kanban. |
 | **About Debashish** | [`/about/`](https://www.debashishpaul.in/about/) | Career journey, core engineering philosophy, tech stack proficiencies, and credentials. |
 | **Engineering Services** | [`/services/`](https://www.debashishpaul.in/services/) | Full-stack engineering, performance audits, enterprise web architecture, and UI/UX solutions. |
 | **Project Directory** | [`/projects/`](https://www.debashishpaul.in/projects/) | Detailed case studies spanning enterprise SaaS, 3D web experiences, and high-conversion portals. |
@@ -53,7 +53,7 @@ Built entirely with zero heavy frontend framework dependencies—delivering ligh
 
 ### 2. DineFlow™ QR Restaurant SaaS Platform & Dual-Device Sandbox
 - **Zero-Install Contactless Dining**: Guests scan dynamic QR table tents to browse digital visual menus, customize spice/allergy options, and place orders directly from their smartphone.
-- **Dual-Device Real-Time Sandbox (`/dineflow/demo.html`)**:
+- **Dual-Device Real-Time Sandbox (`/dineflow/?view=demo`)**:
   - Implements the browser's native `BroadcastChannel` API to establish zero-server-lag inter-frame event streaming.
   - Places an **iPhone 16 Pro Guest Simulator** alongside a **Kitchen KDS Kanban Dashboard** on a single viewport.
   - Orders placed on the guest mobile immediately ring the kitchen station with realistic audio chimes and dispatch live tickets.

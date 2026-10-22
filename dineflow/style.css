@@ -176,7 +176,8 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  max-width: 125px;
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 .df-brand-icon {
@@ -1485,26 +1486,26 @@ body.splash-active {
 }
 
 .df-admin-sidebar {
-  width: 260px;
+  width: 195px;
   background: #0B0F18;
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 0.75rem;
+  padding: 1rem 0.5rem;
   flex-shrink: 0;
 }
 
 .df-admin-nav-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
   border-radius: var(--radius-sm);
   color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   transition: all 0.2s;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .df-admin-nav-item:hover {
@@ -1530,7 +1531,7 @@ body.splash-active {
 
 .df-admin-main {
   flex: 1;
-  padding: 2rem;
+  padding: 1.25rem 1rem;
   overflow-y: auto;
   max-width: 1400px;
 }
@@ -1620,32 +1621,50 @@ body.splash-active {
 .df-kanban-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  margin-top: 1rem;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
 }
 
 .df-kanban-col {
   background: rgba(14, 19, 31, 0.6);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 1rem;
+  padding: 0.65rem 0.45rem;
   display: flex;
   flex-direction: column;
   min-height: 500px;
+  min-width: 0;
 }
 
 .df-kanban-col-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.25rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   border-bottom: 1px solid var(--border-subtle);
+  min-width: 0;
 }
 
 .df-kanban-col-title {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: clamp(0.66rem, 0.82vw, 0.78rem);
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.02em;
+  min-width: 0;
+  flex: 1;
+}
+
+.df-kanban-col-count {
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.08rem 0.35rem;
+  border-radius: 99px;
+  flex-shrink: 0;
 }
 
 .df-kanban-cards {
@@ -1830,6 +1849,28 @@ body.splash-active {
 
 /* Responsive Media Queries */
 @media (max-width: 900px) {
+  .df-topbar {
+    height: 56px;
+    padding: 0 0.65rem;
+  }
+  .df-top-actions {
+    gap: 0.35rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+  }
+  .df-top-actions::-webkit-scrollbar {
+    display: none;
+  }
+  .df-session-status-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.72rem;
+  }
+  .df-session-status-badge .df-role-tag {
+    font-size: 0.6rem;
+    padding: 0.08rem 0.3rem;
+  }
   .df-kanban-board {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1840,12 +1881,13 @@ body.splash-active {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
-    padding: 0.5rem 0.75rem;
+    padding: 0.4rem 0.65rem;
     border-right: none;
     border-bottom: 1px solid var(--border-subtle);
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     gap: 0.35rem;
+    background: #0B0F18;
   }
   .df-admin-sidebar::-webkit-scrollbar {
     display: none;
@@ -1854,8 +1896,9 @@ body.splash-active {
     white-space: nowrap;
     flex-shrink: 0;
     margin-bottom: 0;
-    padding: 0.45rem 0.75rem;
-    font-size: 0.78rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
   }
   .df-admin-main {
     padding: 1.25rem;
