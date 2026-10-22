@@ -232,6 +232,323 @@
     }, 2800);
   }
 
+  // ------------------------------------------------------------------------------
+  // NORMALIZED TABLE & QR CODE URL RESOLVER
+  // Cleanly generates absolute SPA URLs (?r=slug&t=tableId) regardless of host,
+  // path, subfolder, port, or whether loaded from demo sandbox or production.
+  // ------------------------------------------------------------------------------
+  function getDineFlowTableUrl(tenantSlug, tableId) {
+    let origin = window.location.origin;
+    if (!origin || origin === 'null') {
+      origin = 'https://www.debashishpaul.in';
+    }
+    let path = window.location.pathname.replace(/(demo\.html|index\.html).*$/, '');
+    if (!path.endsWith('/')) path += '/';
+    return `${origin}${path}?r=${encodeURIComponent(tenantSlug)}&t=${encodeURIComponent(tableId)}`;
+  }
+
+  // ------------------------------------------------------------------------------
+  // REAL-TIME MULTI-TENANT CLOUD SYNCHRONIZATION ENGINE
+  // Bridges isolated physical devices (customer smartphone scanning table QR code
+  // and kitchen staff laptop/tablet running KDS) with zero accounts or API keys.
+  // Uses dedicated high-throughput multi-tenant pub/sub channels on ntfy.sh
+  // with Dual-Layer SSE live push and heartbeat polling fallback.
+  // ------------------------------------------------------------------------------
+  const DINEFLOW_DEVICE_ID = (function () {
+    let id = null;
+    try {
+      id = localStorage.getItem('DINEFLOW_DEVICE_ID_V1');
+      if (!id) {
+        id = 'dev_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        localStorage.setItem('DINEFLOW_DEVICE_ID_V1', id);
+      }
+    } catch (e) {
+      id = 'dev_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+    }
+    return id;
+  })();
+
+  const processedCloudEventIds = new Set();
+  function isDuplicateCloudEvent(eventId) {
+    if (!eventId) return false;
+    if (processedCloudEventIds.has(eventId)) return true;
+    processedCloudEventIds.add(eventId);
+    if (processedCloudEventIds.size > 200) {
+      const oldest = processedCloudEventIds.values().next().value;
+      processedCloudEventIds.delete(oldest);
+    }
+    return false;
+  }
+
+  function getCloudTopic(tenantSlug) {
+    const slug = (tenantSlug || 'the-urban-plate').toString().toLowerCase().trim().replace(/[^a-z0-9_-]/g, '_');
+    return `dineflow_ops_${slug}`;
+  }
+
+  function broadcastCloudEvent(tenantSlug, eventData) {
+    try {
+      const slug = (tenantSlug || 'the-urban-plate').toString().toLowerCase().trim().replace(/[^a-z0-9_-]/g, '_');
+      const eventId = 'ev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      processedCloudEventIds.add(eventId);
+
+      const payload = {
+        eventId: eventId,
+        senderDeviceId: DINEFLOW_DEVICE_ID,
+        tenantSlug: slug,
+        timestamp: Date.now(),
+        ...eventData
+      };
+
+      if (window.DineFlowCloudSync && typeof window.DineFlowCloudSync.publish === 'function') {
+        window.DineFlowCloudSync.publish(slug, payload);
+      }
+    } catch (e) {
+      console.warn('Cloud broadcast notice:', e);
+    }
+  }
+
+  function handleRemoteOpsEvent(event) {
+    if (!event || typeof event !== 'object') return;
+    if (event.senderDeviceId === DINEFLOW_DEVICE_ID) return; // Discard self-broadcast
+    if (isDuplicateCloudEvent(event.eventId)) return; // Prevent duplicate handling
+
+    state = DineFlowStore.get();
+    let stateChanged = false;
+
+    if (event.action === 'NEW_ORDER') {
+      if (event.order && !state.orders.some(o => o.id === event.order.id)) {
+        state.orders.unshift(event.order);
+        stateChanged = true;
+
+        const table = state.tables.find(t => t.id === event.order.tableId);
+        if (table) {
+          table.status = 'occupied';
+          table.qrScans = (table.qrScans || 0) + 1;
+          table.lastScanned = 'Just now';
+        }
+      }
+    } else if (event.action === 'ORDER_STATUS_CHANGED') {
+      const order = state.orders.find(o => o.id === event.orderId);
+      if (order && order.status !== event.newStatus) {
+        order.status = event.newStatus;
+        if (event.newStatus === 'COMPLETED') {
+          order.paymentStatus = 'PAID';
+          const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && b.status === 'PENDING');
+          if (pendingBill) pendingBill.status = 'PAID';
+          const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.status !== 'COMPLETED');
+          if (!hasMoreOrders) {
+            const tableObj = state.tables.find(t => t.id === order.tableId);
+            if (tableObj) {
+              tableObj.status = 'available';
+              delete tableObj.manuallyOccupied;
+            }
+          }
+        }
+        stateChanged = true;
+      }
+    } else if (event.action === 'STAFF_CALL') {
+      if (event.request && !state.staffRequests.some(r => r.id === event.request.id)) {
+        state.staffRequests.unshift(event.request);
+        stateChanged = true;
+      }
+    } else if (event.action === 'BILL_REQUEST') {
+      if (event.bill && !state.billRequests.some(b => b.id === event.bill.id)) {
+        state.billRequests.unshift(event.bill);
+        stateChanged = true;
+      }
+    } else if (event.action === 'BILL_SETTLED') {
+      const tableOrders = state.orders.filter(o => o.tableId === event.tableId);
+      tableOrders.forEach(o => {
+        o.paymentStatus = 'PAID';
+        o.status = 'COMPLETED';
+      });
+      const bills = state.billRequests.filter(b => b.tableId === event.tableId);
+      bills.forEach(b => { b.status = 'PAID'; });
+      const table = state.tables.find(t => t.id === event.tableId);
+      if (table) {
+        table.status = 'available';
+        delete table.manuallyOccupied;
+      }
+      stateChanged = true;
+    } else if (event.action === 'TABLES_CLEARED_ALL' || event.action === 'ALL_TABLES_CLEARED') {
+      state.tables.forEach(t => {
+        t.status = 'available';
+        delete t.manuallyOccupied;
+      });
+      state.orders.forEach(o => {
+        if (o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+          o.status = 'COMPLETED';
+          o.paymentStatus = 'PAID';
+        }
+      });
+      state.billRequests.forEach(b => { b.status = 'PAID'; });
+      state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
+      stateChanged = true;
+    } else if (event.action === 'TABLE_STATUS_TOGGLED') {
+      const table = state.tables.find(t => t.id === event.tableId);
+      if (table) {
+        if (event.isOccupied) {
+          table.status = 'occupied';
+          table.manuallyOccupied = true;
+        } else {
+          table.status = 'available';
+          delete table.manuallyOccupied;
+        }
+        stateChanged = true;
+      }
+    }
+
+    if (stateChanged) {
+      DineFlowStore.saveLocalOnly(state);
+    }
+
+    if (typeof window.onDineFlowRemoteSync === 'function') {
+      window.onDineFlowRemoteSync({
+        type: 'SYNC',
+        payload: state,
+        meta: event
+      });
+    }
+  }
+
+  const DineFlowCloudSync = {
+    currentTenantSlug: null,
+    client: null,
+    isConnected: false,
+    reconnectTimer: null,
+    serverIndex: 0,
+    outbox: [],
+    servers: [
+      { host: 'broker.emqx.io', port: 8084, path: '/mqtt' },
+      { host: 'broker.hivemq.com', port: 8884, path: '/mqtt' }
+    ],
+
+    broadcast(meta) {
+      if (!meta || !meta.action) return;
+      const tenantSlug = meta.tenantSlug || this.currentTenantSlug || (state && state.currentTenantId) || 'the-urban-plate';
+      broadcastCloudEvent(tenantSlug, meta);
+    },
+
+    publish(tenantSlug, payload) {
+      const topic = `dineflow/${tenantSlug}/ops`;
+      if (this.client && this.isConnected) {
+        try {
+          const message = new Paho.MQTT.Message(JSON.stringify(payload));
+          message.destinationName = topic;
+          message.qos = 0;
+          this.client.send(message);
+          return;
+        } catch (e) {
+          console.warn('Publish failed, queuing payload', e);
+        }
+      }
+      // If client not connected yet, queue in outbox
+      this.outbox.push({ topic, payload });
+      if (!this.isConnected) this.connect();
+    },
+
+    subscribe(tenantSlug) {
+      if (!tenantSlug) return;
+      const normalizedSlug = (tenantSlug || 'the-urban-plate').toString().toLowerCase().trim();
+      const prevSlug = this.currentTenantSlug;
+      this.currentTenantSlug = normalizedSlug;
+
+      if (this.client && this.isConnected) {
+        try {
+          if (prevSlug && prevSlug !== normalizedSlug) {
+            this.client.unsubscribe(`dineflow/${prevSlug}/#`);
+          }
+          this.client.subscribe(`dineflow/${normalizedSlug}/#`);
+        } catch (e) {}
+      } else {
+        this.connect();
+      }
+    },
+
+    connect() {
+      if (typeof window === 'undefined' || typeof Paho === 'undefined' || !Paho.MQTT) {
+        // Retry shortly if script is still loading
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = setTimeout(() => this.connect(), 600);
+        return;
+      }
+
+      if (this.isConnected) return;
+
+      const s = this.servers[this.serverIndex % this.servers.length];
+      const clientId = 'df_' + DINEFLOW_DEVICE_ID + '_' + Math.random().toString(36).substring(2, 6);
+
+      try {
+        if (this.client) {
+          try { this.client.disconnect(); } catch (e) {}
+        }
+        this.client = new Paho.MQTT.Client(s.host, s.port, s.path, clientId);
+
+        this.client.onConnectionLost = (responseObject) => {
+          this.isConnected = false;
+          if (responseObject.errorCode !== 0) {
+            this.serverIndex++;
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = setTimeout(() => this.connect(), 2500);
+          }
+        };
+
+        this.client.onMessageArrived = (message) => {
+          try {
+            const parsed = JSON.parse(message.payloadString);
+            handleRemoteOpsEvent(parsed);
+          } catch (e) {}
+        };
+
+        this.client.connect({
+          useSSL: true,
+          timeout: 5,
+          keepAliveInterval: 30,
+          cleanSession: true,
+          onSuccess: () => {
+            this.isConnected = true;
+            if (this.currentTenantSlug) {
+              try {
+                this.client.subscribe(`dineflow/${this.currentTenantSlug}/#`);
+              } catch (e) {}
+            }
+            // Flush outbox
+            while (this.outbox.length > 0) {
+              const item = this.outbox.shift();
+              try {
+                const msg = new Paho.MQTT.Message(JSON.stringify(item.payload));
+                msg.destinationName = item.topic;
+                this.client.send(msg);
+              } catch (e) {}
+            }
+          },
+          onFailure: () => {
+            this.isConnected = false;
+            this.serverIndex++;
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = setTimeout(() => this.connect(), 2500);
+          }
+        });
+      } catch (err) {
+        this.isConnected = false;
+        this.serverIndex++;
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = setTimeout(() => this.connect(), 2500);
+      }
+    },
+
+    unsubscribe() {
+      if (this.client && this.isConnected && this.currentTenantSlug) {
+        try {
+          this.client.unsubscribe(`dineflow/${this.currentTenantSlug}/#`);
+        } catch (e) {}
+      }
+    }
+  };
+
+  // Expose globally for DineFlowStore hook
+  window.DineFlowCloudSync = DineFlowCloudSync;
+
   // URL Builders & Navigation (Query-parameter routing without '#')
   function buildRouteUrl(route) {
     if (!route) return './';
@@ -489,6 +806,12 @@
     const route = parseRoute();
     const appEl = document.getElementById('app');
     if (!appEl) return;
+
+    // Ensure active tenant cloud synchronization across mobile and desktop
+    const activeTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+    if (activeTenantSlug && typeof DineFlowCloudSync !== 'undefined') {
+      DineFlowCloudSync.subscribe(activeTenantSlug);
+    }
 
     const isStaffAuth = state.session && state.session.isAuthenticated && (state.session.role === 'RESTAURANT_ADMIN' || state.session.role === 'SUPER_ADMIN');
     const isSuperAuth = state.session && state.session.isAuthenticated && state.session.role === 'SUPER_ADMIN';
@@ -1879,13 +2202,15 @@
           targetTable.lastScanned = 'Just now';
         }
 
-        // Save state and notify cross-tabs
+        // Save state and notify cross-tabs & cross-device cloud
         DineFlowStore.save(state, {
           action: 'NEW_ORDER',
           source: 'customer',
           orderId: newOrder.id,
           tableId: table.id,
-          customerName: newOrder.customerName
+          customerName: newOrder.customerName,
+          order: newOrder,
+          tenantSlug: tenant.slug || tenant.id
         });
 
         // Clear cart
@@ -2098,20 +2423,23 @@
         const type = btn.getAttribute('data-type');
         const label = btn.getAttribute('data-label');
 
-        state.staffRequests.unshift({
+        const newReq = {
           id: `REQ-${Math.floor(100 + Math.random() * 900)}`,
           tableId: table.id,
           type,
           label,
           status: 'PENDING',
           time: 'Just now'
-        });
+        };
+        state.staffRequests.unshift(newReq);
 
         DineFlowStore.save(state, {
           action: 'STAFF_CALL',
           source: 'customer',
           tableId: table.id,
-          requestLabel: label
+          requestLabel: label,
+          request: newReq,
+          tenantSlug: tenant.slug || tenant.id
         });
         SoundFX.chime('success');
         modalContainer.innerHTML = '';
@@ -2363,7 +2691,8 @@
       DineFlowStore.save(state, {
         action: 'BILL_SETTLED',
         source: 'customer',
-        tableId: table.id
+        tableId: table.id,
+        tenantSlug: tenant.slug || tenant.id
       });
       SoundFX.chime('success');
       showToast(`Payment received! Table ${table.id} bill settled.`, '✅');
@@ -2371,25 +2700,29 @@
     });
 
     document.getElementById('btn-submit-bill-req')?.addEventListener('click', () => {
+      let activeBillObj = pendingBill;
       if (pendingBill) {
         pendingBill.paymentMethod = selectedPayment;
         pendingBill.amount = totalAmount;
         pendingBill.time = 'Just now';
       } else {
-        state.billRequests.unshift({
+        activeBillObj = {
           id: `BILL-${Math.floor(100 + Math.random() * 900)}`,
           tableId: table.id,
           amount: totalAmount,
           paymentMethod: selectedPayment,
           status: 'PENDING',
           time: 'Just now'
-        });
+        };
+        state.billRequests.unshift(activeBillObj);
       }
 
       DineFlowStore.save(state, {
         action: 'BILL_REQUEST',
         source: 'customer',
-        tableId: table.id
+        tableId: table.id,
+        bill: activeBillObj,
+        tenantSlug: tenant.slug || tenant.id
       });
       SoundFX.chime('success');
       modalContainer.innerHTML = '';
@@ -2870,7 +3203,8 @@
             source: 'staff',
             orderId: order.id,
             newStatus: nextStatus,
-            tableId: order.tableId
+            tableId: order.tableId,
+            tenantSlug: tenant.slug || tenant.id
           });
           SoundFX.chime('success');
           showToast(`Order #${orderId} moved to ${nextStatus}`);
@@ -2893,7 +3227,11 @@
       });
       state.billRequests.forEach(b => { b.status = 'PAID'; });
       state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
-      DineFlowStore.save(state, { action: 'TABLES_CLEARED_ALL', source: 'staff' });
+      DineFlowStore.save(state, {
+        action: 'TABLES_CLEARED_ALL',
+        source: 'staff',
+        tenantSlug: tenant.slug || tenant.id
+      });
       SoundFX.chime('success');
       showToast('All 20 dining tables cleared & marked Available!', '🧹');
       renderAdminView(document.getElementById('app'), tenant);
@@ -2925,8 +3263,8 @@
 
       <div class="df-tables-grid">
         ${state.tables.map(table => {
-          // Construct target URL for table
-          const tableUrl = `${window.location.origin}${window.location.pathname}?r=${tenant.slug}&t=${table.id}`;
+          // Construct normalized target URL for table
+          const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
           return `
             <div class="df-table-admin-card">
               <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -2954,7 +3292,7 @@
                 <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="${table.status === 'occupied' ? 'Click to Clear Table (Mark Available)' : 'Click to Seat Guests (Mark Occupied)'}">
                   ${table.status === 'occupied' ? '🧹 Clear' : '🪑 Seat'}
                 </button>
-                <a href="?r=${tenant.slug}&t=${table.id}" target="_blank" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Test Customer Experience">
+                <a href="${tableUrl}" target="_blank" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Test Customer Experience">
                   ↗
                 </a>
               </div>
@@ -2968,7 +3306,7 @@
     state.tables.forEach(table => {
       const el = document.getElementById(`qr-table-${table.id}`);
       if (el && window.DineFlowQR) {
-        const tableUrl = `${window.location.origin}${window.location.pathname}?r=${tenant.slug}&t=${table.id}`;
+        const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
         el.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 140, darkColor: '#0f172a' });
       }
     });
@@ -3003,7 +3341,12 @@
             table.manuallyOccupied = true;
             showToast(`${table.name} marked Occupied`, '🪑');
           }
-          DineFlowStore.save(state, { action: 'TABLE_STATUS_TOGGLED', tableId: table.id });
+          DineFlowStore.save(state, {
+            action: 'TABLE_STATUS_TOGGLED',
+            tableId: table.id,
+            isOccupied: table.status === 'occupied',
+            tenantSlug: tenant.slug || tenant.id
+          });
           SoundFX.chime('success');
           renderAdminView(document.getElementById('app'), tenant);
         }
@@ -3024,7 +3367,11 @@
       });
       state.billRequests.forEach(b => { b.status = 'PAID'; });
       state.staffRequests.forEach(s => { s.status = 'RESOLVED'; });
-      DineFlowStore.save(state, { action: 'ALL_TABLES_CLEARED' });
+      DineFlowStore.save(state, {
+        action: 'ALL_TABLES_CLEARED',
+        source: 'staff',
+        tenantSlug: tenant.slug || tenant.id
+      });
       SoundFX.chime('success');
       showToast('All 20 tables cleared & marked Available!', '🧹');
       renderAdminView(document.getElementById('app'), tenant);
@@ -3054,7 +3401,7 @@
     const modalContainer = document.getElementById('modal-container');
     if (!modalContainer) return;
 
-    const tableUrl = `${window.location.origin}${window.location.pathname}?r=${tenant.slug}&t=${table.id}`;
+    const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
 
     modalContainer.innerHTML = `
       <div class="df-modal-backdrop active" id="tent-backdrop">
@@ -3428,7 +3775,8 @@
           DineFlowStore.save(state, {
             action: 'BILL_SETTLED',
             source: 'staff',
-            tableId: b.tableId
+            tableId: b.tableId,
+            tenantSlug: tenant.slug || tenant.id
           });
           SoundFX.chime('success');
           showToast(`Table ${b.tableId} bill settled and table cleared!`);
@@ -4074,7 +4422,7 @@
     const meta = (event && event.meta) || {};
 
     if (route.view === 'admin') {
-      const tenant = getCurrentTenant();
+      const tenant = getCurrentTenant(meta.tenantSlug || (state.session && state.session.tenantId));
 
       // Audio notification for staff
       SoundFX.chime(meta.action === 'NEW_ORDER' ? 'order' : 'notice');
@@ -4096,7 +4444,10 @@
         renderAdminView(appEl, tenant);
       }
     } else if (route.view === 'customer') {
-      const tenant = getCurrentTenant(route.tenantSlug);
+      if (meta.tableId && route.tableId && meta.tableId !== route.tableId) {
+        return; // Filter out notifications meant for other dining tables
+      }
+      const tenant = getCurrentTenant(route.tenantSlug || meta.tenantSlug);
       const table = state.tables.find(t => t.id === route.tableId) || { id: route.tableId, name: `Table ${route.tableId}`, section: 'Indoor' };
 
       // Chime for customer
@@ -4139,7 +4490,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.2').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.3').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

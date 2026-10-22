@@ -1286,8 +1286,19 @@ const DineFlowStore = {
           timestamp: Date.now()
         });
       }
+      if (meta && meta.action && typeof window !== 'undefined' && window.DineFlowCloudSync && typeof window.DineFlowCloudSync.broadcast === 'function') {
+        window.DineFlowCloudSync.broadcast(meta);
+      }
     } catch (e) {
       console.error('Failed saving localStorage', e);
+    }
+  },
+
+  saveLocalOnly(data) {
+    try {
+      localStorage.setItem(this.KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error('Failed saving localStorage local-only', e);
     }
   },
 

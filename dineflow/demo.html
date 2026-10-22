@@ -2,6 +2,16 @@
 <html lang="en">
 
 <head>
+  <script>
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('r') && params.get('t')) {
+          window.location.replace('./?r=' + encodeURIComponent(params.get('r')) + '&t=' + encodeURIComponent(params.get('t')));
+        }
+      } catch(e) {}
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DineFlow™ - Dual-Device Interactive Operations Sandbox</title>
