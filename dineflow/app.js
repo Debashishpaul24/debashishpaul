@@ -3498,17 +3498,31 @@
               </div>
             </div>
 
-            <!-- Action Toolbar for PDF, Print, PNG and SVG -->
-            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap;">
-              <button class="df-splash-btn" id="btn-trigger-print" style="flex: 2; min-width: 160px; padding: 0.85rem; font-size: 0.88rem; text-align: center; font-weight: 800;">
-                🖨️ Print / Save PDF
-              </button>
-              <button class="df-pill-btn primary" id="btn-download-qr-png" style="flex: 1; padding: 0.85rem 0.95rem; font-size: 0.82rem; justify-content: center;">
-                📥 600 DPI PNG
-              </button>
-              <button class="df-pill-btn" id="btn-export-qr-svg" style="flex: 1; padding: 0.85rem 0.95rem; font-size: 0.82rem; justify-content: center;">
-                📄 Vector SVG
-              </button>
+            <!-- Unified Action Toolbar (Identical Format across PDF, PNG & Vector SVG) -->
+            <div style="margin-top: 1.25rem;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; text-align: center;">
+                Table Tent Stand Card (Identical Full Format)
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="df-splash-btn" id="btn-trigger-print" style="flex: 1.5; min-width: 140px; padding: 0.75rem; font-size: 0.85rem; text-align: center; font-weight: 800;">
+                  🖨️ Save as PDF
+                </button>
+                <button class="df-pill-btn primary" id="btn-download-stand-png" style="flex: 1; padding: 0.75rem 0.65rem; font-size: 0.82rem; justify-content: center; font-weight: 700;">
+                  📥 Stand (PNG)
+                </button>
+                <button class="df-pill-btn primary" id="btn-download-stand-svg" style="flex: 1; padding: 0.75rem 0.65rem; font-size: 0.82rem; justify-content: center; font-weight: 700;">
+                  📄 Stand (SVG)
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <button class="df-pill-btn" id="btn-download-qr-only-png" style="flex: 1; padding: 0.5rem; font-size: 0.75rem; justify-content: center; color: var(--text-dim);" title="Download QR Matrix square image only without the card frame">
+                  🔍 Raw QR (PNG)
+                </button>
+                <button class="df-pill-btn" id="btn-download-qr-only-svg" style="flex: 1; padding: 0.5rem; font-size: 0.75rem; justify-content: center; color: var(--text-dim);" title="Download QR Matrix vector SVG only without the card frame">
+                  ⚡ Raw QR (SVG)
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -3524,37 +3538,144 @@
       modalContainer.innerHTML = '';
     });
 
-    // High-Precision Isolated PDF Print
+    // 1. High-Precision Isolated PDF Print (Identical Stand Format)
     document.getElementById('btn-trigger-print')?.addEventListener('click', () => {
       printTableTentCard(table, tenant);
     });
 
-    // 600 DPI High-Resolution PNG with Clean Quiet Zone
-    document.getElementById('btn-download-qr-png')?.addEventListener('click', () => {
+    // 2. Full Table Tent Stand PNG Export (Identical to PDF & SVG at 600 DPI)
+    document.getElementById('btn-download-stand-png')?.addEventListener('click', () => {
+      downloadTentCardPNG(table, tenant);
+    });
+
+    // 3. Full Table Tent Stand Vector SVG Export (Identical to PDF & PNG)
+    document.getElementById('btn-download-stand-svg')?.addEventListener('click', () => {
+      const svgContent = buildTableTentCardSVG(table, tenant);
+      const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${tenant.slug}-Table-${table.id}-Stand.svg`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Table ${table.id} Tent Stand SVG Exported (Exact Stand Format)`, '📄');
+    });
+
+    // 4. Raw QR Matrix Only (PNG)
+    document.getElementById('btn-download-qr-only-png')?.addEventListener('click', () => {
       if (window.DineFlowQR) {
-        const dataUrl = window.DineFlowQR.getDataURL(tableUrl, { size: 1000, margin: 3 });
+        const dataUrl = window.DineFlowQR.getDataURL(tableUrl, { size: 1000, margin: 4 });
         const a = document.createElement('a');
         a.href = dataUrl;
-        a.download = `${tenant.slug}-Table-${table.id}-QR.png`;
+        a.download = `${tenant.slug}-Table-${table.id}-QR-matrix.png`;
         a.click();
-        showToast(`Table ${table.id} High-Res QR PNG Downloaded`, '📥');
+        showToast(`Table ${table.id} Raw QR PNG Downloaded`, '📥');
       }
     });
 
-    // Vector SVG Export for Acrylic Laser Cutting & Professional Print Shops
-    document.getElementById('btn-export-qr-svg')?.addEventListener('click', () => {
+    // 5. Raw QR Matrix Only (SVG)
+    document.getElementById('btn-download-qr-only-svg')?.addEventListener('click', () => {
       if (window.DineFlowQR) {
-        const svgContent = window.DineFlowQR.generateSVG(tableUrl, { size: 400, darkColor: '#0b0f17', margin: 2 });
+        const svgContent = window.DineFlowQR.generateSVG(tableUrl, { size: 500, darkColor: '#0b0f17', margin: 4 });
         const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${tenant.slug}-Table-${table.id}-QR.svg`;
+        a.download = `${tenant.slug}-Table-${table.id}-QR-matrix.svg`;
         a.click();
         URL.revokeObjectURL(url);
-        showToast(`Table ${table.id} Vector SVG Exported`, '📄');
+        showToast(`Table ${table.id} Raw QR SVG Exported`, '⚡');
       }
     });
+  }
+
+  function escapeXml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
+  // Pure Vector SVG Generator for the Complete Table Tent Stand Card
+  function buildTableTentCardSVG(table, tenant) {
+    const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
+    const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 400, darkColor: '#0b0f17', margin: 2, lightColor: '#ffffff' }) : '';
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1140" width="800" height="1140">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap');
+      .txt { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- Clean Background & Gold Accent Frame -->
+  <rect x="24" y="24" width="752" height="1092" rx="36" fill="#ffffff" stroke="${tenant.primaryColor || '#E5A93C'}" stroke-width="8"/>
+
+  <!-- Brand Title -->
+  <text x="400" y="115" text-anchor="middle" class="txt" font-size="44" font-weight="800" fill="#0b0f17">${escapeXml(tenant.name)}</text>
+  <text x="400" y="155" text-anchor="middle" class="txt" font-size="20" font-weight="600" fill="#64748b">${escapeXml(tenant.tagline)}</text>
+
+  <!-- Table Identifier Pill -->
+  <rect x="260" y="190" width="280" height="64" rx="32" fill="#0f172a"/>
+  <text x="400" y="233" text-anchor="middle" class="txt" font-size="28" font-weight="800" fill="${tenant.primaryColor || '#E5A93C'}" letter-spacing="2">TABLE ${escapeXml(table.id)}</text>
+
+  <!-- High-Precision Centered QR Code Box -->
+  <rect x="170" y="285" width="460" height="460" rx="24" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+  <g transform="translate(200, 315)">
+    <svg width="400" height="400" viewBox="0 0 400 400">
+      ${qrSvg}
+    </svg>
+  </g>
+
+  <!-- Scan Instructions -->
+  <text x="400" y="795" text-anchor="middle" class="txt" font-size="28" font-weight="800" fill="#0f172a">Scan • Browse • Order • Enjoy</text>
+
+  <!-- Wi-Fi Credentials Pill -->
+  <rect x="100" y="835" width="600" height="56" rx="28" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="400" y="871" text-anchor="middle" class="txt" font-size="19" font-weight="600" fill="#475569">
+    📶 Free Guest Wi-Fi: <tspan font-weight="800" fill="#0f172a">${escapeXml(tenant.wifiName || 'Guest')}</tspan> (Pass: <tspan font-weight="800" fill="#0f172a">${escapeXml(tenant.wifiPass || 'Welcome')}</tspan>)
+  </text>
+
+  <!-- Footer Branding -->
+  <text x="400" y="945" text-anchor="middle" class="txt" font-size="16" font-weight="600" fill="#94a3b8">
+    Powered by DineFlow™ • Contactless Digital Dining Platform
+  </text>
+</svg>`;
+  }
+
+  // 600 DPI High-Resolution PNG Generator for the Complete Table Tent Stand Card
+  function downloadTentCardPNG(table, tenant) {
+    const svgStr = buildTableTentCardSVG(table, tenant);
+    const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1600;
+      canvas.height = 2280;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `${tenant.slug}-Table-${table.id}-Stand.png`;
+      a.click();
+      showToast(`Table ${table.id} Tent Stand PNG Downloaded (600 DPI)`, '📥');
+    };
+    img.onerror = () => {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${tenant.slug}-Table-${table.id}-Stand.svg`;
+      a.click();
+    };
+    img.src = url;
   }
 
   // Standalone Isolated Single-Page PDF Print Generator
@@ -4886,7 +5007,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.6').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.7').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
