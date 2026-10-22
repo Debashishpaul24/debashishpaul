@@ -3401,6 +3401,20 @@
             isOccupied: table.status === 'occupied',
             tenantSlug: tenant.slug || tenant.id
           });
+          DineFlowStore.recordLog({
+            tenantId: tenant.slug || tenant.id,
+            tenantName: tenant.name,
+            managerId: state.session?.user?.id || 'staff-01',
+            managerName: state.session?.user?.name || 'Chef Vikram Rao',
+            category: 'OVERRIDE',
+            action: table.status === 'occupied' ? 'Manual Seat Guest' : 'Table Cleared & Reset',
+            details: `${table.name} (${table.section}) marked ${table.status} by manager on floor`,
+            orderId: table.id,
+            amount: 0,
+            paymentMethod: 'N/A',
+            severity: 'warning',
+            securityFlag: '⚠️ Manual Floor Override'
+          });
           SoundFX.chime('success');
           renderAdminView(document.getElementById('app'), tenant);
         }
@@ -4584,132 +4598,531 @@
   // 3. SUPER ADMIN PLATFORM VIEW (Multi-Tenant Overview)
   // ------------------------------------------------------------------------------
   function renderSuperAdminView(container) {
-    document.title = 'DineFlow - Platform Super Admin Operations & Analytics';
+    document.title = 'DineFlow - Platform Super Admin & Owner Audit Intelligence';
     state = DineFlowStore.get();
     const tenantsList = state.tenants ? Object.values(state.tenants) : [];
     const totalOrdersRev = (state.orders || []).reduce((a, b) => a + (b.total || 0), 0);
 
-    container.innerHTML = `
-      <header class="df-topbar">
-        <div class="df-brand-badge">
-          <div class="df-brand-icon" style="background: linear-gradient(135deg, #6366F1, #4F46E5);">⚡</div>
-          <div class="df-brand-text">
-            <h1>DineFlow Platform Super Admin</h1>
-            <span class="df-brand-tagline">Multi-Tenant SaaS Operations & Subscription Hub</span>
-          </div>
-        </div>
-        <div class="df-top-actions">
-          <div class="df-session-status-badge" style="border-color: rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08);">
-            <span>⚡</span>
-            <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Super Admin'}</span>
-            <span class="df-role-tag" style="background: rgba(99, 102, 241, 0.2); color: #818CF8;">PLATFORM HQ</span>
-          </div>
-          <a href="?view=onboarding" class="df-pill-btn primary">
-            + Onboard Restaurant
-          </a>
-          <a href="?view=admin" class="df-pill-btn">
-            Restaurant OS
-          </a>
-          <button id="btn-superadmin-logout" class="df-pill-btn danger" title="Sign Out of Super Admin" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08);">
-            <span>🔒 Logout</span>
-          </button>
-        </div>
-      </header>
+    let activeSuperTab = 'logs'; // 'logs' | 'outlets'
+    let selectedBranch = 'all';
+    let selectedManager = 'all';
+    let selectedCategory = 'all';
+    let searchQuery = '';
 
-      <main class="df-superadmin-layout" style="padding-top: 96px; padding-bottom: 4rem; padding-left: 2rem; padding-right: 2rem; max-width: 1280px; margin: 0 auto; width: 100%; min-height: 100vh; box-sizing: border-box;">
-        <div class="df-stats-grid" style="margin-bottom: 2rem;">
-          <div class="df-stat-card">
-            <span class="df-stat-label">Total Restaurants</span>
-            <div class="df-stat-val">${tenantsList.length}</div>
-            <span class="df-stat-change">Active Partners</span>
-          </div>
-          <div class="df-stat-card">
-            <span class="df-stat-label">Platform GMV (Processed)</span>
-            <div class="df-stat-val">₹${(totalOrdersRev * 12).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</div>
-            <span class="df-stat-change">↑ +28% YoY Growth</span>
-          </div>
-          <div class="df-stat-card">
-            <span class="df-stat-label">Total QR Scans</span>
-            <div class="df-stat-val">12,480</div>
-            <span class="df-stat-change">Across all tables</span>
-          </div>
-          <div class="df-stat-card">
-            <span class="df-stat-label">SaaS MRR</span>
-            <div class="df-stat-val">₹45,000</div>
-            <span class="df-stat-change">3 Active Subscriptions</span>
-          </div>
-        </div>
+    function getFilteredLogs() {
+      let logs = Array.isArray(state.auditLogs) ? state.auditLogs : (DINEFLOW_DEFAULT_DATA.auditLogs || []);
+      if (selectedBranch !== 'all') {
+        logs = logs.filter(l => l.tenantId === selectedBranch);
+      }
+      if (selectedManager !== 'all') {
+        logs = logs.filter(l => l.managerId === selectedManager);
+      }
+      if (selectedCategory !== 'all') {
+        logs = logs.filter(l => l.category === selectedCategory);
+      }
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        logs = logs.filter(l => 
+          (l.action && l.action.toLowerCase().includes(q)) ||
+          (l.details && l.details.toLowerCase().includes(q)) ||
+          (l.managerName && l.managerName.toLowerCase().includes(q)) ||
+          (l.tenantName && l.tenantName.toLowerCase().includes(q)) ||
+          (l.orderId && l.orderId.toLowerCase().includes(q))
+        );
+      }
+      return logs;
+    }
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-          <h2 style="font-size: 1.35rem; font-weight: 800;">Managed Restaurant Partners</h2>
-          <a href="?view=onboarding" class="df-pill-btn primary">+ Launch 10-Step Onboarding</a>
-        </div>
+    function renderMain() {
+      const logs = getFilteredLogs();
+      const allManagers = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
-          ${tenantsList.map(t => `
-            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 0.65rem;">
-                  <span style="font-size: 1.75rem;">${t.logoEmoji || '🍽️'}</span>
-                  <div>
-                    <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff;">${t.name}</h3>
-                    <span style="font-size: 0.75rem; color: var(--text-dim);">${t.branch}</span>
-                  </div>
-                </div>
-                <span class="df-micro-badge chef" style="text-transform: uppercase;">${t.plan}</span>
+      // Calculate dynamic KPIs from logs
+      const totalAmount = logs.reduce((sum, l) => sum + (l.amount || 0), 0) || (totalOrdersRev * 12);
+      const ordersCount = logs.filter(l => l.category === 'PAYMENT' || l.category === 'DISCOUNT').length || 248;
+      
+      const upiLogs = logs.filter(l => l.paymentMethod === 'UPI');
+      const cardLogs = logs.filter(l => l.paymentMethod === 'Card');
+      const cashLogs = logs.filter(l => l.paymentMethod === 'Cash');
+
+      const upiAmount = upiLogs.reduce((s, l) => s + (l.amount || 0), 0) || Math.round(totalAmount * 0.68);
+      const cardAmount = cardLogs.reduce((s, l) => s + (l.amount || 0), 0) || Math.round(totalAmount * 0.22);
+      const cashAmount = cashLogs.reduce((s, l) => s + (l.amount || 0), 0) || Math.round(totalAmount * 0.10);
+
+      const upiPct = Math.round((upiAmount / (totalAmount || 1)) * 100) || 68;
+      const cardPct = Math.round((cardAmount / (totalAmount || 1)) * 100) || 22;
+      const cashPct = Math.max(0, 100 - upiPct - cardPct) || 10;
+
+      container.innerHTML = `
+        <header class="df-topbar">
+          <div class="df-brand-badge">
+            <div class="df-brand-icon" style="background: linear-gradient(135deg, #6366F1, #4F46E5);">⚡</div>
+            <div class="df-brand-text">
+              <h1>DineFlow Platform Super Admin</h1>
+              <span class="df-brand-tagline">Multi-Tenant SaaS Operations & Owner HQ</span>
+            </div>
+          </div>
+          <div class="df-top-actions">
+            <div class="df-session-status-badge" style="border-color: rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08);">
+              <span>⚡</span>
+              <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Super Admin'}</span>
+              <span class="df-role-tag" style="background: rgba(99, 102, 241, 0.2); color: #818CF8;">OWNER HQ</span>
+            </div>
+            <a href="?view=onboarding" class="df-pill-btn primary">
+              + Onboard Restaurant
+            </a>
+            <a href="?view=admin" class="df-pill-btn">
+              Restaurant OS
+            </a>
+            <button id="btn-superadmin-logout" class="df-pill-btn danger" title="Sign Out of Super Admin">
+              <span>🔒 Logout</span>
+            </button>
+          </div>
+        </header>
+
+        <main class="df-superadmin-layout" style="padding-top: 90px; padding-bottom: 4rem; padding-left: 2rem; padding-right: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; min-height: 100vh; box-sizing: border-box;">
+          
+          <!-- Top Tab Navigation -->
+          <div class="df-superadmin-tabs-bar">
+            <button class="df-superadmin-tab-btn ${activeSuperTab === 'logs' ? 'active' : ''}" data-tab="logs">
+              <span>📜</span> Manager Activity &amp; Audit Logs
+            </button>
+            <button class="df-superadmin-tab-btn ${activeSuperTab === 'outlets' ? 'active' : ''}" data-tab="outlets">
+              <span>🏢</span> Managed Outlets (${tenantsList.length})
+            </button>
+          </div>
+
+          ${activeSuperTab === 'logs' ? `
+            <!-- Filter & Action Bar -->
+            <div class="df-audit-filter-bar">
+              <div class="df-audit-filters-group">
+                <label style="font-size: 0.75rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase;">Filters:</label>
+                
+                <!-- Restaurant Branch Selector -->
+                <select id="filter-branch" class="df-audit-select">
+                  <option value="all" ${selectedBranch === 'all' ? 'selected' : ''}>🏢 All Outlets (${tenantsList.length})</option>
+                  ${tenantsList.map(t => `<option value="${t.slug}" ${selectedBranch === t.slug ? 'selected' : ''}>${t.name} (${t.branch || 'Main'})</option>`).join('')}
+                </select>
+
+                <!-- Manager Selector -->
+                <select id="filter-manager" class="df-audit-select">
+                  <option value="all" ${selectedManager === 'all' ? 'selected' : ''}>👨‍🍳 All Managers</option>
+                  ${allManagers.map(m => `<option value="${m.id}" ${selectedManager === m.id ? 'selected' : ''}>${m.name} (${m.roleTitle})</option>`).join('')}
+                </select>
+
+                <!-- Category Selector -->
+                <select id="filter-category" class="df-audit-select">
+                  <option value="all" ${selectedCategory === 'all' ? 'selected' : ''}>📑 All Event Types</option>
+                  <option value="DISCOUNT" ${selectedCategory === 'DISCOUNT' ? 'selected' : ''}>🚨 Discounts &amp; Comps</option>
+                  <option value="PAYMENT" ${selectedCategory === 'PAYMENT' ? 'selected' : ''}>💳 Bill Settlements</option>
+                  <option value="OVERRIDE" ${selectedCategory === 'OVERRIDE' ? 'selected' : ''}>⚠️ Table Overrides</option>
+                  <option value="STOCK" ${selectedCategory === 'STOCK' ? 'selected' : ''}>📦 Menu Item 86ed</option>
+                  <option value="RECONCILIATION" ${selectedCategory === 'RECONCILIATION' ? 'selected' : ''}>🔒 Cash Reconciled</option>
+                  <option value="SHIFT" ${selectedCategory === 'SHIFT' ? 'selected' : ''}>⏱️ Shift Clock-ins</option>
+                </select>
               </div>
 
-              <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-                ${t.tagline}
-              </p>
-
-              <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
-                <button class="df-pill-btn primary btn-switch-tenant" data-slug="${t.slug}" style="flex: 1; justify-content: center; font-size: 0.78rem;">
-                  Switch & Manage
+              <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <span class="df-micro-badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted); padding: 0.45rem 0.75rem;">
+                  📅 Today - ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+                <button id="btn-export-audit-csv" class="df-pill-btn primary" style="font-size: 0.78rem; padding: 0.45rem 0.95rem;" title="Export filtered records to spreadsheet">
+                  📥 Export CSV
                 </button>
-                <a href="?r=${t.slug}&t=T12" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
-                  QR View ↗
-                </a>
               </div>
             </div>
-          `).join('')}
-        </div>
 
-        <!-- Super Admin Footer -->
-        <footer class="df-superadmin-footer" style="margin-top: 3.5rem; padding-top: 1.75rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-          <div style="font-size: 0.85rem; color: var(--text-muted);">
-            Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow SaaS Platform
-          </div>
-          <a href="../projects" class="df-back-portfolio-btn">
-            <span>← Back to Portfolio</span>
-          </a>
-        </footer>
-      </main>
-    `;
+            <!-- Top 4 Financial & Operational KPI Cards -->
+            <div class="df-audit-kpis-grid">
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Total Orders</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">🛒</div>
+                </div>
+                <div class="df-audit-kpi-value">${ordersCount} orders</div>
+                <div class="df-audit-kpi-sub">
+                  <span>Gross GMV: ₹${totalAmount.toLocaleString('en-IN')}</span>
+                  <span style="color: #10B981; font-weight: 700;">↑ Live Active</span>
+                </div>
+              </div>
 
-    document.querySelectorAll('.btn-switch-tenant').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const slug = btn.getAttribute('data-slug');
-        state.currentTenantId = slug;
-        DineFlowStore.save(state);
-        navigateTo({ view: 'admin' });
-        showToast(`Switched active tenant to ${state.tenants[slug].name}`);
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">UPI Payments</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">📱</div>
+                </div>
+                <div class="df-audit-kpi-value" style="color: #10B981;">${upiPct}%</div>
+                <div class="df-audit-kpi-sub">
+                  <span>₹${upiAmount.toLocaleString('en-IN')} Settled</span>
+                  <span style="color: var(--text-dim);">Direct QR</span>
+                </div>
+              </div>
+
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Card / POS</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(129, 140, 248, 0.15); color: #818CF8;">💳</div>
+                </div>
+                <div class="df-audit-kpi-value" style="color: #818CF8;">${cardPct}%</div>
+                <div class="df-audit-kpi-sub">
+                  <span>₹${cardAmount.toLocaleString('en-IN')} Settled</span>
+                  <span style="color: var(--text-dim);">EDC Terminal</span>
+                </div>
+              </div>
+
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Cash Reconciled</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(229, 169, 60, 0.15); color: #E5A93C;">🔒</div>
+                </div>
+                <div class="df-audit-kpi-value" style="color: #E5A93C;">${cashPct}%</div>
+                <div class="df-audit-kpi-sub">
+                  <span>₹${cashAmount.toLocaleString('en-IN')} In Drawer</span>
+                  <span style="color: #10B981; font-weight: 700;">✓ 0 Discrepancy</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Split View: Left Manager Shifts vs Right Live Audit Logs -->
+            <div class="df-audit-split-view">
+              
+              <!-- Left Column: Manager Shift & Payment Ledger -->
+              <div class="df-manager-ledger-col">
+                <div class="df-ledger-header">
+                  <div>
+                    <h3 class="df-ledger-title">Manager Shift Ledger</h3>
+                    <span style="font-size: 0.72rem; color: var(--text-dim);">Payment custody by store lead</span>
+                  </div>
+                  <span class="df-micro-badge status-available">${allManagers.length} ACTIVE</span>
+                </div>
+
+                ${allManagers.map((m, idx) => {
+                  const mLogs = logs.filter(l => l.managerId === m.id);
+                  const mOrdersCount = mLogs.length ? mLogs.length : (21 - idx * 4);
+                  const mUpi = 65 + (idx % 2 === 0 ? 5 : -5);
+                  const mCard = 22 + (idx % 2 === 0 ? -3 : 4);
+                  const mCash = 100 - mUpi - mCard;
+                  const shiftTime = idx === 0 ? '5h 14m' : idx === 1 ? '4h 30m' : '3h 45m';
+
+                  return `
+                    <div class="df-manager-card-item">
+                      <div class="df-manager-top">
+                        <div class="df-manager-avatar">${m.avatarEmoji || '👨‍🍳'}</div>
+                        <div class="df-manager-info">
+                          <div class="df-manager-name">${m.name}</div>
+                          <div class="df-manager-sub">${m.roleTitle} • ${m.department || 'Floor'}</div>
+                        </div>
+                        <span class="df-manager-status-pill">Active (${shiftTime})</span>
+                      </div>
+
+                      <div class="df-manager-stats-row">
+                        <span>Orders Processed: <strong style="color: #fff;">${mOrdersCount}</strong></span>
+                        <span>Shift Status: <strong style="color: #10B981;">On Floor</strong></span>
+                      </div>
+
+                      <!-- Payment Method Breakdown Progress Bar -->
+                      <div class="df-payment-split-bar" title="Payment custody split: UPI ${mUpi}%, Card ${mCard}%, Cash ${mCash}%">
+                        <div class="df-split-seg upi" style="width: ${mUpi}%;"></div>
+                        <div class="df-split-seg card" style="width: ${mCard}%;"></div>
+                        <div class="df-split-seg cash" style="width: ${mCash}%;"></div>
+                      </div>
+
+                      <div class="df-split-legend">
+                        <span style="color: #10B981;">● UPI: ${mUpi}%</span>
+                        <span style="color: #818CF8;">● Card: ${mCard}%</span>
+                        <span style="color: #E5A93C;">● Cash: ${mCash}%</span>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- Right Column: Live Audit & Security Stream -->
+              <div class="df-audit-logs-col">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                  <div>
+                    <h3 class="df-ledger-title">Live Audit &amp; Activity Log</h3>
+                    <span style="font-size: 0.72rem; color: var(--text-dim);">Immutable operations stream with security flags</span>
+                  </div>
+                  <span class="df-micro-badge" style="background: rgba(99, 102, 241, 0.15); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.35);">
+                    ${logs.length} RECORDS
+                  </span>
+                </div>
+
+                <!-- Instant Search Input -->
+                <div class="df-audit-search-bar">
+                  <input type="text" id="input-audit-search" class="df-audit-search-input" placeholder="🔍 Search records by manager, action, table, or order ID..." value="${searchQuery}">
+                </div>
+
+                <!-- Scrollable Audit Table -->
+                <div class="df-audit-table-wrap">
+                  <table class="df-audit-table">
+                    <thead>
+                      <tr>
+                        <th>Timestamp</th>
+                        <th>Manager &amp; Outlet</th>
+                        <th>Action &amp; Event</th>
+                        <th>Order / Ref</th>
+                        <th>Amount</th>
+                        <th>Security Audit</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${logs.length ? logs.map(l => {
+                        let badgeClass = 'payment';
+                        if (l.category === 'DISCOUNT') badgeClass = 'discount';
+                        else if (l.category === 'OVERRIDE') badgeClass = 'override';
+                        else if (l.category === 'STOCK') badgeClass = 'stock';
+                        else if (l.category === 'SHIFT' || l.category === 'RECONCILIATION') badgeClass = 'shift';
+
+                        let flagClass = 'verified';
+                        if (l.severity === 'alert') flagClass = 'alert';
+                        else if (l.severity === 'warning') flagClass = 'warning';
+
+                        return `
+                          <tr>
+                            <td style="white-space: nowrap; color: var(--text-muted); font-size: 0.75rem;">
+                              ${l.timestamp}
+                            </td>
+                            <td>
+                              <div style="font-weight: 700; color: #fff; font-size: 0.8rem;">${l.managerName}</div>
+                              <div style="font-size: 0.7rem; color: var(--text-dim);">${l.tenantName || 'Outlet'}</div>
+                            </td>
+                            <td>
+                              <div style="margin-bottom: 0.25rem;">
+                                <span class="df-audit-badge ${badgeClass}">${l.action}</span>
+                              </div>
+                              <div style="font-size: 0.72rem; color: var(--text-muted); max-width: 280px; line-height: 1.3;">
+                                ${l.details}
+                              </div>
+                            </td>
+                            <td style="white-space: nowrap; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">
+                              ${l.orderId || '—'}
+                            </td>
+                            <td style="white-space: nowrap; font-weight: 700; font-size: 0.82rem; color: ${l.amount ? '#fff' : 'var(--text-dim)'};">
+                              ${l.amount ? '₹' + l.amount.toLocaleString('en-IN') : '—'}
+                            </td>
+                            <td style="white-space: nowrap;">
+                              <span class="df-sec-flag ${flagClass}">${l.securityFlag || '✓ Verified'}</span>
+                            </td>
+                          </tr>
+                        `;
+                      }).join('') : `
+                        <tr>
+                          <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                            No audit records found matching your filters.
+                          </td>
+                        </tr>
+                      `}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+          ` : `
+            <!-- Outlets Management View -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <div>
+                <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff;">Managed Restaurant Partners</h2>
+                <span style="font-size: 0.78rem; color: var(--text-dim);">Multi-tenant workspace operations and governance</span>
+              </div>
+              <a href="?view=onboarding" class="df-pill-btn primary">+ Launch 10-Step Onboarding</a>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem;">
+              ${tenantsList.map(t => `
+                <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                      <span style="font-size: 1.75rem;">${t.logoEmoji || '🍽️'}</span>
+                      <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff;">${t.name}</h3>
+                        <span style="font-size: 0.75rem; color: var(--text-dim);">${t.branch}</span>
+                      </div>
+                    </div>
+                    <span class="df-micro-badge chef" style="text-transform: uppercase;">${t.plan}</span>
+                  </div>
+
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                    ${t.tagline}
+                  </p>
+
+                  <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
+                    <button class="df-pill-btn primary btn-switch-tenant" data-slug="${t.slug}" style="flex: 1; justify-content: center; font-size: 0.78rem;">
+                      Switch & Manage
+                    </button>
+                    <a href="?r=${t.slug}&t=T12" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+                      QR View ↗
+                    </a>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          `}
+
+          <!-- Super Admin Footer -->
+          <footer class="df-superadmin-footer" style="margin-top: 3.5rem; padding-top: 1.75rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              Designed &amp; Engineered by <a href="../" class="df-credit-link" style="color: var(--brand-primary); font-weight: 700;">Debashish Paul</a> • DineFlow SaaS Platform
+            </div>
+            <a href="../projects" class="df-back-portfolio-btn">
+              <span>← Back to Portfolio</span>
+            </a>
+          </footer>
+        </main>
+      `;
+
+      // Event Listeners for Tabs
+      container.querySelectorAll('.df-superadmin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeSuperTab = btn.getAttribute('data-tab');
+          renderMain();
+        });
       });
-    });
 
-    document.getElementById('btn-superadmin-logout')?.addEventListener('click', () => {
-      state = DineFlowStore.get();
-      state.session = {
-        isAuthenticated: false,
-        role: 'CUSTOMER',
-        user: null,
-        tenantId: 'the-urban-plate'
-      };
-      DineFlowStore.save(state);
-      SoundFX.chime('notice');
-      showToast('Signed out of Platform Super Admin.', '🔒');
-      navigateTo({ view: 'login' });
-    });
+      // Filter Change Listeners
+      const branchSel = container.querySelector('#filter-branch');
+      if (branchSel) {
+        branchSel.addEventListener('change', (e) => {
+          selectedBranch = e.target.value;
+          renderMain();
+        });
+      }
+
+      const managerSel = container.querySelector('#filter-manager');
+      if (managerSel) {
+        managerSel.addEventListener('change', (e) => {
+          selectedManager = e.target.value;
+          renderMain();
+        });
+      }
+
+      const catSel = container.querySelector('#filter-category');
+      if (catSel) {
+        catSel.addEventListener('change', (e) => {
+          selectedCategory = e.target.value;
+          renderMain();
+        });
+      }
+
+      // Search Input
+      const searchInput = container.querySelector('#input-audit-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value;
+          const tbody = container.querySelector('.df-audit-table tbody');
+          if (tbody) {
+            const currentFiltered = getFilteredLogs();
+            tbody.innerHTML = currentFiltered.length ? currentFiltered.map(l => {
+              let badgeClass = 'payment';
+              if (l.category === 'DISCOUNT') badgeClass = 'discount';
+              else if (l.category === 'OVERRIDE') badgeClass = 'override';
+              else if (l.category === 'STOCK') badgeClass = 'stock';
+              else if (l.category === 'SHIFT' || l.category === 'RECONCILIATION') badgeClass = 'shift';
+
+              let flagClass = 'verified';
+              if (l.severity === 'alert') flagClass = 'alert';
+              else if (l.severity === 'warning') flagClass = 'warning';
+
+              return `
+                <tr>
+                  <td style="white-space: nowrap; color: var(--text-muted); font-size: 0.75rem;">
+                    ${l.timestamp}
+                  </td>
+                  <td>
+                    <div style="font-weight: 700; color: #fff; font-size: 0.8rem;">${l.managerName}</div>
+                    <div style="font-size: 0.7rem; color: var(--text-dim);">${l.tenantName || 'Outlet'}</div>
+                  </td>
+                  <td>
+                    <div style="margin-bottom: 0.25rem;">
+                      <span class="df-audit-badge ${badgeClass}">${l.action}</span>
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); max-width: 280px; line-height: 1.3;">
+                      ${l.details}
+                    </div>
+                  </td>
+                  <td style="white-space: nowrap; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">
+                    ${l.orderId || '—'}
+                  </td>
+                  <td style="white-space: nowrap; font-weight: 700; font-size: 0.82rem; color: ${l.amount ? '#fff' : 'var(--text-dim)'};">
+                    ${l.amount ? '₹' + l.amount.toLocaleString('en-IN') : '—'}
+                  </td>
+                  <td style="white-space: nowrap;">
+                    <span class="df-sec-flag ${flagClass}">${l.securityFlag || '✓ Verified'}</span>
+                  </td>
+                </tr>
+              `;
+            }).join('') : `
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                  No audit records found matching "${searchQuery}".
+                </td>
+              </tr>
+            `;
+          }
+        });
+      }
+
+      // Export CSV Listener
+      const btnExport = container.querySelector('#btn-export-audit-csv');
+      if (btnExport) {
+        btnExport.addEventListener('click', () => {
+          const exportLogs = getFilteredLogs();
+          const headers = ['Log ID', 'Timestamp', 'Restaurant', 'Manager', 'Category', 'Action', 'Details', 'Order Ref', 'Amount (INR)', 'Payment Method', 'Security Status'];
+          const rows = exportLogs.map(l => [
+            `"${l.id}"`,
+            `"${l.timestamp}"`,
+            `"${(l.tenantName || l.tenantId || '').replace(/"/g, '""')}"`,
+            `"${(l.managerName || '').replace(/"/g, '""')}"`,
+            `"${l.category || ''}"`,
+            `"${(l.action || '').replace(/"/g, '""')}"`,
+            `"${(l.details || '').replace(/"/g, '""')}"`,
+            `"${l.orderId || 'N/A'}"`,
+            l.amount || 0,
+            `"${l.paymentMethod || 'N/A'}"`,
+            `"${l.securityFlag || 'Verified'}"`
+          ]);
+          const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement('a');
+          link.setAttribute('href', encodedUri);
+          link.setAttribute('download', `dineflow_audit_logs_${new Date().toISOString().slice(0, 10)}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          showToast('Audit logs exported to CSV successfully!', '📥');
+        });
+      }
+
+      // Switch Tenant Listener
+      container.querySelectorAll('.btn-switch-tenant').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const slug = btn.getAttribute('data-slug');
+          state.currentTenantId = slug;
+          DineFlowStore.save(state);
+          navigateTo({ view: 'admin' });
+          showToast(`Switched active tenant to ${state.tenants[slug].name}`);
+        });
+      });
+
+      // Logout Listener
+      container.querySelector('#btn-superadmin-logout')?.addEventListener('click', () => {
+        state = DineFlowStore.get();
+        state.session = {
+          isAuthenticated: false,
+          role: 'CUSTOMER',
+          user: null,
+          tenantId: 'the-urban-plate'
+        };
+        DineFlowStore.save(state);
+        SoundFX.chime('notice');
+        showToast('Signed out of Platform Super Admin.', '🔒');
+        navigateTo({ view: 'login' });
+      });
+    }
+
+    renderMain();
   }
 
   // ------------------------------------------------------------------------------
@@ -5012,7 +5425,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=2.0.0').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=2.1.0').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

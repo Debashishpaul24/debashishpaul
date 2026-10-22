@@ -62,6 +62,158 @@ const DINEFLOW_DEFAULT_DATA = {
       password: 'admin',
       avatarEmoji: '🍕',
       department: 'Italian Cuisine Operations'
+    },
+    {
+      id: 'staff-04',
+      name: 'Kenji Sato',
+      roleTitle: 'Izakaya Floor Manager',
+      role: 'RESTAURANT_ADMIN',
+      tenantId: 'sakura-asian',
+      pin: '4321',
+      email: 'manager@sakuraasian.in',
+      password: 'admin',
+      avatarEmoji: '🍱',
+      department: 'Asian Cuisine Operations'
+    }
+  ],
+
+  // Platform Audit & Security Logs (Real-time Manager Activity Ledger)
+  auditLogs: [
+    {
+      id: 'log-101',
+      timestamp: 'Today, 2:42 PM',
+      isoTime: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
+      managerId: 'staff-01',
+      managerName: 'Chef Vikram Rao',
+      tenantId: 'the-urban-plate',
+      tenantName: 'The Urban Plate',
+      category: 'DISCOUNT',
+      action: 'VIP Comp Discount Applied',
+      details: 'Applied 15% VIP Courtesy Discount on Table T04',
+      orderId: 'ORD-1048',
+      amount: 1850,
+      paymentMethod: 'UPI',
+      severity: 'alert',
+      securityFlag: '🚨 Review Comp'
+    },
+    {
+      id: 'log-102',
+      timestamp: 'Today, 2:15 PM',
+      isoTime: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+      managerId: 'staff-01',
+      managerName: 'Chef Vikram Rao',
+      tenantId: 'the-urban-plate',
+      tenantName: 'The Urban Plate',
+      category: 'PAYMENT',
+      action: 'Bill Settled via Direct UPI',
+      details: 'Table T12 payment completed via PhonePe QR',
+      orderId: 'ORD-1046',
+      amount: 2450,
+      paymentMethod: 'UPI',
+      severity: 'info',
+      securityFlag: '✓ Verified'
+    },
+    {
+      id: 'log-103',
+      timestamp: 'Today, 1:52 PM',
+      isoTime: new Date(Date.now() - 68 * 60 * 1000).toISOString(),
+      managerId: 'staff-03',
+      managerName: 'Marco Rossi',
+      tenantId: 'bella-vista',
+      tenantName: 'Bella Vista Trattoria',
+      category: 'OVERRIDE',
+      action: 'Manual Table Override',
+      details: 'Table T02 manually marked Available (Guests departed)',
+      orderId: 'ORD-1042',
+      amount: 3150,
+      paymentMethod: 'Card',
+      severity: 'warning',
+      securityFlag: '⚠️ Manual Clear'
+    },
+    {
+      id: 'log-104',
+      timestamp: 'Today, 1:20 PM',
+      isoTime: new Date(Date.now() - 100 * 60 * 1000).toISOString(),
+      managerId: 'staff-04',
+      managerName: 'Kenji Sato',
+      tenantId: 'sakura-asian',
+      tenantName: 'Sakura Asian Kitchen',
+      category: 'STOCK',
+      action: 'Menu Item 86ed (Sold Out)',
+      details: 'Bluefin Tuna Sashimi marked out-of-stock for dinner rush',
+      orderId: 'N/A',
+      amount: 0,
+      paymentMethod: 'N/A',
+      severity: 'warning',
+      securityFlag: '⚠️ Stock Cut'
+    },
+    {
+      id: 'log-105',
+      timestamp: 'Today, 12:45 PM',
+      isoTime: new Date(Date.now() - 135 * 60 * 1000).toISOString(),
+      managerId: 'staff-01',
+      managerName: 'Chef Vikram Rao',
+      tenantId: 'the-urban-plate',
+      tenantName: 'The Urban Plate',
+      category: 'PAYMENT',
+      action: 'Bill Settled via POS Terminal',
+      details: 'Table T07 paid via HDFC Credit Card EDC swipe',
+      orderId: 'ORD-1038',
+      amount: 4200,
+      paymentMethod: 'Card',
+      severity: 'info',
+      securityFlag: '✓ Batch Synced'
+    },
+    {
+      id: 'log-106',
+      timestamp: 'Today, 12:10 PM',
+      isoTime: new Date(Date.now() - 170 * 60 * 1000).toISOString(),
+      managerId: 'staff-03',
+      managerName: 'Marco Rossi',
+      tenantId: 'bella-vista',
+      tenantName: 'Bella Vista Trattoria',
+      category: 'RECONCILIATION',
+      action: 'Cash Register Reconciliation',
+      details: 'Mid-day cash drop of ₹14,280 deposited into safe. Discrepancy: ₹0.00',
+      orderId: 'CASH-DROP-01',
+      amount: 14280,
+      paymentMethod: 'Cash',
+      severity: 'info',
+      securityFlag: '✓ Reconciled'
+    },
+    {
+      id: 'log-107',
+      timestamp: 'Today, 11:30 AM',
+      isoTime: new Date(Date.now() - 210 * 60 * 1000).toISOString(),
+      managerId: 'staff-04',
+      managerName: 'Kenji Sato',
+      tenantId: 'sakura-asian',
+      tenantName: 'Sakura Asian Kitchen',
+      category: 'PAYMENT',
+      action: 'Bill Settled via Direct UPI',
+      details: 'Table T05 QR payment settled to merchant Kotak Bank',
+      orderId: 'ORD-1031',
+      amount: 3890,
+      paymentMethod: 'UPI',
+      severity: 'info',
+      securityFlag: '✓ Verified'
+    },
+    {
+      id: 'log-108',
+      timestamp: 'Today, 10:45 AM',
+      isoTime: new Date(Date.now() - 255 * 60 * 1000).toISOString(),
+      managerId: 'staff-01',
+      managerName: 'Chef Vikram Rao',
+      tenantId: 'the-urban-plate',
+      tenantName: 'The Urban Plate',
+      category: 'SHIFT',
+      action: 'Shift Clock-In & Station Open',
+      details: 'Morning operations shift started. Cash float verified: ₹5,000',
+      orderId: 'SHIFT-09',
+      amount: 5000,
+      paymentMethod: 'Cash',
+      severity: 'info',
+      securityFlag: '✓ Verified'
     }
   ],
 
@@ -1231,6 +1383,10 @@ const DineFlowStore = {
             data.settings = { toneProfile: 'executive' };
             updated = true;
           }
+          if (!data.auditLogs || !Array.isArray(data.auditLogs) || data.auditLogs.length === 0) {
+            data.auditLogs = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.auditLogs || []));
+            updated = true;
+          }
 
           // Auto-reconcile table statuses with actual active orders & requests (clears zombie occupied tables)
           if (Array.isArray(data.tables) && Array.isArray(data.orders)) {
@@ -1291,6 +1447,47 @@ const DineFlowStore = {
       }
     } catch (e) {
       console.error('Failed saving localStorage', e);
+    }
+  },
+
+  recordLog(entry) {
+    try {
+      const data = this.get();
+      if (!Array.isArray(data.auditLogs)) {
+        data.auditLogs = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.auditLogs || []));
+      }
+      const tenant = (data.tenants && entry.tenantId && data.tenants[entry.tenantId]) ? data.tenants[entry.tenantId] : null;
+      const tenantName = entry.tenantName || (tenant ? tenant.name : 'The Urban Plate');
+      const now = new Date();
+      const timeStr = `Today, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      
+      const newLog = {
+        id: 'log-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+        timestamp: timeStr,
+        isoTime: now.toISOString(),
+        managerId: entry.managerId || (data.session?.user?.id || 'staff-01'),
+        managerName: entry.managerName || (data.session?.user?.name || 'Chef Vikram Rao'),
+        tenantId: entry.tenantId || (data.session?.tenantId || 'the-urban-plate'),
+        tenantName: tenantName,
+        category: entry.category || 'INFO',
+        action: entry.action || 'Manager Operation',
+        details: entry.details || '',
+        orderId: entry.orderId || 'N/A',
+        amount: typeof entry.amount === 'number' ? entry.amount : 0,
+        paymentMethod: entry.paymentMethod || 'UPI',
+        severity: entry.severity || 'info',
+        securityFlag: entry.securityFlag || '✓ Verified'
+      };
+
+      data.auditLogs.unshift(newLog);
+      if (data.auditLogs.length > 150) {
+        data.auditLogs = data.auditLogs.slice(0, 150);
+      }
+      this.save(data, { action: 'AUDIT_LOG_RECORDED', log: newLog });
+      return newLog;
+    } catch (e) {
+      console.warn('Failed recording audit log', e);
+      return null;
     }
   },
 
