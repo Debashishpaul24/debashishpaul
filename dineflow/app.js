@@ -3297,7 +3297,10 @@
           <h2 style="font-size: 1.35rem; font-weight: 800;">Table Management & QR Tent Cards</h2>
           <p style="font-size: 0.8rem; color: var(--text-muted);">Generate, preview, download, and print table tent cards with unique QR URLs.</p>
         </div>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button class="df-pill-btn" id="btn-batch-print-all" title="Export & Print all tables to high-precision PDF batch">
+            📄 Batch Print All (PDF)
+          </button>
           <button class="df-pill-btn" id="btn-clear-all-tables-tab" title="Reset all tables to Available status">
             🧹 Clear All Tables
           </button>
@@ -3423,6 +3426,11 @@
       renderAdminView(document.getElementById('app'), tenant);
     });
 
+    // Batch Print All Tables (PDF)
+    document.getElementById('btn-batch-print-all')?.addEventListener('click', () => {
+      batchPrintAllTables(state.tables, tenant);
+    });
+
     // Add Table
     document.getElementById('btn-add-table')?.addEventListener('click', () => {
       const nextId = `T${String(state.tables.length + 1).padStart(2, '0')}`;
@@ -3451,14 +3459,17 @@
 
     modalContainer.innerHTML = `
       <div class="df-modal-backdrop active" id="tent-backdrop">
-        <div class="df-bottom-sheet" style="max-width: 480px; align-self: center; border-radius: 24px; padding-bottom: 1.5rem;">
+        <div class="df-bottom-sheet" style="max-width: 490px; align-self: center; border-radius: 24px; padding-bottom: 1.5rem;">
           <div class="df-sheet-header">
-            <h3 style="font-size: 1.1rem; font-weight: 700;">Printable Table Tent Stand Card</h3>
+            <div>
+              <h3 style="font-size: 1.15rem; font-weight: 800;">Table Tent QR Stand • ${table.name}</h3>
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">High-precision vector QR code formatted for printing &amp; PDF export</p>
+            </div>
             <button class="df-sheet-close" id="btn-close-tent">✕</button>
           </div>
 
           <div class="df-sheet-body">
-            <!-- Physical Tent Stand Card Layout -->
+            <!-- Physical Tent Stand Card Layout (Crisp Vector Display) -->
             <div class="df-print-tent-card" id="printable-tent-card">
               <div class="df-print-tent-header">
                 <h2>${tenant.name}</h2>
@@ -3470,29 +3481,33 @@
               </div>
 
               <div class="df-print-qr-holder" id="print-qr-svg-box">
-                <!-- SVG QR -->
+                <!-- High-Precision SVG QR -->
               </div>
 
               <div class="df-print-instructions">
                 Scan • Browse • Order • Enjoy
               </div>
-              <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.65rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                <svg class="df-wifi-icon" style="color: #64748b; width: 12px; height: 12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.85rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                <svg class="df-wifi-icon" style="color: #64748b; width: 13px; height: 13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
                   <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
                   <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
                   <line x1="12" y1="20" x2="12.01" y2="20" stroke-width="2.5"></line>
                 </svg>
-                <span>Free Guest Wi-Fi: <strong>${tenant.wifiName}</strong> (Pass: ${tenant.wifiPass})</span>
+                <span>Free Guest Wi-Fi: <strong>${tenant.wifiName || 'Guest'}</strong> (Pass: ${tenant.wifiPass || 'Welcome'})</span>
               </div>
             </div>
 
-            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-              <button class="df-splash-btn" id="btn-trigger-print" style="flex: 1; padding: 0.85rem; font-size: 0.9rem; text-align: center;">
-                🖨️ Print Card
+            <!-- Action Toolbar for PDF, Print, PNG and SVG -->
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap;">
+              <button class="df-splash-btn" id="btn-trigger-print" style="flex: 2; min-width: 160px; padding: 0.85rem; font-size: 0.88rem; text-align: center; font-weight: 800;">
+                🖨️ Print / Save PDF
               </button>
-              <button class="df-pill-btn" id="btn-download-qr-png" style="padding: 0.85rem 1.25rem; font-size: 0.85rem;">
-                📥 Save PNG
+              <button class="df-pill-btn primary" id="btn-download-qr-png" style="flex: 1; padding: 0.85rem 0.95rem; font-size: 0.82rem; justify-content: center;">
+                📥 600 DPI PNG
+              </button>
+              <button class="df-pill-btn" id="btn-export-qr-svg" style="flex: 1; padding: 0.85rem 0.95rem; font-size: 0.82rem; justify-content: center;">
+                📄 Vector SVG
               </button>
             </div>
           </div>
@@ -3502,27 +3517,346 @@
 
     const svgBox = document.getElementById('print-qr-svg-box');
     if (svgBox && window.DineFlowQR) {
-      svgBox.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 190, darkColor: '#0b0f17' });
+      svgBox.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 210, darkColor: '#0b0f17', margin: 2 });
     }
 
     document.getElementById('btn-close-tent')?.addEventListener('click', () => {
       modalContainer.innerHTML = '';
     });
 
+    // High-Precision Isolated PDF Print
     document.getElementById('btn-trigger-print')?.addEventListener('click', () => {
-      window.print();
+      printTableTentCard(table, tenant);
     });
 
+    // 600 DPI High-Resolution PNG with Clean Quiet Zone
     document.getElementById('btn-download-qr-png')?.addEventListener('click', () => {
       if (window.DineFlowQR) {
-        const dataUrl = window.DineFlowQR.getDataURL(tableUrl, { size: 600 });
+        const dataUrl = window.DineFlowQR.getDataURL(tableUrl, { size: 1000, margin: 3 });
         const a = document.createElement('a');
         a.href = dataUrl;
         a.download = `${tenant.slug}-Table-${table.id}-QR.png`;
         a.click();
-        showToast('High-Res QR PNG Downloaded');
+        showToast(`Table ${table.id} High-Res QR PNG Downloaded`, '📥');
       }
     });
+
+    // Vector SVG Export for Acrylic Laser Cutting & Professional Print Shops
+    document.getElementById('btn-export-qr-svg')?.addEventListener('click', () => {
+      if (window.DineFlowQR) {
+        const svgContent = window.DineFlowQR.generateSVG(tableUrl, { size: 400, darkColor: '#0b0f17', margin: 2 });
+        const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${tenant.slug}-Table-${table.id}-QR.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast(`Table ${table.id} Vector SVG Exported`, '📄');
+      }
+    });
+  }
+
+  // Standalone Isolated Single-Page PDF Print Generator
+  function printTableTentCard(table, tenant) {
+    const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
+    const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#0b0f17', margin: 2 }) : '';
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>${tenant.name} - Table ${table.id} QR Stand</title>
+        <style>
+          @page {
+            size: A5 portrait;
+            margin: 10mm;
+          }
+          @media print {
+            body {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+          }
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: #ffffff;
+            color: #0b0f17;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+          }
+          .tent-card {
+            width: 100%;
+            max-width: 360px;
+            background: #ffffff;
+            border: 3px solid ${tenant.primaryColor || '#E5A93C'};
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: none;
+            page-break-inside: avoid;
+          }
+          .brand-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #0b0f17;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
+          }
+          .brand-tagline {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+          }
+          .table-pill {
+            display: inline-block;
+            background: #0f172a !important;
+            color: ${tenant.primaryColor || '#E5A93C'} !important;
+            font-weight: 800;
+            font-size: 1.25rem;
+            padding: 0.5rem 1.75rem;
+            border-radius: 99px;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .qr-wrapper {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 1.5rem;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 12px;
+            background: #ffffff !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .qr-wrapper svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+          }
+          .instructions {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.65rem;
+            letter-spacing: 0.02em;
+          }
+          .wifi-info {
+            font-size: 0.78rem;
+            color: #64748b;
+          }
+          .footer-note {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #e2e8f0;
+            font-size: 0.7rem;
+            color: #94a3b8;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="tent-card">
+          <h1 class="brand-title">${tenant.name}</h1>
+          <p class="brand-tagline">${tenant.tagline}</p>
+          <div class="table-pill">TABLE ${table.id}</div>
+          <div class="qr-wrapper">
+            ${qrSvg}
+          </div>
+          <div class="instructions">Scan • Browse • Order • Enjoy</div>
+          <div class="wifi-info">
+            📶 Free Guest Wi-Fi: <strong>${tenant.wifiName || 'Guest'}</strong> (Pass: ${tenant.wifiPass || 'Welcome'})
+          </div>
+          <div class="footer-note">
+            Powered by DineFlow™ • Contactless Digital Dining Experience
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => document.body.removeChild(iframe), 4000);
+    }, 400);
+  }
+
+  // Batch Print All Table QR Stands to a Clean Multi-Page PDF Document
+  function batchPrintAllTables(tables, tenant) {
+    const cardsHTML = tables.map(table => {
+      const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
+      const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#0b0f17', margin: 2 }) : '';
+      return `
+        <div class="tent-card-page">
+          <div class="tent-card">
+            <h1 class="brand-title">${tenant.name}</h1>
+            <p class="brand-tagline">${tenant.tagline}</p>
+            <div class="table-pill">TABLE ${table.id}</div>
+            <div class="qr-wrapper">${qrSvg}</div>
+            <div class="instructions">Scan • Browse • Order • Enjoy</div>
+            <div class="wifi-info">
+              📶 Free Guest Wi-Fi: <strong>${tenant.wifiName || 'Guest'}</strong> (Pass: ${tenant.wifiPass || 'Welcome'})
+            </div>
+            <div class="footer-note">
+              Powered by DineFlow™ • Contactless Digital Dining Experience
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>${tenant.name} - All Table QR Stands Batch</title>
+        <style>
+          @page {
+            size: A5 portrait;
+            margin: 8mm;
+          }
+          @media print {
+            body {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+          }
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body {
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            background: #ffffff;
+            color: #0b0f17;
+          }
+          .tent-card-page {
+            page-break-after: always;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10mm;
+          }
+          .tent-card-page:last-child {
+            page-break-after: auto;
+          }
+          .tent-card {
+            width: 100%;
+            max-width: 360px;
+            background: #ffffff;
+            border: 2.5px solid ${tenant.primaryColor || '#E5A93C'};
+            border-radius: 24px;
+            padding: 2.25rem 1.75rem;
+            text-align: center;
+          }
+          .brand-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #0b0f17;
+            margin-bottom: 0.35rem;
+          }
+          .brand-tagline {
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-bottom: 1.25rem;
+          }
+          .table-pill {
+            display: inline-block;
+            background: #0f172a !important;
+            color: ${tenant.primaryColor || '#E5A93C'} !important;
+            font-weight: 800;
+            font-size: 1.15rem;
+            padding: 0.45rem 1.6rem;
+            border-radius: 99px;
+            margin-bottom: 1.25rem;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .qr-wrapper {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 1.25rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 12px;
+            background: #ffffff !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .qr-wrapper svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+          }
+          .instructions {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 0.6rem;
+          }
+          .wifi-info {
+            font-size: 0.75rem;
+            color: #64748b;
+          }
+          .footer-note {
+            margin-top: 1.25rem;
+            padding-top: 0.85rem;
+            border-top: 1px dashed #e2e8f0;
+            font-size: 0.65rem;
+            color: #94a3b8;
+          }
+        </style>
+      </head>
+      <body>
+        ${cardsHTML}
+      </body>
+      </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => document.body.removeChild(iframe), 5000);
+    }, 500);
   }
 
   // MENU MANAGER (CRUD)
@@ -4552,7 +4886,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.5').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.6').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

@@ -497,9 +497,12 @@
       var count = qr.getModuleCount();
       var fullSize = count + margin * 2;
       var moduleSize = size / fullSize;
+      var bgRadius = options.bgRadius !== undefined ? options.bgRadius : 0;
 
-      var svg = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" width="' + size + '" height="' + size + '">'];
-      svg.push('<rect width="' + size + '" height="' + size + '" fill="' + lightColor + '" rx="16"/>');
+      var svg = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" width="100%" height="100%" style="display:block;aspect-ratio:1/1;max-width:100%;height:auto;">'];
+      if (lightColor && lightColor !== 'transparent') {
+        svg.push('<rect width="' + size + '" height="' + size + '" fill="' + lightColor + '" rx="' + bgRadius + '"/>');
+      }
 
       for (var r = 0; r < count; r++) {
         for (var c = 0; c < count; c++) {
@@ -507,7 +510,7 @@
             var x = (c + margin) * moduleSize;
             var y = (r + margin) * moduleSize;
             var radius = rounded ? moduleSize * 0.35 : 0;
-            svg.push('<rect x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '" width="' + (moduleSize + 0.3).toFixed(2) + '" height="' + (moduleSize + 0.3).toFixed(2) + '" rx="' + radius + '" fill="' + darkColor + '"/>');
+            svg.push('<rect x="' + x.toFixed(2) + '" y="' + y.toFixed(2) + '" width="' + (moduleSize + 0.05).toFixed(2) + '" height="' + (moduleSize + 0.05).toFixed(2) + '" rx="' + radius + '" fill="' + darkColor + '"/>');
           }
         }
       }

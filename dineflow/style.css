@@ -1761,11 +1761,17 @@ body.splash-active {
   border-radius: 12px;
   padding: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .df-table-qr-preview svg, .df-table-qr-preview img {
   width: 100%;
   height: 100%;
+  display: block;
 }
 
 /* Printable Table Tent Stand Card (Modal / Print Mode) */
@@ -1779,12 +1785,14 @@ body.splash-active {
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
   border: 2px solid #E5A93C;
+  box-sizing: border-box;
 }
 
 .df-print-tent-header h2 {
   color: #0b0f17;
   font-size: 1.45rem;
   margin-bottom: 0.2rem;
+  font-weight: 800;
 }
 
 .df-print-tent-header p {
@@ -1794,13 +1802,24 @@ body.splash-active {
 }
 
 .df-print-qr-holder {
-  width: 190px;
-  height: 190px;
+  width: 210px;
+  height: 210px;
   margin: 0 auto 1.25rem;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #e2e8f0;
   border-radius: 16px;
-  padding: 10px;
-  background: #fff;
+  padding: 12px;
+  background: #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.df-print-qr-holder svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .df-print-table-tag {
@@ -1811,31 +1830,73 @@ body.splash-active {
   font-size: 1.1rem;
   padding: 0.4rem 1.25rem;
   border-radius: 99px;
-  margin-bottom: 0.85rem;
+  margin-bottom: 1.1rem;
   letter-spacing: 0.05em;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .df-print-instructions {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e293b;
 }
 
-/* Print Media Override */
+/* Print Media Override - Perfectly Formatted PDF & Stand Output */
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    size: portrait;
+    margin: 8mm;
   }
-  .df-print-tent-card, .df-print-tent-card * {
-    visibility: visible;
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .df-print-tent-card,
+  .df-print-tent-card * {
+    visibility: visible !important;
+  }
+  .df-modal-backdrop {
+    background: transparent !important;
+    position: static !important;
+    display: block !important;
+    padding: 0 !important;
+  }
+  .df-bottom-sheet {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  .df-sheet-header,
+  .df-sheet-close,
+  .df-sheet-handle,
+  #btn-trigger-print,
+  #btn-download-qr-png,
+  #btn-export-qr-svg {
+    display: none !important;
   }
   .df-print-tent-card {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: none;
-    border: 1px solid #ccc;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin: 10mm auto !important;
+    box-shadow: none !important;
+    border: 2px solid #E5A93C !important;
+    page-break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 
