@@ -257,13 +257,13 @@
   const DINEFLOW_DEVICE_ID = (function () {
     let id = null;
     try {
-      id = localStorage.getItem('DINEFLOW_DEVICE_ID_V1');
+      id = sessionStorage.getItem('DINEFLOW_TAB_ID_V2');
       if (!id) {
-        id = 'dev_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
-        localStorage.setItem('DINEFLOW_DEVICE_ID_V1', id);
+        id = 'tab_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+        sessionStorage.setItem('DINEFLOW_TAB_ID_V2', id);
       }
     } catch (e) {
-      id = 'dev_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+      id = 'tab_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
     }
     return id;
   })();
@@ -346,9 +346,25 @@
         }
         stateChanged = true;
       }
-    } else if (event.action === 'STAFF_CALL') {
-      if (event.request && !state.staffRequests.some(r => r.id === event.request.id)) {
-        state.staffRequests.unshift(event.request);
+    } else if (event.action === 'STAFF_CALL' || event.action === 'CALL_STAFF') {
+      state.staffRequests = Array.isArray(state.staffRequests) ? state.staffRequests : [];
+      const reqId = (event.request && event.request.id) ? event.request.id : ('REQ-' + Date.now().toString().slice(-4));
+      if (!state.staffRequests.some(r => r.id === reqId)) {
+        const staffReq = event.request || {
+          id: reqId,
+          tableId: event.tableId || 'T12',
+          type: 'WAITER',
+          label: event.requestLabel || 'Call Server to Table',
+          status: 'PENDING',
+          time: 'Just now'
+        };
+        state.staffRequests.unshift(staffReq);
+        stateChanged = true;
+      }
+      const table = state.tables.find(t => t.id === (event.tableId || (event.request && event.request.tableId)));
+      if (table) {
+        table.status = 'occupied';
+        table.lastScanned = 'Just now';
         stateChanged = true;
       }
     } else if (event.action === 'BILL_REQUEST') {
@@ -449,16 +465,16 @@
 
     subscribe(tenantSlug) {
       if (!tenantSlug) return;
-      const normalizedSlug = (tenantSlug || 'the-urban-plate').toString().toLowerCase().trim();
+      const normalizedSlug = tenantSlug === '#' ? '#' : (tenantSlug || 'the-urban-plate').toString().toLowerCase().trim().replace(/[^a-z0-9_-]/g, '_');
       const prevSlug = this.currentTenantSlug;
       this.currentTenantSlug = normalizedSlug;
 
       if (this.client && this.isConnected) {
         try {
           if (prevSlug && prevSlug !== normalizedSlug) {
-            this.client.unsubscribe(`dineflow/${prevSlug}/#`);
+            this.client.unsubscribe(prevSlug === '#' ? 'dineflow/#' : `dineflow/${prevSlug}/#`);
           }
-          this.client.subscribe(`dineflow/${normalizedSlug}/#`);
+          this.client.subscribe(normalizedSlug === '#' ? 'dineflow/#' : `dineflow/${normalizedSlug}/#`);
         } catch (e) {}
       } else {
         this.connect();
@@ -509,7 +525,7 @@
             this.isConnected = true;
             if (this.currentTenantSlug) {
               try {
-                this.client.subscribe(`dineflow/${this.currentTenantSlug}/#`);
+                this.client.subscribe(this.currentTenantSlug === '#' ? 'dineflow/#' : `dineflow/${this.currentTenantSlug}/#`);
               } catch (e) {}
             }
             // Flush outbox
@@ -808,9 +824,13 @@
     if (!appEl) return;
 
     // Ensure active tenant cloud synchronization across mobile and desktop
-    const activeTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
-    if (activeTenantSlug && typeof DineFlowCloudSync !== 'undefined') {
-      DineFlowCloudSync.subscribe(activeTenantSlug);
+    if (typeof DineFlowCloudSync !== 'undefined') {
+      if (route.view === 'admin' || route.view === 'super-admin') {
+        DineFlowCloudSync.subscribe('#');
+      } else {
+        const activeTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+        DineFlowCloudSync.subscribe(activeTenantSlug);
+      }
     }
 
     const isStaffAuth = state.session && state.session.isAuthenticated && (state.session.role === 'RESTAURANT_ADMIN' || state.session.role === 'SUPER_ADMIN');
@@ -3109,6 +3129,27 @@
         </div>
       </div>
 
+      ${state.staffRequests && state.staffRequests.some(r => r.status === 'PENDING') ? `
+        <div class="df-active-calls-banner" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(245, 158, 11, 0.16)); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: var(--radius-md); padding: 0.65rem 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; animation: pulse 2s infinite;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.4rem;">🔔</span>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">
+                Active Waiter / Table Requests (${state.staffRequests.filter(r => r.status === 'PENDING').length})
+              </div>
+              <div style="font-size: 0.72rem; color: #FCA5A5; font-weight: 600;">
+                ${state.staffRequests.filter(r => r.status === 'PENDING').map(r => `<strong>Table ${r.tableId}</strong>: ${r.label}`).join(' • ')}
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.35rem;">
+            <button class="df-pill-btn btn-admin-view-calls" style="font-size: 0.72rem; padding: 0.3rem 0.75rem; background: #EF4444; border-color: #EF4444; color: #fff; font-weight: 700;">
+              View & Attend All →
+            </button>
+          </div>
+        </div>
+      ` : ''}
+
       <div class="df-kanban-board">
         ${cols.map(col => {
           const orders = state.orders.filter(o => o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED'));
@@ -3212,6 +3253,11 @@
           renderAdminView(document.getElementById('app'), tenant);
         }
       });
+    });
+
+    document.querySelector('.btn-admin-view-calls')?.addEventListener('click', () => {
+      currentAdminTab = 'staff-calls';
+      renderAdminView(document.getElementById('app'), tenant);
     });
 
     document.getElementById('btn-admin-clear-all')?.addEventListener('click', () => {
@@ -4411,11 +4457,20 @@
 
   // Cross-tab synchronization hook
   window.onDineFlowRemoteSync = function (event) {
+    // Preserve local session so customer broadcasts never log staff out
+    const currentSession = state && state.session ? { ...state.session } : null;
+
     // 1. Sync in-memory state directly from broadcast payload or storage
     if (event && event.payload) {
       state = event.payload;
+      if (currentSession && currentSession.isAuthenticated) {
+        state.session = currentSession;
+      }
     } else {
       state = DineFlowStore.get();
+      if (currentSession && currentSession.isAuthenticated) {
+        state.session = currentSession;
+      }
     }
 
     const route = parseRoute();
@@ -4487,10 +4542,17 @@
     }
   };
 
+  // Resume & reconnect MQTT instantly when phone/tab wakes from sleep or background
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && window.DineFlowCloudSync && !window.DineFlowCloudSync.isConnected) {
+      window.DineFlowCloudSync.connect();
+    }
+  });
+
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.4').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.5').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

@@ -2666,29 +2666,32 @@
 
       // BroadcastChannel Live Event Listener
       if (typeof BroadcastChannel !== 'undefined') {
-        try {
-          const channel = new BroadcastChannel('dineflow_channel');
-          channel.onmessage = (event) => {
-            const data = event.data;
-            if (data && data.meta) {
-              const act = data.meta.action;
-              if (act === 'NEW_ORDER') {
-                logTelemetry(`⚡ [BROADCAST] Kitchen received NEW ORDER from Table T12!`, '🔥');
-                playChime('order');
-              } else if (act === 'CALL_STAFF' || act === 'STAFF_CALL') {
-                logTelemetry(`🛎️ [BROADCAST] Table T12 called waiter service!`, '🛎️');
-                playChime('bell');
-              } else if (act === 'ORDER_STATUS_CHANGED') {
-                logTelemetry(`👨‍🍳 [BROADCAST] Kitchen moved order stage to ${data.meta.newStatus || 'NEXT'}`, '✅');
-                playChime('advance');
-              } else if (act === 'BILL_REQUEST') {
-                logTelemetry(`💳 [BROADCAST] Table T12 requested their dining bill`, '🧾');
-              } else if (act === 'BILL_SETTLED') {
-                logTelemetry(`✅ [BROADCAST] Table T12 bill settled in full`, '💵');
-                playChime('advance');
-              }
+        const handleSyncMessage = (event) => {
+          const data = event.data;
+          if (data && data.meta) {
+            const act = data.meta.action;
+            if (act === 'NEW_ORDER') {
+              logTelemetry(`⚡ [BROADCAST] Kitchen received NEW ORDER from Table T12!`, '🔥');
+              playChime('order');
+            } else if (act === 'CALL_STAFF' || act === 'STAFF_CALL') {
+              logTelemetry(`🛎️ [BROADCAST] Table T12 called waiter service! (${data.meta.requestLabel || 'Assistance'})`, '🛎️');
+              playChime('bell');
+            } else if (act === 'ORDER_STATUS_CHANGED') {
+              logTelemetry(`👨‍🍳 [BROADCAST] Kitchen moved order stage to ${data.meta.newStatus || 'NEXT'}`, '✅');
+              playChime('advance');
+            } else if (act === 'BILL_REQUEST') {
+              logTelemetry(`💳 [BROADCAST] Table T12 requested their dining bill`, '🧾');
+            } else if (act === 'BILL_SETTLED') {
+              logTelemetry(`✅ [BROADCAST] Table T12 bill settled in full`, '💵');
+              playChime('advance');
             }
-          };
+          }
+        };
+        try {
+          const syncChan = new BroadcastChannel('dineflow_realtime_sync');
+          syncChan.onmessage = handleSyncMessage;
+          const legacyChan = new BroadcastChannel('dineflow_channel');
+          legacyChan.onmessage = handleSyncMessage;
         } catch (e) {
           console.warn('BroadcastChannel error', e);
         }
