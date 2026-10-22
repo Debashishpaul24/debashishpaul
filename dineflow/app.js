@@ -3334,14 +3334,14 @@
                 <span>${table.lastScanned}</span>
               </div>
 
-              <div style="display: flex; gap: 0.4rem; width: 100%; margin-top: 0.35rem;">
-                <button class="df-pill-btn btn-view-tent" data-id="${table.id}" style="flex: 1; font-size: 0.72rem; padding: 0.35rem; justify-content: center;">
+              <div class="df-table-card-actions">
+                <button class="df-pill-btn btn-view-tent" data-id="${table.id}" title="Print QR Stand Tent">
                   🖨️ Print Tent
                 </button>
-                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="${table.status === 'occupied' ? 'Click to Clear Table (Mark Available)' : 'Click to Seat Guests (Mark Occupied)'}">
+                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" title="${table.status === 'occupied' ? 'Click to Clear Table (Mark Available)' : 'Click to Seat Guests (Mark Occupied)'}">
                   ${table.status === 'occupied' ? '🧹 Clear' : '🪑 Seat'}
                 </button>
-                <a href="${tableUrl}" target="_blank" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Test Customer Experience">
+                <a href="${tableUrl}" target="_blank" class="df-pill-btn primary btn-test-link" title="Test Customer Experience">
                   ↗
                 </a>
               </div>
@@ -5007,7 +5007,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=1.9.8').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=1.9.9').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);

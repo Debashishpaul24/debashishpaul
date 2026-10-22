@@ -249,6 +249,17 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 15px rgba(var(--brand-primary-rgb), 0.45);
 }
 
+.df-pill-btn.danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #EF4444;
+}
+
+.df-pill-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.55);
+}
+
 /* Master Container */
 .df-app-viewport {
   padding-top: 60px;
@@ -1750,7 +1761,7 @@ body.splash-active {
 /* Tables & QR Code Grid */
 .df-tables-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.25rem;
 }
 
@@ -1758,12 +1769,63 @@ body.splash-active {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 1.25rem;
+  padding: 1.15rem 0.85rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 0.65rem;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.df-table-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+
+.df-table-card-actions .df-pill-btn {
+  height: 30px;
+  line-height: 1;
+  box-sizing: border-box;
+  white-space: nowrap;
+  font-size: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.df-table-card-actions .btn-view-tent {
+  flex: 1;
+  min-width: 0;
+  padding: 0 0.45rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.df-table-card-actions .btn-toggle-table {
+  flex-shrink: 0;
+  padding: 0 0.55rem;
+}
+
+.df-table-card-actions .btn-test-link {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .df-table-qr-preview {
