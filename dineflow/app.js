@@ -38,7 +38,22 @@
       'cat-mains': { icon: '🥘', label: 'Signature Main', g1: '#2b150c', g2: '#140905', accent: '#EA580C' },
       'cat-kebabs': { icon: '🍢', label: 'Tandoor & Kebab', g1: '#29120c', g2: '#140805', accent: '#DC2626' },
       'cat-desserts': { icon: '🍰', label: 'Decadent Dessert', g1: '#291321', g2: '#140810', accent: '#EC4899' },
-      'cat-beverages': { icon: '🍹', label: 'Craft Beverage', g1: '#0e222a', g2: '#061116', accent: '#06B6D4' }
+      'cat-beverages': { icon: '🍹', label: 'Craft Beverage', g1: '#0e222a', g2: '#061116', accent: '#06B6D4' },
+      // Bella Vista Ristorante (Italian)
+      'cat-bv-antipasti': { icon: '🥗', label: 'Antipasti & Crudo', g1: '#1f2913', g2: '#0f1409', accent: '#84CC16' },
+      'cat-bv-pizza': { icon: '🍕', label: 'Woodfired Pizza', g1: '#2c1414', g2: '#140a0a', accent: '#EF4444' },
+      'cat-bv-pasta': { icon: '🍝', label: 'Handmade Pasta', g1: '#2c1f10', g2: '#140e07', accent: '#F59E0B' },
+      'cat-bv-secondi': { icon: '🥩', label: 'Secondi & Grills', g1: '#2b1414', g2: '#130808', accent: '#DC2626' },
+      'cat-bv-dolci': { icon: '🍨', label: 'Artisanal Dolci', g1: '#281324', g2: '#130811', accent: '#D946EF' },
+      'cat-bv-vini': { icon: '🍷', label: 'Vini & Aperitivi', g1: '#260f1c', g2: '#12060c', accent: '#E11D48' },
+      // Sakura Modern Asian
+      'cat-sk-dimsum': { icon: '🥟', label: 'Dim Sum & Baos', g1: '#261a12', g2: '#130c08', accent: '#F59E0B' },
+      'cat-sk-sushi': { icon: '🍣', label: 'Nigiri & Maki', g1: '#261219', g2: '#12080c', accent: '#F43F5E' },
+      'cat-sk-robata': { icon: '🍢', label: 'Robata Skewers', g1: '#27170e', g2: '#130a06', accent: '#FB923C' },
+      'cat-sk-ramen': { icon: '🍜', label: 'Ramen & Broths', g1: '#291e0f', g2: '#140e06', accent: '#EAB308' },
+      'cat-sk-wok': { icon: '🥢', label: 'Signature Wok', g1: '#24141d', g2: '#11090d', accent: '#EC4899' },
+      'cat-sk-desserts': { icon: '🍵', label: 'Matcha Sweets', g1: '#142517', g2: '#09130b', accent: '#10B981' },
+      'cat-sk-drinks': { icon: '🍶', label: 'Sake & Mixology', g1: '#121f28', g2: '#080f14', accent: '#06B6D4' }
     };
     const cfg = configs[categoryId] || { icon: '🍽️', label: 'Culinary Delicacy', g1: '#1c1f2b', g2: '#0d1017', accent: '#E5A93C' };
 
@@ -1646,7 +1661,123 @@
   // ------------------------------------------------------------------------------
   // 1. CUSTOMER EXPERIENCE VIEW
   // ------------------------------------------------------------------------------
+  // Universal multi-tenant menu & category isolation guardian
+  function ensureTenantMenuAndCategories(tenant) {
+    if (!tenant || !tenant.id) return;
+    let modified = false;
+
+    // 1. Ensure categories exist for this tenant
+    let tCats = (state.categories || []).filter(c => c.tenantId === tenant.id);
+    if (!tCats.length) {
+      const defaults = (typeof DINEFLOW_DEFAULT_DATA !== 'undefined' && Array.isArray(DINEFLOW_DEFAULT_DATA.categories))
+        ? DINEFLOW_DEFAULT_DATA.categories.filter(c => c.tenantId === tenant.id) : [];
+      if (defaults.length) {
+        state.categories = state.categories || [];
+        state.categories.push(...JSON.parse(JSON.stringify(defaults)));
+        modified = true;
+      } else {
+        const prefix = `cat-${tenant.slug || tenant.id}`;
+        state.categories = state.categories || [];
+        state.categories.push(
+          { id: `${prefix}-specials`, name: "Chef's Specials", icon: '👨‍🍳', tenantId: tenant.id },
+          { id: `${prefix}-starters`, name: 'Appetizers & Bites', icon: '🥟', tenantId: tenant.id },
+          { id: `${prefix}-mains`, name: 'Signature Main Courses', icon: '🥘', tenantId: tenant.id },
+          { id: `${prefix}-desserts`, name: 'Artisan Desserts', icon: '🍰', tenantId: tenant.id },
+          { id: `${prefix}-beverages`, name: 'Craft Beverages & Cocktails', icon: '🍹', tenantId: tenant.id }
+        );
+        modified = true;
+      }
+    }
+
+    // 2. Ensure menu items exist for this tenant
+    let tItems = (state.menuItems || []).filter(i => i.tenantId === tenant.id);
+    if (!tItems.length) {
+      const defaultItems = (typeof DINEFLOW_DEFAULT_DATA !== 'undefined' && Array.isArray(DINEFLOW_DEFAULT_DATA.menuItems))
+        ? DINEFLOW_DEFAULT_DATA.menuItems.filter(i => i.tenantId === tenant.id) : [];
+      if (defaultItems.length) {
+        state.menuItems = state.menuItems || [];
+        state.menuItems.push(...JSON.parse(JSON.stringify(defaultItems)));
+        modified = true;
+      } else {
+        const prefix = `cat-${tenant.slug || tenant.id}`;
+        state.menuItems = state.menuItems || [];
+        state.menuItems.push(
+          {
+            id: `item-${tenant.slug || tenant.id}-01`,
+            tenantId: tenant.id,
+            categoryId: `${prefix}-specials`,
+            name: `${tenant.name} Executive Tasting Platter`,
+            description: `Signature culinary assortment curated fresh daily by the executive culinary team of ${tenant.name}.`,
+            price: 495,
+            isVeg: false,
+            spiceLevel: 'medium',
+            isBestseller: true,
+            isRecommended: true,
+            isAvailable: true,
+            image: 'images/item-01.jpg',
+            allergens: ['Dairy'],
+            addOns: []
+          },
+          {
+            id: `item-${tenant.slug || tenant.id}-02`,
+            tenantId: tenant.id,
+            categoryId: `${prefix}-starters`,
+            name: 'Crispy Truffle Herb Medley',
+            description: 'Golden fried herb bites infused with roasted garlic, micro greens, and house-blended emulsion.',
+            price: 290,
+            isVeg: true,
+            spiceLevel: 'mild',
+            isBestseller: true,
+            isRecommended: false,
+            isAvailable: true,
+            image: 'images/item-03.jpg',
+            allergens: ['Gluten'],
+            addOns: []
+          },
+          {
+            id: `item-${tenant.slug || tenant.id}-03`,
+            tenantId: tenant.id,
+            categoryId: `${prefix}-mains`,
+            name: 'Slow-Simmered Signature Entrée',
+            description: 'Aromatic slow-cooked reduction served with herb pilaf, charred seasonal vegetables, and warm brioche.',
+            price: 540,
+            isVeg: false,
+            spiceLevel: 'medium',
+            isBestseller: false,
+            isRecommended: true,
+            isAvailable: true,
+            image: 'images/item-05.jpg',
+            allergens: ['Dairy'],
+            addOns: []
+          },
+          {
+            id: `item-${tenant.slug || tenant.id}-04`,
+            tenantId: tenant.id,
+            categoryId: `${prefix}-desserts`,
+            name: 'Velvety Chocolate Ganache Dome',
+            description: 'Dark Belgian chocolate mousse with salted caramel core, edible gold flakes, and wild berry coulis.',
+            price: 240,
+            isVeg: true,
+            spiceLevel: 'mild',
+            isBestseller: true,
+            isRecommended: true,
+            isAvailable: true,
+            image: 'images/item-09.jpg',
+            allergens: ['Dairy'],
+            addOns: []
+          }
+        );
+        modified = true;
+      }
+    }
+
+    if (modified) {
+      DineFlowStore.save(state);
+    }
+  }
+
   function getFilteredCustomerItems(tenant) {
+    ensureTenantMenuAndCategories(tenant);
     let items = (state.menuItems || []).filter(item => item.tenantId === tenant.id && item.isAvailable);
     if (currentFilterCategory !== 'all') {
       items = items.filter(item => item.categoryId === currentFilterCategory);
@@ -1718,6 +1849,7 @@
     const cartTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
     // Filter categories & menu items
+    ensureTenantMenuAndCategories(tenant);
     const tenantCategories = state.categories.filter(c => c.tenantId === tenant.id);
     let items = getFilteredCustomerItems(tenant);
 
@@ -4329,11 +4461,13 @@
 
   // MENU MANAGER (CRUD)
   function renderMenuManager(container, tenant) {
+    ensureTenantMenuAndCategories(tenant);
+    const tenantItems = state.menuItems.filter(item => item.tenantId === tenant.id);
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
         <div>
-          <h2 style="font-size: 1.35rem; font-weight: 800;">Digital Menu Catalog (${state.menuItems.length} Dishes)</h2>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Manage categories, real-time pricing, stock availability, and chef specials.</p>
+          <h2 style="font-size: 1.35rem; font-weight: 800;">Digital Menu Catalog (${tenantItems.length} Dishes)</h2>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Manage categories, real-time pricing, stock availability, and chef specials for ${tenant.name}.</p>
         </div>
         <button class="df-pill-btn primary" id="btn-add-food-item">
           + Add New Dish
@@ -4353,7 +4487,7 @@
             </tr>
           </thead>
           <tbody>
-            ${state.menuItems.map(item => `
+            ${tenantItems.map(item => `
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                 <td style="padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
                   <img src="${item.image}" alt="${item.name.replace(/"/g, '&quot;')}" onerror="window.dfHandleImageError(this, '${item.categoryId}', '${item.id}')" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
@@ -4443,7 +4577,7 @@
                 <div>
                   <label style="font-size: 0.78rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; display: block;">Category</label>
                   <select id="new-dish-cat" style="width: 100%;">
-                    ${state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
+                    ${(state.categories.filter(c => c.tenantId === tenant.id)).map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
                   </select>
                 </div>
               </div>

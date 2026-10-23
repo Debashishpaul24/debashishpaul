@@ -303,7 +303,24 @@ const DINEFLOW_DEFAULT_DATA = {
     { id: 'cat-mains', name: 'Main Course & Curries', icon: '🥘', tenantId: 'the-urban-plate' },
     { id: 'cat-kebabs', name: 'Tandoor & Kebabs', icon: '🍢', tenantId: 'the-urban-plate' },
     { id: 'cat-desserts', name: 'Decadent Desserts', icon: '🍰', tenantId: 'the-urban-plate' },
-    { id: 'cat-beverages', name: 'Craft Beverages & Shakes', icon: '🍹', tenantId: 'the-urban-plate' }
+    { id: 'cat-beverages', name: 'Craft Beverages & Shakes', icon: '🍹', tenantId: 'the-urban-plate' },
+
+    // Categories for Bella Vista Ristorante (Italian Trattoria)
+    { id: 'cat-bv-antipasti', name: 'Antipasti & Crudo', icon: '🥗', tenantId: 'bella-vista' },
+    { id: 'cat-bv-pizza', name: 'Woodfired Pizzas', icon: '🍕', tenantId: 'bella-vista' },
+    { id: 'cat-bv-pasta', name: 'Handmade Pasta & Risotto', icon: '🍝', tenantId: 'bella-vista' },
+    { id: 'cat-bv-secondi', name: 'Secondi Piatti & Grills', icon: '🥩', tenantId: 'bella-vista' },
+    { id: 'cat-bv-dolci', name: 'Artisanal Dolci', icon: '🍨', tenantId: 'bella-vista' },
+    { id: 'cat-bv-vini', name: 'Vini & Italian Mixology', icon: '🍷', tenantId: 'bella-vista' },
+
+    // Categories for Sakura Modern Asian (Pan-Asian & Robata)
+    { id: 'cat-sk-dimsum', name: 'Dim Sum & Baos', icon: '🥟', tenantId: 'sakura-asian' },
+    { id: 'cat-sk-sushi', name: 'Artisanal Nigiri & Maki', icon: '🍣', tenantId: 'sakura-asian' },
+    { id: 'cat-sk-robata', name: 'Robata Charcoal Skewers', icon: '🍢', tenantId: 'sakura-asian' },
+    { id: 'cat-sk-ramen', name: 'Ramen Bowls & Noodles', icon: '🍜', tenantId: 'sakura-asian' },
+    { id: 'cat-sk-wok', name: 'Signature Wok Mains', icon: '🥢', tenantId: 'sakura-asian' },
+    { id: 'cat-sk-desserts', name: 'Matcha & Sweet Bites', icon: '🍵', tenantId: 'sakura-asian' },
+    { id: 'cat-sk-drinks', name: 'Sake & Asian Mixology', icon: '🍶', tenantId: 'sakura-asian' }
   ],
 
   // 32 Detailed Menu Items for The Urban Plate
@@ -866,6 +883,400 @@ const DINEFLOW_DEFAULT_DATA = {
       isAvailable: true,
       image: 'images/item-32.jpg',
       allergens: ['Dairy']
+    },
+
+    // --------------------------------------------------------------------------
+    // Bella Vista Ristorante (Italian Trattoria) Menu
+    // --------------------------------------------------------------------------
+    {
+      id: 'item-bv-01',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-pizza',
+      name: 'Woodfired Margherita Burrata Pizza',
+      description: 'Slow-fermented sourdough crust topped with San Marzano tomato coulis, fresh Pugliese burrata, sweet basil, and cold-pressed extra virgin olive oil.',
+      price: 480,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-01.jpg',
+      allergens: ['Dairy', 'Gluten'],
+      addOns: [
+        { name: 'Extra Creamy Burrata Ball', price: 120 },
+        { name: 'Black Summer Truffle Shavings', price: 150 }
+      ],
+      customizationOptions: [
+        { title: 'Crust Preference', type: 'radio', options: ['Classic Neapolitan Soft', 'Thin & Crispy Roman'] }
+      ]
+    },
+    {
+      id: 'item-bv-02',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-pasta',
+      name: 'Truffle Porcini Fettuccine',
+      description: 'Hand-rolled fresh egg fettuccine tossed in sautéed wild porcini mushrooms, mountain butter, white truffle oil, and aged Parmigiano-Reggiano.',
+      price: 410,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-02.jpg',
+      allergens: ['Dairy', 'Gluten', 'Eggs'],
+      addOns: [
+        { name: 'Garlic Herb Ciabatta (2 pcs)', price: 75 },
+        { name: 'Grated 36-Month Parmesan', price: 60 }
+      ]
+    },
+    {
+      id: 'item-bv-03',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-pizza',
+      name: 'Four Cheese Quattro Formaggi',
+      description: 'White woodfired pizza layered with artisan Fior di Latte, sharp Gorgonzola Dolce, Fontina d’Aosta, and shaved Grana Padano, finished with wild clover honey.',
+      price: 520,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-03.jpg',
+      allergens: ['Dairy', 'Gluten'],
+      addOns: [
+        { name: 'Caramelized Roasted Walnuts', price: 60 }
+      ]
+    },
+    {
+      id: 'item-bv-04',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-dolci',
+      name: 'Traditional Espresso Tiramisu',
+      description: 'Layers of espresso-soaked Savoiardi ladyfingers and cloud-soft whipped mascarpone cream, dusted with dark Valrhona cocoa powder.',
+      price: 290,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-04.jpg',
+      allergens: ['Dairy', 'Gluten', 'Eggs']
+    },
+    {
+      id: 'item-bv-05',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-antipasti',
+      name: 'Prosciutto di Parma Bruschetta',
+      description: 'Charred rustic sourdough brushed with garlic oil, topped with aged Parma ham, whipped ricotta, fig jam, and micro arugula.',
+      price: 390,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-05.jpg',
+      allergens: ['Dairy', 'Gluten']
+    },
+    {
+      id: 'item-bv-06',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-antipasti',
+      name: 'Crispy Calamari Fritti',
+      description: 'Tender Adriatic squid flash-fried in semolina crumb, served with house lemon-caper remoulade and charred Amalfi lemon.',
+      price: 440,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: false,
+      isAvailable: true,
+      image: 'images/item-bv-06.jpg',
+      allergens: ['Seafood', 'Gluten']
+    },
+    {
+      id: 'item-bv-07',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-pasta',
+      name: 'Classic Tagliolini al Tartufo',
+      description: 'Delicate ribbon pasta spun in French churned cultured butter with freshly shaved Norcia black truffles and cracked black pepper.',
+      price: 540,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-07.jpg',
+      allergens: ['Dairy', 'Gluten', 'Eggs']
+    },
+    {
+      id: 'item-bv-08',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-secondi',
+      name: 'Slow-Braised Osso Buco alla Milanese',
+      description: 'Melt-in-mouth tender veal shank slow-simmered in white wine, mirepoix, and veal glaze, served over saffron-infused Risotto alla Milanese.',
+      price: 680,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-08.jpg',
+      allergens: ['Dairy']
+    },
+    {
+      id: 'item-bv-09',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-secondi',
+      name: 'Pan-Seared Sea Bass Acqua Pazza',
+      description: 'Mediterranean sea bass fillet pan-seared with sweet cherry tomatoes, capers, Kalamata olives, fresh parsley, and white wine broth.',
+      price: 620,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-09.jpg',
+      allergens: ['Seafood']
+    },
+    {
+      id: 'item-bv-10',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-dolci',
+      name: 'Madagascar Vanilla Panna Cotta',
+      description: 'Silky smooth set vanilla cream served with tart wild forest berry compote and fresh mint sprig.',
+      price: 260,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: false,
+      isAvailable: true,
+      image: 'images/item-bv-10.jpg',
+      allergens: ['Dairy']
+    },
+    {
+      id: 'item-bv-11',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-vini',
+      name: 'Aperol Spritz Veneziano',
+      description: 'Classic Italian aperitivo with Venetian Aperol, sparkling Valdobbiadene Prosecco DOCG, splash of club soda, and fresh orange wheel.',
+      price: 380,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-11.jpg',
+      allergens: []
+    },
+    {
+      id: 'item-bv-12',
+      tenantId: 'bella-vista',
+      categoryId: 'cat-bv-vini',
+      name: 'Chianti Classico Riserva (Glass)',
+      description: 'Tuscan Sangiovese red reserve featuring ruby red hues, violet aromatics, velvety tannins, and notes of ripe cherry and oak.',
+      price: 490,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-bv-12.jpg',
+      allergens: []
+    },
+
+    // --------------------------------------------------------------------------
+    // Sakura Modern Asian (Pan-Asian & Robata) Menu
+    // --------------------------------------------------------------------------
+    {
+      id: 'item-sk-01',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-sushi',
+      name: 'Salmon & Bluefin Nigiri Combo (8 pcs)',
+      description: 'Chef selected Norwegian salmon and Pacific bluefin tuna nigiri, lightly torched and brushed with Nikiri glaze, wasabi root and pickled gari.',
+      price: 680,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-01.jpg',
+      allergens: ['Seafood', 'Soy'],
+      addOns: [
+        { name: 'Fresh Shizuoka Grated Wasabi', price: 65 },
+        { name: 'Miso Shiro Soup Cup', price: 80 }
+      ]
+    },
+    {
+      id: 'item-sk-02',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-ramen',
+      name: 'Black Garlic Tonkotsu Ramen',
+      description: '20-hour simmered rich pork bone broth with springy wheat noodles, charred chashu belly, ajitsuke tamago egg, nori, and roasted black garlic oil.',
+      price: 480,
+      isVeg: false,
+      spiceLevel: 'medium',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-02.jpg',
+      allergens: ['Pork', 'Eggs', 'Gluten', 'Soy'],
+      addOns: [
+        { name: 'Extra Marinated Chashu (2 slices)', price: 95 },
+        { name: 'Ajitsuke Soft-Boiled Egg', price: 40 },
+        { name: 'Extra Noodle Kaedama', price: 70 }
+      ],
+      customizationOptions: [
+        { title: 'Broth Richness', type: 'radio', options: ['Signature Rich Tonkotsu', 'Light Shoyu Infused'] }
+      ]
+    },
+    {
+      id: 'item-sk-03',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-dimsum',
+      name: 'Truffle Edamame Crystal Dim Sum',
+      description: 'Translucent steamed crystal dumplings stuffed with young edamame bean purée, water chestnut crunch, and white truffle essence.',
+      price: 390,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-03.jpg',
+      allergens: ['Soy', 'Gluten']
+    },
+    {
+      id: 'item-sk-04',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-dimsum',
+      name: 'Spicy Prawn & Chive Har Gow',
+      description: 'Plump Pacific tiger prawns and Chinese chives wrapped in delicate wheat starch skins, tossed in chili crisp sesame vinaigrette.',
+      price: 440,
+      isVeg: false,
+      spiceLevel: 'spicy',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-04.jpg',
+      allergens: ['Seafood', 'Gluten', 'Sesame']
+    },
+    {
+      id: 'item-sk-05',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-sushi',
+      name: 'Dragon Roll Unagi & Avocado',
+      description: 'Crunchy ebi tempura roll wrapped with sweet BBQ fresh water eel, creamy avocado slices, tobiko caviar, and unagi drizzle.',
+      price: 590,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: false,
+      isAvailable: true,
+      image: 'images/item-sk-05.jpg',
+      allergens: ['Seafood', 'Gluten', 'Soy']
+    },
+    {
+      id: 'item-sk-06',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-robata',
+      name: 'Charcoal Robata Chicken Yakitori',
+      description: 'Skewered chicken thigh and scallion leeks grilled over Binchotan charcoal, glazed with aged tare teriyaki sauce and shichimi togarashi.',
+      price: 360,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-06.jpg',
+      allergens: ['Soy']
+    },
+    {
+      id: 'item-sk-07',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-robata',
+      name: 'Miso Glazed Chilean Sea Bass',
+      description: 'Sustainably caught Chilean sea bass marinated for 48 hours in sweet Saikyo white miso and mirin, caramelized over white hot coals.',
+      price: 740,
+      isVeg: false,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-07.jpg',
+      allergens: ['Seafood', 'Soy']
+    },
+    {
+      id: 'item-sk-08',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-ramen',
+      name: 'Wok-Tossed Dan Dan Noodles',
+      description: 'Chewy handmade wheat noodles tossed in Sichuan spicy chili oil, roasted sesame paste, minced chicken, and crispy bok choy.',
+      price: 380,
+      isVeg: false,
+      spiceLevel: 'spicy',
+      isBestseller: true,
+      isRecommended: false,
+      isAvailable: true,
+      image: 'images/item-sk-08.jpg',
+      allergens: ['Peanuts', 'Sesame', 'Gluten', 'Soy']
+    },
+    {
+      id: 'item-sk-09',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-wok',
+      name: 'Wild Mushroom Claypot Rice',
+      description: 'Japanese short-grain rice steamed in dashi broth with shimeji, shiitake, and enoki mushrooms, topped with scallion confit and crispy bottom crust.',
+      price: 420,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-09.jpg',
+      allergens: ['Soy']
+    },
+    {
+      id: 'item-sk-10',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-desserts',
+      name: 'Matcha Lava Fondant & Sesame Gelato',
+      description: 'Warm Uji ceremonial green tea cake with a molten matcha white chocolate center, served with house-spun black sesame ice cream.',
+      price: 290,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-10.jpg',
+      allergens: ['Dairy', 'Eggs', 'Gluten', 'Sesame']
+    },
+    {
+      id: 'item-sk-11',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-drinks',
+      name: 'Japanese Yuzu Plum Highball',
+      description: 'Refreshing highball with Kishu Umeshu plum liqueur, sparkling yuzu soda, crushed ice, and fresh shiso leaf.',
+      price: 380,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: false,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-11.jpg',
+      allergens: []
+    },
+    {
+      id: 'item-sk-12',
+      tenantId: 'sakura-asian',
+      categoryId: 'cat-sk-drinks',
+      name: 'Junmai Daiginjo Sake Tokkuri',
+      description: 'Premium chilled Japanese rice wine brewed from polished Yamada Nishiki rice, presenting delicate floral and honeydew notes (180ml flask).',
+      price: 540,
+      isVeg: true,
+      spiceLevel: 'mild',
+      isBestseller: true,
+      isRecommended: true,
+      isAvailable: true,
+      image: 'images/item-sk-12.jpg',
+      allergens: []
     }
   ],
 
@@ -1413,7 +1824,8 @@ const DINEFLOW_DEFAULT_DATA = {
 
 // Store helper for localStorage persistence with state change broadcast
 const DineFlowStore = {
-  KEY: 'DINEFLOW_SaaS_STORE_v4',
+  KEY: 'DINEFLOW_SaaS_STORE_v5',
+  PREV_KEY: 'DINEFLOW_SaaS_STORE_v4',
   broadcastChannel: null,
 
   init() {
@@ -1433,6 +1845,9 @@ const DineFlowStore = {
   get() {
     try {
       let stored = localStorage.getItem(this.KEY);
+      if (!stored && this.PREV_KEY) {
+        stored = localStorage.getItem(this.PREV_KEY);
+      }
       if (stored) {
         const data = JSON.parse(stored);
         // Resilient corporate VPN migration: ensure all dish images reference local bundled assets
@@ -1541,6 +1956,22 @@ const DineFlowStore = {
               data.billRequests.push(...JSON.parse(JSON.stringify(bvBills)));
               updated = true;
             }
+          }
+
+          // Multi-Tenant Isolation Migration: Ensure categories exist for Bella Vista and Sakura Asian
+          if (!Array.isArray(data.categories) || !data.categories.some(c => c.tenantId === 'bella-vista')) {
+            const extraCategories = DINEFLOW_DEFAULT_DATA.categories.filter(c => c.tenantId === 'bella-vista' || c.tenantId === 'sakura-asian');
+            data.categories = Array.isArray(data.categories) ? data.categories : JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.categories));
+            data.categories.push(...JSON.parse(JSON.stringify(extraCategories)));
+            updated = true;
+          }
+
+          // Multi-Tenant Isolation Migration: Ensure menuItems exist for Bella Vista and Sakura Asian
+          if (!Array.isArray(data.menuItems) || !data.menuItems.some(i => i.tenantId === 'bella-vista')) {
+            const extraItems = DINEFLOW_DEFAULT_DATA.menuItems.filter(i => i.tenantId === 'bella-vista' || i.tenantId === 'sakura-asian');
+            data.menuItems = Array.isArray(data.menuItems) ? data.menuItems : JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.menuItems));
+            data.menuItems.push(...JSON.parse(JSON.stringify(extraItems)));
+            updated = true;
           }
 
           // Tenant-Isolated Auto-reconciliation of table statuses using composite keys: `${tenantId}::${tableId}`

@@ -2,14 +2,14 @@
  * DineFlow Service Worker - PWA Offline Shell & Asset Caching
  */
 
-const CACHE_NAME = 'dineflow-v2.3.5';
+const CACHE_NAME = 'dineflow-v2.4.1';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './style.css?v=2.3.4',
-  './app.js?v=2.3.5',
-  './data.js?v=2.3.5',
-  './qr-engine.js?v=2.4.0',
+  './app.js?v=2.4.1',
+  './data.js?v=2.4.1',
+  './qr-engine.js?v=2.4.1',
   './mqttws31.min.js?v=2.3.1',
   './manifest.json',
   '../favicon.svg'
