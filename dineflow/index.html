@@ -118,7 +118,7 @@
   </script>
 
   <!-- Design Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2.2.1">
+  <link rel="stylesheet" href="style.css?v=2.3.4">
 </head>
 
 <body>
@@ -149,8 +149,8 @@
         <button class="df-pill-btn" id="btn-open-pilot-top" style="background: linear-gradient(135deg, #E5A93C, #F59E0B); color: #07090E; font-weight: 800; border: none; box-shadow: 0 4px 14px rgba(229,169,60,0.35); cursor: pointer;" title="Request Free 14-Day Pilot for Your Restaurant">
           <span>🚀 <span class="df-hide-mobile">Request </span>Free Pilot</span>
         </button>
-        <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
-          <span>Staff<span class="df-hide-mobile"> Portal</span> 🔒</span>
+        <a href="?view=login" class="df-pill-btn primary" title="Universal Operations Terminal Login">
+          <span>Terminal<span class="df-hide-mobile"> Login</span> 🔒</span>
         </a>
       </div>
     </header>
@@ -172,6 +172,7 @@
         <!-- Quick 1st-Time Visitor Guide Pills -->
         <div class="df-quick-nav-bar">
           <a href="?section=demo-sandbox" class="df-nav-pill active">⚡ Live Dual-Device Sandbox</a>
+          <a href="?section=restaurant-directory" class="df-nav-pill">🏢 3 Partner Restaurants</a>
           <a href="?section=explore-roles" class="df-nav-pill">👥 Explore 3 Modules</a>
           <a href="?section=roi-calculator" class="df-nav-pill">📊 ROI Calculator</a>
           <a href="?section=why-dineflow" class="df-nav-pill">⚖️ Why DineFlow vs POS</a>
@@ -232,6 +233,167 @@
           </div>
         </div>
       </div>
+
+      <!-- Multi-Restaurant Directory & Live Outlets Showcase -->
+      <section class="df-restaurants-directory-section" id="restaurant-directory">
+        <div class="df-directory-header">
+          <div class="df-directory-title-wrap">
+            <h2>
+              <span>🏢</span> Multi-Restaurant Portals &amp; Live Outlets
+            </h2>
+            <p>
+              Each restaurant operates with complete multi-tenant database isolation, custom branding, dedicated Kitchen KDS, and private staff credentials.
+            </p>
+          </div>
+          <div class="df-directory-badge">
+            <span class="live-indicator"></span>
+            <span>3 Active Tenants</span>
+          </div>
+        </div>
+
+        <div class="df-outlets-grid">
+          <!-- Outlet 1: The Urban Plate -->
+          <div class="df-outlet-card" style="--outlet-color: #E5A93C; --outlet-bg: rgba(229, 169, 60, 0.15); --outlet-border: rgba(229, 169, 60, 0.35);">
+            <div class="df-outlet-top">
+              <div class="df-outlet-brand">
+                <div class="df-outlet-icon">🍽️</div>
+                <div class="df-outlet-info">
+                  <h3>The Urban Plate</h3>
+                  <div class="df-outlet-branch">
+                    <span>📍 Indiranagar Flagship</span>
+                    <span>•</span>
+                    <span class="df-outlet-cuisine-tag">Bistro &amp; Craft Bar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="df-outlet-desc">
+              Contemporary casual dining with artisanal gourmet burgers, royal dum biryanis, and mixology cocktails.
+            </p>
+            <div class="df-outlet-metrics">
+              <div class="df-metric-item">
+                <span class="metric-label">Tables</span>
+                <span class="metric-value">12 Tables (T01–T12)</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Floor Status</span>
+                <span class="metric-value live">● 3 Occupied</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Shift Revenue</span>
+                <span class="metric-value">₹3,480 Today</span>
+              </div>
+            </div>
+            <div class="df-outlet-actions">
+              <a href="?r=the-urban-plate&t=T12" class="df-outlet-btn primary" title="Open Guest Table T12 Ordering Menu">
+                <span>📱 Guest Menu (Table T12)</span>
+              </a>
+              <div class="df-outlet-actions-row">
+                <a href="?r=the-urban-plate&view=admin" class="df-outlet-btn staff" title="Launch Dedicated Kitchen Staff OS">
+                  <span>👨‍🍳 Staff OS &amp; KDS</span>
+                </a>
+                <a href="?r=the-urban-plate&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                  <span>🔐 Staff Login</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outlet 2: Bella Vista Ristorante -->
+          <div class="df-outlet-card" style="--outlet-color: #EF4444; --outlet-bg: rgba(239, 68, 68, 0.15); --outlet-border: rgba(239, 68, 68, 0.35);">
+            <div class="df-outlet-top">
+              <div class="df-outlet-brand">
+                <div class="df-outlet-icon">🍷</div>
+                <div class="df-outlet-info">
+                  <h3>Bella Vista Ristorante</h3>
+                  <div class="df-outlet-branch">
+                    <span>📍 Waterfront Promenade</span>
+                    <span>•</span>
+                    <span class="df-outlet-cuisine-tag">Italian Trattoria</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="df-outlet-desc">
+              Authentic Italian dining with wood-fired sourdough pizzas, handcrafted pastas, and curated sommelier reserves.
+            </p>
+            <div class="df-outlet-metrics">
+              <div class="df-metric-item">
+                <span class="metric-label">Tables</span>
+                <span class="metric-value">8 Tables (BV-01–08)</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Floor Status</span>
+                <span class="metric-value live">● 2 Occupied</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Shift Revenue</span>
+                <span class="metric-value">₹4,250 Today</span>
+              </div>
+            </div>
+            <div class="df-outlet-actions">
+              <a href="?r=bella-vista&t=BV-02" class="df-outlet-btn primary" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: #fff;" title="Open Guest Table BV-02 Ordering Menu">
+                <span>📱 Guest Menu (Table BV-02)</span>
+              </a>
+              <div class="df-outlet-actions-row">
+                <a href="?r=bella-vista&view=admin" class="df-outlet-btn staff" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.09);" title="Launch Dedicated Kitchen Staff OS">
+                  <span>👨‍🍳 Staff OS &amp; KDS</span>
+                </a>
+                <a href="?r=bella-vista&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                  <span>🔐 Staff Login</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outlet 3: Sakura Asian Kitchen -->
+          <div class="df-outlet-card" style="--outlet-color: #EC4899; --outlet-bg: rgba(236, 72, 153, 0.15); --outlet-border: rgba(236, 72, 153, 0.35);">
+            <div class="df-outlet-top">
+              <div class="df-outlet-brand">
+                <div class="df-outlet-icon">🍱</div>
+                <div class="df-outlet-info">
+                  <h3>Sakura Asian Kitchen</h3>
+                  <div class="df-outlet-branch">
+                    <span>📍 Financial District</span>
+                    <span>•</span>
+                    <span class="df-outlet-cuisine-tag">Pan-Asian &amp; Robata</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="df-outlet-desc">
+              Pan-Asian culinary journey with crystal dim sum, robata skewers, steaming ramen bowls, and matcha delicacies.
+            </p>
+            <div class="df-outlet-metrics">
+              <div class="df-metric-item">
+                <span class="metric-label">Tables</span>
+                <span class="metric-value">8 Tables (SK-01–08)</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Floor Status</span>
+                <span class="metric-value live">● 2 Occupied</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Shift Revenue</span>
+                <span class="metric-value">₹2,890 Today</span>
+              </div>
+            </div>
+            <div class="df-outlet-actions">
+              <a href="?r=sakura-asian&t=SK-02" class="df-outlet-btn primary" style="background: linear-gradient(135deg, #EC4899, #DB2777); color: #fff;" title="Open Guest Table SK-02 Ordering Menu">
+                <span>📱 Guest Menu (Table SK-02)</span>
+              </a>
+              <div class="df-outlet-actions-row">
+                <a href="?r=sakura-asian&view=admin" class="df-outlet-btn staff" style="color: #EC4899; border-color: rgba(236, 72, 153, 0.35); background: rgba(236, 72, 153, 0.09);" title="Launch Dedicated Kitchen Staff OS">
+                  <span>👨‍🍳 Staff OS &amp; KDS</span>
+                </a>
+                <a href="?r=sakura-asian&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                  <span>🔐 Staff Login</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Audience Perspective Switcher: Restaurant Operator vs Technical Architecture -->
       <div class="df-audience-switch-container">
@@ -594,8 +756,8 @@
   <!-- Client-Side Modules (Zero external network dependencies for QR, PubSub & Storage) -->
   <script src="qr-engine.js?v=1.8.0"></script>
   <script src="mqttws31.min.js?v=2.3.1"></script>
-  <script src="data.js?v=2.3.1"></script>
-  <script src="app.js?v=2.3.1"></script>
+  <script src="data.js?v=2.3.4"></script>
+  <script src="app.js?v=2.3.4"></script>
 
   <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
   <script>

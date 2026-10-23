@@ -578,9 +578,10 @@
       return `?r=${encodeURIComponent(route.tenantSlug || 'the-urban-plate')}&t=${encodeURIComponent(route.tableId || 'T12')}`;
     }
     if (route.view === 'login' || route.view === 'staff-login') {
-      const isOwner = route.target === 'super-admin' || route.portal === 'owner';
-      const tenant = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
-      return isOwner ? '?view=owner-login' : `?r=${encodeURIComponent(tenant)}&view=staff-login`;
+      if (route.tenantSlug) {
+        return `?r=${encodeURIComponent(route.tenantSlug)}&view=login`;
+      }
+      return '?view=login';
     }
     if (route.view === 'admin') {
       const tenant = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
@@ -645,6 +646,14 @@
     const sectionParam = searchParams.get('section');
     const pilotParam = searchParams.get('pilot');
 
+    // Multi-Restaurant Directory / Outlets Showcase: ?view=restaurants or ?view=directory
+    if (viewParam === 'restaurants' || viewParam === 'directory' || viewParam === 'outlets') {
+      return {
+        view: 'hub',
+        section: 'restaurant-directory'
+      };
+    }
+
     // Tenant-isolated Staff OS view: ?r=<tenant>&view=admin
     if (viewParam === 'admin') {
       return {
@@ -653,14 +662,14 @@
       };
     }
 
-    // Tenant-isolated Staff Login view: ?r=<tenant>&view=staff-login
+    // Single Unified Operations & Staff Login Gateway: ?view=login or ?view=staff-login or ?view=owner-login
     if (viewParam === 'login' || viewParam === 'staff-login' || viewParam === 'owner-login') {
       const isOwner = viewParam === 'owner-login' || searchParams.get('target') === 'super-admin' || searchParams.get('portal') === 'owner';
       return {
         view: 'login',
         target: isOwner ? 'super-admin' : 'admin',
         portal: isOwner ? 'owner' : 'staff',
-        tenantSlug: rParam || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate'
+        tenantSlug: rParam || null
       };
     }
 
@@ -754,20 +763,26 @@
       return;
     }
 
+    const curTenant = state.currentTenantId || 'the-urban-plate';
+    const curTable = state.currentTableId || (curTenant === 'bella-vista' ? 'BV-02' : (curTenant === 'sakura-asian' ? 'SK-02' : 'T12'));
+
     el.innerHTML = `
       <div class="df-demo-bar-inner">
-        <a href="?view=hub" class="df-demo-bar-brand" title="Back to DineFlow Showcase Hub">
+        <a href="?view=hub&section=restaurant-directory" class="df-demo-bar-brand" title="View All Partner Restaurants Directory">
           <span class="live-dot"></span>
-          <span>DineFlow Hub ↗</span>
+          <span>🏢 Outlets (3) ↗</span>
         </a>
         <div class="df-demo-bar-links">
-          <a href="?r=the-urban-plate&t=T12" class="df-demo-link ${activeView === 'customer' ? 'active' : ''}" title="Guest QR Menu (Table T12)">
-            <span>📱 Guest T12</span>
+          <a href="?r=${curTenant}&t=${curTable}" class="df-demo-link ${activeView === 'customer' ? 'active' : ''}" title="Guest QR Menu (${curTable})">
+            <span>📱 Guest ${curTable}</span>
           </a>
-          <a href="?view=login" class="df-demo-link ${activeView === 'login' ? 'active' : ''}" title="Staff & Admin Login Portal">
-            <span>🔐 Login</span>
+          <a href="?r=bella-vista&t=BV-02" class="df-demo-link ${curTenant === 'bella-vista' && activeView === 'customer' ? 'active' : ''}" title="Bella Vista Italian Guest Menu">
+            <span>🍷 Bella Vista</span>
           </a>
-          <a href="?view=admin" class="df-demo-link ${activeView === 'admin' ? 'active' : ''}" title="Kitchen Staff OS & KDS">
+          <a href="?r=sakura-asian&t=SK-02" class="df-demo-link ${curTenant === 'sakura-asian' && activeView === 'customer' ? 'active' : ''}" title="Sakura Asian Guest Menu">
+            <span>🍱 Sakura</span>
+          </a>
+          <a href="?r=${curTenant}&view=admin" class="df-demo-link ${activeView === 'admin' ? 'active' : ''}" title="Kitchen Staff OS & KDS">
             <span>👨‍🍳 Staff OS</span>
           </a>
           <a href="?view=super-admin" class="df-demo-link ${activeView === 'super-admin' ? 'active' : ''}" title="Platform Super Admin">
@@ -891,15 +906,7 @@
       navigateTo({ view: 'login' });
       return;
     } else if (route.view === 'login') {
-      const isOwner = route.target === 'super-admin' || route.portal === 'owner';
-      const targetTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
-      renderLoginView(
-        appEl,
-        isOwner ? '?view=super-admin' : `?r=${targetTenantSlug}&view=admin`,
-        isOwner ? 'SUPER_ADMIN' : 'RESTAURANT_ADMIN',
-        isOwner ? 'owner' : 'staff',
-        targetTenantSlug
-      );
+      renderLoginView(appEl, null, null, null, route.tenantSlug || null);
       renderFloatingRoleSwitcher('login');
     } else if (route.view === 'admin') {
       const targetTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
@@ -1000,8 +1007,8 @@
           <a href="?view=demo" class="df-pill-btn" style="background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;" title="Dual-Device Live Operations Sandbox">
             <span>⚡ Dual-Device Demo</span>
           </a>
-          <a href="?view=admin" class="df-pill-btn primary" title="Staff OS Login">
-            <span>Staff Portal 🔒</span>
+          <a href="?view=login" class="df-pill-btn primary" title="Universal Operations Terminal Login">
+            <span>Terminal Login 🔒</span>
           </a>
         </div>
       </header>
@@ -1075,6 +1082,84 @@
             </div>
           </div>
         </div>
+
+        <!-- Multi-Restaurant Directory & Live Outlets Showcase -->
+        <section class="df-restaurants-directory-section" id="restaurant-directory">
+          <div class="df-directory-header">
+            <div class="df-directory-title-wrap">
+              <h2>
+                <span>🏢</span> Multi-Restaurant Portals &amp; Live Outlets
+              </h2>
+              <p>
+                Each restaurant operates with complete multi-tenant database isolation, custom branding, dedicated Kitchen KDS, and private staff credentials.
+              </p>
+            </div>
+            <div class="df-directory-badge">
+              <span class="live-indicator"></span>
+              <span>${Object.keys(state.tenants || {}).length || 3} Active Tenants</span>
+            </div>
+          </div>
+
+          <div class="df-outlets-grid">
+            ${Object.values(state.tenants || {}).map(t => {
+              const totalTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug).length || 8;
+              const occTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug && tbl.status === 'occupied').length;
+              const tenantOrders = (state.orders || []).filter(o => o.tenantId === t.slug);
+              const shiftRev = tenantOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+              const defaultTable = t.slug === 'bella-vista' ? 'BV-02' : (t.slug === 'sakura-asian' ? 'SK-02' : 'T12');
+              const primaryColor = (t.theme && t.theme.primaryColor) || '#E5A93C';
+              const cuisineLabel = t.slug === 'bella-vista' ? 'Italian Trattoria' : (t.slug === 'sakura-asian' ? 'Pan-Asian & Robata' : 'Bistro & Craft Bar');
+
+              return `
+                <div class="df-outlet-card" style="--outlet-color: ${primaryColor};">
+                  <div class="df-outlet-top">
+                    <div class="df-outlet-brand">
+                      <div class="df-outlet-icon">${t.logoEmoji || '🍽️'}</div>
+                      <div class="df-outlet-info">
+                        <h3>${t.name}</h3>
+                        <div class="df-outlet-branch">
+                          <span>📍 ${t.branch || 'Main'}</span>
+                          <span>&bull;</span>
+                          <span class="df-outlet-cuisine-tag">${cuisineLabel}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="df-outlet-desc">
+                    ${t.tagline || 'Exquisite hospitality powered by DineFlow SaaS platform.'}
+                  </p>
+                  <div class="df-outlet-metrics">
+                    <div class="df-metric-item">
+                      <span class="metric-label">Tables</span>
+                      <span class="metric-value">${totalTbls} Tables</span>
+                    </div>
+                    <div class="df-metric-item">
+                      <span class="metric-label">Floor Status</span>
+                      <span class="metric-value live">● ${occTbls} Occupied</span>
+                    </div>
+                    <div class="df-metric-item">
+                      <span class="metric-label">Shift Revenue</span>
+                      <span class="metric-value">₹${shiftRev.toLocaleString('en-IN')} Today</span>
+                    </div>
+                  </div>
+                  <div class="df-outlet-actions">
+                    <a href="?r=${t.slug}&t=${defaultTable}" class="df-outlet-btn primary" title="Open Guest Menu for Table ${defaultTable}">
+                      <span>📱 Guest Menu (Table ${defaultTable})</span>
+                    </a>
+                    <div class="df-outlet-actions-row">
+                      <a href="?r=${t.slug}&view=admin" class="df-outlet-btn staff" title="Launch Dedicated Kitchen Staff OS">
+                        <span>👨‍🍳 Staff OS &amp; KDS</span>
+                      </a>
+                      <a href="?r=${t.slug}&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                        <span>🔐 Staff Login</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
 
         <div class="df-hub-grid">
           <!-- Card 1: Guest Dining -->
@@ -1181,12 +1266,14 @@
   // ------------------------------------------------------------------------------
   // 0. AUTHENTICATION & LOGIN GATEWAY VIEW
   // ------------------------------------------------------------------------------
-  function renderLoginView(container, redirectTarget = '?view=admin', requestedRole = 'RESTAURANT_ADMIN', portalType = 'staff', tenantSlug = null) {
+  function renderLoginView(container, redirectTarget = null, requestedRole = null, portalType = null, tenantSlug = null) {
     let currentAuthMode = 'pin'; // 'pin' | 'password'
     let enteredPin = '';
 
-    const targetTenant = getCurrentTenant(tenantSlug || parseRoute().tenantSlug);
-    const isStaffPortal = requestedRole === 'RESTAURANT_ADMIN' || portalType === 'staff';
+    const routeInfo = parseRoute();
+    const explicitTenantSlug = tenantSlug || routeInfo.tenantSlug || null;
+    const targetTenant = explicitTenantSlug ? getCurrentTenant(explicitTenantSlug) : null;
+    const activeTenant = targetTenant || getCurrentTenant(state.currentTenantId || 'the-urban-plate');
 
     function updatePinDots() {
       const dots = container.querySelectorAll('.df-pin-dot');
@@ -1212,71 +1299,61 @@
       state = DineFlowStore.get();
       const currentAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
 
-      // 1. Strict Existence Check: Account must exist in owner-managed directory
+      // 1. Directory Existence Check
       const existsInDirectory = currentAccounts.some(a => a.id === account.id || a.pin === account.pin);
       if (!existsInDirectory) {
         SoundFX.chime('alert');
         triggerShake();
-        showToast('Access Denied: This account does not exist or has been revoked by the owner.', '🚫');
+        showToast('Access Denied: Account not found or revoked in directory.', '🚫');
         return false;
       }
 
-      // 2. Strict Role & Cross-Tenant Authorization
-      if (isStaffPortal) {
-        if (account.role !== 'RESTAURANT_ADMIN') {
-          SoundFX.chime('alert');
-          triggerShake();
-          showToast('Access Denied: Owner HQ credentials detected. Super Admins must use the Owner HQ Gateway (?view=super-admin).', '🔒');
-          return false;
-        }
-        if (account.tenantId && targetTenant.slug && account.tenantId !== targetTenant.slug) {
-          const homeName = (state.tenants && state.tenants[account.tenantId]?.name) || account.tenantId;
-          SoundFX.chime('alert');
-          triggerShake();
-          showToast(`Access Denied: Your staff profile belongs to ${homeName}. You cannot access ${targetTenant.name}.`, '🚫');
-          return false;
-        }
-      } else {
-        if (account.role !== 'SUPER_ADMIN') {
-          SoundFX.chime('alert');
-          triggerShake();
-          showToast(`Access Denied: ${account.name} is a Staff account and can only access the Restaurant Staff Portal.`, '🔒');
-          return false;
-        }
-      }
+      // 2. Intelligent Auto-Routing (Single Unified Gateway: No cross-tenant brick walls!)
+      const isSuper = account.role === 'SUPER_ADMIN';
+      const destinationTenantId = isSuper ? (state.currentTenantId || 'the-urban-plate') : (account.tenantId || 'the-urban-plate');
+      const destinationTenant = getCurrentTenant(destinationTenantId);
 
       // 3. Establish Authenticated Session
       state.session = {
         isAuthenticated: true,
         role: account.role,
         user: account,
-        tenantId: account.tenantId || targetTenant.slug
+        tenantId: destinationTenantId
       };
-      if (account.tenantId) {
+      if (!isSuper && account.tenantId) {
         state.currentTenantId = account.tenantId;
       }
       DineFlowStore.save(state);
       SoundFX.chime('success');
-      showToast(`Welcome, ${account.name}! Authenticated as ${account.roleTitle}`, account.avatarEmoji || '🔑');
+
+      if (isSuper) {
+        showToast(`Welcome, ${account.name}! Authenticated to Platform Owner HQ`, account.avatarEmoji || '⚡');
+      } else {
+        showToast(`Welcome, ${account.name}! Authenticated to ${destinationTenant.name}`, account.avatarEmoji || '👨‍🍳');
+      }
 
       // 4. Record Immutable Security Audit Log
       DineFlowStore.recordLog({
-        tenantId: account.tenantId || targetTenant.slug,
-        tenantName: (state.tenants && state.tenants[account.tenantId]?.name) || targetTenant.name,
+        tenantId: destinationTenantId,
+        tenantName: isSuper ? 'Platform Owner HQ' : destinationTenant.name,
         managerId: account.id,
         managerName: account.name,
         category: 'SHIFT',
-        action: isStaffPortal ? 'Staff Portal Login' : 'Owner HQ Login',
-        details: `${account.name} (${account.roleTitle}) authenticated into ${isStaffPortal ? 'Restaurant Staff OS' : 'Owner HQ'}. Authorized by owner directory.`,
+        action: isSuper ? 'Owner HQ Login' : 'Staff Portal Login',
+        details: `${account.name} (${account.roleTitle}) authenticated via DineFlow Universal Login Gateway. Auto-routed to ${isSuper ? 'Owner HQ' : destinationTenant.name}.`,
         amount: 0,
         paymentMethod: null,
         securityFlag: '✓ Authorized Session',
         severity: 'info'
       });
 
-      const targetView = (account.role === 'SUPER_ADMIN') ? 'super-admin' : 'admin';
+      // 5. Direct navigation to target dashboard
       setTimeout(() => {
-        navigateTo({ view: targetView, tenantSlug: account.tenantId || targetTenant.slug });
+        if (isSuper) {
+          navigateTo({ view: 'super-admin' });
+        } else {
+          navigateTo({ view: 'admin', tenantSlug: destinationTenantId });
+        }
       }, 200);
       return true;
     }
@@ -1294,7 +1371,7 @@
       if (!match) {
         SoundFX.chime('alert');
         triggerShake();
-        showToast(isStaffPortal ? 'Authentication Failed: Unrecognized staff PIN. Only staff created by the restaurant owner can log in.' : 'Invalid Super Admin PIN.', '❌');
+        showToast('Authentication Failed: Unrecognized 4-digit PIN. Please use an authorized staff or owner PIN.', '❌');
         enteredPin = '';
         updatePinDots();
         return;
@@ -1303,119 +1380,102 @@
       authenticateUser(match);
     }
 
-    document.title = isStaffPortal 
-      ? `${targetTenant.name} - Restaurant Staff Portal & Kitchen Login Gateway`
-      : 'DineFlow - Owner HQ & Platform Super Admin Gateway';
+    document.title = 'DineFlow - Unified Operations Terminal & Staff Gateway';
 
-    // Filter accounts specifically for this portal & tenant:
+    // All active authorized accounts for fast 1-click login:
     const allAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
-    const authorizedProfiles = isStaffPortal
-      ? allAccounts.filter(acc => acc.role === 'RESTAURANT_ADMIN' && (!acc.tenantId || acc.tenantId === targetTenant.slug))
-      : allAccounts.filter(acc => acc.role === 'SUPER_ADMIN');
 
     container.innerHTML = `
       <header class="df-topbar">
         <div class="df-brand-badge">
-          <div class="df-brand-icon" style="${isStaffPortal ? 'background: linear-gradient(135deg, #10B981, #059669); color: #fff;' : 'background: linear-gradient(135deg, #6366F1, #4F46E5); color: #fff;'}">${isStaffPortal ? '👨‍🍳' : '⚡'}</div>
+          <div class="df-brand-icon" style="background: linear-gradient(135deg, #6366F1, #10B981); color: #fff;">⚡</div>
           <div class="df-brand-text">
-            <h1>${isStaffPortal ? `${targetTenant.name} Staff Portal` : 'DineFlow Platform Owner HQ'}</h1>
-            <span class="df-brand-tagline">${isStaffPortal ? 'Authorized Floor, Kitchen KDS &amp; Billing Terminal' : 'Executive Multi-Tenant Governance &amp; Controls'}</span>
+            <h1>DineFlow Operations Terminal</h1>
+            <span class="df-brand-tagline">Unified Access Gateway &bull; Restaurant Staff OS &amp; Owner HQ</span>
           </div>
         </div>
         <div class="df-top-actions">
-          <a href="?r=${targetTenant.slug}&t=T12" class="df-pill-btn" title="Return to Guest Ordering">
-            <span>← Guest Dining</span>
+          <a href="?view=hub&section=restaurant-directory" class="df-pill-btn" title="View All Outlets Directory">
+            <span>🏪 Outlets Directory</span>
           </a>
-          ${isStaffPortal ? `
-            <a href="?view=super-admin" class="df-pill-btn" style="border-color: rgba(99,102,241,0.4); color: #818CF8;" title="Go to Platform Owner HQ">
-              <span>Owner HQ ⚡</span>
-            </a>
-          ` : `
-            <a href="?view=admin" class="df-pill-btn" style="border-color: rgba(16,185,129,0.4); color: #10B981;" title="Go to Restaurant Staff Portal">
-              <span>Staff Portal 👨‍🍳</span>
-            </a>
-          `}
+          <a href="?r=${activeTenant.slug}&t=T12" class="df-pill-btn" title="Return to Guest Dining Experience">
+            <span>🍽️ Guest Dining</span>
+          </a>
+          <a href="?view=super-admin" class="df-pill-btn" style="border-color: rgba(99,102,241,0.4); color: #818CF8;" title="Platform Super Admin HQ">
+            <span>Owner HQ ⚡</span>
+          </a>
         </div>
       </header>
 
       <main class="df-login-container">
         <div class="df-login-card">
           <div class="df-login-header">
-            <div class="df-login-icon-badge" style="${isStaffPortal ? 'background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3);' : 'background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.3);'}">
-              ${isStaffPortal ? '👨‍🍳' : '⚡'}
+            <div class="df-login-icon-badge" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(16,185,129,0.2)); color: #10B981; border: 1px solid rgba(16,185,129,0.35);">
+              🛡️
             </div>
-            <h2 class="df-login-title">${isStaffPortal ? 'Restaurant Staff Portal' : 'Owner HQ Security Gateway'}</h2>
+            <h2 class="df-login-title">Operations Terminal Login</h2>
             <p class="df-login-subtitle">
-              ${isStaffPortal 
-                ? 'Sign in to access live dining tables, kitchen KDS tickets, and at-table guest requests.'
-                : 'Sign in to manage multi-tenant restaurants, financial audit logs, and owner controls.'}
+              Single entry gateway for all restaurants and executive controls. Enter your 4-digit PIN to automatically open your designated venue or Owner HQ.
             </p>
           </div>
 
-          <!-- Scope Context & Security Banner -->
-          ${isStaffPortal ? `
-            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.55rem 0.85rem; margin-bottom: 0.85rem;">
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 1.15rem;">🏢</span>
-                <div>
-                  <div style="font-size: 0.8rem; font-weight: 700; color: #fff;">${targetTenant.name}</div>
-                  <div style="font-size: 0.68rem; color: var(--text-dim);">${targetTenant.branch || 'Main Branch'} &bull; Restaurant Staff Terminal</div>
+          <!-- Scope Context Banner -->
+          ${targetTenant ? `
+            <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 0.9rem; margin-bottom: 0.85rem;">
+              <div style="display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 1;">
+                <span style="font-size: 1.2rem; flex-shrink: 0;">🏢</span>
+                <div style="min-width: 0; flex: 1;">
+                  <div style="font-size: 0.82rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${targetTenant.name}</div>
+                  <div style="font-size: 0.68rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${targetTenant.branch || 'Restaurant Terminal'} &bull; Suggested Outlet</div>
                 </div>
               </div>
-              <span class="df-staff-scope-pill staff-only">Staff Terminal 🔒</span>
-            </div>
-
-            <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 10px; padding: 0.75rem 0.95rem; margin-bottom: 1.25rem; display: flex; gap: 0.65rem; align-items: flex-start;">
-              <span style="font-size: 1.15rem; line-height: 1;">🛡️</span>
-              <div style="font-size: 0.73rem; color: #CBD5E1; line-height: 1.45;">
-                <strong style="color: #10B981; display: block; margin-bottom: 0.15rem;">Owner-Provisioned Staff Access Only</strong>
-                Only staff accounts created and authorized by the restaurant owner in Owner HQ are permitted to log in.
-              </div>
+              <span class="df-staff-scope-pill staff-only" style="font-size: 0.66rem; background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); border-radius: 4px; padding: 0.2rem 0.55rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;">Universal Keypad 🌐</span>
             </div>
           ` : `
-            <div style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.28); border-radius: 10px; padding: 0.75rem 0.95rem; margin-bottom: 1.25rem; display: flex; gap: 0.65rem; align-items: flex-start;">
-              <span style="font-size: 1.15rem; line-height: 1;">⚡</span>
-              <div style="font-size: 0.73rem; color: #CBD5E1; line-height: 1.45;">
-                <strong style="color: #818CF8; display: block; margin-bottom: 0.15rem;">Platform Owner &amp; Super Admin Access</strong>
-                Strictly restricted to platform owners. Staff members cannot access Owner HQ and must use the Staff Portal.
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.65rem; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; padding: 0.6rem 0.9rem; margin-bottom: 0.85rem;">
+              <div style="display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 1;">
+                <span style="font-size: 1.2rem; flex-shrink: 0;">🌐</span>
+                <div style="min-width: 0; flex: 1;">
+                  <div style="font-size: 0.82rem; font-weight: 700; color: #818CF8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Universal Platform Gateway</div>
+                  <div style="font-size: 0.68rem; color: #CBD5E1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Multi-Outlet Floor Staff &bull; Platform Owner HQ</div>
+                </div>
               </div>
+              <span style="font-size: 0.66rem; background: rgba(99,102,241,0.2); color: #C7D2FE; border: 1px solid rgba(99,102,241,0.4); border-radius: 4px; padding: 0.2rem 0.55rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;">1 Keypad &bull; All Portals</span>
             </div>
           `}
 
           <!-- Quick 1-Click Authorized Profiles -->
           <div class="df-demo-box">
             <div class="df-demo-box-label">
-              <span>${isStaffPortal ? '⚡ Owner-Authorized Staff Profiles' : '⚡ Platform Owner Profile'}</span>
-              <span style="font-size: 0.65rem; color: ${isStaffPortal ? '#10B981' : '#818CF8'}; font-weight: 700;">
-                ${isStaffPortal ? `${authorizedProfiles.length} Active Staff` : 'Super Admin'}
+              <span>⚡ Authorized Profiles (1-Click)</span>
+              <span style="font-size: 0.65rem; color: #10B981; font-weight: 700; white-space: nowrap;">
+                ${allAccounts.length} Active Profiles
               </span>
             </div>
             <div class="df-demo-profile-btns">
-              ${authorizedProfiles.length > 0 ? authorizedProfiles.map(acc => {
+              ${allAccounts.map(acc => {
                 const isSuper = acc.role === 'SUPER_ADMIN';
-                const tenantName = isSuper ? 'Multi-Tenant HQ • Owner Controls' : ((state.tenants && state.tenants[acc.tenantId]?.name) || targetTenant.name);
-                const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Owner Authorized ✓';
-                const badgeColor = isSuper ? '#818CF8' : '#10B981';
+                const tenantName = isSuper 
+                  ? 'Platform Owner HQ' 
+                  : ((state.tenants && state.tenants[acc.tenantId]?.name) || acc.tenantId || 'Partner Outlet');
+                const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Staff Terminal 👨‍🍳';
+                const badgeColor = isSuper ? '#818CF8' : (acc.tenantId === 'bella-vista' ? '#F59E0B' : (acc.tenantId === 'sakura-asian' ? '#EC4899' : '#10B981'));
                 return `
                   <button class="df-demo-btn btn-quick-login" data-pin="${acc.pin}" title="Login as ${acc.name}">
                     <div class="df-demo-btn-info">
                       <span class="df-demo-btn-emoji">${acc.avatarEmoji || (isSuper ? '⚡' : '👨‍🍳')}</span>
-                      <div>
-                        <div class="df-demo-btn-title" style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                      <div class="df-demo-btn-text">
+                        <div class="df-demo-btn-title">
                           <span>${acc.name}</span>
-                          <span style="font-size: 0.62rem; padding: 0.1rem 0.35rem; border-radius: 4px; background: rgba(255,255,255,0.08); color: ${badgeColor}; font-weight: 700;">${badgeLabel}</span>
+                          <span class="df-demo-role-badge" style="background: rgba(255,255,255,0.08); color: ${badgeColor};">${badgeLabel}</span>
                         </div>
-                        <div class="df-demo-btn-sub">${acc.roleTitle} • ${tenantName}</div>
+                        <div class="df-demo-btn-sub" title="${acc.roleTitle} • ${tenantName}">${acc.roleTitle} &bull; ${tenantName}</div>
                       </div>
                     </div>
                     <div class="df-demo-btn-pin" style="color: ${badgeColor}; border-color: rgba(255,255,255,0.15);">PIN: ${acc.pin}</div>
                   </button>
                 `;
-              }).join('') : `
-                <div style="text-align: center; padding: 1.25rem; font-size: 0.78rem; color: var(--text-dim); background: rgba(255,255,255,0.03); border-radius: 8px;">
-                  No staff profiles created yet. Please ask your restaurant owner to create your profile in Owner HQ.
-                </div>
-              `}
+              }).join('')}
             </div>
           </div>
 
@@ -1453,28 +1513,28 @@
               <button class="df-keypad-btn submit-btn btn-submit-pin" title="Authenticate">✓</button>
             </div>
             <p style="text-align: center; font-size: 0.72rem; color: var(--text-dim); margin-top: 0.5rem;">
-              You can also use physical keyboard numbers to enter PIN
+              Type 4 digits on physical keyboard or click keypad buttons above
             </p>
           </div>
 
           <!-- Email & Password Mode -->
           <form id="df-password-view" class="df-login-form" style="${currentAuthMode === 'password' ? '' : 'display: none;'}" onsubmit="return false;">
             <div class="df-form-field">
-              <label>${isStaffPortal ? 'Staff Email' : 'Owner / Super Admin Email'}</label>
-              <input type="email" id="login-email" placeholder="${isStaffPortal ? 'manager@theurbanplate.in' : 'debashish@dineflow.io'}" value="${isStaffPortal ? (authorizedProfiles[0]?.email || 'manager@theurbanplate.in') : 'debashish@dineflow.io'}" required>
+              <label>Staff / Owner Email</label>
+              <input type="email" id="login-email" placeholder="manager@theurbanplate.in" value="manager@theurbanplate.in" required>
             </div>
             <div class="df-form-field">
               <label>Password</label>
               <input type="password" id="login-password" placeholder="••••••••" value="admin" required>
             </div>
-            <button class="df-pill-btn primary" id="btn-submit-password" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; ${isStaffPortal ? 'background: linear-gradient(135deg, #10B981, #059669); border: none;' : ''}">
-              ${isStaffPortal ? 'Authenticate & Enter Staff OS →' : 'Authenticate & Enter Owner HQ →'}
+            <button class="df-pill-btn primary" id="btn-submit-password" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: linear-gradient(135deg, #10B981, #059669); border: none;">
+              Authenticate &amp; Launch Terminal →
             </button>
           </form>
 
           <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
-            <span>🔒 ${isStaffPortal ? 'Owner-Provisioned Staff Only' : 'Owner Executive Access Only'}</span>
-            <a href="?r=${targetTenant.slug}&t=T12" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Guest Menu</a>
+            <span>🔒 Single Universal Operations Gateway</span>
+            <a href="?view=hub&section=restaurant-directory" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Browse Outlets →</a>
           </div>
         </div>
       </main>
@@ -1550,7 +1610,7 @@
       } else {
         SoundFX.chime('alert');
         triggerShake();
-        showToast(isStaffPortal ? 'Authentication Failed: Invalid staff credentials. Only owner-created staff can log in.' : 'Invalid credentials.', '❌');
+        showToast('Authentication Failed: Invalid email or password credentials.', '❌');
       }
     });
 
@@ -3074,11 +3134,49 @@
     container.innerHTML = `
       <!-- Admin Topbar -->
       <header class="df-topbar df-staff-topbar">
-        <div class="df-brand-badge">
-          <div class="df-brand-icon">${tenant.logoEmoji || '🍽️'}</div>
-          <div class="df-brand-text">
-            <h1 title="${tenant.name} Staff OS">${tenant.name} - Staff OS</h1>
-            <span class="df-brand-tagline">${tenant.branch}</span>
+        <div class="df-venue-switcher-container" id="df-venue-switcher-wrap">
+          <button id="btn-venue-switcher-toggle" class="df-venue-switcher-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Switch Restaurant Outlets">
+            <div class="df-brand-icon">${tenant.logoEmoji || '🍽️'}</div>
+            <div class="df-brand-text">
+              <div class="df-venue-current-row">
+                <h1 title="${tenant.name} Staff OS">${tenant.name}</h1>
+                <span class="df-venue-chevron">▾</span>
+              </div>
+              <span class="df-brand-tagline">${tenant.branch} • Staff OS</span>
+            </div>
+          </button>
+          <div id="df-venue-dropdown-menu" class="df-venue-dropdown-menu">
+            <div class="df-venue-dropdown-header">
+              <span>Switch Restaurant Outlet</span>
+              <span class="df-venue-badge">${Object.keys(state.tenants || {}).length || 3} Locations</span>
+            </div>
+            <div class="df-venue-dropdown-list">
+              ${Object.values(state.tenants || {}).map(t => {
+                const isCurrent = t.slug === tenant.slug;
+                const occCount = (state.tables || []).filter(tbl => tbl.tenantId === t.slug && tbl.status === 'occupied').length;
+                const totalTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug).length;
+                return `
+                  <a href="?r=${t.slug}&view=admin" class="df-venue-item ${isCurrent ? 'active' : ''}" data-slug="${t.slug}">
+                    <div class="df-venue-item-info">
+                      <span class="df-venue-item-icon">${t.logoEmoji || '🍽️'}</span>
+                      <div>
+                        <div class="df-venue-item-name">${t.name}</div>
+                        <div class="df-venue-item-sub">${t.branch || 'Main'} &bull; ${totalTbls} Tables</div>
+                      </div>
+                    </div>
+                    <span class="df-venue-item-status">${occCount} Active</span>
+                  </a>
+                `;
+              }).join('')}
+            </div>
+            <div class="df-venue-dropdown-footer">
+              <a href="?view=hub&section=restaurant-directory" class="df-venue-footer-link">
+                <span>🏢 Outlets Directory ↗</span>
+              </a>
+              <a href="?view=super-admin" class="df-venue-footer-link" style="color: #818CF8;">
+                <span>⚡ Platform HQ</span>
+              </a>
+            </div>
           </div>
         </div>
         <div class="df-top-actions">
@@ -3090,7 +3188,7 @@
           <button id="btn-admin-tone-cycle" class="df-pill-btn" title="Synthesized Audio Alert Profile (Click to preview & cycle)">
             <span>${getToneProfileLabel(currentTone)}</span>
           </button>
-          <a href="?r=${tenant.slug}&t=T12" target="_blank" class="df-pill-btn" title="Open Customer View for Table T12">
+          <a href="?r=${tenant.slug}&t=${tenant.slug === 'bella-vista' ? 'BV-02' : (tenant.slug === 'sakura-asian' ? 'SK-02' : 'T12')}" target="_blank" class="df-pill-btn" title="Open Customer View for this restaurant">
             <span>Customer QR ↗</span>
           </a>
           <a href="?view=super-admin" class="df-pill-btn" title="Super Admin Platform">
@@ -3139,6 +3237,22 @@
             <button class="df-admin-nav-item ${currentAdminTab === 'settings' ? 'active' : ''}" data-tab="settings">
               <span>⚙️</span> Restaurant Branding
             </button>
+
+            <!-- Quick Sidebar Venue Switcher -->
+            <div class="df-sidebar-venue-box">
+              <div class="df-sidebar-venue-head">
+                <span>Switch Outlet</span>
+                <span style="font-size: 0.62rem; color: var(--brand-primary);">${Object.keys(state.tenants || {}).length || 3} Venues</span>
+              </div>
+              <div class="df-sidebar-venue-list">
+                ${Object.values(state.tenants || {}).map(t => `
+                  <a href="?r=${t.slug}&view=admin" class="df-sidebar-venue-btn ${t.slug === tenant.slug ? 'active' : ''}" title="Switch to ${t.name}">
+                    <span>${t.logoEmoji || '🍽️'} ${t.name.split(' ')[0]}</span>
+                    <span style="font-size: 0.65rem; opacity: 0.7;">${t.slug === tenant.slug ? 'Active' : '↗'}</span>
+                  </a>
+                `).join('')}
+              </div>
+            </div>
           </aside>
 
           <!-- Main Content Area -->
@@ -3247,6 +3361,21 @@
       showToast('Signed out of Staff OS. Session secured.', '🔒');
       navigateTo({ view: 'login' });
     });
+
+    // Bind Venue Switcher Dropdown Toggle
+    const venueWrap = document.getElementById('df-venue-switcher-wrap');
+    const venueToggleBtn = document.getElementById('btn-venue-switcher-toggle');
+    if (venueToggleBtn && venueWrap) {
+      venueToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        venueWrap.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!venueWrap.contains(e.target)) {
+          venueWrap.classList.remove('open');
+        }
+      });
+    }
 
     renderAdminTabContent(tenant);
   }
@@ -5270,15 +5399,15 @@
               <!-- Left Column: Manager Shift & Payment Ledger -->
               <div class="df-manager-ledger-col">
                 <div class="df-ledger-header">
-                  <div>
+                  <div class="df-ledger-header-text">
                     <h3 class="df-ledger-title">Manager Shift Ledger</h3>
-                    <span style="font-size: 0.72rem; color: var(--text-dim);">Staff operational accounts &amp; payment custody</span>
+                    <p class="df-ledger-subtitle">Staff operational accounts &amp; payment custody</p>
                   </div>
-                  <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <div class="df-ledger-header-actions">
                     <button id="btn-add-staff-from-ledger" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Provision new staff member">
                       + Add Staff
                     </button>
-                    <span class="df-micro-badge status-available">${allManagers.length} ACTIVE</span>
+                    <span class="df-micro-badge status-available" style="white-space: nowrap;">${allManagers.length} ACTIVE</span>
                   </div>
                 </div>
 
@@ -5289,24 +5418,24 @@
                   const mCard = 22 + (idx % 2 === 0 ? -3 : 4);
                   const mCash = 100 - mUpi - mCard;
                   const shiftTime = idx === 0 ? '5h 14m' : idx === 1 ? '4h 30m' : '3h 45m';
+                  const venueName = m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform Operations';
 
                   return `
                     <div class="df-manager-card-item">
-                      <div class="df-manager-top">
-                        <div class="df-manager-avatar">${m.avatarEmoji || '👨‍🍳'}</div>
-                        <div class="df-manager-info">
-                          <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
-                            <span class="df-manager-name">${m.name}</span>
-                            ${m.role === 'SUPER_ADMIN' 
-                              ? '<span class="df-staff-scope-pill owner-hq">Owner HQ ⚡</span>' 
-                              : '<span class="df-staff-scope-pill staff-only">Staff OS Only 🔒</span>'}
-                          </div>
-                          <div class="df-manager-sub">${m.roleTitle} • ${m.department || 'Floor'}</div>
-                          <div style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem;">
-                            🏢 ${m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform Operations'} &bull; <span style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); font-weight: 700;">PIN: ${m.pin}</span>
+                      <div class="df-manager-header-row">
+                        <div class="df-manager-identity">
+                          <div class="df-manager-avatar">${m.avatarEmoji || '👨‍🍳'}</div>
+                          <div style="min-width: 0; flex: 1;">
+                            <div class="df-manager-name-line">
+                              <span class="df-manager-name">${m.name}</span>
+                              ${m.role === 'SUPER_ADMIN' 
+                                ? '<span class="df-staff-scope-pill owner-hq" style="font-size: 0.62rem; padding: 0.12rem 0.4rem; white-space: nowrap;">Owner HQ ⚡</span>' 
+                                : '<span class="df-staff-scope-pill staff-only" style="font-size: 0.62rem; padding: 0.12rem 0.4rem; white-space: nowrap;">Staff OS 🔒</span>'}
+                            </div>
+                            <div class="df-manager-sub" title="${m.roleTitle} • ${m.department || 'Floor Operations'}">${m.roleTitle} &bull; ${m.department || 'Floor'}</div>
                           </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
+                        <div class="df-manager-actions">
                           <span class="df-manager-status-pill">Active (${shiftTime})</span>
                           ${m.role !== 'SUPER_ADMIN' ? `
                             <button class="btn-revoke-staff" data-id="${m.id}" data-name="${m.name}" title="Revoke staff account">
@@ -5314,6 +5443,11 @@
                             </button>
                           ` : ''}
                         </div>
+                      </div>
+
+                      <div class="df-manager-meta-bar">
+                        <span class="df-manager-venue-tag" title="${venueName}">🏢 ${venueName}</span>
+                        <span class="df-manager-pin-badge">PIN: ${m.pin}</span>
                       </div>
 
                       <div class="df-manager-stats-row">
