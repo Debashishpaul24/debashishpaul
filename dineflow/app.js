@@ -3366,6 +3366,9 @@
             <button class="df-admin-nav-item ${currentAdminTab === 'reviews' ? 'active' : ''}" data-tab="reviews">
               <span>⭐</span> Guest Reviews
             </button>
+            <button class="df-admin-nav-item ${currentAdminTab === 'staff' ? 'active' : ''}" data-tab="staff">
+              <span>👥</span> Staff &amp; Team
+            </button>
             <button class="df-admin-nav-item ${currentAdminTab === 'settings' ? 'active' : ''}" data-tab="settings">
               <span>⚙️</span> Restaurant Branding
             </button>
@@ -3537,6 +3540,8 @@
       renderAnalyticsDashboard(tabBody, tenant);
     } else if (currentAdminTab === 'reviews') {
       renderReviewsFeed(tabBody, tenant);
+    } else if (currentAdminTab === 'staff') {
+      renderStaffManagementTab(tabBody, tenant);
     } else if (currentAdminTab === 'settings') {
       renderBrandingSettings(tabBody, tenant);
     }
@@ -5078,6 +5083,194 @@
   }
 
   // ------------------------------------------------------------------------------
+  // RESTAURANT STAFF & TEAM OPERATIONS CONSOLE (Staff OS Tab)
+  // Allows restaurant owners and general managers to view, edit, provision,
+  // and modify staff credentials, 4-digit PIN codes, roles, and shift statuses.
+  // ------------------------------------------------------------------------------
+  function renderStaffManagementTab(container, tenant) {
+    let showAllOutlets = false;
+
+    function renderContent() {
+      state = DineFlowStore.get();
+      const currentAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+      const filteredStaff = showAllOutlets ? currentAccounts : currentAccounts.filter(s => s.tenantId === tenant.slug || s.role === 'SUPER_ADMIN');
+
+      container.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span>👥</span> Staff &amp; Team Management
+            </h2>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin: 3px 0 0 0;">
+              Manage team profiles, roles, 4-digit PIN credentials, and floor assignments for <strong>${tenant.name}</strong>.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <div class="df-audience-toggle-group" style="padding: 2px;">
+              <button type="button" class="df-audience-toggle-btn ${!showAllOutlets ? 'active' : ''}" id="btn-team-filter-this" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
+                <span>${tenant.name} (${currentAccounts.filter(s => s.tenantId === tenant.slug).length})</span>
+              </button>
+              <button type="button" class="df-audience-toggle-btn ${showAllOutlets ? 'active' : ''}" id="btn-team-filter-all" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
+                <span>All Outlets (${currentAccounts.length})</span>
+              </button>
+            </div>
+            <button id="btn-add-team-member" class="df-pill-btn primary" style="font-size: 0.75rem; padding: 0.45rem 0.85rem; font-weight: 700; background: linear-gradient(135deg, #10B981, #059669); border: none;">
+              <span>+ Add Team Member</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Security Quick Callout -->
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; font-size: 0.76rem; color: #E2E8F0;">
+            <span style="font-size: 1.1rem;">🔐</span>
+            <span>Owners and General Managers can modify any staff member's credentials or PIN code at any time. Changes sync live across the Staff OS Keypad.</span>
+          </div>
+          <span class="df-micro-badge status-available">${filteredStaff.length} PROFILES ACTIVE</span>
+        </div>
+
+        <!-- Staff Cards Grid -->
+        <div class="df-staff-team-grid">
+          ${filteredStaff.map((m) => {
+            const venueName = m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform HQ';
+            const isSuper = m.role === 'SUPER_ADMIN';
+            const statusLabel = m.status === 'break' ? '☕ On Break' : m.status === 'leave' ? '🌴 On Leave' : '● On Shift';
+            const statusColor = m.status === 'break' ? '#F59E0B' : m.status === 'leave' ? '#94A3B8' : '#10B981';
+
+            return `
+              <div class="df-team-card">
+                <div class="df-team-card-head">
+                  <div class="df-team-avatar">
+                    ${m.avatarEmoji || '👨‍🍳'}
+                  </div>
+                  <div class="df-team-info">
+                    <div class="df-team-name-row">
+                      <span class="df-team-name">${m.name}</span>
+                      ${isSuper 
+                        ? '<span class="df-staff-scope-pill owner-hq" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">Owner HQ ⚡</span>' 
+                        : '<span class="df-staff-scope-pill staff-only" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">Staff OS 🔒</span>'}
+                    </div>
+                    <div class="df-team-role">${m.roleTitle} &bull; ${m.department || 'Floor'}</div>
+                  </div>
+                </div>
+
+                <div class="df-team-details-table">
+                  <div class="df-team-detail-row">
+                    <span style="color: var(--text-dim);">Assigned Outlet:</span>
+                    <strong style="color: #fff;">🏢 ${venueName}</strong>
+                  </div>
+                  <div class="df-team-detail-row">
+                    <span style="color: var(--text-dim);">4-Digit PIN:</span>
+                    <span style="display: flex; align-items: center; gap: 0.35rem;">
+                      <code style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); font-weight: 800; font-size: 0.85rem; background: rgba(229,169,60,0.15); padding: 0.1rem 0.4rem; border-radius: 4px; border: 1px solid rgba(229,169,60,0.3);">${m.pin}</code>
+                      <button class="btn-copy-pin" data-pin="${m.pin}" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.72rem;" title="Copy PIN">📋</button>
+                    </span>
+                  </div>
+                  <div class="df-team-detail-row">
+                    <span style="color: var(--text-dim);">Login Email:</span>
+                    <span style="color: #CBD5E1; font-family: monospace; font-size: 0.72rem;">${m.email || 'None'}</span>
+                  </div>
+                  <div class="df-team-detail-row">
+                    <span style="color: var(--text-dim);">Shift Status:</span>
+                    <span style="color: ${statusColor}; font-weight: 700; font-size: 0.72rem;">${statusLabel}</span>
+                  </div>
+                </div>
+
+                <div class="df-team-actions-row">
+                  <button class="btn-edit-staff df-pill-btn" data-id="${m.id}" data-name="${m.name}" style="flex: 1; justify-content: center; font-size: 0.76rem; padding: 0.45rem;">
+                    ✏️ Edit Profile
+                  </button>
+                  ${!isSuper ? `
+                    <button class="btn-revoke-staff" data-id="${m.id}" data-name="${m.name}" style="padding: 0.45rem 0.75rem; font-size: 0.76rem;" title="Revoke staff account">
+                      🗑️ Revoke
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+
+      // Event Listeners inside Tab
+      container.querySelector('#btn-team-filter-this')?.addEventListener('click', () => {
+        showAllOutlets = false;
+        renderContent();
+      });
+
+      container.querySelector('#btn-team-filter-all')?.addEventListener('click', () => {
+        showAllOutlets = true;
+        renderContent();
+      });
+
+      container.querySelector('#btn-add-team-member')?.addEventListener('click', () => {
+        openCreateStaffModal(() => renderContent(), tenant.slug);
+      });
+
+      // Bind Edit Staff buttons
+      container.querySelectorAll('.btn-edit-staff').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const staffId = btn.getAttribute('data-id');
+          openEditStaffModal(staffId, () => renderContent());
+        });
+      });
+
+      // Bind Copy PIN buttons
+      container.querySelectorAll('.btn-copy-pin').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pin = btn.getAttribute('data-pin');
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(pin).then(() => {
+              showToast(`PIN ${pin} copied to clipboard!`, '📋');
+            });
+          } else {
+            showToast(`PIN: ${pin}`, '🔑');
+          }
+        });
+      });
+
+      // Bind Revoke Staff buttons
+      container.querySelectorAll('.btn-revoke-staff').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const staffId = btn.getAttribute('data-id');
+          const staffName = btn.getAttribute('data-name');
+          if (confirm(`Are you sure you want to revoke access for "${staffName}"? This will immediately disable their login and PIN access.`)) {
+            state = DineFlowStore.get();
+            const targetAccount = (state.staffAccounts || []).find(a => a.id === staffId);
+            state.staffAccounts = (state.staffAccounts || []).filter(a => a.id !== staffId);
+
+            DineFlowStore.recordLog({
+              tenantId: targetAccount?.tenantId || tenant.slug,
+              tenantName: (targetAccount?.tenantId && state.tenants[targetAccount.tenantId]?.name) || tenant.name,
+              managerId: state.session?.user?.id || 'staff-02',
+              managerName: state.session?.user?.name || 'Owner HQ',
+              category: 'SECURITY',
+              action: 'Staff Profile Revoked',
+              details: `Revoked operational access for "${staffName}" (${targetAccount?.roleTitle || 'Staff'}).`,
+              amount: 0,
+              paymentMethod: null,
+              securityFlag: '⚠️ Profile Revoked',
+              severity: 'warning'
+            });
+
+            DineFlowStore.save(state);
+            SoundFX.chime('notice');
+            showToast(`Staff profile for "${staffName}" revoked.`, '🗑️');
+            renderContent();
+          }
+        });
+      });
+    }
+
+    renderContent();
+  }
+
+  // ------------------------------------------------------------------------------
   // MODAL: CREATE RESTAURANT STAFF / MANAGER PROFILE (OWNER DASHBOARD)
   // Strictly restricted to Restaurant Staff OS (RESTAURANT_ADMIN).
   // ------------------------------------------------------------------------------
@@ -5336,6 +5529,295 @@
   }
 
   // ------------------------------------------------------------------------------
+  // MODAL: EDIT / MODIFY RESTAURANT STAFF PROFILE (OWNER DASHBOARD)
+  // Allows restaurant owner to modify name, role title, department, outlet,
+  // 4-digit PIN, credentials, avatar emoji, and operational status at any time.
+  // ------------------------------------------------------------------------------
+  function openEditStaffModal(staffId, onSavedCallback) {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
+
+    state = DineFlowStore.get();
+    const existingAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+    const staff = existingAccounts.find(a => a.id === staffId);
+    if (!staff) {
+      showToast('Staff profile not found.', '❌');
+      return;
+    }
+
+    const tenantsList = state.tenants ? Object.values(state.tenants) : [];
+    const isSuper = staff.role === 'SUPER_ADMIN';
+
+    // Generates a random 4-digit PIN that is not allocated to any OTHER staff account
+    function generateUniquePin() {
+      const otherPins = new Set(existingAccounts.filter(a => a.id !== staffId).map(a => a.pin));
+      let pin = '';
+      for (let attempts = 0; attempts < 1000; attempts++) {
+        pin = Math.floor(1000 + Math.random() * 9000).toString();
+        if (!otherPins.has(pin)) break;
+      }
+      return pin || '2468';
+    }
+
+    modalContainer.innerHTML = `
+      <div class="df-modal-backdrop active">
+        <div class="df-bottom-sheet" style="max-width: 580px; align-self: center; border-radius: 20px; background: #0E131F; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 24px 60px rgba(0,0,0,0.85); overflow: hidden;">
+          <div class="df-sheet-header" style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(56, 189, 248, 0.15); color: #38BDF8; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                ${staff.avatarEmoji || '✏️'}
+              </div>
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Edit Staff Profile</h3>
+                <span style="font-size: 0.72rem; color: var(--text-dim);">Modify operational credentials &amp; permissions for ${staff.name}</span>
+              </div>
+            </div>
+            <button class="df-sheet-close" id="btn-close-edit-staff" style="background: none; border: none; font-size: 1.25rem; color: var(--text-dim); cursor: pointer;">✕</button>
+          </div>
+
+          <div class="df-sheet-body" style="padding: 1.25rem 1.5rem; max-height: 80vh; overflow-y: auto;">
+            <!-- Callout -->
+            <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+              <span style="font-size: 1.25rem;">⚡</span>
+              <div style="font-size: 0.74rem; color: #CBD5E1; line-height: 1.45;">
+                <strong style="color: #fff; display: block; margin-bottom: 0.2rem;">Live Staff Directory Synchronization</strong>
+                Modifying this profile updates terminal keypad PIN authentication, active kitchen shift metrics, and outlet access privileges immediately.
+              </div>
+            </div>
+
+            <form id="df-edit-staff-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1rem;">
+              <!-- Target Outlet -->
+              <div>
+                <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Assigned Restaurant Outlet *</label>
+                ${isSuper ? `
+                  <input type="text" value="🏢 Platform HQ (All Outlets &amp; Super Admin)" disabled style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; color: #818CF8; font-size: 0.85rem; font-weight: 600;">
+                  <input type="hidden" id="edit-staff-outlet" value="">
+                ` : `
+                  <select id="edit-staff-outlet" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                    ${tenantsList.map(t => `<option value="${t.slug}" ${t.slug === staff.tenantId ? 'selected' : ''}>🏢 ${t.name} (${t.branch || 'Main'})</option>`).join('')}
+                  </select>
+                `}
+              </div>
+
+              <!-- Name & Role Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Full Name *</label>
+                  <input type="text" id="edit-staff-name" value="${staff.name || ''}" placeholder="e.g. Chef Vikram Rao" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Role Title *</label>
+                  <input type="text" id="edit-staff-role-title" value="${staff.roleTitle || 'Floor Supervisor'}" placeholder="e.g. Floor Supervisor" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+              </div>
+
+              <!-- Department & Avatar Emoji Grid -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Department</label>
+                  <select id="edit-staff-dept" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                    <option value="Floor &amp; Guest Dining" ${staff.department === 'Floor & Guest Dining' ? 'selected' : ''}>Floor &amp; Guest Dining</option>
+                    <option value="Kitchen &amp; KDS Kanban" ${staff.department === 'Kitchen & KDS Kanban' ? 'selected' : ''}>Kitchen &amp; KDS Kanban</option>
+                    <option value="Cash &amp; POS Billing" ${staff.department === 'Cash & POS Billing' ? 'selected' : ''}>Cash &amp; POS Billing</option>
+                    <option value="Bar &amp; Craft Beverage" ${staff.department === 'Bar & Craft Beverage' ? 'selected' : ''}>Bar &amp; Craft Beverage</option>
+                    <option value="Italian Cuisine Operations" ${staff.department === 'Italian Cuisine Operations' ? 'selected' : ''}>Italian Cuisine Operations</option>
+                    <option value="Asian Cuisine Operations" ${staff.department === 'Asian Cuisine Operations' ? 'selected' : ''}>Asian Cuisine Operations</option>
+                    <option value="Platform Operations &amp; HQ" ${staff.department === 'Platform Operations & HQ' ? 'selected' : ''}>Platform Operations &amp; HQ</option>
+                    <option value="General Store Operations" ${staff.department === 'General Store Operations' ? 'selected' : ''}>General Store Operations</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Avatar Emoji</label>
+                  <select id="edit-staff-emoji" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                    <option value="👨‍🍳" ${staff.avatarEmoji === '👨‍🍳' ? 'selected' : ''}>👨‍🍳 Head Chef</option>
+                    <option value="👩‍🍳" ${staff.avatarEmoji === '👩‍🍳' ? 'selected' : ''}>👩‍🍳 Sous Chef</option>
+                    <option value="🤵" ${staff.avatarEmoji === '🤵' ? 'selected' : ''}>🤵 Floor Lead / Host</option>
+                    <option value="🍕" ${staff.avatarEmoji === '🍕' ? 'selected' : ''}>🍕 Pizza Specialist</option>
+                    <option value="🍱" ${staff.avatarEmoji === '🍱' ? 'selected' : ''}>🍱 Asian Culinary Lead</option>
+                    <option value="🍣" ${staff.avatarEmoji === '🍣' ? 'selected' : ''}>🍣 Sushi Master</option>
+                    <option value="🍷" ${staff.avatarEmoji === '🍷' ? 'selected' : ''}>🍷 Sommelier / Cellar</option>
+                    <option value="🍹" ${staff.avatarEmoji === '🍹' ? 'selected' : ''}>🍹 Mixologist / Bar</option>
+                    <option value="🧑‍💼" ${staff.avatarEmoji === '🧑‍💼' ? 'selected' : ''}>🧑‍💼 Operations Lead</option>
+                    <option value="💼" ${staff.avatarEmoji === '💼' ? 'selected' : ''}>💼 Store Manager</option>
+                    <option value="⚡" ${staff.avatarEmoji === '⚡' ? 'selected' : ''}>⚡ Shift Cashier</option>
+                    <option value="🍰" ${staff.avatarEmoji === '🍰' ? 'selected' : ''}>🍰 Pastry &amp; Bakery</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Fast 4-Digit PIN with Auto-Generate -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0;">4-Digit Fast Access PIN *</label>
+                  <button type="button" id="btn-edit-generate-pin" style="background: none; border: none; color: var(--brand-primary); font-size: 0.72rem; cursor: pointer; text-decoration: underline;">
+                    🎲 Generate New PIN
+                  </button>
+                </div>
+                <div style="position: relative;">
+                  <input type="text" id="edit-staff-pin" maxlength="4" value="${staff.pin || ''}" placeholder="4 Digits (e.g. 2468)" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 1rem; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px;" required>
+                </div>
+                <span style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.25rem; display: block;">
+                  PIN is used for instant 1-tap keypad login on tablet or mobile.
+                </span>
+              </div>
+
+              <!-- Email & Password Credentials -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Staff Email *</label>
+                  <input type="email" id="edit-staff-email" value="${staff.email || ''}" placeholder="staff@restaurant.in" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+                <div>
+                  <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Password *</label>
+                  <input type="text" id="edit-staff-pass" value="${staff.password || 'admin'}" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;" required>
+                </div>
+              </div>
+
+              <!-- Operational Status -->
+              <div>
+                <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Operational Shift Status</label>
+                <select id="edit-staff-status" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                  <option value="active" ${staff.status !== 'break' && staff.status !== 'leave' ? 'selected' : ''}>● Active (On Duty &amp; Available on Floor)</option>
+                  <option value="break" ${staff.status === 'break' ? 'selected' : ''}>☕ On Break / Standby</option>
+                  <option value="leave" ${staff.status === 'leave' ? 'selected' : ''}>🌴 On Scheduled Leave / Off Duty</option>
+                </select>
+              </div>
+
+              <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+                <button type="button" id="btn-cancel-edit-staff" class="df-pill-btn" style="padding: 0.65rem 1.15rem;">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-edit-staff" class="df-pill-btn primary" style="padding: 0.65rem 1.4rem; font-weight: 700; background: linear-gradient(135deg, #38BDF8, #2563EB); border: none; color: #fff;">
+                  Save Changes ✓
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Event Listeners
+    const closeModal = () => {
+      modalContainer.innerHTML = '';
+    };
+
+    document.getElementById('btn-close-edit-staff')?.addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-edit-staff')?.addEventListener('click', closeModal);
+
+    document.getElementById('btn-edit-generate-pin')?.addEventListener('click', () => {
+      const pinInput = document.getElementById('edit-staff-pin');
+      if (pinInput) pinInput.value = generateUniquePin();
+    });
+
+    document.getElementById('df-edit-staff-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const outletSlug = document.getElementById('edit-staff-outlet')?.value;
+      const fullName = document.getElementById('edit-staff-name')?.value.trim();
+      const roleTitle = document.getElementById('edit-staff-role-title')?.value.trim();
+      const dept = document.getElementById('edit-staff-dept')?.value;
+      const emoji = document.getElementById('edit-staff-emoji')?.value;
+      const pin = document.getElementById('edit-staff-pin')?.value.trim();
+      const email = document.getElementById('edit-staff-email')?.value.trim().toLowerCase();
+      const pass = document.getElementById('edit-staff-pass')?.value.trim();
+      const status = document.getElementById('edit-staff-status')?.value;
+
+      if (!fullName) {
+        showToast('Please enter staff full name.', '⚠️');
+        return;
+      }
+      if (!pin || !/^\d{4}$/.test(pin)) {
+        showToast('PIN must be exactly 4 numeric digits.', '⚠️');
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        showToast('Please provide a valid staff email address.', '⚠️');
+        return;
+      }
+
+      state = DineFlowStore.get();
+      const accounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+
+      // Check PIN uniqueness (against other accounts)
+      if (accounts.some(a => a.id !== staffId && a.pin === pin)) {
+        showToast(`PIN "${pin}" is already allocated to another staff member. Please choose another PIN.`, '❌');
+        return;
+      }
+
+      // Check Email uniqueness (against other accounts)
+      if (accounts.some(a => a.id !== staffId && a.email && a.email.toLowerCase() === email)) {
+        showToast(`Email "${email}" is already registered to another staff member.`, '❌');
+        return;
+      }
+
+      // Find staff in state
+      if (!state.staffAccounts || !Array.isArray(state.staffAccounts)) {
+        state.staffAccounts = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.staffAccounts));
+      }
+      const target = state.staffAccounts.find(a => a.id === staffId);
+      if (!target) {
+        showToast('Staff member not found in database.', '❌');
+        return;
+      }
+
+      const prevOutlet = target.tenantId;
+      target.name = fullName;
+      target.roleTitle = roleTitle || target.roleTitle;
+      target.department = dept || target.department;
+      if (target.role !== 'SUPER_ADMIN' && outletSlug) {
+        target.tenantId = outletSlug;
+      }
+      target.avatarEmoji = emoji || target.avatarEmoji;
+      target.pin = pin;
+      target.email = email;
+      target.password = pass || target.password;
+      target.status = status;
+      target.updatedAt = new Date().toISOString();
+
+      // If active session belongs to this staff, update live session credentials
+      if (state.session && state.session.user && state.session.user.id === staffId) {
+        state.session.user.name = target.name;
+        state.session.user.roleTitle = target.roleTitle;
+        state.session.user.avatarEmoji = target.avatarEmoji;
+        state.session.user.department = target.department;
+        state.session.user.pin = target.pin;
+        state.session.user.email = target.email;
+        if (target.role !== 'SUPER_ADMIN' && target.tenantId) {
+          state.session.tenantId = target.tenantId;
+          state.currentTenantId = target.tenantId;
+        }
+      }
+
+      const tenantObj = target.tenantId && state.tenants ? state.tenants[target.tenantId] : null;
+      const tenantName = tenantObj ? tenantObj.name : 'Platform HQ';
+
+      // Record immutable security audit log
+      DineFlowStore.recordLog({
+        tenantId: target.tenantId || 'the-urban-plate',
+        tenantName: tenantName,
+        managerId: state.session?.user?.id || 'staff-02',
+        managerName: state.session?.user?.name || 'Owner / Super Admin',
+        category: 'SECURITY',
+        action: 'Staff Profile Modified',
+        details: `Owner modified staff profile for "${target.name}" (${target.roleTitle}, PIN: ${target.pin}, Venue: ${tenantName}${prevOutlet !== target.tenantId ? `, Reassigned from ${prevOutlet}` : ''}).`,
+        amount: 0,
+        paymentMethod: null,
+        securityFlag: '✏️ Profile Modified',
+        severity: 'info'
+      });
+
+      DineFlowStore.save(state);
+      SoundFX.chime('success');
+      showToast(`Staff profile for "${target.name}" updated successfully!`, target.avatarEmoji);
+      closeModal();
+
+      if (typeof onSavedCallback === 'function') {
+        onSavedCallback(target);
+      }
+    });
+  }
+
+  // ------------------------------------------------------------------------------
   // 3. SUPER ADMIN PLATFORM VIEW (Multi-Tenant Overview)
   // ------------------------------------------------------------------------------
   function renderSuperAdminView(container) {
@@ -5571,6 +6053,9 @@
                         </div>
                         <div class="df-manager-actions">
                           <span class="df-manager-status-pill">Active (${shiftTime})</span>
+                          <button class="btn-edit-staff" data-id="${m.id}" data-name="${m.name}" title="Edit staff profile & credentials">
+                            ✏️ Edit
+                          </button>
                           ${m.role !== 'SUPER_ADMIN' ? `
                             <button class="btn-revoke-staff" data-id="${m.id}" data-name="${m.name}" title="Revoke staff account">
                               🗑️ Revoke
@@ -5713,9 +6198,24 @@
                     <span class="df-micro-badge chef" style="text-transform: uppercase;">${t.plan}</span>
                   </div>
 
-                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.85rem;">
                     ${t.tagline}
                   </p>
+
+                  <!-- Assigned Staff Mini Roster -->
+                  <div style="margin-bottom: 1rem; padding: 0.65rem 0.85rem; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+                      <span>👥 Assigned Staff (${allManagers.filter(m => m.tenantId === t.slug).length})</span>
+                      <span style="font-size: 0.68rem; color: #38BDF8;">Click to edit</span>
+                    </div>
+                    <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                      ${allManagers.filter(m => m.tenantId === t.slug).length === 0 ? '<span style="font-size: 0.72rem; color: #64748B;">No staff assigned yet</span>' : allManagers.filter(m => m.tenantId === t.slug).map(s => `
+                        <button class="btn-edit-staff" data-id="${s.id}" data-name="${s.name}" style="font-size: 0.68rem; padding: 0.15rem 0.45rem;" title="Edit ${s.name} (${s.roleTitle})">
+                          ${s.avatarEmoji || '👨‍🍳'} ${s.name} (PIN: ${s.pin}) ✏️
+                        </button>
+                      `).join('')}
+                    </div>
+                  </div>
 
                   <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1rem;">
                     <button class="df-pill-btn primary btn-switch-tenant" data-slug="${t.slug}" style="flex: 1; justify-content: center; font-size: 0.78rem;">
@@ -5880,6 +6380,16 @@
         btn.addEventListener('click', () => {
           const slug = btn.getAttribute('data-slug');
           openCreateStaffModal(() => renderMain(), slug);
+        });
+      });
+
+      // Edit Staff Profile Listener (Owner HQ)
+      container.querySelectorAll('.btn-edit-staff').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const staffId = btn.getAttribute('data-id');
+          openEditStaffModal(staffId, () => renderMain());
         });
       });
 
@@ -6276,6 +6786,10 @@
   window.addEventListener('popstate', () => {
     renderApp();
   });
+
+  // Expose global staff management hooks
+  window.dfOpenEditStaffModal = openEditStaffModal;
+  window.dfOpenCreateStaffModal = openCreateStaffModal;
 
   // Initial Boot
   window.addEventListener('DOMContentLoaded', () => {
