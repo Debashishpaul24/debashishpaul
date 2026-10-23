@@ -5092,8 +5092,15 @@
 
     function renderContent() {
       state = DineFlowStore.get();
+      const isSessionSuperAdmin = state.session && state.session.role === 'SUPER_ADMIN';
+      const sessionTenantId = state.session?.tenantId || tenant.slug;
       const currentAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
-      const filteredStaff = showAllOutlets ? currentAccounts : currentAccounts.filter(s => s.tenantId === tenant.slug || s.role === 'SUPER_ADMIN');
+
+      // RBAC: Managers can ONLY view/manage staff belonging to their same restaurant.
+      // Owners (SUPER_ADMIN) can toggle between this outlet and All Outlets.
+      const filteredStaff = isSessionSuperAdmin
+        ? (showAllOutlets ? currentAccounts : currentAccounts.filter(s => s.tenantId === tenant.slug || s.role === 'SUPER_ADMIN'))
+        : currentAccounts.filter(s => s.tenantId === tenant.slug || s.role === 'SUPER_ADMIN');
 
       container.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
@@ -5106,27 +5113,37 @@
             </p>
           </div>
           <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <div class="df-audience-toggle-group" style="padding: 2px;">
-              <button type="button" class="df-audience-toggle-btn ${!showAllOutlets ? 'active' : ''}" id="btn-team-filter-this" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
-                <span>${tenant.name} (${currentAccounts.filter(s => s.tenantId === tenant.slug).length})</span>
-              </button>
-              <button type="button" class="df-audience-toggle-btn ${showAllOutlets ? 'active' : ''}" id="btn-team-filter-all" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
-                <span>All Outlets (${currentAccounts.length})</span>
-              </button>
-            </div>
+            ${isSessionSuperAdmin ? `
+              <div class="df-audience-toggle-group" style="padding: 2px;">
+                <button type="button" class="df-audience-toggle-btn ${!showAllOutlets ? 'active' : ''}" id="btn-team-filter-this" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
+                  <span>${tenant.name} (${currentAccounts.filter(s => s.tenantId === tenant.slug).length})</span>
+                </button>
+                <button type="button" class="df-audience-toggle-btn ${showAllOutlets ? 'active' : ''}" id="btn-team-filter-all" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
+                  <span>All Outlets (${currentAccounts.length})</span>
+                </button>
+              </div>
+            ` : `
+              <div class="df-manager-venue-tag" style="background: rgba(229,169,60,0.12); color: var(--brand-primary); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 700; border: 1px solid rgba(229,169,60,0.25); font-size: 0.74rem;">
+                🏢 ${tenant.name} Floor Staff
+              </div>
+            `}
             <button id="btn-add-team-member" class="df-pill-btn primary" style="font-size: 0.75rem; padding: 0.45rem 0.85rem; font-weight: 700; background: linear-gradient(135deg, #10B981, #059669); border: none;">
               <span>+ Add Team Member</span>
             </button>
           </div>
         </div>
 
-        <!-- Security Quick Callout -->
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+        <!-- Security Quick Callout with RBAC Status -->
+        <div style="background: ${isSessionSuperAdmin ? 'rgba(99, 102, 241, 0.08)' : 'rgba(16, 185, 129, 0.08)'}; border: 1px solid ${isSessionSuperAdmin ? 'rgba(99, 102, 241, 0.25)' : 'rgba(16, 185, 129, 0.25)'}; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
           <div style="display: flex; align-items: center; gap: 0.65rem; font-size: 0.76rem; color: #E2E8F0;">
-            <span style="font-size: 1.1rem;">🔐</span>
-            <span>Owners and General Managers can modify any staff member's credentials or PIN code at any time. Changes sync live across the Staff OS Keypad.</span>
+            <span style="font-size: 1.1rem;">${isSessionSuperAdmin ? '⚡' : '🛡️'}</span>
+            <span>
+              ${isSessionSuperAdmin 
+                ? '<strong>Owner HQ Authority:</strong> You have full rights to modify staff profiles, reset PIN credentials, and reassign team members across all outlets.' 
+                : `<strong>Manager RBAC Active:</strong> You can edit and modify credentials for staff at <strong>${tenant.name}</strong>. Owner HQ profiles are strictly protected and cannot be modified.`}
+            </span>
           </div>
-          <span class="df-micro-badge status-available">${filteredStaff.length} PROFILES ACTIVE</span>
+          <span class="df-micro-badge status-available">${filteredStaff.length} PROFILES LOADED</span>
         </div>
 
         <!-- Staff Cards Grid -->
@@ -5134,6 +5151,11 @@
           ${filteredStaff.map((m) => {
             const venueName = m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform HQ';
             const isSuper = m.role === 'SUPER_ADMIN';
+            const isSameRestaurant = m.tenantId === tenant.slug;
+            // RBAC: Managers cannot edit/revoke Owner; Managers can only edit their own restaurant's staff
+            const canEdit = isSessionSuperAdmin || (!isSuper && isSameRestaurant);
+            const canRevoke = !isSuper && (isSessionSuperAdmin || isSameRestaurant);
+
             const statusLabel = m.status === 'break' ? '☕ On Break' : m.status === 'leave' ? '🌴 On Leave' : '● On Shift';
             const statusColor = m.status === 'break' ? '#F59E0B' : m.status === 'leave' ? '#94A3B8' : '#10B981';
 
@@ -5177,10 +5199,16 @@
                 </div>
 
                 <div class="df-team-actions-row">
-                  <button class="btn-edit-staff df-pill-btn" data-id="${m.id}" data-name="${m.name}" style="flex: 1; justify-content: center; font-size: 0.76rem; padding: 0.45rem;">
-                    ✏️ Edit Profile
-                  </button>
-                  ${!isSuper ? `
+                  ${canEdit ? `
+                    <button class="btn-edit-staff df-pill-btn" data-id="${m.id}" data-name="${m.name}" style="flex: 1; justify-content: center; font-size: 0.76rem; padding: 0.45rem;">
+                      ✏️ Edit Profile
+                    </button>
+                  ` : `
+                    <div style="flex: 1; text-align: center; font-size: 0.72rem; padding: 0.45rem; background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.25); color: #818CF8; border-radius: 6px; font-weight: 600;">
+                      🔒 Owner Profile (Protected)
+                    </div>
+                  `}
+                  ${canRevoke ? `
                     <button class="btn-revoke-staff" data-id="${m.id}" data-name="${m.name}" style="padding: 0.45rem 0.75rem; font-size: 0.76rem;" title="Revoke staff account">
                       🗑️ Revoke
                     </button>
@@ -5239,16 +5267,31 @@
           e.stopPropagation();
           const staffId = btn.getAttribute('data-id');
           const staffName = btn.getAttribute('data-name');
+          const targetAccount = (state.staffAccounts || []).find(a => a.id === staffId);
+
+          // RBAC: Manager cannot revoke Owner
+          if (!isSessionSuperAdmin && targetAccount?.role === 'SUPER_ADMIN') {
+            SoundFX.chime('alert');
+            showToast('Permission Denied: Managers cannot revoke Owner accounts.', '🚫');
+            return;
+          }
+
+          // RBAC: Manager can only revoke staff from their own restaurant
+          if (!isSessionSuperAdmin && targetAccount?.tenantId !== tenant.slug) {
+            SoundFX.chime('alert');
+            showToast('Permission Denied: Managers can only revoke staff from their own restaurant.', '🚫');
+            return;
+          }
+
           if (confirm(`Are you sure you want to revoke access for "${staffName}"? This will immediately disable their login and PIN access.`)) {
             state = DineFlowStore.get();
-            const targetAccount = (state.staffAccounts || []).find(a => a.id === staffId);
             state.staffAccounts = (state.staffAccounts || []).filter(a => a.id !== staffId);
 
             DineFlowStore.recordLog({
               tenantId: targetAccount?.tenantId || tenant.slug,
               tenantName: (targetAccount?.tenantId && state.tenants[targetAccount.tenantId]?.name) || tenant.name,
               managerId: state.session?.user?.id || 'staff-02',
-              managerName: state.session?.user?.name || 'Owner HQ',
+              managerName: state.session?.user?.name || 'Floor Manager',
               category: 'SECURITY',
               action: 'Staff Profile Revoked',
               details: `Revoked operational access for "${staffName}" (${targetAccount?.roleTitle || 'Staff'}).`,
@@ -5279,8 +5322,12 @@
     if (!modalContainer) return;
 
     state = DineFlowStore.get();
+    const isSessionSuperAdmin = state.session && state.session.role === 'SUPER_ADMIN';
+    const sessionTenantId = state.session?.tenantId || state.currentTenantId;
     const tenantsList = state.tenants ? Object.values(state.tenants) : [];
-    const defaultTenantSlug = preselectedTenant || state.currentTenantId || tenantsList[0]?.slug || 'the-urban-plate';
+    const defaultTenantSlug = isSessionSuperAdmin 
+      ? (preselectedTenant || state.currentTenantId || tenantsList[0]?.slug || 'the-urban-plate')
+      : sessionTenantId;
 
     // Generates a random 4-digit PIN that is not already in use
     function generateUniquePin() {
@@ -5316,8 +5363,8 @@
             <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.35); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start;">
               <span style="font-size: 1.25rem;">🔒</span>
               <div style="font-size: 0.74rem; color: #CBD5E1; line-height: 1.45;">
-                <strong style="color: #fff; display: block; margin-bottom: 0.2rem;">Strict Restaurant OS Restriction Enforced</strong>
-                This user will be provisioned with operational permissions (<span style="color: #818CF8; font-weight: 700;">RESTAURANT_ADMIN</span>) and can <strong>only</strong> log into <strong>Restaurant Staff OS</strong> (?view=admin). Direct navigation or credentials entry into Owner HQ (?view=super-admin) is strictly blocked by RBAC route guards.
+                <strong style="color: #fff; display: block; margin-bottom: 0.2rem;">Strict Restaurant Staff Role Provisioned</strong>
+                This user will be provisioned with operational permissions (<span style="color: #818CF8; font-weight: 700;">RESTAURANT_ADMIN</span>) and can <strong>only</strong> log into <strong>Restaurant Staff OS</strong> (?view=admin). Managers cannot create Owner HQ accounts.
               </div>
             </div>
 
@@ -5325,9 +5372,17 @@
               <!-- Target Outlet -->
               <div>
                 <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Assigned Restaurant Outlet *</label>
-                <select id="staff-outlet-select" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
-                  ${tenantsList.map(t => `<option value="${t.slug}" ${t.slug === defaultTenantSlug ? 'selected' : ''}>🏢 ${t.name} (${t.branch || 'Main'})</option>`).join('')}
-                </select>
+                ${!isSessionSuperAdmin ? `
+                  <input type="text" value="🏢 ${state.tenants?.[sessionTenantId]?.name || sessionTenantId} (Your Restaurant)" disabled style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem; font-weight: 600;">
+                  <input type="hidden" id="staff-outlet-select" value="${sessionTenantId}">
+                  <span style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.25rem; display: block;">
+                    🔒 Managers can only provision staff for their own assigned restaurant.
+                  </span>
+                ` : `
+                  <select id="staff-outlet-select" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                    ${tenantsList.map(t => `<option value="${t.slug}" ${t.slug === defaultTenantSlug ? 'selected' : ''}>🏢 ${t.name} (${t.branch || 'Main'})</option>`).join('')}
+                  </select>
+                `}
               </div>
 
               <!-- Name & Role Grid -->
@@ -5466,6 +5521,16 @@
       }
 
       state = DineFlowStore.get();
+      const isSuper = state.session && state.session.role === 'SUPER_ADMIN';
+      const userTenantId = state.session?.tenantId || state.currentTenantId;
+
+      // RBAC: Manager cannot provision staff for other restaurants
+      if (!isSuper && outletSlug !== userTenantId) {
+        SoundFX.chime('alert');
+        showToast('Permission Denied: Managers can only provision staff for their own restaurant.', '🚫');
+        return;
+      }
+
       const existingAccounts = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
 
       // Check PIN uniqueness
@@ -5545,8 +5610,26 @@
       return;
     }
 
+    const isSessionSuperAdmin = state.session && state.session.role === 'SUPER_ADMIN';
+    const sessionTenantId = state.session?.tenantId || state.currentTenantId;
+    const isTargetSuper = staff.role === 'SUPER_ADMIN';
+
+    // RBAC GUARD 1: Manager cannot edit or modify Owner details
+    if (isTargetSuper && !isSessionSuperAdmin) {
+      SoundFX.chime('alert');
+      showToast('Permission Denied: Restaurant Managers do not have rights to edit Owner details.', '🚫');
+      return;
+    }
+
+    // RBAC GUARD 2: Manager can only edit staff from their own restaurant
+    if (!isSessionSuperAdmin && staff.tenantId !== sessionTenantId) {
+      SoundFX.chime('alert');
+      const staffVenue = state.tenants?.[staff.tenantId]?.name || staff.tenantId;
+      showToast(`Permission Denied: You cannot modify staff from ${staffVenue}. Managers can only edit staff from their own restaurant.`, '🚫');
+      return;
+    }
+
     const tenantsList = state.tenants ? Object.values(state.tenants) : [];
-    const isSuper = staff.role === 'SUPER_ADMIN';
 
     // Generates a random 4-digit PIN that is not allocated to any OTHER staff account
     function generateUniquePin() {
@@ -5589,14 +5672,20 @@
               <!-- Target Outlet -->
               <div>
                 <label style="font-size: 0.76rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">Assigned Restaurant Outlet *</label>
-                ${isSuper ? `
+                ${isTargetSuper ? `
                   <input type="text" value="🏢 Platform HQ (All Outlets &amp; Super Admin)" disabled style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; color: #818CF8; font-size: 0.85rem; font-weight: 600;">
                   <input type="hidden" id="edit-staff-outlet" value="">
+                ` : (!isSessionSuperAdmin ? `
+                  <input type="text" value="🏢 ${state.tenants?.[staff.tenantId]?.name || staff.tenantId} (Assigned Restaurant)" disabled style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem; font-weight: 600;">
+                  <input type="hidden" id="edit-staff-outlet" value="${staff.tenantId}">
+                  <span style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.25rem; display: block;">
+                    🔒 Managers can only manage staff for their assigned outlet. Reassignment across restaurants requires Owner authorization.
+                  </span>
                 ` : `
                   <select id="edit-staff-outlet" style="width: 100%; padding: 0.7rem 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 8px; color: #fff; font-size: 0.85rem;">
                     ${tenantsList.map(t => `<option value="${t.slug}" ${t.slug === staff.tenantId ? 'selected' : ''}>🏢 ${t.name} (${t.branch || 'Main'})</option>`).join('')}
                   </select>
-                `}
+                `)}
               </div>
 
               <!-- Name & Role Grid -->
@@ -5757,6 +5846,21 @@
       const target = state.staffAccounts.find(a => a.id === staffId);
       if (!target) {
         showToast('Staff member not found in database.', '❌');
+        return;
+      }
+
+      // Enforce RBAC on submit
+      const isSubmitSuperAdmin = state.session && state.session.role === 'SUPER_ADMIN';
+      const submitSessionTenantId = state.session?.tenantId || state.currentTenantId;
+
+      if (target.role === 'SUPER_ADMIN' && !isSubmitSuperAdmin) {
+        SoundFX.chime('alert');
+        showToast('Permission Denied: Managers cannot modify Owner profiles.', '🚫');
+        return;
+      }
+      if (!isSubmitSuperAdmin && target.tenantId !== submitSessionTenantId) {
+        SoundFX.chime('alert');
+        showToast('Permission Denied: Managers can only modify staff from their own restaurant.', '🚫');
         return;
       }
 
