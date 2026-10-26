@@ -202,6 +202,12 @@ img {
   border: 1px solid rgba(181, 84, 58, 0.22);
 }
 
+.section-label.label-olive {
+  color: #4C5D3C;
+  background: rgba(111, 127, 95, 0.14);
+  border: 1px solid #6F7F5F;
+}
+
 .section-heading {
   font-family: var(--font-display);
   font-size: clamp(2.3rem, 3.8vw, 3.5rem);
@@ -281,16 +287,17 @@ img {
 
 /* Olive Accent Button */
 .btn-sage {
-  background: var(--garden-emerald);
+  background: #6F7F5F;
   color: #FFFFFF;
-  border: 1px solid var(--border-garden);
-  box-shadow: 0 4px 16px rgba(111, 127, 95, 0.25);
+  border: 1px solid #5A694D;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(111, 127, 95, 0.32);
 }
 
 .btn-sage:hover {
-  background: var(--garden-light);
+  background: #5B6B4C;
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(111, 127, 95, 0.35);
+  box-shadow: 0 8px 25px rgba(111, 127, 95, 0.45);
   color: #FFFFFF;
 }
 
@@ -366,11 +373,11 @@ img {
 .live-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  padding: 0.25rem 0.72rem;
+  gap: 0.48rem;
+  background: rgba(111, 127, 95, 0.16);
+  color: #4C5D3C;
+  border: 1px solid #6F7F5F;
+  padding: 0.28rem 0.8rem;
   border-radius: 999px;
   font-family: var(--font-modern);
   font-size: 0.78rem;
@@ -379,12 +386,18 @@ img {
   white-space: nowrap !important;
 }
 
+.top-announcement-bar .live-pill {
+  background: rgba(111, 127, 95, 0.35);
+  color: #EBF3E6;
+  border: 1.5px solid #6F7F5F;
+}
+
 .pulse-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  background: #6F7F5F;
+  box-shadow: 0 0 8px #6F7F5F;
   animation: pulseGreen 2s infinite ease-in-out;
 }
 
@@ -393,13 +406,13 @@ img {
   100% {
     opacity: 1;
     transform: scale(1);
-    box-shadow: 0 0 8px #10b981;
+    box-shadow: 0 0 8px #6F7F5F;
   }
 
   50% {
     opacity: 0.4;
     transform: scale(0.85);
-    box-shadow: 0 0 3px #10b981;
+    box-shadow: 0 0 2px #6F7F5F;
   }
 }
 
@@ -814,15 +827,15 @@ img {
   gap: 0.5rem;
   padding: 0.55rem 1.15rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #6F7F5F;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   font-family: var(--font-modern);
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--text-title);
-  box-shadow: var(--shadow-subtle);
+  color: #4C5D3C;
+  box-shadow: 0 4px 18px rgba(90, 46, 37, 0.08);
   white-space: nowrap !important;
 }
 
@@ -894,7 +907,11 @@ img {
   border-top: 3px solid #B5543A;
 }
 .metric-card.emerald-border {
-  border-top: 3px solid #6F7F5F;
+  border-top: 3.5px solid #6F7F5F;
+}
+.metric-card.emerald-border:hover {
+  border-color: #6F7F5F;
+  box-shadow: 0 12px 35px rgba(111, 127, 95, 0.2);
 }
 .metric-card.blue-border {
   border-top: 3px solid #5A2E25;
@@ -1041,6 +1058,17 @@ img {
   flex-shrink: 0;
 }
 
+.pillar-box.pillar-olive .pillar-icon {
+  background: rgba(111, 127, 95, 0.16);
+  border: 1.5px solid #6F7F5F;
+  color: #4C5D3C;
+}
+
+.pillar-box.pillar-olive:hover {
+  border-color: #6F7F5F;
+  box-shadow: 0 8px 24px rgba(111, 127, 95, 0.18);
+}
+
 .pillar-info h4 {
   font-family: var(--font-modern);
   font-size: 1.08rem;
@@ -1139,9 +1167,10 @@ img {
 }
 
 .space-badge.badge-emerald {
-  background: rgba(111, 127, 95, 0.12);
-  color: #5B6B4C;
-  border-color: rgba(111, 127, 95, 0.35);
+  background: rgba(111, 127, 95, 0.18);
+  color: #4C5D3C;
+  border: 1.5px solid #6F7F5F;
+  font-weight: 700;
 }
 
 .space-badge.badge-rose {
@@ -1216,9 +1245,10 @@ img {
 }
 
 .space-card.emerald-theme .space-action-btn {
-  color: #5B6B4C;
-  border-color: rgba(111, 127, 95, 0.35);
-  background: rgba(111, 127, 95, 0.08);
+  color: #FFFFFF;
+  border: 1px solid #5A694D;
+  background: #6F7F5F;
+  box-shadow: 0 4px 14px rgba(111, 127, 95, 0.3);
 }
 
 .space-card.rose-theme .space-action-btn {
@@ -1234,8 +1264,10 @@ img {
 }
 
 .space-card.emerald-theme .space-action-btn:hover {
-  background: #6F7F5F;
+  background: #5B6B4C;
   color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(111, 127, 95, 0.45);
 }
 
 .space-card.rose-theme .space-action-btn:hover {
@@ -1350,9 +1382,11 @@ img {
 }
 
 .badge-veg {
-  background: rgba(111, 127, 95, 0.12);
-  color: #5B6B4C;
-  border: 1px solid rgba(111, 127, 95, 0.35);
+  background: rgba(111, 127, 95, 0.18);
+  color: #445635;
+  border: 1.5px solid #6F7F5F;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(111, 127, 95, 0.12);
 }
 
 .badge-nonveg {
@@ -1704,15 +1738,15 @@ img {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(181, 84, 58, 0.1);
-  border: 2px solid var(--lantern-gold);
-  color: var(--lantern-gold);
+  background: rgba(111, 127, 95, 0.15);
+  border: 2px solid #6F7F5F;
+  color: #6F7F5F;
   font-size: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem;
-  box-shadow: 0 0 25px rgba(181, 84, 58, 0.2);
+  box-shadow: 0 0 25px rgba(111, 127, 95, 0.25);
 }
 
 .modal-title {
@@ -1881,7 +1915,7 @@ img {
   padding: 0.4rem 0.95rem;
   border-radius: 999px;
   background: rgba(240, 230, 216, 0.12);
-  border: 1px solid rgba(240, 230, 216, 0.25);
+  border: 1px solid rgba(111, 127, 95, 0.5);
   color: #F0E6D8;
   font-family: var(--font-modern);
   font-size: 0.78rem;
