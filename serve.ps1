@@ -31,6 +31,9 @@ $mimeTypes = @{
   ".webp" = "image/webp"
   ".ico"  = "image/x-icon"
   ".wasm" = "application/wasm"
+  ".woff" = "font/woff"
+  ".woff2"= "font/woff2"
+  ".ttf"  = "font/ttf"
 }
 
 while ($listener.IsListening) {
@@ -40,8 +43,12 @@ while ($listener.IsListening) {
     $response = $context.Response
 
     $urlPath = $request.Url.LocalPath
-    if ($urlPath -eq "/" -or $urlPath -eq "/dineflow" -or $urlPath -eq "/dineflow/") {
+    if ($urlPath -eq "/") {
+      $urlPath = "/index.html"
+    } elseif ($urlPath -eq "/dineflow" -or $urlPath -eq "/dineflow/") {
       $urlPath = "/dineflow/index.html"
+    } elseif ($urlPath -eq "/across-the-street" -or $urlPath -eq "/across-the-street/") {
+      $urlPath = "/across-the-street/index.html"
     }
 
     $relativePath = $urlPath.TrimStart("/").Replace("/", [System.IO.Path]::DirectorySeparatorChar)

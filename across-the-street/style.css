@@ -2036,28 +2036,67 @@ img {
     display: block;
   }
 
+  /* Tablet Hero */
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2.75rem;
+  }
+
+  .hero-facade-img {
+    height: 480px;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 24px;
+    object-fit: cover;
+    object-position: center 48%;
   }
 
   .pill-bottom-left {
     display: none !important;
   }
 
+  /* Story Section on Tablet */
+  .story-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .story-img {
+    height: 400px;
+    border-radius: 24px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .story-pillars {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+
+  /* Dining Spaces on Tablet: 2 cols with 3rd card spanning full width */
   .dining-spaces-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
 
-  .story-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
+  .space-card:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  /* Curated Menu on Tablet */
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+  }
+
+  .menu-item-card {
+    padding: 1.75rem 1.4rem;
   }
 
   .reservation-wrapper {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2.75rem;
   }
 
   .metrics-grid {
@@ -2065,13 +2104,25 @@ img {
     gap: 1.25rem;
   }
 
+  /* Reviews on Tablet: 2 cols with 3rd review spanning full width */
   .reviews-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 
+  .review-card:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  /* Footer on Tablet: 2 cols with brand spanning full width */
   .footer-top {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 2.5rem;
+  }
+
+  .footer-col.brand-col {
+    grid-column: 1 / -1;
+    max-width: 620px;
   }
 }
 
@@ -2257,12 +2308,20 @@ img {
     border-radius: 20px;
   }
 
-  /* Dining Spaces */
+  .story-pillars {
+    grid-template-columns: 1fr;
+  }
+
+  /* Dining Spaces on Mobile */
   .dining-spaces-grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
     width: 100%;
     max-width: 100%;
+  }
+
+  .space-card:nth-child(3) {
+    grid-column: auto;
   }
 
   /* Curated Menu Tabs Horizontal Swiper */
