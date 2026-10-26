@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Across The Street - The Dining Room (New Town, Kolkata)
  * Serene Editorial Dining Sanctuary Controller
  */
@@ -47,6 +47,7 @@ function initHeaderScroll() {
  * 2. Mobile Navigation Drawer
  */
 function initMobileDrawer() {
+  const header = document.getElementById('header');
   const toggleBtn = document.getElementById('mobileToggle');
   const drawer = document.getElementById('mobileDrawer');
   if (!toggleBtn || !drawer) return;
@@ -55,7 +56,9 @@ function initMobileDrawer() {
     const isOpen = forceClose ? false : !drawer.classList.contains('open');
     drawer.classList.toggle('open', isOpen);
     toggleBtn.classList.toggle('active', isOpen);
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (header) {
+      header.classList.toggle('drawer-open', isOpen);
+    }
   };
 
   toggleBtn.addEventListener('click', (e) => {
