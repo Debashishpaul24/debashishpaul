@@ -2164,24 +2164,6 @@ img {
   }
 }
 
-@media (max-width: 860px) {
-  .footer-top {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.2rem 1.8rem;
-  }
-
-  .footer-col.brand-col {
-    grid-column: 1 / -1;
-    display: block;
-    padding-bottom: 1.8rem;
-    border-bottom: 1px solid rgba(240, 230, 216, 0.15);
-  }
-
-  .brand-col .footer-tagline {
-    margin-bottom: 1.2rem;
-    max-width: 100%;
-  }
-}
 
 @media (max-width: 768px) {
   .section-container,
@@ -2454,47 +2436,46 @@ img {
     box-sizing: border-box;
   }
 
-  /* Footer on Mobile */
-  .site-footer {
-    padding: 3.5rem 0 2rem;
-  /* Footer on Tablet Portrait (601px - 768px): 2 columns */
-  .footer-top {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.2rem 1.8rem;
-    margin-bottom: 2.8rem;
-  }
-
-  .footer-col.brand-col {
-    grid-column: 1 / -1;
-    display: block;
-    padding-bottom: 1.8rem;
-    border-bottom: 1px solid rgba(240, 230, 216, 0.15);
-  }
-}
-
-@media (max-width: 600px) {
-  /* Footer on Mobile Phones */
+  /* Footer on Mobile & Tablet Portrait (<= 768px): Zero blank space single-column stack */
   .site-footer {
     padding: 3.5rem 0 2rem;
   }
 
   .footer-top {
-    grid-template-columns: 1fr;
-    gap: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     width: 100%;
     max-width: 100%;
     margin-bottom: 2.5rem;
   }
 
-  .footer-col.brand-col {
-    grid-column: auto;
-    border-bottom: 1px solid rgba(240, 230, 216, 0.1);
+  .footer-col {
+    width: 100%;
+    box-sizing: border-box;
     padding-bottom: 1.8rem;
+    margin-bottom: 1.8rem;
+    border-bottom: 1px solid rgba(240, 230, 216, 0.12);
   }
 
-  .footer-col:not(:last-child) {
-    border-bottom: 1px solid rgba(240, 230, 216, 0.1);
+  .footer-col:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .footer-col.brand-col {
+    grid-column: auto;
+    display: block;
+    border-bottom: 1px solid rgba(240, 230, 216, 0.12);
     padding-bottom: 1.8rem;
+    margin-bottom: 1.8rem;
+    max-width: 100%;
+  }
+
+  .brand-col .footer-tagline {
+    margin-bottom: 1.2rem;
+    max-width: 100%;
   }
 
   .footer-bottom {
