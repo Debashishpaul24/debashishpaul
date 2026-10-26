@@ -810,7 +810,7 @@ img {
   width: 100%;
   height: 560px;
   object-fit: cover;
-  object-position: center top;
+  object-position: center 48%;
   display: block;
   transition: transform 0.8s ease;
 }
@@ -2041,6 +2041,10 @@ img {
     gap: 3rem;
   }
 
+  .pill-bottom-left {
+    display: none !important;
+  }
+
   .dining-spaces-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
@@ -2216,10 +2220,31 @@ img {
   }
 
   .hero-facade-img {
-    height: 360px;
+    height: 420px;
     width: 100%;
     max-width: 100%;
     border-radius: 20px;
+    object-fit: cover;
+    object-position: center 48%;
+  }
+
+  .pill-bottom-left {
+    display: none !important;
+  }
+
+  .hero-card-caption {
+    padding: 0.85rem 1rem;
+    background: linear-gradient(180deg, transparent 0%, rgba(35, 18, 14, 0.72) 40%, rgba(35, 18, 14, 0.94) 100%);
+  }
+
+  .caption-title {
+    font-size: 1.05rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .caption-sub {
+    font-size: 0.76rem;
+    line-height: 1.35;
   }
 
   /* Story Section */
@@ -2459,8 +2484,10 @@ img {
   }
 
   .hero-facade-img {
-    height: 250px;
+    height: 380px;
     border-radius: 18px;
+    object-fit: cover;
+    object-position: center 48%;
   }
 
   .story-img {
@@ -2626,5 +2653,10 @@ img {
   .stat-sub {
     font-size: 0.76rem;
     white-space: nowrap !important;
+  }
+
+  .hero-facade-img {
+    height: 350px;
+    object-position: center 48%;
   }
 }
