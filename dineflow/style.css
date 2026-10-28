@@ -1786,12 +1786,56 @@ body.splash-active {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.df-order-admin-card:active {
+  cursor: grabbing;
 }
 
 .df-order-admin-card:hover {
   border-color: var(--border-glow);
   transform: translateY(-2px);
+}
+
+.df-order-admin-card.df-dragging {
+  opacity: 0.45;
+  transform: scale(0.97) rotate(1.5deg);
+  border: 1.5px dashed var(--brand-primary);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+}
+
+.df-order-admin-card.df-touch-dragging {
+  opacity: 0.65;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+}
+
+.df-kanban-col.df-drag-over {
+  background: rgba(56, 189, 248, 0.14) !important;
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), inset 0 0 15px rgba(56, 189, 248, 0.12);
+}
+
+.df-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  cursor: grab;
+  padding: 0 0.15rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.2s, background 0.2s;
+}
+
+.df-order-admin-card:hover .df-drag-handle {
+  color: var(--brand-primary);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .df-order-card-header {

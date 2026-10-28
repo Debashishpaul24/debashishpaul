@@ -3598,7 +3598,7 @@
         ${cols.map(col => {
           const orders = state.orders.filter(o => (!o.tenantId || o.tenantId === tenant.slug || o.tenantId === tenant.id) && (o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED')));
           return `
-            <div class="df-kanban-col">
+            <div class="df-kanban-col" data-col-status="${col.key}">
               <div class="df-kanban-col-header">
                 <span class="df-kanban-col-title" style="color: ${col.color};" title="${col.title}">${col.title}</span>
                 <span class="df-kanban-col-count">
@@ -3607,9 +3607,12 @@
               </div>
               <div class="df-kanban-cards">
                 ${orders.length ? orders.map(order => `
-                  <div class="df-order-admin-card">
+                  <div class="df-order-admin-card" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
                     <div class="df-order-card-header">
-                      <span class="df-order-card-table">Table ${order.tableId}</span>
+                      <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <span class="df-drag-handle" title="Drag &amp; drop ticket across stages">⠿</span>
+                        <span class="df-order-card-table">Table ${order.tableId}</span>
+                      </div>
                       <span style="font-size: 0.72rem; color: var(--text-dim); font-weight: 700;">#${order.id}</span>
                     </div>
                     <div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
@@ -3663,39 +3666,139 @@
       </div>
     `;
 
+    // Unified order status progression handler (used by both buttons and drag-and-drop)
+    function applyOrderStatusChange(orderId, nextStatus) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+      if (order.status === nextStatus) return;
+
+      order.status = nextStatus;
+      if (nextStatus === 'COMPLETED') {
+        order.paymentStatus = 'PAID';
+        const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && (!b.tenantId || b.tenantId === order.tenantId) && b.status === 'PENDING');
+        if (pendingBill) pendingBill.status = 'PAID';
+        const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === order.tenantId) && o.status !== 'COMPLETED');
+        if (!hasMoreOrders) {
+          const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === order.tenantId));
+          if (tableObj) {
+            tableObj.status = 'available';
+            delete tableObj.manuallyOccupied;
+          }
+        }
+      }
+      DineFlowStore.save(state, {
+        action: 'ORDER_STATUS_CHANGED',
+        source: 'staff',
+        orderId: order.id,
+        newStatus: nextStatus,
+        tableId: order.tableId,
+        tenantSlug: tenant.slug || tenant.id
+      });
+      SoundFX.chime('success');
+      showToast(`Order #${orderId} moved to ${nextStatus}`);
+      // Re-render whole admin view so top stats cards update in real time
+      renderAdminView(document.getElementById('app'), tenant);
+    }
+
+    // Button click status advance
     document.querySelectorAll('.btn-status-next').forEach(btn => {
       btn.addEventListener('click', () => {
         const orderId = btn.getAttribute('data-id');
         const nextStatus = btn.getAttribute('data-next');
-        const order = state.orders.find(o => o.id === orderId);
-        if (order) {
-          order.status = nextStatus;
-          if (nextStatus === 'COMPLETED') {
-            order.paymentStatus = 'PAID';
-            const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && (!b.tenantId || b.tenantId === order.tenantId) && b.status === 'PENDING');
-            if (pendingBill) pendingBill.status = 'PAID';
-            const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === order.tenantId) && o.status !== 'COMPLETED');
-            if (!hasMoreOrders) {
-              const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === order.tenantId));
-              if (tableObj) {
-                tableObj.status = 'available';
-                delete tableObj.manuallyOccupied;
-              }
-            }
-          }
-          DineFlowStore.save(state, {
-            action: 'ORDER_STATUS_CHANGED',
-            source: 'staff',
-            orderId: order.id,
-            newStatus: nextStatus,
-            tableId: order.tableId,
-            tenantSlug: tenant.slug || tenant.id
-          });
-          SoundFX.chime('success');
-          showToast(`Order #${orderId} moved to ${nextStatus}`);
-          // Re-render whole admin view so top stats cards update in real time
-          renderAdminView(document.getElementById('app'), tenant);
+        applyOrderStatusChange(orderId, nextStatus);
+      });
+    });
+
+    // Drag & Drop Kanban Engine
+    const cards = container.querySelectorAll('.df-order-admin-card');
+    const kanbanCols = container.querySelectorAll('.df-kanban-col');
+
+    cards.forEach(card => {
+      card.addEventListener('dragstart', (e) => {
+        const orderId = card.getAttribute('data-order-id');
+        e.dataTransfer.setData('text/plain', orderId);
+        e.dataTransfer.effectAllowed = 'move';
+        card.classList.add('df-dragging');
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('df-dragging');
+        kanbanCols.forEach(c => c.classList.remove('df-drag-over'));
+      });
+    });
+
+    kanbanCols.forEach(col => {
+      col.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!col.classList.contains('df-drag-over')) {
+          col.classList.add('df-drag-over');
         }
+      });
+
+      col.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+        col.classList.add('df-drag-over');
+      });
+
+      col.addEventListener('dragleave', (e) => {
+        if (!col.contains(e.relatedTarget)) {
+          col.classList.remove('df-drag-over');
+        }
+      });
+
+      col.addEventListener('drop', (e) => {
+        e.preventDefault();
+        col.classList.remove('df-drag-over');
+        const orderId = e.dataTransfer.getData('text/plain');
+        const targetStatus = col.getAttribute('data-col-status');
+        if (orderId && targetStatus) {
+          applyOrderStatusChange(orderId, targetStatus);
+        }
+      });
+    });
+
+    // Touch Drag & Drop for Mobile & Tablet POS
+    let activeTouchCard = null;
+    let currentTouchCol = null;
+
+    cards.forEach(card => {
+      card.addEventListener('touchstart', (e) => {
+        const handle = e.target.closest('.df-drag-handle') || e.target.closest('.df-order-card-header');
+        if (!handle) return;
+        activeTouchCard = card;
+        card.classList.add('df-touch-dragging');
+      }, { passive: true });
+
+      card.addEventListener('touchmove', (e) => {
+        if (!activeTouchCard || activeTouchCard !== card) return;
+        const touch = e.touches[0];
+        const targetElem = document.elementFromPoint(touch.clientX, touch.clientY);
+        const col = targetElem?.closest('.df-kanban-col');
+
+        kanbanCols.forEach(c => {
+          if (c === col) {
+            c.classList.add('df-drag-over');
+          } else {
+            c.classList.remove('df-drag-over');
+          }
+        });
+        currentTouchCol = col;
+      }, { passive: true });
+
+      card.addEventListener('touchend', () => {
+        if (!activeTouchCard || activeTouchCard !== card) return;
+        card.classList.remove('df-touch-dragging');
+        if (currentTouchCol) {
+          const orderId = card.getAttribute('data-order-id');
+          const targetStatus = currentTouchCol.getAttribute('data-col-status');
+          currentTouchCol.classList.remove('df-drag-over');
+          if (orderId && targetStatus) {
+            applyOrderStatusChange(orderId, targetStatus);
+          }
+        }
+        activeTouchCard = null;
+        currentTouchCol = null;
       });
     });
 
