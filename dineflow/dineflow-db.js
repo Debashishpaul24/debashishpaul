@@ -401,6 +401,20 @@
         const order = Transformers.orderFromDb(payload.new);
         if (!state.orders.some(o => o.id === order.id)) {
           state.orders.unshift(order);
+
+          // Keep local serial order counter synchronized
+          if (order.id && order.tenantId) {
+            const m = order.id.match(/^ORD-(\d+)$/i);
+            if (m) {
+              const num = parseInt(m[1], 10);
+              const tSlug = order.tenantId.toLowerCase().trim();
+              if (!state.orderCounters) state.orderCounters = {};
+              if (!state.orderCounters[tSlug] || num > state.orderCounters[tSlug]) {
+                state.orderCounters[tSlug] = num;
+              }
+            }
+          }
+
           // Auto-occupy table
           const tbl = state.tables.find(t => t.id === order.tableId && t.tenantId === order.tenantId);
           if (tbl) {

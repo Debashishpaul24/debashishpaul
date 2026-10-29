@@ -282,6 +282,76 @@
   }
 
   // ------------------------------------------------------------------------------
+  // MULTI-TENANT SERIAL ORDER ID GENERATOR
+  // Generates strictly consecutive, monotonically increasing order IDs for each
+  // individual restaurant (e.g. ORD-1049, ORD-1050 for The Urban Plate;
+  // ORD-2003 for Bella Vista; ORD-3002 for Sakura Asian; ORD-4001 for new outlets).
+  // ------------------------------------------------------------------------------
+  function getNextSerialOrderId(tenantSlug) {
+    const slug = (tenantSlug || 'the-urban-plate').toString().toLowerCase().trim();
+
+    // Standard starting seeds for known tenant order series
+    const RESTAURANT_SEEDS = {
+      'the-urban-plate': 1048,
+      'bella-vista': 2002,
+      'sakura-asian': 3001
+    };
+
+    if (!state.orderCounters) {
+      state.orderCounters = {};
+    }
+
+    const allOrders = Array.isArray(state.orders) ? state.orders : [];
+    const existingIds = new Set(allOrders.map(o => o.id));
+
+    // Determine current baseline counter
+    let currentVal = state.orderCounters[slug];
+
+    if (!currentVal) {
+      const baseSeed = RESTAURANT_SEEDS[slug] || (function () {
+        const tenants = Object.keys(state.tenants || {});
+        const idx = tenants.indexOf(slug);
+        return (idx >= 0 ? idx + 1 : 4) * 1000;
+      })();
+
+      const tenantOrders = allOrders.filter(o => {
+        const oSlug = (o.tenantId || 'the-urban-plate').toString().toLowerCase().trim();
+        return oSlug === slug;
+      });
+
+      // Find highest contiguous serial for this tenant (ignoring random outlier jumps)
+      let maxFound = baseSeed;
+      const sortedNums = tenantOrders
+        .map(o => {
+          const m = typeof o.id === 'string' && o.id.match(/^ORD-(\d+)$/i);
+          return m ? parseInt(m[1], 10) : null;
+        })
+        .filter(n => n !== null && n >= baseSeed)
+        .sort((a, b) => a - b);
+
+      for (const num of sortedNums) {
+        if (num <= maxFound + 10) {
+          maxFound = Math.max(maxFound, num);
+        }
+      }
+
+      currentVal = maxFound;
+    }
+
+    // Advance to next sequential number
+    let nextNum = currentVal + 1;
+
+    // Guarantee absolute uniqueness across all orders in state
+    while (existingIds.has(`ORD-${nextNum}`)) {
+      nextNum++;
+    }
+
+    // Persist counter
+    state.orderCounters[slug] = nextNum;
+    return `ORD-${nextNum}`;
+  }
+
+  // ------------------------------------------------------------------------------
   // REAL-TIME MULTI-TENANT CLOUD SYNCHRONIZATION ENGINE
   // Bridges isolated physical devices (customer smartphone scanning table QR code
   // and kitchen staff laptop/tablet running KDS) with zero accounts or API keys.
@@ -353,6 +423,19 @@
       if (event.order && !state.orders.some(o => o.id === event.order.id)) {
         state.orders.unshift(event.order);
         stateChanged = true;
+
+        // Keep local tenant order counter synchronized with remote events
+        if (event.order.id && (event.order.tenantId || event.tenantSlug)) {
+          const tSlug = (event.order.tenantId || event.tenantSlug).toLowerCase().trim();
+          const m = event.order.id.match(/^ORD-(\d+)$/i);
+          if (m) {
+            const num = parseInt(m[1], 10);
+            if (!state.orderCounters) state.orderCounters = {};
+            if (!state.orderCounters[tSlug] || num > state.orderCounters[tSlug]) {
+              state.orderCounters[tSlug] = num;
+            }
+          }
+        }
 
         const table = state.tables.find(t => t.id === event.order.tableId);
         if (table) {
@@ -2616,10 +2699,12 @@
         if (!cart.length) return;
         const name = document.getElementById('cust-name-input')?.value.trim() || 'Guest Diner';
         const phone = document.getElementById('cust-phone-input')?.value.trim() || '';
+        const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+        const newOrderId = getNextSerialOrderId(tenantSlug);
 
         const newOrder = {
-          id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
-          tenantId: tenant.id,
+          id: newOrderId,
+          tenantId: tenantSlug,
           tableId: table.id,
           customerName: name,
           customerPhone: phone,
@@ -2640,7 +2725,7 @@
         state.orders.unshift(newOrder);
 
         // Mark table as occupied
-        const targetTable = state.tables.find(t => t.id === table.id);
+        const targetTable = state.tables.find(t => t.id === table.id && (!t.tenantId || t.tenantId === tenantSlug));
         if (targetTable) {
           targetTable.status = 'occupied';
           targetTable.qrScans++;
@@ -2655,7 +2740,7 @@
           tableId: table.id,
           customerName: newOrder.customerName,
           order: newOrder,
-          tenantSlug: tenant.slug || tenant.id
+          tenantSlug: tenantSlug
         });
 
         // Clear cart
