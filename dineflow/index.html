@@ -28,6 +28,15 @@
           document.documentElement.classList.add('df-deep-loading');
         }
       } catch(e) {}
+
+      // Failsafe auto-dismiss: guarantees the loading spinner never gets stuck
+      setTimeout(function() {
+        try {
+          document.documentElement.classList.remove('df-deep-loading');
+          var bl = document.getElementById('df-boot-loader');
+          if (bl) bl.style.display = 'none';
+        } catch(e) {}
+      }, 1500);
     })();
   </script>
   <!-- Primary SEO Metadata -->

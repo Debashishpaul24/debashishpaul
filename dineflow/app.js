@@ -618,10 +618,10 @@
     // 1. Backward Compatibility & Complete '#' Elimination:
     // If any legacy or in-page hash exists (e.g. #roi-calculator, #pilot, #admin, #r/the-urban-plate/t/T12),
     // immediately rewrite the address bar to a clean query URL without '#' via history.replaceState.
+    let targetQuery = '';
     const rawHash = (window.location.hash || '').replace(/^#\/?/, '').trim();
     if (rawHash) {
       const parts = rawHash.split('/');
-      let targetQuery = '';
       if (parts[0] === 'login') {
         targetQuery = parts[1] && parts[1] !== 'admin' ? `?view=login&target=${encodeURIComponent(parts[1])}` : '?view=login';
       } else if (parts[0] === 'r' && parts[1]) {
@@ -872,7 +872,18 @@
   // VIEW RENDERERS & ROUTE GUARDS
   // ==============================================================================
 
+  function dismissBootLoader() {
+    try {
+      document.documentElement.classList.remove('df-deep-loading');
+      const bootLoader = document.getElementById('df-boot-loader');
+      if (bootLoader) bootLoader.style.display = 'none';
+    } catch (e) {}
+  }
+
   function renderApp() {
+    // Always dismiss boot shield first
+    dismissBootLoader();
+
     const activeEl = document.activeElement;
     const isSearchFocused = activeEl && activeEl.id === 'df-search-input';
     const cursorStart = isSearchFocused ? activeEl.selectionStart : null;
@@ -882,11 +893,6 @@
     const route = parseRoute();
     const appEl = document.getElementById('app');
     if (!appEl) return;
-
-    // Dismiss deep-route boot shield to smoothly reveal view
-    document.documentElement.classList.remove('df-deep-loading');
-    const bootLoader = document.getElementById('df-boot-loader');
-    if (bootLoader) bootLoader.style.display = 'none';
 
     // Ensure active tenant cloud synchronization across mobile and desktop
     if (typeof DineFlowCloudSync !== 'undefined') {
