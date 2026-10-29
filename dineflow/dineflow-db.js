@@ -166,19 +166,26 @@
   // ------------------------------------------------------------------------------
   const DineFlowDB = {
     isOnline: true,
+    initializedTenants: new Set(),
 
     async init(tenantSlug) {
-      if (tenantSlug) currentTenant = tenantSlug;
+      const slug = tenantSlug || currentTenant;
+      if (this.initializedTenants.has(slug)) {
+        return; // Guard: Already initialized and subscribed for this tenant
+      }
+      this.initializedTenants.add(slug);
+      currentTenant = slug;
+
       const sb = getClient();
       if (!sb) {
-        console.warn('[DineFlowDB] Supabase SDK not loaded yet. Will retry in 500ms.');
-        setTimeout(() => this.init(tenantSlug), 500);
+        this.initializedTenants.delete(slug);
+        setTimeout(() => this.init(slug), 500);
         return;
       }
 
-      console.log(`[DineFlowDB] ⚡ Initializing live connection for tenant: "${currentTenant}"`);
-      await this.hydrate(currentTenant);
-      this.subscribeRealtime(currentTenant);
+      console.log(`[DineFlowDB] Initializing live connection for tenant: "${slug}"`);
+      await this.hydrate(slug);
+      this.subscribeRealtime(slug);
       this.flushOutbox();
     },
 
@@ -215,20 +222,44 @@
 
         if (ordersRes.data) {
           const freshOrders = ordersRes.data.map(Transformers.orderFromDb);
+          const freshIds = new Set(freshOrders.map(o => o.id));
+
+          // Retain recent local orders (within 5 minutes) not yet in cloud snapshot
+          // to prevent optimistic UI orders from flickering or disappearing
+          const now = Date.now();
+          const pendingRecentOrders = (state.orders || []).filter(o => {
+            if (o.tenantId !== slug) return false;
+            if (freshIds.has(o.id)) return false;
+            const ageMs = now - new Date(o.timestamp || now).getTime();
+            return ageMs < 5 * 60 * 1000;
+          });
+
           const otherOrders = (state.orders || []).filter(o => o.tenantId !== slug);
-          state.orders = [...freshOrders, ...otherOrders];
+          state.orders = [...pendingRecentOrders, ...freshOrders, ...otherOrders];
         }
 
         if (staffRes.data) {
           const freshStaff = staffRes.data.map(Transformers.staffRequestFromDb);
+          const freshStaffIds = new Set(freshStaff.map(s => s.id));
+          const pendingRecentStaff = (state.staffRequests || []).filter(s => {
+            if (s.tenantId !== slug) return false;
+            if (freshStaffIds.has(s.id)) return false;
+            return s.status === 'PENDING';
+          });
           const otherStaff = (state.staffRequests || []).filter(s => s.tenantId !== slug);
-          state.staffRequests = [...freshStaff, ...otherStaff];
+          state.staffRequests = [...pendingRecentStaff, ...freshStaff, ...otherStaff];
         }
 
         if (billsRes.data) {
           const freshBills = billsRes.data.map(Transformers.billRequestFromDb);
+          const freshBillIds = new Set(freshBills.map(b => b.id));
+          const pendingRecentBills = (state.billRequests || []).filter(b => {
+            if (b.tenantId !== slug) return false;
+            if (freshBillIds.has(b.id)) return false;
+            return b.status === 'PENDING';
+          });
           const otherBills = (state.billRequests || []).filter(b => b.tenantId !== slug);
-          state.billRequests = [...freshBills, ...otherBills];
+          state.billRequests = [...pendingRecentBills, ...freshBills, ...otherBills];
         }
 
         if (itemsRes.data && itemsRes.data.length > 0) {
