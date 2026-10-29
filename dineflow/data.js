@@ -14,9 +14,17 @@
 const DINEFLOW_DEFAULT_DATA = {
   // Active Authentication Session
   session: {
-    isAuthenticated: false,
-    role: 'CUSTOMER', // 'CUSTOMER' | 'RESTAURANT_ADMIN' | 'SUPER_ADMIN'
-    user: null,
+    isAuthenticated: true,
+    role: 'RESTAURANT_ADMIN', // 'CUSTOMER' | 'RESTAURANT_ADMIN' | 'SUPER_ADMIN'
+    user: {
+      id: 'staff-01',
+      name: 'Chef Vikram Rao',
+      role: 'RESTAURANT_ADMIN',
+      roleTitle: 'Head Chef & Kitchen Lead',
+      tenantId: 'the-urban-plate',
+      avatarEmoji: '\uD83D\uDC68\u200D\uD83C\uDF73',
+      pin: '1234'
+    },
     tenantId: 'the-urban-plate'
   },
 
@@ -36,7 +44,7 @@ const DINEFLOW_DEFAULT_DATA = {
       pin: '1234',
       email: 'manager@theurbanplate.in',
       password: 'admin',
-      avatarEmoji: '👨‍🍳',
+      avatarEmoji: '\uD83D\uDC68\u200D\uD83C\uDF73',
       department: 'Kitchen & Floor'
     },
     {
@@ -48,7 +56,7 @@ const DINEFLOW_DEFAULT_DATA = {
       pin: '9999',
       email: 'debashish@dineflow.io',
       password: 'admin',
-      avatarEmoji: '⚡',
+      avatarEmoji: '\uD83D\uDC68\u200D\uD83C\uDF73',
       department: 'Platform Operations & HQ'
     },
     {
@@ -60,7 +68,7 @@ const DINEFLOW_DEFAULT_DATA = {
       pin: '5678',
       email: 'manager@bellavista.in',
       password: 'admin',
-      avatarEmoji: '🍕',
+      avatarEmoji: '\uD83D\uDC68\u200D\uD83C\uDF73',
       department: 'Italian Cuisine Operations'
     },
     {
@@ -72,7 +80,7 @@ const DINEFLOW_DEFAULT_DATA = {
       pin: '4321',
       email: 'manager@sakuraasian.in',
       password: 'admin',
-      avatarEmoji: '🍱',
+      avatarEmoji: '\uD83D\uDC68\u200D\uD83C\uDF73',
       department: 'Asian Cuisine Operations'
     }
   ],

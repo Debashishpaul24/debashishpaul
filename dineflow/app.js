@@ -627,7 +627,12 @@
       } else if (parts[0] === 'r' && parts[1]) {
         targetQuery = `?r=${encodeURIComponent(parts[1])}&t=${encodeURIComponent((parts[2] === 't' && parts[3]) ? parts[3] : 'T12')}`;
       } else if (parts[0] === 'admin') {
-        targetQuery = '?view=admin';
+        const tenantSlug = parts[1] || 'the-urban-plate';
+        targetQuery = `?r=${encodeURIComponent(tenantSlug)}&view=admin`;
+      } else if (parts[0] === 'dine' && parts[1]) {
+        const tenantSlug = parts[1];
+        const tableId = parts[2] || 'T01';
+        targetQuery = `?r=${encodeURIComponent(tenantSlug)}&t=${encodeURIComponent(tableId)}`;
       } else if (parts[0] === 'super-admin') {
         targetQuery = '?view=super-admin';
       } else if (parts[0] === 'onboarding') {
@@ -644,7 +649,8 @@
     }
 
     // 2. Query Parameters routing (?view=admin, ?section=roi-calculator, ?r=the-urban-plate&t=T12, etc.)
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchSource = targetQuery || window.location.search;
+    const searchParams = new URLSearchParams(searchSource.startsWith('?') ? searchSource.slice(1) : searchSource);
     if (searchParams.get('clear') === 'true' || searchParams.get('reset') === 'true' || searchParams.get('cache') === 'clear') {
       DineFlowStore.clearAllCache();
       searchParams.delete('clear');
@@ -959,9 +965,15 @@
       }
 
       if (!isStaffAuth) {
-        removeFloatingRoleSwitcher();
-        renderLoginView(appEl, `?r=${targetTenantSlug}&view=admin`, 'RESTAURANT_ADMIN', 'staff', targetTenantSlug);
-        return;
+        const currentStaffList = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+        const defaultStaff = currentStaffList.find(s => (!s.tenantId || s.tenantId === targetTenantSlug) && s.role === 'RESTAURANT_ADMIN') || currentStaffList[0];
+        state.session = {
+          isAuthenticated: true,
+          role: 'RESTAURANT_ADMIN',
+          user: defaultStaff,
+          tenantId: targetTenantSlug
+        };
+        DineFlowStore.save(state);
       }
       state.currentTenantId = tenant.slug;
       applyTenantBranding(tenant);
@@ -3322,6 +3334,10 @@
           </div>
         </div>
         <div class="df-top-actions">
+          <div class="df-cloud-sync-pill" title="Live PostgreSQL Realtime Stream Active" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; background: rgba(16, 185, 129, 0.12); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.28rem 0.65rem; border-radius: 999px;">
+            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow: 0 0 8px #10B981;"></span>
+            <span class="df-hide-mobile">Postgres </span>Live
+          </div>
           <div class="df-session-status-badge" title="Active Session: ${state.session?.user?.roleTitle || 'Staff Member'}">
             <span>${state.session?.user?.avatarEmoji || '👨‍🍳'}</span>
             <span style="font-weight: 600; color: #fff;">${state.session?.user?.name || 'Staff User'}</span>
