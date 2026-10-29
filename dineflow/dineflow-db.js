@@ -724,16 +724,31 @@
 
           case 'TABLES_CLEARED_ALL':
           case 'ALL_TABLES_CLEARED': {
-            await sb.from('tables')
-              .update({ status: 'available', manually_occupied: false })
-              .eq('tenant_id', tenantId);
-            await sb.from('orders')
-              .update({ status: 'COMPLETED', payment_status: 'PAID' })
-              .eq('tenant_id', tenantId)
-              .neq('status', 'CANCELLED');
-            await sb.from('bill_requests').update({ status: 'PAID' }).eq('tenant_id', tenantId);
-            await sb.from('staff_requests').update({ status: 'RESOLVED' }).eq('tenant_id', tenantId);
-            console.log(`[DineFlowDB] ✓ All tables cleared for ${tenantId}`);
+            if (meta.clearedTableIds && Array.isArray(meta.clearedTableIds)) {
+              for (const tid of meta.clearedTableIds) {
+                await sb.from('tables')
+                  .update({ status: 'available', manually_occupied: false })
+                  .match({ tenant_id: tenantId, id: tid });
+                await sb.from('orders')
+                  .update({ status: 'COMPLETED', payment_status: 'PAID' })
+                  .match({ tenant_id: tenantId, table_id: tid })
+                  .neq('status', 'CANCELLED');
+                await sb.from('staff_requests')
+                  .update({ status: 'RESOLVED' })
+                  .match({ tenant_id: tenantId, table_id: tid });
+              }
+            } else {
+              await sb.from('tables')
+                .update({ status: 'available', manually_occupied: false })
+                .eq('tenant_id', tenantId);
+              await sb.from('orders')
+                .update({ status: 'COMPLETED', payment_status: 'PAID' })
+                .eq('tenant_id', tenantId)
+                .neq('status', 'CANCELLED');
+              await sb.from('bill_requests').update({ status: 'PAID' }).eq('tenant_id', tenantId);
+              await sb.from('staff_requests').update({ status: 'RESOLVED' }).eq('tenant_id', tenantId);
+            }
+            console.log(`[DineFlowDB] ✓ Cleared tables processed for ${tenantId}`);
             break;
           }
 

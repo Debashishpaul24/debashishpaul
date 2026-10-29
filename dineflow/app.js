@@ -3910,35 +3910,58 @@
 
     document.getElementById('btn-admin-clear-all')?.addEventListener('click', () => {
       const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
-      state.tables.forEach(t => {
-        if (!t.tenantId || t.tenantId === tenantSlug) {
-          t.status = 'available';
-          delete t.manuallyOccupied;
-        }
+      const occupiedTables = state.tables.filter(t => (!t.tenantId || t.tenantId === tenantSlug) && t.status === 'occupied');
+
+      const tablesWithPendingBills = occupiedTables.filter(t => {
+        const hasPendingBill = state.billRequests.some(b => b.tableId === t.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
+        const hasUnpaidOrders = state.orders.some(o => o.tableId === t.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+        return hasPendingBill || hasUnpaidOrders;
       });
+
+      if (occupiedTables.length > 0 && tablesWithPendingBills.length === occupiedTables.length) {
+        SoundFX.chime('alert');
+        showToast('bill is pending by customer, tables can be marked as available once bill is cleared', '💳');
+        return;
+      }
+
+      const tablesToClear = occupiedTables.filter(t => !tablesWithPendingBills.some(pb => pb.id === t.id));
+      if (!tablesToClear.length) {
+        showToast('No eligible tables to clear.', 'ℹ️');
+        return;
+      }
+
+      const clearedIds = new Set(tablesToClear.map(t => t.id));
+      tablesToClear.forEach(t => {
+        t.status = 'available';
+        delete t.manuallyOccupied;
+      });
+
       state.orders.forEach(o => {
-        if ((!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+        if (clearedIds.has(o.tableId) && (!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
           o.status = 'COMPLETED';
           o.paymentStatus = 'PAID';
         }
       });
-      state.billRequests.forEach(b => {
-        if (!b.tenantId || b.tenantId === tenantSlug) {
-          b.status = 'PAID';
-        }
-      });
       state.staffRequests.forEach(s => {
-        if (!s.tenantId || s.tenantId === tenantSlug) {
+        if (clearedIds.has(s.tableId) && (!s.tenantId || s.tenantId === tenantSlug)) {
           s.status = 'RESOLVED';
         }
       });
+
       DineFlowStore.save(state, {
         action: 'TABLES_CLEARED_ALL',
+        clearedTableIds: Array.from(clearedIds),
         source: 'staff',
         tenantSlug: tenantSlug
       });
-      SoundFX.chime('success');
-      showToast(`All ${tenant.name} dining tables cleared & marked Available!`, '🧹');
+
+      if (tablesWithPendingBills.length > 0) {
+        SoundFX.chime('notice');
+        showToast(`${tablesToClear.length} table(s) cleared. ${tablesWithPendingBills.length} table(s) retained: bill is pending by customer, tables can be marked as available once bill is cleared`, '💳');
+      } else {
+        SoundFX.chime('success');
+        showToast(`All ${tablesToClear.length} dining tables cleared & marked Available!`, '🧹');
+      }
       renderAdminView(document.getElementById('app'), tenant);
     });
 
@@ -4039,13 +4062,24 @@
         ${tenantTables.map(table => {
           // Construct normalized target URL for table
           const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
+          const hasPendingBill = state.billRequests.some(b => b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
+          const hasUnpaidOrders = state.orders.some(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+          const isBillPending = hasPendingBill || hasUnpaidOrders;
+
           return `
             <div class="df-table-admin-card" data-table-status="${table.status}">
               <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff;">${table.name}</h4>
-                <span class="df-micro-badge ${table.status === 'occupied' ? 'status-occupied' : 'status-available'}" style="text-transform: uppercase;">
-                  ${table.status}
-                </span>
+                <div style="display: flex; gap: 0.35rem; align-items: center;">
+                  ${isBillPending ? `
+                    <span class="df-micro-badge" style="background: rgba(239, 68, 68, 0.18); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.4); font-size: 0.65rem; padding: 2px 6px;" title="Customer bill is pending settlement">
+                      💳 Bill Pending
+                    </span>
+                  ` : ''}
+                  <span class="df-micro-badge ${table.status === 'occupied' ? 'status-occupied' : 'status-available'}" style="text-transform: uppercase;">
+                    ${table.status}
+                  </span>
+                </div>
               </div>
               <span style="font-size: 0.72rem; color: var(--text-muted);">${table.section} • Capacity: ${table.capacity}p</span>
 
@@ -4063,7 +4097,7 @@
                 <button class="df-pill-btn btn-view-tent" data-id="${table.id}" title="Print QR Stand Tent">
                   🖨️ Print Tent
                 </button>
-                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" title="${table.status === 'occupied' ? 'Click to Clear Table (Mark Available)' : 'Click to Seat Guests (Mark Occupied)'}">
+                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" title="${table.status === 'occupied' ? (isBillPending ? 'Bill is pending by customer, tables can be marked as available once bill is cleared' : 'Click to Clear Table (Mark Available)') : 'Click to Seat Guests (Mark Occupied)'}">
                   ${table.status === 'occupied' ? '🧹 Clear' : '🪑 Seat'}
                 </button>
                 <a href="${tableUrl}" target="_blank" class="df-pill-btn primary btn-test-link" title="Test Customer Experience">
@@ -4101,19 +4135,18 @@
         const table = state.tables.find(t => t.id === tableId && (!t.tenantId || t.tenantId === tenantSlug));
         if (table) {
           if (table.status === 'occupied') {
+            // Guard: Check if there are unsettled bills or unpaid active orders
+            const hasPendingBill = state.billRequests.some(b => b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
+            const hasUnpaidOrders = state.orders.some(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+
+            if (hasPendingBill || hasUnpaidOrders) {
+              SoundFX.chime('alert');
+              showToast('bill is pending by customer, tables can be marked as available once bill is cleared', '💳');
+              return;
+            }
+
             table.status = 'available';
             delete table.manuallyOccupied;
-            state.orders.forEach(o => {
-              if (o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
-                o.status = 'COMPLETED';
-                o.paymentStatus = 'PAID';
-              }
-            });
-            state.billRequests.forEach(b => {
-              if (b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug)) {
-                b.status = 'PAID';
-              }
-            });
             state.staffRequests.forEach(s => {
               if (s.tableId === table.id && (!s.tenantId || s.tenantId === tenantSlug)) {
                 s.status = 'RESOLVED';
@@ -4166,35 +4199,58 @@
 
     // Clear All Tables
     document.getElementById('btn-clear-all-tables-tab')?.addEventListener('click', () => {
-      state.tables.forEach(t => {
-        if (!t.tenantId || t.tenantId === tenantSlug) {
-          t.status = 'available';
-          delete t.manuallyOccupied;
-        }
+      const occupiedTables = state.tables.filter(t => (!t.tenantId || t.tenantId === tenantSlug) && t.status === 'occupied');
+
+      const tablesWithPendingBills = occupiedTables.filter(t => {
+        const hasPendingBill = state.billRequests.some(b => b.tableId === t.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
+        const hasUnpaidOrders = state.orders.some(o => o.tableId === t.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+        return hasPendingBill || hasUnpaidOrders;
       });
+
+      if (occupiedTables.length > 0 && tablesWithPendingBills.length === occupiedTables.length) {
+        SoundFX.chime('alert');
+        showToast('bill is pending by customer, tables can be marked as available once bill is cleared', '💳');
+        return;
+      }
+
+      const tablesToClear = occupiedTables.filter(t => !tablesWithPendingBills.some(pb => pb.id === t.id));
+      if (!tablesToClear.length) {
+        showToast('No eligible tables to clear.', 'ℹ️');
+        return;
+      }
+
+      const clearedIds = new Set(tablesToClear.map(t => t.id));
+      tablesToClear.forEach(t => {
+        t.status = 'available';
+        delete t.manuallyOccupied;
+      });
+
       state.orders.forEach(o => {
-        if ((!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+        if (clearedIds.has(o.tableId) && (!o.tenantId || o.tenantId === tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
           o.status = 'COMPLETED';
           o.paymentStatus = 'PAID';
         }
       });
-      state.billRequests.forEach(b => {
-        if (!b.tenantId || b.tenantId === tenantSlug) {
-          b.status = 'PAID';
-        }
-      });
       state.staffRequests.forEach(s => {
-        if (!s.tenantId || s.tenantId === tenantSlug) {
+        if (clearedIds.has(s.tableId) && (!s.tenantId || s.tenantId === tenantSlug)) {
           s.status = 'RESOLVED';
         }
       });
+
       DineFlowStore.save(state, {
         action: 'ALL_TABLES_CLEARED',
+        clearedTableIds: Array.from(clearedIds),
         source: 'staff',
         tenantSlug: tenantSlug
       });
-      SoundFX.chime('success');
-      showToast(`All ${tenant.name} tables cleared & marked Available!`, '🧹');
+
+      if (tablesWithPendingBills.length > 0) {
+        SoundFX.chime('notice');
+        showToast(`${tablesToClear.length} table(s) cleared. ${tablesWithPendingBills.length} table(s) retained: bill is pending by customer, tables can be marked as available once bill is cleared`, '💳');
+      } else {
+        SoundFX.chime('success');
+        showToast(`All ${tablesToClear.length} tables cleared & marked Available!`, '🧹');
+      }
       renderAdminView(document.getElementById('app'), tenant);
     });
 
