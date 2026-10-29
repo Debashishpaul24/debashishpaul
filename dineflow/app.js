@@ -443,6 +443,22 @@
         } else {
           table.status = 'available';
           delete table.manuallyOccupied;
+          state.orders.forEach(o => {
+            if (o.tableId === event.tableId && (!o.tenantId || o.tenantId === event.tenantSlug) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+              o.status = 'COMPLETED';
+              o.paymentStatus = 'PAID';
+            }
+          });
+          state.billRequests.forEach(b => {
+            if (b.tableId === event.tableId && (!b.tenantId || b.tenantId === event.tenantSlug)) {
+              b.status = 'PAID';
+            }
+          });
+          state.staffRequests.forEach(s => {
+            if (s.tableId === event.tableId && (!s.tenantId || s.tenantId === event.tenantSlug)) {
+              s.status = 'RESOLVED';
+            }
+          });
         }
         stateChanged = true;
       }
@@ -4093,6 +4109,16 @@
                 o.paymentStatus = 'PAID';
               }
             });
+            state.billRequests.forEach(b => {
+              if (b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug)) {
+                b.status = 'PAID';
+              }
+            });
+            state.staffRequests.forEach(s => {
+              if (s.tableId === table.id && (!s.tenantId || s.tenantId === tenantSlug)) {
+                s.status = 'RESOLVED';
+              }
+            });
             showToast(`${table.name} cleared & marked Available`, '🧹');
           } else {
             table.status = 'occupied';
@@ -5081,6 +5107,11 @@
             if (o.tableId === b.tableId && (!o.tenantId || o.tenantId === tenantSlug)) {
               o.paymentStatus = 'PAID';
               o.status = 'COMPLETED';
+            }
+          });
+          state.staffRequests.forEach(s => {
+            if (s.tableId === b.tableId && (!s.tenantId || s.tenantId === tenantSlug)) {
+              s.status = 'RESOLVED';
             }
           });
           DineFlowStore.save(state, {

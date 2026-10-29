@@ -476,6 +476,24 @@
         const idx = state.tables.findIndex(t => t.id === updated.id && t.tenantId === updated.tenantId);
         if (idx !== -1) {
           state.tables[idx] = updated;
+          if (updated.status === 'available') {
+            state.orders.forEach(o => {
+              if (o.tableId === updated.id && (!o.tenantId || o.tenantId === updated.tenantId) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED') {
+                o.status = 'COMPLETED';
+                o.paymentStatus = 'PAID';
+              }
+            });
+            state.billRequests.forEach(b => {
+              if (b.tableId === updated.id && (!b.tenantId || b.tenantId === updated.tenantId)) {
+                b.status = 'PAID';
+              }
+            });
+            state.staffRequests.forEach(s => {
+              if (s.tableId === updated.id && (!s.tenantId || s.tenantId === updated.tenantId)) {
+                s.status = 'RESOLVED';
+              }
+            });
+          }
           DineFlowStore.saveLocalOnly(state);
           this.notifyUI({
             action: 'TABLE_STATUS_TOGGLED',
@@ -664,6 +682,11 @@
                 .update({ status: 'PAID' })
                 .match({ tenant_id: tenantId, table_id: meta.tableId });
 
+              // Resolve staff requests
+              await sb.from('staff_requests')
+                .update({ status: 'RESOLVED' })
+                .match({ tenant_id: tenantId, table_id: meta.tableId });
+
               // Mark table available
               await sb.from('tables')
                 .update({ status: 'available', manually_occupied: false })
@@ -680,7 +703,21 @@
               await sb.from('tables')
                 .update({ status: status, manually_occupied: Boolean(meta.isOccupied) })
                 .match({ tenant_id: tenantId, id: meta.tableId });
-              console.log(`[DineFlowDB] ✓ Table ${meta.tableId} set to ${status}`);
+
+              // When clearing table to available, complete active orders and resolve bills/calls in PostgreSQL
+              if (!meta.isOccupied) {
+                await sb.from('orders')
+                  .update({ status: 'COMPLETED', payment_status: 'PAID' })
+                  .match({ tenant_id: tenantId, table_id: meta.tableId })
+                  .neq('status', 'CANCELLED');
+                await sb.from('bill_requests')
+                  .update({ status: 'PAID' })
+                  .match({ tenant_id: tenantId, table_id: meta.tableId });
+                await sb.from('staff_requests')
+                  .update({ status: 'RESOLVED' })
+                  .match({ tenant_id: tenantId, table_id: meta.tableId });
+              }
+              console.log(`[DineFlowDB] ✓ Table ${meta.tableId} set to ${status} in PostgreSQL`);
             }
             break;
           }
