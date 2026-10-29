@@ -1,0 +1,2744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script>
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('r') && params.get('t')) {
+          window.location.replace('./?r=' + encodeURIComponent(params.get('r')) + '&t=' + encodeURIComponent(params.get('t')));
+        }
+      } catch(e) {}
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DineFlow™ - Dual-Device Interactive Operations Sandbox</title>
+  <meta name="description" content="Experience real-time sync between Customer QR ordering on mobile and Kitchen Staff OS / SaaS Platform Admin on desktop.">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #07090E;
+      --bg-surface: #0E131F;
+      --bg-card: #141A29;
+      --brand-primary: #E5A93C;
+      --brand-primary-rgb: 229, 169, 60;
+      --brand-secondary: #0F172A;
+      --accent-blue: #38BDF8;
+      --accent-purple: #818CF8;
+      --accent-green: #10B981;
+      --accent-red: #EF4444;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(229, 169, 60, 0.28);
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(ellipse 60% 40% at 20% 0%, rgba(229, 169, 60, 0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 50% at 80% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 70%),
+        radial-gradient(circle at 50% 100%, rgba(14, 19, 31, 0.8) 0%, transparent 100%);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Consolidated Theater Sandbox Header (Single Sleek Bar) */
+    .sandbox-header {
+      background: rgba(10, 14, 23, 0.94);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 0.5rem 1.25rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    .btn-back-hub {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-back-hub:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #E5A93C, #FF5E3A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(229, 169, 60, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-info h1 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      white-space: nowrap;
+    }
+
+    .brand-info h1 span.tag {
+      font-size: 0.64rem;
+      padding: 0.12rem 0.45rem;
+      background: rgba(229, 169, 60, 0.15);
+      border: 1px solid var(--border-glow);
+      color: var(--brand-primary);
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    /* Center: Hero Simulation Launcher & Compact Timeline Track */
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: nowrap;
+    }
+
+    .btn-hero-sim {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.42rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #07090E;
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      border: 1px solid #E5A93C;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 0 16px rgba(229, 169, 60, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .btn-hero-sim:hover {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 0 24px rgba(229, 169, 60, 0.55);
+    }
+
+    .btn-hero-sim .sim-play {
+      font-size: 0.72rem;
+    }
+
+    .mission-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.18rem 0.35rem;
+    }
+
+    .mission-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.24rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .mission-btn:hover {
+      background: rgba(229, 169, 60, 0.15);
+      color: #fff;
+    }
+
+    .mission-btn.active {
+      background: rgba(229, 169, 60, 0.25);
+      color: var(--brand-primary);
+    }
+
+    .mission-step {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: rgba(229, 169, 60, 0.2);
+      color: var(--brand-primary);
+      font-size: 0.6rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Right: Utilities & Free Pilot CTA */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      padding: 0.28rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      color: #34D399;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .sync-dot {
+      width: 6px;
+      height: 6px;
+      background: #10B981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #10B981;
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #E2E8F0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 7px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-action.primary {
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      color: #07090E;
+      border-color: #E5A93C;
+      box-shadow: 0 4px 12px rgba(229, 169, 60, 0.3);
+    }
+
+    .btn-action.primary:hover {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(229, 169, 60, 0.45);
+    }
+
+    /* Live Visual Spotlight HUD Toast */
+    .spotlight-toast {
+      position: fixed;
+      top: 66px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-15px);
+      background: rgba(14, 19, 31, 0.96);
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(229, 169, 60, 0.3);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 0.6rem 1.15rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: #fff;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      width: max-content;
+      max-width: min(520px, calc(100vw - 2rem));
+      box-sizing: border-box;
+      text-align: left;
+    }
+
+    .spotlight-toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    .spotlight-icon {
+      font-size: 1.1rem;
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    .spotlight-text strong {
+      color: var(--brand-primary);
+    }
+
+
+    /* Main Sandbox Stage */
+    .sandbox-stage {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      gap: 1.25rem;
+      padding: 0.85rem 1.25rem 3.5rem;
+      max-width: 1560px;
+      margin: 0 auto;
+      width: 100%;
+      align-items: start;
+    }
+
+    /* Left: Mobile Phone Device Wrapper */
+    .device-column-mobile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      width: 100%;
+    }
+
+    .device-title-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 320px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 9px;
+    }
+
+    .badge-identity {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .role-icon {
+      font-size: 1.15rem;
+    }
+
+    .badge-identity strong {
+      display: block;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .role-caption {
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .role-tag {
+      font-size: 0.64rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .guest-tag {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+    }
+
+    .staff-tag {
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      color: var(--brand-primary);
+    }
+
+    /* iPhone 16 Pro Photorealistic Chassis */
+    .iphone-frame {
+      width: 310px;
+      max-width: 100%;
+      height: 580px;
+      background: #1e2024;
+      border-radius: 40px;
+      padding: 9px;
+      box-shadow:
+        0 0 0 3px #3a3d45,
+        0 0 0 5px #15171a,
+        0 20px 45px -10px rgba(0, 0, 0, 0.75),
+        0 0 30px rgba(229, 169, 60, 0.15);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92px;
+      height: 24px;
+      background: #000;
+      border-radius: 16px;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      font-size: 0.6rem;
+      color: #fff;
+    }
+
+    .island-camera {
+      width: 9px;
+      height: 9px;
+      background: #071728;
+      border-radius: 50%;
+      border: 1px solid #1a2a40;
+    }
+
+    .island-sensor {
+      width: 7px;
+      height: 7px;
+      background: #0a0a0a;
+      border-radius: 50%;
+    }
+
+    .screen-container {
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      overflow: hidden;
+      background: #07090E;
+      position: relative;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .screen-container::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    .screen-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #07090E;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .screen-iframe::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* Bottom Home Indicator Bar */
+    .home-indicator {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      z-index: 60;
+      pointer-events: none;
+    }
+
+    /* --------------------------------------------------------------------------
+       AT-TABLE RESTAURANT QR SCANNER VIEWPORT OVERLAY
+       -------------------------------------------------------------------------- */
+    .qr-scanner-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 55;
+      background: #0b0f19;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .qr-scanner-overlay.scanned {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.06);
+    }
+
+    .scanner-table-scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.85rem 0.75rem 1.65rem;
+      box-sizing: border-box;
+      background: 
+        radial-gradient(circle at 50% 20%, rgba(229, 169, 60, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 50% 90%, rgba(15, 23, 42, 0.95) 0%, transparent 80%),
+        linear-gradient(180deg, #101524 0%, #07090e 100%);
+    }
+
+    .scene-decorations {
+      position: absolute;
+      top: 8%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      opacity: 0.45;
+      pointer-events: none;
+      font-size: 1.15rem;
+    }
+
+    /* Table Tent Card Chassis */
+    .table-tent-stand {
+      background: linear-gradient(145deg, #182030, #0d121c);
+      border: 1px solid rgba(229, 169, 60, 0.45);
+      border-radius: 12px;
+      padding: 0.65rem 0.75rem 0.5rem;
+      width: 190px;
+      box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.7),
+        0 0 25px rgba(229, 169, 60, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 5;
+      flex-shrink: 0;
+      margin-top: 0.25rem;
+    }
+
+    .table-tent-stand::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 15%;
+      width: 70%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #E5A93C, transparent);
+    }
+
+    .tent-brand-title {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.15rem;
+    }
+
+    .tent-table-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #07090E;
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      padding: 0.12rem 0.5rem;
+      border-radius: 999px;
+      margin-bottom: 0.45rem;
+      box-shadow: 0 2px 8px rgba(229, 169, 60, 0.35);
+    }
+
+    .tent-qr-box {
+      background: #fff;
+      padding: 5px;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tent-qr-frame {
+      position: relative;
+      width: 90px;
+      height: 90px;
+    }
+
+    .tent-qr-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Laser Scanning Beam */
+    .scanner-laser-beam {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #10B981, #34D399, transparent);
+      box-shadow: 0 0 12px #10B981, 0 0 4px #fff;
+      animation: scanSweep 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes scanSweep {
+      0% { top: 3px; opacity: 0.9; }
+      100% { top: 84px; opacity: 0.9; }
+    }
+
+    .tent-instruction {
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: var(--brand-primary);
+      margin-top: 0.4rem;
+      letter-spacing: 0.04em;
+    }
+
+    .tent-tag {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      margin-top: 0.1rem;
+    }
+
+    /* Camera Viewfinder Reticle */
+    .camera-reticle {
+      position: absolute;
+      top: 38%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 205px;
+      height: 220px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .camera-reticle .corner {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(229, 169, 60, 0.8);
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .camera-reticle.verified .corner {
+      border-color: #10B981;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+    }
+
+    .camera-reticle .corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+    .camera-reticle .corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+    .camera-reticle .corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+    .camera-reticle .corner.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+    /* Scanner CTA Bar */
+    .scanner-action-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      width: 100%;
+      z-index: 20;
+      flex-shrink: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .scanner-hint-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(14, 19, 31, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.22rem 0.6rem;
+      font-size: 0.66rem;
+      color: var(--text-muted);
+    }
+
+    .pulse-scan-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      animation: pulseGlow 1.4s infinite;
+    }
+
+    .btn-scan-qr {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      width: 100%;
+      max-width: 220px;
+      padding: 0.62rem 0.85rem;
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      color: #07090E;
+      font-size: 0.78rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(229, 169, 60, 0.4);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-scan-qr:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(229, 169, 60, 0.55);
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+    }
+
+    /* Bottom Home Indicator Bar */
+    .home-indicator {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      z-index: 60;
+      pointer-events: none;
+    }
+
+    /* Customer Quick Action Triggers */
+    .quick-actions-tray {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .quick-actions-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .quick-actions-row {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-quick {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.45rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+    }
+
+    .btn-quick:hover {
+      background: rgba(229, 169, 60, 0.15);
+      border-color: var(--brand-primary);
+      color: #fff;
+    }
+
+    /* Right: Desktop Window Wrapper */
+    .device-column-desktop {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      width: 100%;
+      height: 100%;
+    }
+
+    .device-column-desktop .device-title-badge {
+      max-width: 100%;
+    }
+
+    /* MacBook Pro / Studio Browser Window */
+    .desktop-window {
+      background: #121722;
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.6),
+        0 0 30px rgba(99, 102, 241, 0.1);
+      display: flex;
+      flex-direction: column;
+      height: 580px;
+      width: 100%;
+    }
+
+    /* Desktop Window Title Bar */
+    .window-titlebar {
+      background: #0B0F17;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+      flex-wrap: nowrap;
+      min-height: 44px;
+    }
+
+    .window-controls {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .control-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .dot-close { background: #FF5F56; }
+    .dot-min { background: #FFBD2E; }
+    .dot-max { background: #27C93F; }
+
+    /* Interactive Desktop Tabs */
+    .window-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      flex-shrink: 0;
+    }
+
+    .window-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .window-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.32rem 0.65rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .window-tab:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .window-tab.active {
+      background: rgba(229, 169, 60, 0.15);
+      border-color: var(--brand-primary);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .window-tab.active.tab-saas {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: #818CF8;
+    }
+
+    .window-tab-badge {
+      font-size: 0.62rem;
+      padding: 0.08rem 0.32rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Address Bar */
+    .window-urlbar {
+      background: #07090E;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.25rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      max-width: 250px;
+      min-width: 120px;
+      flex-shrink: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .window-urlbar span:last-child {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .url-lock {
+      color: #10B981;
+      font-size: 0.7rem;
+    }
+
+    .desktop-iframe {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #07090E;
+    }
+
+    /* ==========================================================================
+       BOTTOM COLLAPSIBLE DEVELOPER / MANUAL CONTROLS DRAWER
+       ========================================================================== */
+    .dev-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 95;
+      background: rgba(10, 14, 23, 0.96);
+      border-top: 1px solid var(--border-subtle);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dev-drawer.collapsed .drawer-body {
+      display: none;
+    }
+
+    .drawer-toggle {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0.45rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+
+    .drawer-toggle:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .drawer-title {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--text-dim);
+    }
+
+    .drawer-toggle:hover .drawer-title {
+      color: var(--text-muted);
+    }
+
+    .drawer-toggle-state {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--brand-primary);
+    }
+
+    .drawer-body {
+      padding: 0.75rem 1.5rem 0.95rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .drawer-controls-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .drawer-section {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .drawer-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .drawer-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .drawer-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .telemetry-label {
+      color: var(--brand-primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+
+    .telemetry-feed {
+      flex: 1;
+      overflow-x: auto;
+      white-space: nowrap;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .telemetry-item {
+      padding: 0.18rem 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      animation: fadeInItem 0.3s ease;
+    }
+
+    .telemetry-item strong {
+      color: #fff;
+    }
+
+    @keyframes fadeInItem {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Architecture Explainer Modal */
+    .arch-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .arch-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .arch-modal {
+      background: #0E131F;
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 680px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(229, 169, 60, 0.2);
+      transform: scale(0.96);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .arch-modal-backdrop.open .arch-modal {
+      transform: scale(1);
+    }
+
+    .arch-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .arch-modal-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .arch-modal-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: var(--text-muted);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    /* ==============================================================================
+       MANDATORY LANDSCAPE ORIENTATION GATE (PORTRAIT ONLY)
+       Ensures visitors always view Customer Phone & Kitchen KDS side-by-side.
+       ============================================================================== */
+    .landscape-gate {
+      display: none;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 999999;
+      background: radial-gradient(circle at center, rgba(17, 24, 39, 0.98) 0%, rgba(7, 9, 14, 0.99) 100%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    /* Active only in portrait orientation on screens <= 1100px */
+    @media (max-width: 1100px) and (orientation: portrait) {
+      .landscape-gate {
+        display: flex;
+      }
+      .sandbox-stage,
+      .sandbox-header,
+      .drawer-controls-wrapper,
+      .spotlight-toast {
+        display: none !important;
+      }
+    }
+
+    .landscape-gate-card {
+      max-width: 440px;
+      width: 100%;
+      background: rgba(14, 19, 31, 0.9);
+      border: 1px solid rgba(229, 169, 60, 0.4);
+      border-radius: 24px;
+      padding: 2.25rem 1.75rem;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 32px rgba(229, 169, 60, 0.18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.15rem;
+      animation: gateModalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes gateModalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .landscape-gate-icon-box {
+      width: 84px;
+      height: 84px;
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid rgba(229, 169, 60, 0.4);
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(229, 169, 60, 0.25);
+    }
+
+    .tilt-gate-svg {
+      width: 48px;
+      height: 48px;
+      animation: gateTiltAnimation 2.4s infinite ease-in-out;
+      transform-origin: center center;
+    }
+
+    @keyframes gateTiltAnimation {
+      0%, 20% { transform: rotate(0deg); }
+      50%, 75% { transform: rotate(90deg); }
+      95%, 100% { transform: rotate(0deg); }
+    }
+
+    .landscape-gate-badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--brand-primary);
+      background: rgba(229, 169, 60, 0.18);
+      border: 1px solid rgba(229, 169, 60, 0.35);
+      padding: 0.2rem 0.75rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .landscape-gate-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: var(--font-heading);
+      letter-spacing: -0.02em;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .landscape-gate-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .landscape-gate-desc strong {
+      color: var(--brand-primary);
+      display: block;
+      margin-top: 0.35rem;
+      font-weight: 800;
+    }
+
+    .landscape-gate-action {
+      margin-top: 0.35rem;
+      width: 100%;
+    }
+
+    .btn-gate-hub {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.4rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-gate-hub:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    /* ==============================================================================
+       LANDSCAPE MODE (TABLETS & PHONES)
+       Both Devices Side-by-Side: Customer Mobile + Kitchen KDS
+       ============================================================================== */
+    @media (orientation: landscape) and (max-width: 1200px) {
+      .device-switcher-bar {
+        display: none !important;
+      }
+      .device-column-mobile,
+      .device-column-desktop {
+        display: flex !important;
+      }
+      .sandbox-stage {
+        grid-template-columns: 290px 1fr !important;
+        gap: 0.85rem;
+        padding: 0.5rem 0.85rem 3rem;
+      }
+      .desktop-window {
+        height: 540px;
+      }
+      .iphone-frame {
+        width: 290px;
+        height: 540px;
+      }
+    }
+
+    /* Extra-compact landscape for mobile phones (height <= 520px in landscape) */
+    @media (orientation: landscape) and (max-height: 520px) {
+      .sandbox-header {
+        padding: 0.3rem 0.65rem;
+      }
+      .btn-hero-sim {
+        padding: 0.28rem 0.65rem;
+        font-size: 0.74rem;
+      }
+      .sandbox-stage {
+        grid-template-columns: 240px 1fr !important;
+        gap: 0.65rem;
+        padding: 0.35rem 0.65rem 2.25rem;
+      }
+      .iphone-frame {
+        width: 240px;
+        height: 380px;
+        border-radius: 24px;
+        padding: 8px;
+      }
+      .desktop-window {
+        height: 380px;
+      }
+      .device-title-badge {
+        padding: 0.25rem 0.5rem;
+        margin-bottom: 0.35rem;
+      }
+      .device-title-badge strong {
+        font-size: 0.72rem;
+      }
+      .device-title-badge .role-caption {
+        display: none;
+      }
+    }
+
+    /* Smaller Mobile Portrait Rules */
+    @media (max-width: 768px) and (orientation: portrait) {
+      .sandbox-header {
+        padding: 0.45rem 0.75rem;
+      }
+      .btn-hero-sim {
+        font-size: 0.76rem;
+        padding: 0.35rem 0.75rem;
+      }
+      .mission-buttons {
+        overflow-x: auto;
+        max-width: 100%;
+      }
+      .mission-btn span:last-child {
+        display: none;
+      }
+      .mission-btn {
+        padding: 0.2rem 0.35rem;
+      }
+      .btn-action span {
+        font-size: 0.7rem;
+      }
+      .desktop-window {
+        height: 560px;
+      }
+      .iphone-frame {
+        height: 580px;
+      }
+      .drawer-controls-grid {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+    }
+
+    @media (max-width: 480px) and (orientation: portrait) {
+      .brand-info h1 {
+        font-size: 0.85rem;
+      }
+      .brand-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.95rem;
+      }
+      .sync-status {
+        display: none;
+      }
+      .desktop-window {
+        height: 500px;
+      }
+      .iphone-frame {
+        height: 560px;
+        max-width: 100%;
+        border-radius: 28px;
+        padding: 10px;
+      }
+      .arch-modal {
+        padding: 1.25rem 1rem;
+        border-radius: 14px;
+      }
+      .landscape-prompt-desc {
+        white-space: normal;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Consolidated Theater Header -->
+  <header class="sandbox-header">
+    <div class="header-left">
+      <a href="./?view=hub" class="btn-back-hub" title="Back to DineFlow Hub">
+        <span>← Hub</span>
+      </a>
+      <a href="./?view=hub&section=restaurant-directory" class="btn-back-hub" style="color: var(--brand-primary); border-color: rgba(229,169,60,0.35); background: rgba(229,169,60,0.08);" title="View all 3 Partner Restaurants Directory">
+        <span>🏢 3 Outlets</span>
+      </a>
+      <div class="brand-pill">
+        <div class="brand-icon">🍽️</div>
+        <div class="brand-info">
+          <h1>DineFlow™ <span class="tag">Dual-Device Sandbox</span></h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center: Primary Walkthrough Action & 6 Dining Steps -->
+    <div class="header-center">
+      <button id="btn-auto-demo" class="btn-hero-sim" title="Run full automated 6-stage end-to-end walkthrough">
+        <span class="sim-play">▶</span>
+        <span>Play 30s Simulation</span>
+      </button>
+
+      <div class="mission-buttons">
+        <button id="mission-1" class="mission-btn" title="Stage 1: Scan Table T12 QR Stand">
+          <span class="mission-step">1</span>
+          <span>Scan</span>
+        </button>
+        <button id="mission-2" class="mission-btn" title="Stage 2: Guest places food order via UPI">
+          <span class="mission-step">2</span>
+          <span>Order</span>
+        </button>
+        <button id="mission-3" class="mission-btn" title="Stage 3: Kitchen KDS cooks and serves with live tracking">
+          <span class="mission-step">3</span>
+          <span>Cook</span>
+        </button>
+        <button id="mission-4" class="mission-btn" title="Stage 4: Guest calls waiter for table service">
+          <span class="mission-step">4</span>
+          <span>Call</span>
+        </button>
+        <button id="mission-5" class="mission-btn" title="Stage 5: Guest requests bill &amp; cashier settles payment">
+          <span class="mission-step">5</span>
+          <span>Bill</span>
+        </button>
+        <button id="mission-6" class="mission-btn" title="Stage 6: Guest submits 5-star review">
+          <span class="mission-step">6</span>
+          <span>Review</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Utilities & Pilot CTA -->
+    <div class="header-right">
+      <div class="sync-status" title="Real-time cross-frame BroadcastChannel link active (<50ms)">
+        <span class="sync-dot"></span>
+        <span>&lt;50ms SYNC</span>
+      </div>
+      <button id="btn-reset-demo" class="btn-action" title="Reset all orders and restore pristine table scan state">
+        <span>🔄 Reset</span>
+      </button>
+      <button id="btn-toggle-sound" class="btn-action" title="Toggle synthesized acoustic chimes">
+        <span id="sound-icon">🔊 Sound</span>
+      </button>
+      <button id="btn-open-arch" class="btn-action" title="View technical architecture">
+        <span>📐 Architecture</span>
+      </button>
+      <a href="./?section=roi-calculator" class="btn-action primary" title="Simulate revenue gains and claim 14-day free pilot">
+        <span>📊 Free Pilot &rarr;</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Mandatory Landscape Orientation Gate (Mobile & Tablet Portrait Only) -->
+  <aside id="landscape-gate" class="landscape-gate" role="alert" aria-live="polite">
+    <div class="landscape-gate-card">
+      <div class="landscape-gate-icon-box">
+        <svg class="tilt-gate-svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="13" y="6" width="22" height="36" rx="4" ry="4" stroke="var(--brand-primary)"></rect>
+          <line x1="22" y1="36" x2="26" y2="36" stroke="var(--brand-primary)" stroke-linecap="round"></line>
+        </svg>
+      </div>
+      <span class="landscape-gate-badge">⚡ Live Dual-Device Sandbox</span>
+      <h2 class="landscape-gate-title">Please Rotate Your Device</h2>
+      <p class="landscape-gate-desc">
+        DineFlow simulates a Customer Phone &amp; Kitchen KDS running simultaneously in real time.
+        <strong>Tilt your phone or iPad to landscape mode</strong> to experience both screens side-by-side.
+      </p>
+      <div class="landscape-gate-action">
+        <a href="./?view=hub" class="btn-gate-hub">← Back to Platform Hub</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Live Visual Spotlight HUD Toast -->
+  <div id="spotlight-toast" class="spotlight-toast">
+    <span id="spotlight-icon" class="spotlight-icon">⚡</span>
+    <span id="spotlight-text" class="spotlight-text">Ready for dual-device real-time event simulation</span>
+  </div>
+
+  <!-- Sandbox Stage: Dual Devices -->
+  <main class="sandbox-stage">
+
+    <!-- Left: Mobile Customer Device (iPhone 16 Pro) -->
+    <section id="column-mobile" class="device-column-mobile active-mobile-view">
+      <div class="device-title-badge">
+        <div class="badge-identity">
+          <span class="role-icon">📱</span>
+          <div>
+            <strong>CUSTOMER'S PHONE (Table T12)</strong>
+            <p class="role-caption">Scan Table QR &bull; Contactless UPI Ordering</p>
+          </div>
+        </div>
+        <span class="role-tag guest-tag">Front-of-House</span>
+      </div>
+
+      <!-- iPhone Frame -->
+      <div class="iphone-frame">
+        <!-- Dynamic Island -->
+        <div class="dynamic-island">
+          <div class="island-camera"></div>
+          <span style="font-size: 0.62rem; color: #E5A93C; font-weight: 700;">DineFlow</span>
+          <div class="island-sensor"></div>
+        </div>
+
+        <!-- Touch Screen Container -->
+        <div class="screen-container">
+          <!-- Interactive At-Table Restaurant QR Scanner Overlay -->
+          <div id="qr-scanner-overlay" class="qr-scanner-overlay">
+            <div class="scanner-table-scene">
+              <div class="scene-decorations">
+                <span>🕯️</span>
+                <span>🍷</span>
+              </div>
+
+              <!-- 3D Table Tent Card Stand -->
+              <div class="table-tent-stand">
+                <div class="tent-brand-title">THE URBAN PLATE</div>
+                <div class="tent-table-badge">TABLE T12</div>
+                
+                <div class="tent-qr-box">
+                  <div class="tent-qr-frame">
+                    <!-- Crisp Vector QR Code -->
+                    <svg class="tent-qr-svg" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="140" height="140" fill="white"/>
+                      <!-- Corner Square Top-Left -->
+                      <rect x="10" y="10" width="36" height="36" rx="4" fill="#07090E"/>
+                      <rect x="16" y="16" width="24" height="24" rx="2" fill="white"/>
+                      <rect x="22" y="22" width="12" height="12" rx="2" fill="#E5A93C"/>
+                      <!-- Corner Square Top-Right -->
+                      <rect x="94" y="10" width="36" height="36" rx="4" fill="#07090E"/>
+                      <rect x="100" y="16" width="24" height="24" rx="2" fill="white"/>
+                      <rect x="106" y="22" width="12" height="12" rx="2" fill="#E5A93C"/>
+                      <!-- Corner Square Bottom-Left -->
+                      <rect x="10" y="94" width="36" height="36" rx="4" fill="#07090E"/>
+                      <rect x="16" y="100" width="24" height="24" rx="2" fill="white"/>
+                      <rect x="22" y="106" width="12" height="12" rx="2" fill="#E5A93C"/>
+                      <!-- Data Matrix Pixels -->
+                      <rect x="52" y="12" width="8" height="8" fill="#07090E"/>
+                      <rect x="68" y="12" width="8" height="8" fill="#07090E"/>
+                      <rect x="80" y="12" width="8" height="8" fill="#07090E"/>
+                      <rect x="52" y="28" width="8" height="8" fill="#07090E"/>
+                      <rect x="64" y="28" width="12" height="8" fill="#07090E"/>
+                      <rect x="80" y="28" width="8" height="8" fill="#07090E"/>
+                      <rect x="52" y="44" width="8" height="8" fill="#07090E"/>
+                      <rect x="76" y="44" width="8" height="8" fill="#07090E"/>
+                      <!-- Horizontal Alignment -->
+                      <rect x="12" y="52" width="8" height="8" fill="#07090E"/>
+                      <rect x="28" y="52" width="8" height="8" fill="#07090E"/>
+                      <rect x="100" y="52" width="8" height="8" fill="#07090E"/>
+                      <rect x="116" y="52" width="8" height="8" fill="#07090E"/>
+                      <!-- Center Brand Fork & Knife Icon -->
+                      <circle cx="70" cy="70" r="16" fill="#07090E"/>
+                      <circle cx="70" cy="70" r="13" fill="#E5A93C"/>
+                      <text x="70" y="75" font-size="12" text-anchor="middle" fill="#07090E" font-weight="900">🍽️</text>
+                      <!-- Lower Half Data Matrix Pixels -->
+                      <rect x="52" y="88" width="8" height="8" fill="#07090E"/>
+                      <rect x="68" y="88" width="8" height="8" fill="#07090E"/>
+                      <rect x="80" y="88" width="8" height="8" fill="#07090E"/>
+                      <rect x="52" y="104" width="8" height="8" fill="#07090E"/>
+                      <rect x="64" y="104" width="12" height="8" fill="#07090E"/>
+                      <rect x="80" y="104" width="8" height="8" fill="#07090E"/>
+                      <rect x="96" y="96" width="8" height="8" fill="#07090E"/>
+                      <rect x="112" y="96" width="8" height="8" fill="#07090E"/>
+                      <rect x="96" y="112" width="8" height="8" fill="#07090E"/>
+                      <rect x="112" y="112" width="16" height="8" fill="#07090E"/>
+                      <rect x="96" y="124" width="24" height="8" fill="#07090E"/>
+                      <rect x="52" y="120" width="8" height="8" fill="#07090E"/>
+                      <rect x="68" y="120" width="8" height="8" fill="#07090E"/>
+                      <rect x="80" y="120" width="8" height="8" fill="#07090E"/>
+                    </svg>
+
+                    <!-- Animated Laser Scan Line -->
+                    <div id="scanner-laser" class="scanner-laser-beam"></div>
+                  </div>
+                </div>
+
+                <div class="tent-instruction">SCAN FOR CONTACTLESS MENU</div>
+                <div class="tent-tag">Garden Patio (Outdoor) &bull; Wi-Fi: UrbanPlate_Guest</div>
+              </div>
+
+              <!-- Camera Viewfinder Reticle -->
+              <div id="camera-reticle" class="camera-reticle">
+                <span class="corner tl"></span>
+                <span class="corner tr"></span>
+                <span class="corner bl"></span>
+                <span class="corner br"></span>
+              </div>
+
+              <!-- Bottom Scanner Control -->
+              <div class="scanner-action-bar">
+                <div class="scanner-hint-pill">
+                  <span class="pulse-scan-dot"></span>
+                  <span id="scanner-status-label">Align camera to scan Table T12 QR</span>
+                </div>
+                <button id="btn-scan-qr" class="btn-scan-qr">
+                  <span>⚡ Scan Table T12 QR Now</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.9.4" title="DineFlow Guest Mobile Ordering"></iframe>
+        </div>
+
+        <!-- iOS Home Indicator -->
+        <div class="home-indicator"></div>
+      </div>
+
+    </section>
+ 
+    <!-- Right: Desktop Back-of-House / SaaS Admin Window -->
+    <section id="column-desktop" class="device-column-desktop">
+      <div class="device-title-badge">
+        <div class="badge-identity">
+          <span class="role-icon">👨‍🍳</span>
+          <div>
+            <strong>KITCHEN STAFF KDS &amp; SAAS HQ</strong>
+            <p class="role-caption">Live Cooking Tickets &bull; Waiter Calls &bull; Multi-Role Ops</p>
+          </div>
+        </div>
+        <span class="role-tag staff-tag">Back-of-House</span>
+      </div>
+
+      <!-- Studio Browser Frame -->
+      <div class="desktop-window">
+        <!-- Window Title Bar -->
+        <div class="window-titlebar">
+          <div class="window-controls">
+            <span class="control-dot dot-close"></span>
+            <span class="control-dot dot-min"></span>
+            <span class="control-dot dot-max"></span>
+          </div>
+
+          <!-- Switchable Persona Tabs -->
+          <div class="window-tabs">
+            <button id="tab-staff" class="window-tab active">
+              <span>👨‍🍳 Kitchen Staff OS (KDS)</span>
+              <span class="window-tab-badge">Manager</span>
+            </button>
+            <button id="tab-saas" class="window-tab">
+              <span>⚡ SaaS Platform Super Admin</span>
+              <span class="window-tab-badge">HQ</span>
+            </button>
+            <button id="tab-hub" class="window-tab">
+              <span>🌐 Platform Hub</span>
+            </button>
+          </div>
+
+          <!-- Address Bar -->
+          <div class="window-urlbar">
+            <span class="url-lock">🔒</span>
+            <span id="desktop-url-text">https://dineflow.io/kitchen?view=admin</span>
+          </div>
+        </div>
+
+        <!-- Desktop Screen Iframe -->
+        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=1.9.4" title="DineFlow Operations & Governance Console"></iframe>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Collapsible Developer Controls & Live Event Bus Drawer -->
+  <div id="dev-drawer" class="dev-drawer collapsed">
+    <button id="btn-toggle-drawer" class="drawer-toggle" title="Toggle Manual Triggers and Event Stream">
+      <span class="drawer-title">⚙️ Manual Test Triggers &amp; Live Event Bus</span>
+      <span class="drawer-toggle-state" id="drawer-toggle-icon">▲ Show Controls &amp; Event Bus</span>
+    </button>
+    <div class="drawer-body">
+      <div class="drawer-controls-grid">
+        <div class="drawer-section">
+          <span class="drawer-section-title">📱 Customer Triggers:</span>
+          <div class="drawer-btn-group">
+            <button id="btn-trigger-add" class="btn-quick" title="Add Truffle Risotto to mobile cart">
+              <span>➕ Add Dish</span>
+            </button>
+            <button id="btn-trigger-cart" class="btn-quick" title="Open slide-over cart modal">
+              <span>🛒 View Cart</span>
+            </button>
+            <button id="btn-trigger-order" class="btn-quick" title="Place and pay for Table T12 order">
+              <span>💳 Order UPI</span>
+            </button>
+            <button id="btn-trigger-call" class="btn-quick" title="Ring Service Bell for waiter assistance">
+              <span>🛎️ Call Staff</span>
+            </button>
+            <button id="btn-trigger-bill" class="btn-quick" title="Request table bill">
+              <span>🧾 Request Bill</span>
+            </button>
+          </div>
+        </div>
+        <div class="drawer-section">
+          <span class="drawer-section-title">👨‍🍳 Kitchen Triggers:</span>
+          <div class="drawer-btn-group">
+            <button id="btn-kitchen-advance" class="btn-quick" title="Advance latest order status in KDS">
+              <span>🍲 Advance Order Stage</span>
+            </button>
+            <button id="btn-kitchen-ack" class="btn-quick" title="Acknowledge waiter call">
+              <span>🛎️ Resolve Staff Call</span>
+            </button>
+            <button id="btn-kitchen-settle" class="btn-quick" title="Mark Table T12 bill as settled">
+              <span>💳 Settle T12 Bill</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="drawer-telemetry">
+        <span class="telemetry-label">📡 LIVE BUS:</span>
+        <div id="telemetry-feed" class="telemetry-feed">
+          <span class="telemetry-item">⚡ <strong>Sandbox Initialized</strong> &bull; Ready for dual-device real-time event simulation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Architecture & How It Works Modal -->
+  <div id="arch-modal-backdrop" class="arch-modal-backdrop">
+    <div class="arch-modal">
+      <div class="arch-modal-header">
+        <div class="arch-modal-title">
+          <span>📐</span>
+          <span>DineFlow Architecture &amp; Real-Time Pipeline</span>
+        </div>
+        <button id="btn-close-arch" class="arch-modal-close" title="Close modal">✕</button>
+      </div>
+
+      <div style="font-size: 0.88rem; line-height: 1.6; color: var(--text-muted);">
+        <p style="margin-bottom: 1rem;">
+          DineFlow is engineered entirely with <strong style="color: #fff;">Vanilla JavaScript</strong>, the native <strong style="color: var(--brand-primary);">BroadcastChannel API</strong>, and zero external runtime dependencies. Here is how dual-screen synchronization operates:
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1rem;">
+            <div style="font-weight: 700; color: #fff; margin-bottom: 0.35rem;">📱 Front-of-House (Guest)</div>
+            <p style="font-size: 0.78rem; color: var(--text-dim);">
+              Customer scans table QR code. In-memory cart dispatches orders via localStorage &amp; BroadcastChannel with 5-stage live status tracking.
+            </p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1rem;">
+            <div style="font-weight: 700; color: #fff; margin-bottom: 0.35rem;">👨‍🍳 Back-of-House (KDS)</div>
+            <p style="font-size: 0.78rem; color: var(--text-dim);">
+              Kitchen Kanban receives instant broadcast tickets, synthesizes Web Audio concierge chimes, and updates floor matrix without page refreshes.
+            </p>
+          </div>
+        </div>
+
+        <div style="background: rgba(229, 169, 60, 0.1); border: 1px solid var(--border-glow); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; color: var(--brand-primary); margin-bottom: 0.35rem;">⚡ Zero Cloud Latency Inter-Frame Bus</div>
+          <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+            Because both devices communicate over the browser's hardware-accelerated IPC bus (BroadcastChannel), state transitions occur at sub-millisecond speeds even with no internet connection.
+          </p>
+        </div>
+
+        <div style="text-align: right;">
+          <button id="btn-close-arch-cta" class="btn-action primary">
+            <span>Got it, let's explore! →</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sandbox Controller & Orchestration Logic -->
+  <script>
+    (function () {
+      const mobileIframe = document.getElementById('mobile-iframe');
+      const desktopIframe = document.getElementById('desktop-iframe');
+      const telemetryFeed = document.getElementById('telemetry-feed');
+      const urlText = document.getElementById('desktop-url-text');
+      const spotlightToast = document.getElementById('spotlight-toast');
+      const spotlightIcon = document.getElementById('spotlight-icon');
+      const spotlightText = document.getElementById('spotlight-text');
+      const qrScannerOverlay = document.getElementById('qr-scanner-overlay');
+      const cameraReticle = document.getElementById('camera-reticle');
+      const scannerStatusLabel = document.getElementById('scanner-status-label');
+
+      const tabStaff = document.getElementById('tab-staff');
+      const tabSaas = document.getElementById('tab-saas');
+      const tabHub = document.getElementById('tab-hub');
+
+      const colMobile = document.getElementById('column-mobile');
+      const colDesktop = document.getElementById('column-desktop');
+
+      let currentActiveRole = 'RESTAURANT_ADMIN';
+      let soundEnabled = true;
+      let toastTimer = null;
+      let isWalkthroughRunning = false;
+      let isQrScanned = false;
+
+      // --------------------------------------------------------------------------
+      // DYNAMIC QUERY-BASED URL ENGINE (/?view=demo&role=...&step=...&sim=...)
+      // --------------------------------------------------------------------------
+      function getQueryParam(key) {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          return params.get(key);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function updateSandboxUrlQuery(updates = {}) {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          if (!params.has('view')) {
+            params.set('view', 'demo');
+          }
+          Object.keys(updates).forEach((k) => {
+            if (updates[k] === null || updates[k] === undefined || updates[k] === '') {
+              params.delete(k);
+            } else {
+              params.set(k, updates[k]);
+            }
+          });
+          const newRelative = './?' + params.toString();
+          window.history.replaceState(null, document.title, newRelative);
+        } catch (e) {
+          console.warn('Sandbox URL sync warning:', e);
+        }
+      }
+
+      // Automatically normalize address bar on initial load to ./?view=demo
+      updateSandboxUrlQuery();
+
+      // Web Audio Synthesizer for Luxury Hotel Concierge Chimes & Scanner Beeps
+      let audioCtx = null;
+      function playChime(type = 'bell') {
+        if (!soundEnabled) return;
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!audioCtx) audioCtx = new AudioContext();
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          const now = audioCtx.currentTime;
+
+          if (type === 'shutter') {
+            // Camera scanner focus chirp & shutter
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(987.77, now); // B5
+            osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.3);
+          } else if (type === 'order') {
+            // Ascending Concierge Chime (D5 -> A5 -> D6)
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc2.type = 'triangle';
+
+            osc1.frequency.setValueAtTime(587.33, now); // D5
+            osc1.frequency.setValueAtTime(880.00, now + 0.14); // A5
+            osc2.frequency.setValueAtTime(1174.66, now + 0.14); // D6
+
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now + 0.14);
+            osc1.stop(now + 1.25);
+            osc2.stop(now + 1.25);
+          } else if (type === 'bell') {
+            // Desk Bell Ring (1760Hz A6)
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1760, now);
+
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.95);
+          } else if (type === 'advance') {
+            // Ticket Advance Confirmation (E5 -> G5)
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(659.25, now);
+            osc.frequency.setValueAtTime(783.99, now + 0.1);
+
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.8);
+          } else if (type === 'success') {
+            // Star Review Fanfare (C5 -> E5 -> G5 -> C6)
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.setValueAtTime(659.25, now + 0.08);
+            osc.frequency.setValueAtTime(783.99, now + 0.16);
+            osc.frequency.setValueAtTime(1046.50, now + 0.24);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.9);
+          }
+        } catch (e) {
+          console.warn('Audio chime warning:', e);
+        }
+      }
+
+      function ensureDemoAuth(role) {
+        currentActiveRole = role;
+        try {
+          let data = null;
+          const raw = localStorage.getItem('dineflow_data');
+          if (raw) {
+            data = JSON.parse(raw);
+          } else if (typeof DINEFLOW_DEFAULT_DATA !== 'undefined') {
+            data = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
+          }
+
+          if (data) {
+            if (role === 'SUPER_ADMIN') {
+              data.session = {
+                isAuthenticated: true,
+                role: 'SUPER_ADMIN',
+                user: { name: 'Debashish Paul (HQ)', email: 'admin@dineflow.io' },
+                tenantId: 'the-urban-plate'
+              };
+            } else {
+              data.session = {
+                isAuthenticated: true,
+                role: 'RESTAURANT_ADMIN',
+                user: { name: 'Chef Marco', email: 'marco@urbanplate.com' },
+                tenantId: 'the-urban-plate'
+              };
+            }
+            localStorage.setItem('dineflow_data', JSON.stringify(data));
+          }
+        } catch (e) {
+          console.warn('Session setup warning:', e);
+        }
+      }
+
+      function autoBypassLogin() {
+        try {
+          const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+          if (!doc) return;
+          const pin = (currentActiveRole === 'SUPER_ADMIN') ? '9999' : '1234';
+          const btn = doc.querySelector(`.btn-quick-login[data-pin="${pin}"]`);
+          if (btn) btn.click();
+        } catch (e) {}
+      }
+
+      function suppressIframeScrollbars(iframe) {
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          if (!doc) return;
+          let s = doc.getElementById('df-suppress-scrollbar');
+          if (!s) {
+            s = doc.createElement('style');
+            s.id = 'df-suppress-scrollbar';
+            doc.head.appendChild(s);
+          }
+          s.textContent = `
+            html, body, #app, div, section, main, article, ul {
+              scrollbar-width: none !important;
+              -ms-overflow-style: none !important;
+            }
+            ::-webkit-scrollbar {
+              display: none !important;
+              width: 0 !important;
+              height: 0 !important;
+              background: transparent !important;
+            }
+          `;
+        } catch (e) {}
+      }
+
+      desktopIframe.addEventListener('load', () => {
+        setTimeout(autoBypassLogin, 250);
+      });
+
+      mobileIframe.addEventListener('load', () => {
+        suppressIframeScrollbars(mobileIframe);
+      });
+
+      // Initial staff pre-auth
+      ensureDemoAuth('RESTAURANT_ADMIN');
+
+      // Helper to log telemetry
+      function logTelemetry(msg, icon = '🔔') {
+        const item = document.createElement('span');
+        item.className = 'telemetry-item';
+        const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        item.innerHTML = `[${time}] ${icon} ${msg}`;
+        telemetryFeed.prepend(item);
+      }
+
+      // Visual Spotlight HUD Toast
+      function showSpotlight(msg, icon = '⚡', duration = 3800) {
+        if (!spotlightToast) return;
+        spotlightIcon.textContent = icon;
+        spotlightText.innerHTML = msg;
+        spotlightToast.classList.add('visible');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          spotlightToast.classList.remove('visible');
+        }, duration);
+      }
+
+
+      // Tab Switcher for Desktop Frame
+      tabStaff.addEventListener('click', () => {
+        tabStaff.classList.add('active');
+        tabSaas.classList.remove('active');
+        tabHub.classList.remove('active');
+        ensureDemoAuth('RESTAURANT_ADMIN');
+        desktopIframe.src = './?view=admin';
+        urlText.textContent = 'https://dineflow.io/kitchen?view=admin';
+        updateSandboxUrlQuery({ role: 'staff' });
+        logTelemetry('Switched desktop view to Kitchen Staff OS (KDS)', '👨‍🍳');
+      });
+
+      tabSaas.addEventListener('click', () => {
+        tabSaas.classList.add('active');
+        tabStaff.classList.remove('active');
+        tabHub.classList.remove('active');
+        ensureDemoAuth('SUPER_ADMIN');
+        desktopIframe.src = './?view=super-admin';
+        urlText.textContent = 'https://dineflow.io/hq?view=super-admin';
+        updateSandboxUrlQuery({ role: 'saas' });
+        logTelemetry('Switched desktop view to SaaS Platform Super Admin HQ', '⚡');
+      });
+
+      tabHub.addEventListener('click', () => {
+        tabHub.classList.add('active');
+        tabStaff.classList.remove('active');
+        tabSaas.classList.remove('active');
+        desktopIframe.src = './?view=hub';
+        urlText.textContent = 'https://dineflow.io/hub?view=hub';
+        updateSandboxUrlQuery({ role: 'hub' });
+        logTelemetry('Switched desktop view to DineFlow Platform Showcase Hub', '🌐');
+      });
+
+      // --------------------------------------------------------------------------
+      // CHOREOGRAPHED OPERATIONS PIPELINE (STAGES 1 TO 6)
+      // --------------------------------------------------------------------------
+
+      // STAGE 1: Scan Table Tent QR Code
+      function executeStage1_ScanQR(callback) {
+        if (isQrScanned) {
+          if (callback) callback();
+          return;
+        }
+
+        playChime('shutter');
+        cameraReticle?.classList.add('verified');
+        if (scannerStatusLabel) {
+          scannerStatusLabel.innerHTML = '<strong>Table T12 Verified ✓</strong> Unlocking Menu...';
+        }
+        showSpotlight('<strong>[Stage 1/6] QR Code Scanned!</strong> Customer at Table T12 accesses digital dining menu.', '📷');
+        logTelemetry('Guest scanned Table T12 tent stand QR code & unlocked menu', '📷');
+
+        setTimeout(() => {
+          qrScannerOverlay?.classList.add('scanned');
+          isQrScanned = true;
+
+          // Auto-enter digital menu inside mobile iframe
+          setTimeout(() => {
+            try {
+              const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+              if (doc) {
+                const enterBtn = doc.getElementById('btn-enter-menu') || doc.querySelector('.df-splash-btn');
+                if (enterBtn) enterBtn.click();
+              }
+            } catch (e) {}
+            if (callback) callback();
+          }, 400);
+        }, 700);
+      }
+
+      document.getElementById('btn-scan-qr')?.addEventListener('click', () => {
+        executeStage1_ScanQR();
+      });
+
+      // STAGE 2: Customer Places Order from Mobile Menu
+      function executeStage2_PlaceOrder(callback) {
+        executeStage1_ScanQR(() => {
+          tabStaff.click();
+          showSpotlight('<strong>[Stage 2/6] Selecting Gourmet Delicacy...</strong> Adding Truffle Risotto to cart.', '🍕');
+
+          setTimeout(() => {
+            try {
+              const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+              if (!doc) return;
+
+              // Close any dangling modal/sheet from prior interactions
+              const closeExisting = doc.querySelector('.df-sheet-close');
+              if (closeExisting) closeExisting.click();
+
+              // Ensure splash screen is unlocked if still visible
+              const enterBtn = doc.getElementById('btn-enter-menu') || doc.querySelector('.df-splash-btn');
+              if (enterBtn) enterBtn.click();
+
+              // Step 1: Click Quick Add on the first delicacy
+              setTimeout(() => {
+                const addBtn = doc.querySelector('.btn-quick-add');
+                if (addBtn) addBtn.click();
+                playChime('advance');
+
+                // Step 2: Handle customization modal if dish has add-ons/options
+                setTimeout(() => {
+                  const modalAddBtn = doc.getElementById('btn-modal-add-cart');
+                  if (modalAddBtn) {
+                    modalAddBtn.click();
+                    playChime('advance');
+                  }
+                  logTelemetry('Guest added Truffle Mushroom Risotto to cart (Table T12)', '🍽️');
+
+                  // Step 3: Open Mobile Cart
+                  setTimeout(() => {
+                    const cartBtn = doc.getElementById('nav-tab-cart') || doc.querySelector('.df-nav-tab:nth-child(2)');
+                    if (cartBtn) cartBtn.click();
+                    showSpotlight('<strong>Reviewing Mobile Cart...</strong> Itemized total with 1-tap UPI checkout.', '🛒');
+
+                    // Step 4: Submit Order via UPI / Table Pay
+                    setTimeout(() => {
+                      const placeBtn = doc.getElementById('btn-place-order');
+                      if (placeBtn) {
+                        placeBtn.click();
+                        playChime('order');
+                        showSpotlight('<strong>[Stage 2/6] Order Dispatched!</strong> Live 5-stage tracker active. Kitchen received ticket!', '🔔');
+                        logTelemetry('Order placed via instant UPI! Synced across devices via BroadcastChannel.', '💳');
+                      }
+                      if (callback) callback();
+                    }, 850);
+                  }, 650);
+                }, 550);
+              }, 450);
+            } catch (e) {
+              console.error('Stage 2 error', e);
+              if (callback) callback();
+            }
+          }, 350);
+        });
+      }
+
+      // STAGE 3: Kitchen Cooks & Serves (Parallel KDS Progression)
+      function executeStage3_CookAndServe(callback) {
+        tabStaff.click();
+        showSpotlight('<strong>[Stage 3/6 - Part 1] Kitchen receives ticket!</strong> Chef clicks "Cook" to start preparation.', '👨‍🍳');
+
+        setTimeout(() => {
+          try {
+            const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+            // Ensure Staff OS is on Live Kitchen tab
+            const liveTab = doc.querySelector('.df-admin-nav-item[data-tab="orders"]');
+            if (liveTab && !liveTab.classList.contains('active')) liveTab.click();
+
+            // 1. Advance to PREPARING
+            const cookBtn = doc.querySelector('.btn-status-next[data-next="PREPARING"]') || doc.querySelector('.btn-status-next');
+            if (cookBtn) cookBtn.click();
+          } catch (e) {}
+
+          playChime('advance');
+          showSpotlight('<strong>Cooking in progress!</strong> Notice Table T12 phone tracker lights up Stage 2/3 live!', '🍳');
+          logTelemetry('Kitchen Staff moved order to PREPARING. Phone tracker synced in real-time.', '🍳');
+
+          // 2. Advance to READY
+          setTimeout(() => {
+            try {
+              const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+              const readyBtn = doc.querySelector('.btn-status-next[data-next="READY"]') || doc.querySelector('.btn-status-next');
+              if (readyBtn) readyBtn.click();
+            } catch (e) {}
+
+            playChime('advance');
+            showSpotlight('<strong>[Stage 3/6 - Part 2] Plated & Ready!</strong> Customer phone tracker updates to Stage 4.', '🔔');
+            logTelemetry('Kitchen Staff marked order READY for delivery. Ticket moved on Kanban.', '🔔');
+
+            // 3. Advance to SERVED
+            setTimeout(() => {
+              try {
+                const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                const serveBtn = doc.querySelector('.btn-status-next[data-next="SERVED"]') || doc.querySelector('.btn-status-next');
+                if (serveBtn) serveBtn.click();
+              } catch (e) {}
+
+              playChime('advance');
+              showSpotlight('<strong>[Stage 3/6 - Part 3] Delivered to Table T12!</strong> Customer phone marks meal Served!', '🍽️');
+              logTelemetry('Waiter marked order SERVED to Table T12. Customer live tracker completed.', '✅');
+
+              if (callback) callback();
+            }, 2600);
+          }, 2400);
+        }, 800);
+      }
+
+      // STAGE 4: Customer Calls Staff Service Bell
+      function executeStage4_CallStaff(callback) {
+        showSpotlight('<strong>[Stage 4/6] Customer Service Bell!</strong> Table T12 requests Chilled Water.', '🛎️');
+
+        try {
+          const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+          if (doc) {
+            // Close order tracker modal if open
+            const closeBtn = doc.getElementById('btn-close-orders') || doc.querySelector('.df-sheet-close');
+            if (closeBtn) closeBtn.click();
+
+            setTimeout(() => {
+              // Open Call Staff Modal
+              const callBtn = doc.getElementById('btn-call-staff-top') || doc.getElementById('act-call-staff');
+              if (callBtn) callBtn.click();
+
+              setTimeout(() => {
+                // Select "Need Water"
+                const waterBtn = doc.querySelector('.df-staff-opt-btn[data-type="WATER"]') || doc.querySelector('.df-staff-opt-btn');
+                if (waterBtn) waterBtn.click();
+                playChime('bell');
+
+                // Switch Staff OS to Service Requests tab to visually highlight the alert!
+                try {
+                  const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                  const serviceTab = doc2.querySelector('.df-admin-nav-item[data-tab="staff-calls"]');
+                  if (serviceTab) serviceTab.click();
+                } catch (e) {}
+
+                showSpotlight('<strong>Service Bell Rung!</strong> Watch Staff OS on the right flash Table T12 assistance alert!', '🛎️');
+                logTelemetry('Table T12 summoned waiter for Chilled Water. Alert ringing on Staff OS console.', '🛎️');
+
+                // Auto-acknowledge from staff OS
+                setTimeout(() => {
+                  try {
+                    const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                    const resolveBtn = doc2.querySelector('.btn-resolve-call, .btn-ack-staff');
+                    if (resolveBtn) resolveBtn.click();
+                  } catch (e) {}
+
+                  playChime('advance');
+                  showSpotlight('<strong>Staff Attended Table T12!</strong> Service request resolved on both screens.', '✅');
+                  logTelemetry('Staff acknowledged and attended Table T12 service call.', '✅');
+
+                  // Return Staff OS to Live Kitchen after brief moment
+                  setTimeout(() => {
+                    try {
+                      const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                      const liveTab = doc2.querySelector('.df-admin-nav-item[data-tab="orders"]');
+                      if (liveTab) liveTab.click();
+                    } catch (e) {}
+                  }, 1200);
+
+                  if (callback) callback();
+                }, 2200);
+              }, 600);
+            }, 350);
+          }
+        } catch (e) {
+          if (callback) callback();
+        }
+      }
+
+      // STAGE 5: Request Bill, Settle Payment & Receipt
+      function executeStage5_SettleBill(callback) {
+        showSpotlight('<strong>[Stage 5/6] Customer Requests Bill!</strong> Generating table itemized receipt.', '🧾');
+
+        try {
+          const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+          if (doc) {
+            // Close any open modals
+            const closeBtn = doc.querySelector('.df-sheet-close');
+            if (closeBtn) closeBtn.click();
+
+            setTimeout(() => {
+              // Open Bill Modal
+              const billBtn = doc.getElementById('btn-request-bill') || doc.getElementById('act-request-bill') || doc.querySelector('.df-quick-action-card:nth-child(3)');
+              if (billBtn) billBtn.click();
+
+              // Switch Staff OS to Bill Requests tab to display live bill ticket
+              setTimeout(() => {
+                try {
+                  const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                  const billTab = doc2.querySelector('.df-admin-nav-item[data-tab="bills"]');
+                  if (billTab) billTab.click();
+                } catch (e) {}
+
+                // Settle from Customer UPI modal
+                setTimeout(() => {
+                  try {
+                    // Click instant settlement in customer bill sheet
+                    const upiPaidBtn = doc.getElementById('btn-simulate-upi-paid') || doc.getElementById('btn-instant-settle-demo');
+                    if (upiPaidBtn) {
+                      upiPaidBtn.click();
+                    } else {
+                      // Fallback: settle from cashier OS
+                      const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                      const settleBtn = doc2.querySelector('.btn-settle-bill, [data-action="settle"]');
+                      if (settleBtn) settleBtn.click();
+                    }
+                  } catch (e) {}
+
+                  playChime('advance');
+                  showSpotlight('<strong>Table T12 Bill Settled!</strong> Zero-balance receipt generated live on phone.', '💳');
+                  logTelemetry('Table T12 bill settled in full via UPI. Zero-balance receipt active.', '🧾');
+
+                  // Return Staff OS to Live Kitchen after 1.4s
+                  setTimeout(() => {
+                    try {
+                      const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                      const liveTab = doc2.querySelector('.df-admin-nav-item[data-tab="orders"]');
+                      if (liveTab) liveTab.click();
+                    } catch (e) {}
+                  }, 1400);
+
+                  if (callback) callback();
+                }, 1400);
+              }, 400);
+            }, 300);
+          }
+        } catch (e) {
+          if (callback) callback();
+        }
+      }
+
+      // STAGE 6: Customer Rates Experience (5-Star Review)
+      function executeStage6_SubmitReview(callback) {
+        showSpotlight('<strong>[Stage 6/6] Dining Feedback!</strong> Customer rates 5 Stars for The Urban Plate.', '⭐');
+
+        try {
+          const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+          if (doc) {
+            // Click "Leave Review" button from settled bill modal or header
+            const reviewBtn = doc.getElementById('btn-bill-feedback') || doc.getElementById('btn-order-feedback');
+            if (reviewBtn) reviewBtn.click();
+
+            setTimeout(() => {
+              // Fill in high praise comment
+              const commentInput = doc.getElementById('feedback-comment');
+              if (commentInput) {
+                commentInput.value = 'Exquisite Truffle Risotto and lightning-fast contactless QR ordering! 10/10 service.';
+              }
+
+              // Submit Review
+              setTimeout(() => {
+                const submitBtn = doc.getElementById('btn-submit-feedback');
+                if (submitBtn) submitBtn.click();
+
+                // Switch Staff OS to Guest Reviews tab to showcase the live review!
+                setTimeout(() => {
+                  try {
+                    const doc2 = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+                    const reviewTab = doc2.querySelector('.df-admin-nav-item[data-tab="reviews"]');
+                    if (reviewTab) reviewTab.click();
+                  } catch (e) {}
+                }, 600);
+
+                playChime('success');
+                showSpotlight('<strong>🎉 5-Star Review Submitted!</strong> Dining loop complete. <a href="./?section=roi-calculator" style="color:#E5A93C;text-decoration:underline;margin-left:6px;font-weight:700;">Calculate Your ROI &amp; Claim Pilot &rarr;</a>', '⭐', 8000);
+                logTelemetry('Guest submitted 5-Star review! Saved into restaurant CRM & analytics. Ready for dining room deployment.', '🌟');
+
+                if (callback) callback();
+              }, 900);
+            }, 500);
+          }
+        } catch (e) {
+          if (callback) callback();
+        }
+      }
+
+      // Individual Timeline Button Bindings
+      document.getElementById('mission-1')?.addEventListener('click', () => {
+        updateSandboxUrlQuery({ step: '1' });
+        executeStage1_ScanQR();
+      });
+
+      document.getElementById('mission-2')?.addEventListener('click', () => {
+        updateSandboxUrlQuery({ step: '2' });
+        executeStage2_PlaceOrder();
+      });
+
+      document.getElementById('mission-3')?.addEventListener('click', () => {
+        updateSandboxUrlQuery({ step: '3' });
+        executeStage3_CookAndServe();
+      });
+
+      document.getElementById('mission-4')?.addEventListener('click', () => {
+        updateSandboxUrlQuery({ step: '4' });
+        executeStage4_CallStaff();
+      });
+
+      document.getElementById('mission-5')?.addEventListener('click', () => {
+        updateSandboxUrlQuery({ step: '5' });
+        executeStage5_SettleBill();
+      });
+
+      document.getElementById('mission-6')?.addEventListener('click', () => {
+        updateSandboxUrlQuery({ step: '6' });
+        executeStage6_SubmitReview();
+      });
+
+      // Master Full End-to-End Walkthrough
+      document.getElementById('btn-auto-demo')?.addEventListener('click', () => {
+        if (isWalkthroughRunning) return;
+        isWalkthroughRunning = true;
+        updateSandboxUrlQuery({ sim: 'true', step: null });
+        logTelemetry('Starting continuous 6-stage end-to-end operations walkthrough...', '🚀');
+
+        // Stage 1: Scan QR
+        executeStage1_ScanQR(() => {
+          setTimeout(() => {
+            // Stage 2: Place Food Order
+            executeStage2_PlaceOrder(() => {
+              setTimeout(() => {
+                // Stage 3: Kitchen Cooks & Serves
+                executeStage3_CookAndServe(() => {
+                  setTimeout(() => {
+                    // Stage 4: Call Staff
+                    executeStage4_CallStaff(() => {
+                      setTimeout(() => {
+                        // Stage 5: Settle Bill
+                        executeStage5_SettleBill(() => {
+                          setTimeout(() => {
+                            // Stage 6: Rate & Review
+                            executeStage6_SubmitReview(() => {
+                              isWalkthroughRunning = false;
+                              updateSandboxUrlQuery({ sim: null });
+                            });
+                          }, 1800);
+                        });
+                      }, 1800);
+                    });
+                  }, 1800);
+                });
+              }, 1800);
+            });
+          }, 1200);
+        });
+      });
+
+      // Reset Demo State to Table Tent QR Scanner
+      document.getElementById('btn-reset-demo')?.addEventListener('click', () => {
+        try {
+          localStorage.removeItem('dineflow_data');
+          isQrScanned = false;
+          cameraReticle?.classList.remove('verified');
+          qrScannerOverlay?.classList.remove('scanned');
+          if (scannerStatusLabel) {
+            scannerStatusLabel.textContent = 'Align camera to scan Table T12 QR';
+          }
+          showSpotlight('<strong>Restored to Table Stand!</strong> Ready to scan Table T12 QR again.', '🔄');
+          logTelemetry('Demo restored to initial at-table state with QR stand', '🔄');
+
+          mobileIframe.src = './?r=the-urban-plate&t=T12&v=1.9.4';
+          ensureDemoAuth('RESTAURANT_ADMIN');
+          tabStaff.click();
+          updateSandboxUrlQuery({ step: null, sim: null, role: 'staff' });
+        } catch (e) {}
+      });
+
+      // Sound Toggle
+      document.getElementById('btn-toggle-sound')?.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        const soundText = document.getElementById('sound-icon');
+        if (soundText) {
+          soundText.textContent = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+        }
+        if (soundEnabled) playChime('advance');
+        updateSandboxUrlQuery({ sound: soundEnabled ? null : 'false' });
+        logTelemetry(`Audio notification state: ${soundEnabled ? 'Enabled' : 'Muted'}`, soundEnabled ? '🔊' : '🔇');
+      });
+
+      // Architecture Modal
+      const archModal = document.getElementById('arch-modal-backdrop');
+      document.getElementById('btn-open-arch')?.addEventListener('click', () => {
+        archModal?.classList.add('open');
+      });
+      document.getElementById('btn-close-arch')?.addEventListener('click', () => {
+        archModal?.classList.remove('open');
+      });
+      document.getElementById('btn-close-arch-cta')?.addEventListener('click', () => {
+        archModal?.classList.remove('open');
+      });
+      archModal?.addEventListener('click', (e) => {
+        if (e.target === archModal) archModal.classList.remove('open');
+      });
+
+      // Quick Customer Action Triggers
+      document.getElementById('btn-trigger-add')?.addEventListener('click', () => {
+        try {
+          const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+          const addBtn = doc.querySelector('.btn-quick-add');
+          if (addBtn) {
+            addBtn.click();
+            playChime('advance');
+            showSpotlight('<strong>Dish Added to Cart!</strong>', '🛒');
+          }
+        } catch (e) {}
+      });
+
+      document.getElementById('btn-trigger-cart')?.addEventListener('click', () => {
+        try {
+          const doc = mobileIframe.contentDocument || mobileIframe.contentWindow.document;
+          const cartBtn = doc.getElementById('nav-tab-cart') || doc.querySelector('.df-nav-tab:nth-child(2)');
+          if (cartBtn) cartBtn.click();
+        } catch (e) {}
+      });
+
+      document.getElementById('btn-trigger-order')?.addEventListener('click', () => {
+        executeStage2_PlaceOrder();
+      });
+
+      document.getElementById('btn-trigger-call')?.addEventListener('click', () => {
+        executeStage4_CallStaff();
+      });
+
+      document.getElementById('btn-trigger-bill')?.addEventListener('click', () => {
+        executeStage5_SettleBill();
+      });
+
+      // Quick Kitchen Actions
+      document.getElementById('btn-kitchen-advance')?.addEventListener('click', () => {
+        executeStage3_CookAndServe();
+      });
+
+      document.getElementById('btn-kitchen-ack')?.addEventListener('click', () => {
+        try {
+          const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+          const resolveBtn = doc.querySelector('.btn-resolve-call, .btn-ack-staff');
+          if (resolveBtn) {
+            resolveBtn.click();
+            playChime('advance');
+            showSpotlight('<strong>Staff Attended Table T12!</strong>', '✅');
+          }
+        } catch (e) {}
+      });
+
+      document.getElementById('btn-kitchen-settle')?.addEventListener('click', () => {
+        executeStage5_SettleBill();
+      });
+
+      // Developer Drawer Toggle
+      const devDrawer = document.getElementById('dev-drawer');
+      const btnToggleDrawer = document.getElementById('btn-toggle-drawer');
+      const drawerToggleIcon = document.getElementById('drawer-toggle-icon');
+
+      btnToggleDrawer?.addEventListener('click', () => {
+        devDrawer?.classList.toggle('collapsed');
+        const isCollapsed = devDrawer?.classList.contains('collapsed');
+        if (drawerToggleIcon) {
+          drawerToggleIcon.textContent = isCollapsed ? '▲ Show Controls & Event Bus' : '▼ Hide Controls';
+        }
+      });
+
+      // BroadcastChannel Live Event Listener
+      if (typeof BroadcastChannel !== 'undefined') {
+        const handleSyncMessage = (event) => {
+          const data = event.data;
+          if (data && data.meta) {
+            const act = data.meta.action;
+            if (act === 'NEW_ORDER') {
+              logTelemetry(`⚡ [BROADCAST] Kitchen received NEW ORDER from Table T12!`, '🔥');
+              playChime('order');
+            } else if (act === 'CALL_STAFF' || act === 'STAFF_CALL') {
+              logTelemetry(`🛎️ [BROADCAST] Table T12 called waiter service! (${data.meta.requestLabel || 'Assistance'})`, '🛎️');
+              playChime('bell');
+            } else if (act === 'ORDER_STATUS_CHANGED') {
+              logTelemetry(`👨‍🍳 [BROADCAST] Kitchen moved order stage to ${data.meta.newStatus || 'NEXT'}`, '✅');
+              playChime('advance');
+            } else if (act === 'BILL_REQUEST') {
+              logTelemetry(`💳 [BROADCAST] Table T12 requested their dining bill`, '🧾');
+            } else if (act === 'BILL_SETTLED') {
+              logTelemetry(`✅ [BROADCAST] Table T12 bill settled in full`, '💵');
+              playChime('advance');
+            }
+          }
+        };
+        try {
+          const syncChan = new BroadcastChannel('dineflow_realtime_sync');
+          syncChan.onmessage = handleSyncMessage;
+          const legacyChan = new BroadcastChannel('dineflow_channel');
+          legacyChan.onmessage = handleSyncMessage;
+        } catch (e) {
+          console.warn('BroadcastChannel error', e);
+        }
+      }
+
+      // --------------------------------------------------------------------------
+      // INITIALIZE STATE FROM URL QUERY PARAMETERS
+      // --------------------------------------------------------------------------
+      try {
+        const initialRole = getQueryParam('role');
+        const initialStep = getQueryParam('step');
+        const initialSim = getQueryParam('sim') || getQueryParam('autostart');
+        const initialSound = getQueryParam('sound');
+
+        if (initialSound === 'false' || initialSound === '0' || initialSound === 'mute') {
+          soundEnabled = false;
+          const soundText = document.getElementById('sound-icon');
+          if (soundText) soundText.textContent = '🔇 Sound: OFF';
+        }
+
+        if (initialRole === 'saas' || initialRole === 'super-admin' || initialRole === 'hq') {
+          tabSaas.click();
+        } else if (initialRole === 'hub') {
+          tabHub.click();
+        } else {
+          updateSandboxUrlQuery({ role: 'staff' });
+        }
+
+        if (initialSim === 'true') {
+          setTimeout(() => {
+            document.getElementById('btn-auto-demo')?.click();
+          }, 900);
+        } else if (initialStep) {
+          setTimeout(() => {
+            const stepBtn = document.getElementById('mission-' + initialStep);
+            if (stepBtn) stepBtn.click();
+          }, 700);
+        }
+      } catch (e) {
+        console.warn('URL query parameter initialization error:', e);
+      }
+
+    })();
+  </script>
+</body>
+
+</html>

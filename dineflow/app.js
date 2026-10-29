@@ -892,6 +892,12 @@
       }
     }
 
+    // Connect & hydrate live PostgreSQL database stream
+    if (typeof DineFlowDB !== 'undefined' && typeof DineFlowDB.init === 'function') {
+      const activeTenantSlug = route.tenantSlug || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate';
+      DineFlowDB.init(activeTenantSlug);
+    }
+
     const isStaffAuth = state.session && state.session.isAuthenticated && (state.session.role === 'RESTAURANT_ADMIN' || state.session.role === 'SUPER_ADMIN');
     const isSuperAuth = state.session && state.session.isAuthenticated && state.session.role === 'SUPER_ADMIN';
 
@@ -1016,6 +1022,10 @@
           </div>
         </div>
         <div class="df-top-actions">
+          <div class="df-cloud-sync-pill" title="Live PostgreSQL Realtime Stream Active" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; background: rgba(16, 185, 129, 0.12); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.35); padding: 0.28rem 0.65rem; border-radius: 999px;">
+            <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10B981; box-shadow: 0 0 8px #10B981;"></span>
+            <span class="df-hide-mobile">Postgres </span>Live
+          </div>
           <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
             <span>← Back to Portfolio</span>
           </a>
@@ -3606,21 +3616,34 @@
                 </span>
               </div>
               <div class="df-kanban-cards">
-                ${orders.length ? orders.map(order => `
-                  <div class="df-order-admin-card" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
+                ${orders.length ? orders.map(order => {
+                  const orderDate = new Date(order.timestamp || Date.now());
+                  const elapsedMins = Math.max(0, Math.floor((Date.now() - orderDate.getTime()) / 60000));
+                  const isPending = order.status === 'RECEIVED' || order.status === 'CONFIRMED' || order.status === 'PREPARING';
+                  const isOverdue = isPending && elapsedMins >= 20;
+                  const isWarning = isPending && elapsedMins >= 10 && !isOverdue;
+
+                  return `
+                  <div class="df-order-admin-card ${isOverdue ? 'df-card-overdue' : (isWarning ? 'df-card-warning' : '')}" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
                     <div class="df-order-card-header">
                       <div style="display: flex; align-items: center; gap: 0.35rem;">
                         <span class="df-drag-handle" title="Drag &amp; drop ticket across stages">⠿</span>
                         <span class="df-order-card-table">Table ${order.tableId}</span>
                       </div>
-                      <span style="font-size: 0.72rem; color: var(--text-dim); font-weight: 700;">#${order.id}</span>
+                      <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <span class="df-elapsed-badge" data-order-timestamp="${orderDate.getTime()}" style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; ${isOverdue ? 'background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4);' : (isWarning ? 'background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.12); color: #94A3B8;')}">
+                          ⏱️ ${elapsedMins}m ${isOverdue ? '• LATE' : ''}
+                        </span>
+                        <span style="font-size: 0.72rem; color: var(--text-dim); font-weight: 700;">#${order.id}</span>
+                      </div>
                     </div>
                     <div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
                       ${order.customerName}
                     </div>
                     <div class="df-order-items-snippet">
                       ${order.items.map(it => `
-                        <div>• ${it.quantity} × ${it.name} ${it.customizations?.spice ? `(${it.customizations.spice})` : ''}</div>
+                        <div class="df-kds-item-row" style="cursor: pointer; user-select: none;" title="Click to strike-through item when prepared" onclick="this.classList.toggle('df-item-prepared');">
+                          • ${it.quantity} × <span>${it.name}</span> ${it.customizations?.spice ? `(${it.customizations.spice})` : ''}</div>
                       `).join('')}
                     </div>
                     ${order.items.some(i => i.specialInstructions) ? `
@@ -3631,6 +3654,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; margin-top: 0.25rem;">
                       <span style="font-size: 0.85rem; font-weight: 800; color: var(--brand-primary);">${tenant.currency}${order.total.toFixed(0)}</span>
                       <div style="display: flex; gap: 0.35rem;">
+                        <button class="df-pill-btn btn-print-kot" data-id="${order.id}" title="Print 80mm Kitchen Order Ticket (KOT)" style="font-size: 0.68rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-muted);">&#128424; KOT</button>
                         ${order.status === 'RECEIVED' || order.status === 'CONFIRMED' ? `
                           <button class="df-pill-btn primary btn-status-next" data-id="${order.id}" data-next="PREPARING" style="font-size: 0.68rem; padding: 0.25rem 0.65rem;">
                             🍳 Cook
@@ -3654,7 +3678,8 @@
                       </div>
                     </div>
                   </div>
-                `).join('') : `
+                `;
+              }).join('') : `
                   <div style="text-align: center; padding: 2rem 0; color: var(--text-dim); font-size: 0.8rem;">
                     No orders in this stage
                   </div>
@@ -3699,6 +3724,19 @@
       // Re-render whole admin view so top stats cards update in real time
       renderAdminView(document.getElementById('app'), tenant);
     }
+
+    // Kitchen Order Ticket (KOT) Thermal Print
+    document.querySelectorAll('.btn-print-kot').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const orderId = btn.getAttribute('data-id');
+        const order = state.orders.find(o => o.id === orderId);
+        if (order && window.DineFlowPrinter) {
+          const html = window.DineFlowPrinter.generateKotHTML(order, tenant);
+          window.DineFlowPrinter.openPreviewModal(`Kitchen Order Ticket - #${order.id}`, html);
+        }
+      });
+    });
 
     // Button click status advance
     document.querySelectorAll('.btn-status-next').forEach(btn => {
@@ -3845,6 +3883,47 @@
       renderAdminView(document.getElementById('app'), tenant);
       showToast('Kitchen feed refreshed');
     });
+
+    // Auto-update KDS aging timers every 30 seconds smoothly without DOM re-render
+    if (window.__dfKdsAgingInterval) clearInterval(window.__dfKdsAgingInterval);
+    window.__dfKdsAgingInterval = setInterval(() => {
+      const badges = container.querySelectorAll('.df-elapsed-badge[data-order-timestamp]');
+      if (!badges || !badges.length) {
+        clearInterval(window.__dfKdsAgingInterval);
+        return;
+      }
+      const now = Date.now();
+      badges.forEach(badge => {
+        const ts = parseInt(badge.getAttribute('data-order-timestamp'), 10) || now;
+        const elapsed = Math.max(0, Math.floor((now - ts) / 60000));
+        const card = badge.closest('.df-order-admin-card');
+        const status = card ? card.getAttribute('data-current-status') : '';
+        const isPending = status === 'RECEIVED' || status === 'CONFIRMED' || status === 'PREPARING';
+        const isOverdue = isPending && elapsed >= 20;
+        const isWarning = isPending && elapsed >= 10 && !isOverdue;
+
+        badge.innerHTML = `â±ï¸ ${elapsed}m ${isOverdue ? 'â€¢ LATE' : ''}`;
+        if (isOverdue) {
+          badge.style.background = 'rgba(239, 68, 68, 0.2)';
+          badge.style.color = '#EF4444';
+          badge.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+          card?.classList.add('df-card-overdue');
+          card?.classList.remove('df-card-warning');
+        } else if (isWarning) {
+          badge.style.background = 'rgba(245, 158, 11, 0.2)';
+          badge.style.color = '#F59E0B';
+          badge.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+          card?.classList.add('df-card-warning');
+          card?.classList.remove('df-card-overdue');
+        } else {
+          badge.style.background = 'rgba(148, 163, 184, 0.12)';
+          badge.style.color = '#94A3B8';
+          badge.style.border = 'none';
+          card?.classList.remove('df-card-overdue');
+          card?.classList.remove('df-card-warning');
+        }
+      });
+    }, 30000);
   }
 
   // TABLES & QR CODE MANAGEMENT
@@ -3871,12 +3950,34 @@
         </div>
       </div>
 
+      <div class="df-floor-metrics-bar" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 0.75rem 1rem; border-radius: var(--radius-md);">
+        <div style="display: flex; gap: 1.2rem; align-items: center; flex: 1; flex-wrap: wrap;">
+          <span style="font-size: 0.82rem; color: var(--text-muted);">
+            Total: <strong style="color: #fff;">${tenantTables.length}</strong>
+          </span>
+          <span style="font-size: 0.82rem; color: #10B981;">
+            🟢 Available: <strong style="color: #10B981;">${tenantTables.filter(t => t.status === 'available').length}</strong>
+          </span>
+          <span style="font-size: 0.82rem; color: #EF4444;">
+            🔴 Occupied: <strong style="color: #EF4444;">${tenantTables.filter(t => t.status === 'occupied').length}</strong>
+          </span>
+          <span style="font-size: 0.82rem; color: var(--brand-primary);">
+            📊 Occupancy: <strong>${tenantTables.length ? Math.round((tenantTables.filter(t => t.status === 'occupied').length / tenantTables.length) * 100) : 0}%</strong>
+          </span>
+        </div>
+        <div class="df-floor-filter-pills" style="display: flex; gap: 0.35rem;">
+          <button class="df-nav-pill active btn-filter-tables" data-filter="all" style="font-size: 0.72rem; padding: 0.25rem 0.6rem;">All (${tenantTables.length})</button>
+          <button class="df-nav-pill btn-filter-tables" data-filter="occupied" style="font-size: 0.72rem; padding: 0.25rem 0.6rem;">🔴 Occupied (${tenantTables.filter(t => t.status === 'occupied').length})</button>
+          <button class="df-nav-pill btn-filter-tables" data-filter="available" style="font-size: 0.72rem; padding: 0.25rem 0.6rem;">🟢 Available (${tenantTables.filter(t => t.status === 'available').length})</button>
+        </div>
+      </div>
+
       <div class="df-tables-grid">
         ${tenantTables.map(table => {
           // Construct normalized target URL for table
           const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
           return `
-            <div class="df-table-admin-card">
+            <div class="df-table-admin-card" data-table-status="${table.status}">
               <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff;">${table.name}</h4>
                 <span class="df-micro-badge ${table.status === 'occupied' ? 'status-occupied' : 'status-available'}" style="text-transform: uppercase;">
@@ -3974,6 +4075,19 @@
           SoundFX.chime('success');
           renderAdminView(document.getElementById('app'), tenant);
         }
+      });
+    });
+
+    // Filter Floor Tables by Status
+    document.querySelectorAll('.btn-filter-tables').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.btn-filter-tables').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const filter = pill.getAttribute('data-filter');
+        document.querySelectorAll('.df-table-admin-card').forEach(card => {
+          const status = card.getAttribute('data-table-status');
+          card.style.display = (filter === 'all' || status === filter) ? '' : 'none';
+        });
       });
     });
 
@@ -4808,7 +4922,12 @@
         const r = state.staffRequests.find(req => req.id === id);
         if (r) {
           r.status = 'ATTENDED';
-          DineFlowStore.save(state);
+          DineFlowStore.save(state, {
+            action: 'STAFF_REQUEST_RESOLVED',
+            requestId: r.id,
+            tableId: r.tableId,
+            tenantSlug: tenantSlug
+          });
           SoundFX.chime('success');
           showToast(`Staff marked attending Table ${r.tableId}`);
           renderStaffRequestsFeed(container, tenant);
@@ -4844,7 +4963,7 @@
 
             <div>
               ${bill.status === 'PENDING' ? `
-                <button class="df-pill-btn primary btn-settle-bill" data-id="${bill.id}">
+                <button class="df-pill-btn btn-print-bill-slip" data-table="${bill.tableId}" data-bill-id="${bill.id}" title="Print 80mm Guest Bill Receipt" style="font-size: 0.72rem; padding: 0.35rem 0.65rem; margin-right: 0.4rem;">&#128424; Print Slip</button><button class="df-pill-btn primary btn-settle-bill" data-id="${bill.id}">
                   Mark Paid & Clear Table
                 </button>
               ` : `
@@ -4861,6 +4980,18 @@
         `}
       </div>
     `;
+
+    // Bill Request Receipt Print
+    document.querySelectorAll('.btn-print-bill-slip').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tableId = btn.getAttribute('data-table');
+        if (tableId && window.DineFlowPrinter) {
+          const html = window.DineFlowPrinter.generateBillHTML(tableId, tenant, state.orders);
+          window.DineFlowPrinter.openPreviewModal(`Guest Bill - Table ${tableId}`, html);
+        }
+      });
+    });
 
     document.querySelectorAll('.btn-settle-bill').forEach(btn => {
       btn.addEventListener('click', () => {

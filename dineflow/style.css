@@ -5031,3 +5031,20 @@ body.splash-active {
 }
 
 
+
+
+/* Phase 3: Live KDS & Floor Sync Enhancements */
+.df-item-prepared {
+  text-decoration: line-through;
+  opacity: 0.42;
+  transition: opacity 0.2s ease;
+}
+
+.df-card-warning {
+  border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+.df-card-overdue {
+  border-color: rgba(239, 68, 68, 0.6) !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.25) !important;
+}

@@ -2032,6 +2032,9 @@ const DineFlowStore = {
       if (meta && meta.action && typeof window !== 'undefined' && window.DineFlowCloudSync && typeof window.DineFlowCloudSync.broadcast === 'function') {
         window.DineFlowCloudSync.broadcast(meta);
       }
+      if (meta && meta.action && typeof window !== 'undefined' && window.DineFlowDB && typeof window.DineFlowDB.pushAction === 'function') {
+        window.DineFlowDB.pushAction(meta, data);
+      }
     } catch (e) {
       console.error('Failed saving localStorage', e);
     }

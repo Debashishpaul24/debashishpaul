@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RQEHBYXQBG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-RQEHBYXQBG');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- Instant Boot Shield: Eliminates pre-rendered landing page flash when launching Guest Menu or Staff OS directly -->
+  <script>
+    (function() {
+      try {
+        var s = window.location.search || '';
+        var h = window.location.hash || '';
+        if (s.indexOf('view=demo') !== -1 || s.indexOf('view=sandbox') !== -1) {
+          window.location.replace('demo.html' + s);
+          return;
+        }
+        if (s.indexOf('r=') !== -1 || s.indexOf('view=') !== -1 || (h.length > 1 && h.indexOf('section') === -1)) {
+          document.documentElement.classList.add('df-deep-loading');
+        }
+      } catch(e) {}
+    })();
+  </script>
+  <!-- Primary SEO Metadata -->
+  <title>DineFlow - QR Restaurant SaaS & Digital Dining Platform</title>
+  <meta name="title" content="DineFlow - QR Restaurant SaaS & Digital Dining Platform">
+  <meta name="description" content="Production-grade QR ordering SaaS for hospitality. Real-time kitchen KDS, dynamic table tent cards, mobile cart, instant UPI billing & multi-tenant operations.">
+  <meta name="keywords" content="QR Restaurant Menu, Digital Dining Platform, Restaurant SaaS, Kitchen Display System, Table Tent QR Codes, Contactless Dining, UPI Restaurant Billing, Multi-Tenant Restaurant OS, Debashish Paul">
+  <meta name="author" content="Debashish Paul">
+  <meta name="robots" content="index, follow">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.debashishpaul.in/dineflow/">
+
+  <!-- PWA & Mobile Web App Meta -->
+  <meta name="theme-color" content="#07090E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DineFlow">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+
+  <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="DineFlow - QR Restaurant SaaS">
+  <meta property="og:url" content="https://www.debashishpaul.in/dineflow/">
+  <meta property="og:title" content="DineFlow - QR Restaurant SaaS & Digital Dining Platform">
+  <meta property="og:description" content="Production-grade QR ordering SaaS for hospitality. Real-time kitchen KDS, dynamic table tent cards, mobile cart, instant UPI billing & multi-tenant operations.">
+  <meta property="og:image" content="https://www.debashishpaul.in/assets/dineflow-showcase.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DineFlow QR Restaurant SaaS Platform">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://www.debashishpaul.in/dineflow/">
+  <meta name="twitter:title" content="DineFlow - QR Restaurant SaaS & Digital Dining Platform">
+  <meta name="twitter:description" content="Scan. Order. Enjoy. Production-ready QR restaurant ordering platform with real-time kitchen KDS and multi-tenant management.">
+  <meta name="twitter:image" content="https://www.debashishpaul.in/assets/dineflow-showcase.jpg">
+
+  <!-- JSON-LD Structured Data Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://www.debashishpaul.in/dineflow/#software",
+        "name": "DineFlow",
+        "alternateName": "DineFlow - QR Restaurant SaaS",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All modern web browsers, iOS, Android",
+        "url": "https://www.debashishpaul.in/dineflow/",
+        "description": "Production-grade QR ordering SaaS for hospitality. Real-time kitchen KDS, dynamic table tent cards, mobile cart, instant UPI billing & multi-tenant operations.",
+        "image": "https://www.debashishpaul.in/assets/dineflow-showcase.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "Debashish Paul",
+          "url": "https://www.debashishpaul.in/"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Interactive At-Table QR Code Ordering",
+          "Live Kitchen Display System (KDS) Kanban",
+          "Real-Time Cross-Tab State Synchronization",
+          "Zero-Commission Instant UPI Billing",
+          "Dynamic Table Tent Stand SVG Generator",
+          "Multi-Tenant Brand Customization Engine",
+          "Zero-Network Resilient Asset Architecture"
+        ]
+      },
+      {
+        "@type": "Restaurant",
+        "@id": "https://www.debashishpaul.in/dineflow/#the-urban-plate",
+        "name": "The Urban Plate (Powered by DineFlow)",
+        "url": "https://www.debashishpaul.in/dineflow/?r=the-urban-plate&t=T12",
+        "servesCuisine": ["Continental", "North Indian", "Gourmet Artisan"],
+        "priceRange": "₹₹",
+        "image": "https://www.debashishpaul.in/assets/dineflow-showcase.jpg"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Design Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=2.4.2">
+</head>
+
+<body>
+  <!-- Instant Boot Shield Overlay -->
+  <div id="df-boot-loader" aria-hidden="true">
+    <div class="df-boot-logo">🍽️</div>
+    <div class="df-boot-spinner"></div>
+    <div class="df-boot-text">Loading DineFlow...</div>
+  </div>
+
+  <!-- Dynamic Single Page Application Mount Point with Pre-Rendered Semantic SEO Content -->
+  <div id="app">
+    <header class="df-topbar df-hub-topbar">
+      <div class="df-brand-badge">
+        <div class="df-brand-icon" style="background: linear-gradient(135deg, #E5A93C, #FF5E3A); color: #fff;">🍽️</div>
+        <div class="df-brand-text">
+          <h1>DineFlow - QR Restaurant SaaS</h1>
+          <span class="df-brand-tagline">Multi-Tenant Hospitality Ecosystem &bull; Real-Time Operations</span>
+        </div>
+      </div>
+      <div class="df-top-actions">
+        <a href="../projects" class="df-pill-btn" title="Back to Debashish Paul Portfolio">
+          <span>← Back<span class="df-hide-mobile"> to Portfolio</span></span>
+        </a>
+        <a href="?view=demo" class="df-pill-btn" style="background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;" title="Dual-Device Live Operations Sandbox">
+          <span>⚡ <span class="df-hide-mobile">Dual-Device </span>Demo</span>
+        </a>
+        <button class="df-pill-btn" id="btn-open-pilot-top" style="background: linear-gradient(135deg, #E5A93C, #F59E0B); color: #07090E; font-weight: 800; border: none; box-shadow: 0 4px 14px rgba(229,169,60,0.35); cursor: pointer;" title="Request Free 14-Day Pilot for Your Restaurant">
+          <span>🚀 <span class="df-hide-mobile">Request </span>Free Pilot</span>
+        </button>
+        <a href="?view=login" class="df-pill-btn primary" title="Universal Operations Terminal Login">
+          <span>Terminal<span class="df-hide-mobile"> Login</span> 🔒</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="df-hub-layout">
+      <div class="df-hub-hero">
+        <div class="df-hub-badge">
+          <span class="live-indicator"></span>
+          <span>Production-Grade Hospitality SaaS Platform</span>
+        </div>
+        <h1 class="df-hub-headline">
+          Turn Dining Tables into Instant Revenue &amp; 30% Faster Turns
+        </h1>
+        <p class="df-hub-subtext">
+          Engineered by <a href="../" style="color: var(--brand-primary); font-weight: 700; text-decoration: none;">Debashish Paul</a>. 
+          Bypass 25% delivery aggregator eat-in commissions, stop handwritten kitchen errors, and let guests order and pay directly from their phones with zero app installs.
+        </p>
+
+        <!-- Quick 1st-Time Visitor Guide Pills -->
+        <div class="df-quick-nav-bar">
+          <a href="?section=demo-sandbox" class="df-nav-pill active">⚡ Live Dual-Device Sandbox</a>
+          <a href="?section=restaurant-directory" class="df-nav-pill">🏢 3 Partner Restaurants</a>
+          <a href="?section=explore-roles" class="df-nav-pill">👥 Explore 3 Modules</a>
+          <a href="?section=roi-calculator" class="df-nav-pill">📊 ROI Calculator</a>
+          <a href="?section=why-dineflow" class="df-nav-pill">⚖️ Why DineFlow vs POS</a>
+        </div>
+      </div>
+
+      <!-- Interactive Dual-Device Sandbox Feature Banner -->
+      <div class="df-hub-sandbox-banner" id="demo-sandbox">
+        <div class="df-sandbox-banner-badge">
+          <span class="live-indicator"></span>
+          <span>RECOMMENDED 1-CLICK INTERACTIVE EXPERIENCE</span>
+        </div>
+        <div class="df-sandbox-banner-body">
+          <div class="df-sandbox-banner-info">
+            <h2 class="df-sandbox-banner-title">
+              Dual-Device Operations Sandbox
+            </h2>
+            <p class="df-sandbox-banner-desc">
+              Experience the entire restaurant ecosystem side-by-side on a single screen! Watch live cross-frame sync as a guest orders on an iPhone 16 Pro and the Kitchen KDS Kanban rings &amp; dispatches in real-time.
+            </p>
+            <div class="df-sandbox-features">
+              <span class="df-sandbox-chip">⚡ Live BroadcastChannel Sync</span>
+              <span class="df-sandbox-chip">📱 Customer iPhone Simulator</span>
+              <span class="df-sandbox-chip">👨‍🍳 Kitchen KDS Kanban</span>
+              <span class="df-sandbox-chip">🔊 Acoustic Hotel Chimes</span>
+            </div>
+
+            <!-- 4-Step Interactive Architecture Pipeline -->
+            <div class="df-sandbox-pipeline">
+              <div class="df-pipeline-step">
+                <span class="df-pipeline-num">Step 1</span>
+                <span class="df-pipeline-title">📱 QR Mobile Scan</span>
+                <span class="df-pipeline-desc">Guest opens Table T12 menu, customizes dishes &amp; places order</span>
+              </div>
+              <div class="df-pipeline-step">
+                <span class="df-pipeline-num">Step 2</span>
+                <span class="df-pipeline-title">⚡ Real-Time Bus</span>
+                <span class="df-pipeline-desc">BroadcastChannel event dispatches instantly across windows</span>
+              </div>
+              <div class="df-pipeline-step">
+                <span class="df-pipeline-num">Step 3</span>
+                <span class="df-pipeline-title">👨‍🍳 Kitchen KDS Chime</span>
+                <span class="df-pipeline-desc">Kitchen Kanban rings, receives ticket &amp; starts preparation</span>
+              </div>
+              <div class="df-pipeline-step">
+                <span class="df-pipeline-num">Step 4</span>
+                <span class="df-pipeline-title">🔔 5-Stage Tracking</span>
+                <span class="df-pipeline-desc">Guest phone displays live cooking milestones with zero refresh</span>
+              </div>
+            </div>
+          </div>
+          <div class="df-sandbox-banner-cta">
+            <a href="?view=demo" class="df-sandbox-launch-btn">
+              <span>Launch Dual-Device Sandbox</span>
+              <span class="btn-arrow">→</span>
+            </a>
+            <span class="df-sandbox-subhint">1-Click Auto Simulation &bull; Zero Configuration</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multi-Restaurant Directory & Live Outlets Showcase -->
+      <section class="df-restaurants-directory-section" id="restaurant-directory">
+        <div class="df-directory-header">
+          <div class="df-directory-title-wrap">
+            <h2>
+              <span>🏢</span> Multi-Restaurant Portals &amp; Live Outlets
+            </h2>
+            <p>
+              Each restaurant operates with complete multi-tenant database isolation, custom branding, dedicated Kitchen KDS, and private staff credentials.
+            </p>
+          </div>
+          <div class="df-directory-badge">
+            <span class="live-indicator"></span>
+            <span>3 Active Tenants</span>
+          </div>
+        </div>
+
+        <div class="df-outlets-grid">
+          <!-- Outlet 1: The Urban Plate -->
+          <div class="df-outlet-card" style="--outlet-color: #E5A93C; --outlet-bg: rgba(229, 169, 60, 0.15); --outlet-border: rgba(229, 169, 60, 0.35);">
+            <div class="df-outlet-top">
+              <div class="df-outlet-brand">
+                <div class="df-outlet-icon">🍽️</div>
+                <div class="df-outlet-info">
+                  <h3>The Urban Plate</h3>
+                  <div class="df-outlet-branch">
+                    <span>📍 Indiranagar Flagship</span>
+                    <span>•</span>
+                    <span class="df-outlet-cuisine-tag">Bistro &amp; Craft Bar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="df-outlet-desc">
+              Contemporary casual dining with artisanal gourmet burgers, royal dum biryanis, and mixology cocktails.
+            </p>
+            <div class="df-outlet-metrics">
+              <div class="df-metric-item">
+                <span class="metric-label">Tables</span>
+                <span class="metric-value">12 Tables (T01–T12)</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Floor Status</span>
+                <span class="metric-value live">● 3 Occupied</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Shift Revenue</span>
+                <span class="metric-value">₹3,480 Today</span>
+              </div>
+            </div>
+            <div class="df-outlet-actions">
+              <a href="?r=the-urban-plate&t=T12" class="df-outlet-btn primary" title="Open Guest Table T12 Ordering Menu">
+                <span>📱 Guest Menu (Table T12)</span>
+              </a>
+              <div class="df-outlet-actions-row">
+                <a href="?r=the-urban-plate&view=admin" class="df-outlet-btn staff" title="Launch Dedicated Kitchen Staff OS">
+                  <span>👨‍🍳 Staff OS &amp; KDS</span>
+                </a>
+                <a href="?r=the-urban-plate&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                  <span>🔐 Staff Login</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outlet 2: Bella Vista Ristorante -->
+          <div class="df-outlet-card" style="--outlet-color: #EF4444; --outlet-bg: rgba(239, 68, 68, 0.15); --outlet-border: rgba(239, 68, 68, 0.35);">
+            <div class="df-outlet-top">
+              <div class="df-outlet-brand">
+                <div class="df-outlet-icon">🍷</div>
+                <div class="df-outlet-info">
+                  <h3>Bella Vista Ristorante</h3>
+                  <div class="df-outlet-branch">
+                    <span>📍 Waterfront Promenade</span>
+                    <span>•</span>
+                    <span class="df-outlet-cuisine-tag">Italian Trattoria</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="df-outlet-desc">
+              Authentic Italian dining with wood-fired sourdough pizzas, handcrafted pastas, and curated sommelier reserves.
+            </p>
+            <div class="df-outlet-metrics">
+              <div class="df-metric-item">
+                <span class="metric-label">Tables</span>
+                <span class="metric-value">8 Tables (BV-01–08)</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Floor Status</span>
+                <span class="metric-value live">● 2 Occupied</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Shift Revenue</span>
+                <span class="metric-value">₹4,250 Today</span>
+              </div>
+            </div>
+            <div class="df-outlet-actions">
+              <a href="?r=bella-vista&t=BV-02" class="df-outlet-btn primary" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: #fff;" title="Open Guest Table BV-02 Ordering Menu">
+                <span>📱 Guest Menu (Table BV-02)</span>
+              </a>
+              <div class="df-outlet-actions-row">
+                <a href="?r=bella-vista&view=admin" class="df-outlet-btn staff" style="color: #EF4444; border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.09);" title="Launch Dedicated Kitchen Staff OS">
+                  <span>👨‍🍳 Staff OS &amp; KDS</span>
+                </a>
+                <a href="?r=bella-vista&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                  <span>🔐 Staff Login</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Outlet 3: Sakura Asian Kitchen -->
+          <div class="df-outlet-card" style="--outlet-color: #EC4899; --outlet-bg: rgba(236, 72, 153, 0.15); --outlet-border: rgba(236, 72, 153, 0.35);">
+            <div class="df-outlet-top">
+              <div class="df-outlet-brand">
+                <div class="df-outlet-icon">🍱</div>
+                <div class="df-outlet-info">
+                  <h3>Sakura Asian Kitchen</h3>
+                  <div class="df-outlet-branch">
+                    <span>📍 Financial District</span>
+                    <span>•</span>
+                    <span class="df-outlet-cuisine-tag">Pan-Asian &amp; Robata</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="df-outlet-desc">
+              Pan-Asian culinary journey with crystal dim sum, robata skewers, steaming ramen bowls, and matcha delicacies.
+            </p>
+            <div class="df-outlet-metrics">
+              <div class="df-metric-item">
+                <span class="metric-label">Tables</span>
+                <span class="metric-value">8 Tables (SK-01–08)</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Floor Status</span>
+                <span class="metric-value live">● 2 Occupied</span>
+              </div>
+              <div class="df-metric-item">
+                <span class="metric-label">Shift Revenue</span>
+                <span class="metric-value">₹2,890 Today</span>
+              </div>
+            </div>
+            <div class="df-outlet-actions">
+              <a href="?r=sakura-asian&t=SK-02" class="df-outlet-btn primary" style="background: linear-gradient(135deg, #EC4899, #DB2777); color: #fff;" title="Open Guest Table SK-02 Ordering Menu">
+                <span>📱 Guest Menu (Table SK-02)</span>
+              </a>
+              <div class="df-outlet-actions-row">
+                <a href="?r=sakura-asian&view=admin" class="df-outlet-btn staff" style="color: #EC4899; border-color: rgba(236, 72, 153, 0.35); background: rgba(236, 72, 153, 0.09);" title="Launch Dedicated Kitchen Staff OS">
+                  <span>👨‍🍳 Staff OS &amp; KDS</span>
+                </a>
+                <a href="?r=sakura-asian&view=staff-login" class="df-outlet-btn secondary" title="Open Keypad Staff Login">
+                  <span>🔐 Staff Login</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Audience Perspective Switcher: Restaurant Operator vs Technical Architecture -->
+      <div class="df-audience-switch-container">
+        <span class="df-audience-switch-label">Perspective:</span>
+        <div class="df-audience-toggle-group">
+          <button type="button" class="df-audience-toggle-btn active" id="btn-persp-business" data-persp="business">
+            <span>🏨 Restaurant Owner / Operator</span>
+          </button>
+          <button type="button" class="df-audience-toggle-btn" id="btn-persp-tech" data-persp="tech">
+            <span>💻 Tech Lead / Architecture</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="df-hub-grid" id="explore-roles">
+        <!-- Card 1: Guest Dining -->
+        <div class="df-hub-card guest-card">
+          <div class="df-hub-card-top">
+            <span class="df-hub-role-badge">Front-of-House &bull; Guest Experience</span>
+            <div class="df-hub-card-icon">📱</div>
+          </div>
+          <h2 class="df-hub-card-title">At-Table QR Dining</h2>
+          <div class="df-hub-card-sub">The Urban Plate &bull; Table T12</div>
+          <p class="df-hub-card-desc">
+            Zero-download mobile ordering experience. Browse 32 gourmet delicacies, filter Pure Veg, customize cooking instructions, and track live kitchen status.
+          </p>
+          <ul class="df-hub-features-list" id="features-guest">
+            <li class="persp-biz"><span>✓</span> Instant QR scan on phone (Zero app download)</li>
+            <li class="persp-biz"><span>✓</span> Dynamic dietary badges &amp; spice customizer</li>
+            <li class="persp-biz"><span>✓</span> 1-Touch Waiter Call &amp; zero-fee UPI checkout</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Zero-dependency client-side PWA architecture</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> BroadcastChannel cross-window pub/sub engine</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Sub-50ms reactive state updates with Vanilla JS</li>
+          </ul>
+          <div class="df-hub-card-cta">
+            <a href="?r=the-urban-plate&t=T12" class="df-pill-btn primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700;">
+              Launch Guest Menu (Table T12) →
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Kitchen Staff OS -->
+        <div class="df-hub-card staff-card">
+          <div class="df-hub-card-top">
+            <span class="df-hub-role-badge staff">Back-of-House &bull; Operations</span>
+            <div class="df-hub-card-icon">👨‍🍳</div>
+          </div>
+          <h2 class="df-hub-card-title">Kitchen Staff OS &amp; KDS</h2>
+          <div class="df-hub-card-sub">Chef &amp; Floor Management Hub</div>
+          <p class="df-hub-card-desc">
+            Frontline operations console. Real-time Kitchen Display System (KDS) Kanban board, visual 20-table dining floor matrix, and service bell dispatcher.
+          </p>
+          <ul class="df-hub-features-list" id="features-staff">
+            <li class="persp-biz"><span>✓</span> Real-time Kitchen KDS board stops missed orders</li>
+            <li class="persp-biz"><span>✓</span> Acoustic chime rings kitchen when tickets arrive</li>
+            <li class="persp-biz"><span>✓</span> 20-Table floor map with live guest status</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Event-driven KDS Kanban state machine</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Web Audio API synthesized alert chimes</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Dynamic vector SVG QR tent card generator</li>
+          </ul>
+          <div class="df-hub-card-cta">
+            <a href="?view=admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(229,169,60,0.15); border-color: var(--brand-primary); color: #fff;">
+              Launch Kitchen Staff OS →
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 3: SaaS Super Admin -->
+        <div class="df-hub-card admin-card">
+          <div class="df-hub-card-top">
+            <span class="df-hub-role-badge super">Multi-Tenant Platform HQ</span>
+            <div class="df-hub-card-icon">⚡</div>
+          </div>
+          <h2 class="df-hub-card-title">SaaS Platform Super Admin</h2>
+          <div class="df-hub-card-sub">Chain &amp; Franchise Governance</div>
+          <p class="df-hub-card-desc">
+            Multi-restaurant SaaS central dashboard. Monitor network GMV, tenant analytics, batch QR generation, and launch the 10-step restaurant onboarding wizard.
+          </p>
+          <ul class="df-hub-features-list" id="features-admin">
+            <li class="persp-biz"><span>✓</span> 100% direct revenue retention (0% aggregator cuts)</li>
+            <li class="persp-biz"><span>✓</span> Live GMV, peak rush &amp; cover volume analytics</li>
+            <li class="persp-biz"><span>✓</span> 10-Step instant restaurant onboarding wizard</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Multi-tenant isolated workspace state schemas</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Service Worker offline-first asset caching</li>
+            <li class="persp-tech" style="display: none;"><span>✓</span> Zero cloud database bills &amp; local persistence</li>
+          </ul>
+          <div class="df-hub-card-cta">
+            <a href="?view=super-admin" class="df-pill-btn" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; background: rgba(99,102,241,0.15); border-color: #818CF8; color: #fff;">
+              Launch Platform Super Admin →
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================================== -->
+      <!-- RESTAURANT ROI CALCULATOR FOR OWNERS & GENERAL MANAGERS              -->
+      <!-- ==================================================================== -->
+      <section class="df-hub-roi-wrapper" id="roi-calculator">
+        <div class="df-roi-header">
+          <div class="df-roi-badge">
+            <span>📊</span>
+            <span>Commercial Impact Simulator</span>
+          </div>
+          <h2 class="df-roi-title">
+            Calculate Your Restaurant's Revenue Lift
+          </h2>
+          <p class="df-roi-subtitle">
+            See how accelerating table turns from 70 mins to 48 mins, eliminating handwritten order errors, and bypassing 25% aggregator eat-in commissions expands your net profits.
+          </p>
+        </div>
+
+        <div class="df-roi-grid">
+          <!-- Controls Column -->
+          <div class="df-roi-controls">
+            <!-- Slider 1: Tables Count -->
+            <div class="df-roi-slider-group">
+              <div class="df-slider-label-row">
+                <span>Number of Dining Tables</span>
+                <span class="df-slider-val" id="val-tables">20 Tables</span>
+              </div>
+              <input type="range" min="5" max="80" value="20" step="1" class="df-range-input" id="range-tables">
+            </div>
+
+            <!-- Slider 2: Average Spend -->
+            <div class="df-roi-slider-group">
+              <div class="df-slider-label-row">
+                <span>Average Spend per Guest</span>
+                <span class="df-slider-val" id="val-spend">₹450 / guest</span>
+              </div>
+              <input type="range" min="150" max="1500" value="450" step="25" class="df-range-input" id="range-spend">
+            </div>
+
+            <!-- Slider 3: Daily Covers -->
+            <div class="df-roi-slider-group">
+              <div class="df-slider-label-row">
+                <span>Current Daily Guests (Covers)</span>
+                <span class="df-slider-val" id="val-covers">140 Guests/day</span>
+              </div>
+              <input type="range" min="30" max="450" value="140" step="10" class="df-range-input" id="range-covers">
+            </div>
+          </div>
+
+          <!-- Dynamic Results Box -->
+          <div class="df-roi-results">
+            <div class="df-roi-highlight-box">
+              <div class="df-roi-highlight-label">Estimated Monthly Bottom-Line Uplift</div>
+              <div class="df-roi-highlight-number" id="calc-monthly-gain">+₹3,27,000 / mo</div>
+              <span style="font-size: 0.78rem; color: #94A3B8; margin-top: 0.35rem; display: block;">
+                Annual Run-Rate Upside: <strong style="color: #F8FAFC;" id="calc-annual-gain">+₹39,24,000 / year</strong>
+              </span>
+            </div>
+
+            <div class="df-roi-metric-rows">
+              <div class="df-roi-metric-item">
+                <span class="title">Table Turn Velocity</span>
+                <strong class="val" style="color: #38BDF8;">31% Faster (48 mins)</strong>
+              </div>
+              <div class="df-roi-metric-item">
+                <span class="title">Peak-Rush Extra Covers</span>
+                <strong class="val" style="color: #10B981;" id="calc-extra-covers">+22 guests / day</strong>
+              </div>
+              <div class="df-roi-metric-item">
+                <span class="title">Kitchen Food Waste Saved</span>
+                <strong class="val" style="color: #E5A93C;" id="calc-waste-saved">₹22,000 / mo</strong>
+              </div>
+              <div class="df-roi-metric-item">
+                <span class="title">Aggregator Dine-in Tax</span>
+                <strong class="val" style="color: #F59E0B;">₹0 Commission</strong>
+              </div>
+            </div>
+
+            <button class="df-btn-claim-pilot" id="btn-open-pilot-from-calc">
+              <span>🚀 Claim 14-Day Free Pilot for Your Restaurant</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- PAIN-POINT RESOLUTION MATRIX                                         -->
+      <!-- ==================================================================== -->
+      <section class="df-pain-matrix-wrapper" id="why-dineflow">
+        <div style="text-align: center; max-width: 720px; margin: 0 auto 2rem;">
+          <h2 style="font-size: 1.65rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">
+            Why Modern Operators Choose DineFlow Over Traditional POS
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">
+            Engineered to remove friction points between front-of-house guests and back-of-house kitchen operations.
+          </p>
+        </div>
+
+        <table class="df-pain-matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 28%;">Operational Bottleneck</th>
+              <th style="width: 36%;">Traditional Dining &amp; Paper KOT</th>
+              <th style="width: 36%; color: var(--brand-primary);">DineFlow™ Real-Time Platform</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Table Dwell Time</td>
+              <td>Diners wait 8-12m for menus, 10m to order, 12m for bill. Total: <strong>65-75 mins</strong>.</td>
+              <td class="highlight-dineflow">Compressed to <strong>42-48 mins</strong> via instant QR self-ordering and 1-tap checkout (+30% table capacity).</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Staffing Pressure &amp; Turn-over</td>
+              <td>Waitstaff run around as transactional order-takers. High burnout &amp; staff attrition.</td>
+              <td class="highlight-dineflow">Waiters become high-touch hospitality hosts; 1 server comfortably manages 8-10 tables with zero order lag.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Order Mistakes &amp; Food Waste</td>
+              <td>Verbal errors, illegible handwriting, and missed allergy notices cost ₹15k-40k/mo in voided plates.</td>
+              <td class="highlight-dineflow"><strong>99.4% precision</strong>: guest spice meters, dietary badges, and chef notes dispatch straight to kitchen KDS.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Menu Updates &amp; 86ing Dishes</td>
+              <td>Reprinting 100 laminate menus costs ₹15k-25k; sold-out dishes cause awkward table delays.</td>
+              <td class="highlight-dineflow">1-Click cloud updates: 86ing sold-out items or updating seasonal prices syncs across all tables in <strong>&lt;150ms</strong>.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Customer Service Calls</td>
+              <td>Guests wave hands across noisy dining rooms for water, napkins, or extra plates.</td>
+              <td class="highlight-dineflow"><strong>Digital Concierge Bell</strong>: Guests tap 🛎️ Call Staff; acoustic chime rings floor console and records resolution.</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">Third-Party Commission Fees</td>
+              <td>Food aggregators charge 15%-25% commission on dine-in discounts and own your guest data.</td>
+              <td class="highlight-dineflow"><strong>₹0 Aggregator Cut</strong>: 100% direct revenue retention with instant zero-commission UPI, and CRM data is 100% yours.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Real-Time Testing Helper Box -->
+      <div class="df-hub-testing-banner">
+        <div class="df-testing-banner-header">
+          <span style="font-size: 1.35rem;">🧪</span>
+          <div>
+            <h3 style="font-size: 1rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">
+              Dual-Window Live Testing Recommendation
+            </h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.45;">
+              For the best demo experience, open <strong>Guest Menu</strong> in one window and <strong>Staff OS</strong> in a second side-by-side window. When an order or waiter call is sent from Table T12, the kitchen board rings and updates instantaneously without page reloads!
+            </p>
+          </div>
+        </div>
+        <div class="df-testing-banner-actions">
+          <a href="?r=the-urban-plate&t=T12" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+            <span>Window 1: Guest T12 ↗</span>
+          </a>
+          <a href="?view=admin" target="_blank" class="df-pill-btn" style="font-size: 0.78rem;">
+            <span>Window 2: Staff OS ↗</span>
+          </a>
+        </div>
+      </div>
+
+      <footer style="margin-top: 3.5rem; text-align: center; font-size: 0.82rem; color: var(--text-dim);">
+        DineFlow &bull; Engineered with Vanilla JS, BroadcastChannel Real-Time Engine &amp; Luxury Glassmorphism by 
+        <a href="../" style="color: var(--brand-primary); font-weight: 700; text-decoration: none;">Debashish Paul</a>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ======================================================================== -->
+  <!-- HIGH-CONVERTING AI SMART LEAD CAPTURE MODAL                              -->
+  <!-- ======================================================================== -->
+  <div class="df-lead-modal-backdrop" id="lead-modal-backdrop">
+    <div class="df-lead-modal-card">
+      <div class="df-lead-modal-header">
+        <div>
+          <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--brand-primary); letter-spacing: 0.06em;">Restaurant Expansion Program</span>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-top: 0.2rem;">Claim 14-Day Free Pilot</h3>
+        </div>
+        <button id="btn-close-lead-modal" style="background: none; border: none; color: #94A3B8; font-size: 1.25rem; cursor: pointer; padding: 0.25rem;">✕</button>
+      </div>
+
+      <div class="df-lead-modal-body">
+        <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.5rem;">
+          Deploy DineFlow in your dining room with zero setup fees, free branded table tent stands, and personalized menu onboarding by Debashish Paul.
+        </p>
+
+        <form id="lead-capture-form" onsubmit="return false;">
+          <div class="df-lead-form-group">
+            <label for="lead-restaurant-name">Restaurant / Cafe Name *</label>
+            <input type="text" id="lead-restaurant-name" class="df-lead-input" placeholder="e.g. The Urban Plate, Cafe Mocha" required>
+          </div>
+
+          <div class="df-lead-grid-row">
+            <div class="df-lead-form-group">
+              <label for="lead-owner-name">Your Name *</label>
+              <input type="text" id="lead-owner-name" class="df-lead-input" placeholder="Owner / General Manager" required>
+            </div>
+            <div class="df-lead-form-group">
+              <label for="lead-city">City / Location *</label>
+              <input type="text" id="lead-city" class="df-lead-input" placeholder="e.g. Kolkata, Bangalore, Mumbai" required>
+            </div>
+          </div>
+
+          <div class="df-lead-grid-row df-lead-grid-split">
+            <div class="df-lead-form-group">
+              <label for="lead-tables">Dining Tables *</label>
+              <input type="number" id="lead-tables" class="df-lead-input" value="20" min="2" max="200" required>
+            </div>
+            <div class="df-lead-form-group">
+              <label for="lead-contact">WhatsApp / Phone *</label>
+              <input type="tel" id="lead-contact" class="df-lead-input" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <div class="df-lead-form-group" style="margin-top: 0.25rem;">
+            <label for="lead-email">Email Address <span style="font-size: 0.72rem; color: #94A3B8; font-weight: normal;">(Optional - for digital blueprint copy)</span></label>
+            <input type="email" id="lead-email" class="df-lead-input" placeholder="owner@restaurant.com">
+          </div>
+
+          <button type="submit" id="btn-submit-lead" class="df-btn-claim-pilot" style="margin-top: 0.85rem;">
+            <span>🚀 Generate Custom Restaurant Blueprint</span>
+          </button>
+        </form>
+
+        <!-- Dynamic Success Box with Direct WhatsApp Hook -->
+        <div class="df-lead-success-box" id="lead-success-box">
+          <div style="font-size: 2rem; margin-bottom: 0.35rem;">🎉</div>
+          <h4 style="font-size: 1.05rem; font-weight: 800; color: #34D399; margin-bottom: 0.35rem;">
+            Pilot Blueprint Configured!
+          </h4>
+          <p style="font-size: 0.82rem; color: #E2E8F0; line-height: 1.45; margin-bottom: 1rem;" id="lead-success-summary">
+            We've calculated an estimated +₹3,27,000/mo extra revenue capacity for your restaurant.
+          </p>
+          <div style="display: flex; gap: 0.65rem; flex-direction: column;">
+            <a href="#" id="lead-whatsapp-btn" target="_blank" class="df-btn-claim-pilot" style="background: #25D366; color: #fff; font-size: 0.86rem; padding: 0.75rem;">
+              <span>💬 Connect with Debashish Paul via WhatsApp</span>
+            </a>
+            <button id="lead-modal-dismiss" class="df-pill-btn" style="justify-content: center; font-size: 0.78rem;">
+              <span>Close Window</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="background: #0f172a; color: #f8fafc; padding: 2rem; max-width: 800px; margin: 2rem auto; border-radius: 12px; border: 1px solid rgba(229,169,60,0.3); font-family: sans-serif; text-align: center;">
+      <h2 style="color: #E5A93C; margin-bottom: 0.5rem;">DineFlow - QR Restaurant SaaS Platform</h2>
+      <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+        DineFlow is a production-grade digital dining and kitchen operations SaaS engineered by Debashish Paul. Please enable JavaScript in your browser to experience real-time at-table QR ordering, Kitchen Display System (KDS), and SaaS multi-tenant governance.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="../projects" style="color: #E5A93C; text-decoration: underline; font-weight: 600;">← Back to Main Portfolio</a>
+        <a href="?r=the-urban-plate&t=T12" style="color: #38bdf8; text-decoration: underline; font-weight: 600;">The Urban Plate Guest Menu</a>
+      </div>
+    </div>
+  </noscript>
+
+  <!-- Persistent Modal Mount Point (Preserved across SPA re-renders) -->
+  <div id="modal-container"></div>
+
+  <!-- Client-Side Modules (Zero external network dependencies for QR, PubSub & Storage) -->
+  <script src="qr-engine.js?v=2.4.1"></script>
+  <script src="mqttws31.min.js?v=2.3.1"></script>
+  <script src="data.js?v=2.4.1"></script>
+  <script src="app.js?v=2.4.3"></script>
+
+  <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
+  <script>
+    (function() {
+      const rangeTables = document.getElementById('range-tables');
+      const rangeSpend = document.getElementById('range-spend');
+      const rangeCovers = document.getElementById('range-covers');
+
+      const valTables = document.getElementById('val-tables');
+      const valSpend = document.getElementById('val-spend');
+      const valCovers = document.getElementById('val-covers');
+
+      const calcMonthlyGain = document.getElementById('calc-monthly-gain');
+      const calcAnnualGain = document.getElementById('calc-annual-gain');
+      const calcExtraCovers = document.getElementById('calc-extra-covers');
+      const calcWasteSaved = document.getElementById('calc-waste-saved');
+
+      function updateROI() {
+        if (!rangeTables || !rangeSpend || !rangeCovers) return;
+        const tables = parseInt(rangeTables.value, 10);
+        const spend = parseInt(rangeSpend.value, 10);
+        const covers = parseInt(rangeCovers.value, 10);
+
+        valTables.textContent = `${tables} Tables`;
+        valSpend.textContent = `₹${spend} / guest`;
+        valCovers.textContent = `${covers} Guests/day`;
+
+        // 31% faster table turn yields ~15.7% more peak-hour capacity
+        const extraCovers = Math.round(covers * 0.157);
+        const monthlyTurnoverGain = extraCovers * spend * 30;
+        // Misordered food waste saved (~₹1,100 per table/mo in traditional ops)
+        const wasteSaved = tables * 1100;
+        const totalMonthlyGain = monthlyTurnoverGain + wasteSaved;
+        const annualGain = totalMonthlyGain * 12;
+
+        calcExtraCovers.textContent = `+${extraCovers} guests / day`;
+        calcWasteSaved.textContent = `₹${wasteSaved.toLocaleString('en-IN')} / mo`;
+        calcMonthlyGain.textContent = `+₹${totalMonthlyGain.toLocaleString('en-IN')} / mo`;
+        calcAnnualGain.textContent = `+₹${annualGain.toLocaleString('en-IN')} / year`;
+      }
+
+      rangeTables?.addEventListener('input', updateROI);
+      rangeSpend?.addEventListener('input', updateROI);
+      rangeCovers?.addEventListener('input', updateROI);
+
+      // Lead Modal Triggers
+      const leadModal = document.getElementById('lead-modal-backdrop');
+      const openButtons = [
+        document.getElementById('btn-open-pilot-top'),
+        document.getElementById('btn-open-pilot-from-calc')
+      ];
+
+      openButtons.forEach(btn => {
+        btn?.addEventListener('click', () => {
+          if (rangeTables && document.getElementById('lead-tables')) {
+            document.getElementById('lead-tables').value = rangeTables.value;
+          }
+          leadModal?.classList.add('active');
+        });
+      });
+
+      // Auto-open modal if URL specifies ?pilot=true or ?section=pilot (with fallback for legacy #pilot)
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('pilot') === 'true' || urlParams.get('section') === 'pilot' || window.location.hash.toLowerCase().includes('pilot')) {
+        setTimeout(() => {
+          if (rangeTables && document.getElementById('lead-tables')) {
+            document.getElementById('lead-tables').value = rangeTables.value;
+          }
+          leadModal?.classList.add('active');
+        }, 350);
+      }
+
+      document.getElementById('btn-close-lead-modal')?.addEventListener('click', () => {
+        leadModal?.classList.remove('active');
+      });
+      document.getElementById('lead-modal-dismiss')?.addEventListener('click', () => {
+        leadModal?.classList.remove('active');
+      });
+      leadModal?.addEventListener('click', (e) => {
+        if (e.target === leadModal) leadModal.classList.remove('active');
+      });
+
+      // Submit Lead Form
+      document.getElementById('lead-capture-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rName = document.getElementById('lead-restaurant-name')?.value.trim() || 'My Restaurant';
+        const oName = document.getElementById('lead-owner-name')?.value.trim() || 'Operator';
+        const city = document.getElementById('lead-city')?.value.trim() || 'India';
+        const tables = document.getElementById('lead-tables')?.value || '20';
+        const contact = document.getElementById('lead-contact')?.value.trim() || '';
+        const email = document.getElementById('lead-email')?.value.trim() || '';
+
+        // Store locally in CRM
+        try {
+          const leads = JSON.parse(localStorage.getItem('dineflow_leads') || '[]');
+          leads.unshift({
+            id: 'LEAD-' + Date.now(),
+            restaurant: rName,
+            name: oName,
+            city,
+            tables,
+            contact,
+            email,
+            timestamp: new Date().toISOString()
+          });
+          localStorage.setItem('dineflow_leads', JSON.stringify(leads));
+        } catch(err) {}
+
+        // Send to Debashish's Google Apps Script Webhook (Google Sheets + Instant Gmail alert)
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbzaWRIAD6dz6M2uqDyA6_xKQRvRI6ZWRrFJc5WERO66nZFjhMDmh_ZBiKubz-jyYZGh9A/exec';
+        const payload = {
+          name: oName,
+          business_name: `${rName} (${city})`,
+          email: email || `${contact.replace(/\D/g, '') || 'pilot'}@dineflow-lead.in`,
+          phone: contact,
+          service: 'DineFlow 14-Day Free Pilot',
+          requirement_tier: `Hospitality QR SaaS Onboarding (${tables} Dining Tables)`,
+          budget: '₹0 - 14-Day Free Pilot',
+          message: `DineFlow 14-Day Free Pilot Request from ${oName} (${rName}, ${city}). Venue has ${tables} dining tables. Requested free acrylic QR table stands and live menu onboarding.`
+        };
+
+        try {
+          fetch(scriptUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }).catch(() => {});
+        } catch (fetchErr) {}
+
+        // Format direct WhatsApp lead message
+        const waMsg = encodeURIComponent(
+          `Hi Debashish! I run ${rName} in ${city} with ${tables} tables. ` +
+          `I tested your DineFlow platform demo and would like to claim a 14-day free pilot / custom table stands for our dining room. ` +
+          `Name: ${oName}, Contact: ${contact}${email ? ', Email: ' + email : ''}`
+        );
+        const waLink = `https://wa.me/919905608257?text=${waMsg}`;
+        const waBtn = document.getElementById('lead-whatsapp-btn');
+        if (waBtn) waBtn.href = waLink;
+
+        document.getElementById('lead-capture-form').style.display = 'none';
+        const successBox = document.getElementById('lead-success-box');
+        if (successBox) successBox.classList.add('active');
+        const summary = document.getElementById('lead-success-summary');
+        if (summary) {
+          summary.innerHTML = `Personalized pilot blueprint generated for <strong>${rName} (${tables} tables, ${city})</strong>. Our team has received your pilot request. Connect directly on WhatsApp to receive your acrylic table tent mockups and schedule onboarding!`;
+        }
+      });
+      // Perspective Switcher Handler (Restaurant Owner vs Tech Lead)
+      const btnBiz = document.getElementById('btn-persp-business');
+      const btnTech = document.getElementById('btn-persp-tech');
+      function setPerspective(persp) {
+        const isBiz = persp === 'business';
+        btnBiz?.classList.toggle('active', isBiz);
+        btnTech?.classList.toggle('active', !isBiz);
+        document.querySelectorAll('.persp-biz').forEach(el => el.style.display = isBiz ? 'flex' : 'none');
+        document.querySelectorAll('.persp-tech').forEach(el => el.style.display = isBiz ? 'none' : 'flex');
+      }
+      btnBiz?.addEventListener('click', () => setPerspective('business'));
+      btnTech?.addEventListener('click', () => setPerspective('tech'));
+    })();
+  </script>
+</body>
+</html>
