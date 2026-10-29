@@ -153,8 +153,14 @@
       }
     },
 
+    __lastChimeTime: 0,
     chime(type = 'success', overrideProfile = null) {
       try {
+        const nowMs = Date.now();
+        if (nowMs - this.__lastChimeTime < 450) {
+          return; // Suppress rapid-fire overlapping audio chimes
+        }
+        this.__lastChimeTime = nowMs;
         this.init();
         if (!this.ctx) return;
         const now = this.ctx.currentTime + 0.01;
@@ -226,14 +232,27 @@
     }
   };
 
-  // Toast Notification
-  function showToast(message, icon = '✓') {
+  // Toast Notification (with debounce & stack-limit protection)
+  let __lastToastText = '';
+  let __lastToastTime = 0;
+
+  function showToast(message, icon = '\u2713') {
+    const now = Date.now();
+    if (message === __lastToastText && (now - __lastToastTime) < 2200) {
+      return; // Suppress duplicate toast stacking
+    }
+    __lastToastText = message;
+    __lastToastTime = now;
+
     let container = document.getElementById('df-toast-container');
     if (!container) {
       container = document.createElement('div');
       container.id = 'df-toast-container';
       container.className = 'df-toast-container';
       document.body.appendChild(container);
+    }
+    while (container.children.length >= 3) {
+      container.removeChild(container.firstChild);
     }
     const toast = document.createElement('div');
     toast.className = 'df-toast';
@@ -7020,8 +7039,25 @@
   window.addEventListener('hashchange', renderApp);
   window.addEventListener('popstate', renderApp);
 
-  // Cross-tab synchronization hook
+  // Cross-tab & Multi-Channel synchronization hook (with deduplication)
+  const __recentSyncEventKeys = new Map();
+
   window.onDineFlowRemoteSync = function (event) {
+    const metaCheck = (event && event.meta) || {};
+    if (metaCheck.action) {
+      const eventSignature = `${metaCheck.action}_${metaCheck.orderId || metaCheck.tableId || ''}_${metaCheck.newStatus || metaCheck.status || ''}`;
+      const nowTs = Date.now();
+      const lastTs = __recentSyncEventKeys.get(eventSignature) || 0;
+      if (nowTs - lastTs < 1200) {
+        // Redundant channel echo arriving within 1.2s: suppress duplicate toast & chime
+        return;
+      }
+      __recentSyncEventKeys.set(eventSignature, nowTs);
+      if (__recentSyncEventKeys.size > 80) {
+        __recentSyncEventKeys.forEach((ts, k) => { if (nowTs - ts > 8000) __recentSyncEventKeys.delete(k); });
+      }
+    }
+
     // Preserve local session so customer broadcasts never log staff out
     const currentSession = state && state.session ? { ...state.session } : null;
 
@@ -7044,37 +7080,46 @@
     if (route.view === 'admin') {
       const tenant = getCurrentTenant(meta.tenantSlug || (state.session && state.session.tenantId));
 
-      // Audio notification for staff
-      SoundFX.chime(meta.action === 'NEW_ORDER' ? 'order' : 'notice');
-
-      // Staff Toast
-      if (meta.action === 'NEW_ORDER') {
-        showToast(`New Order #${meta.orderId || ''} received from Table ${meta.tableId || ''}! 🛎️`, '📥');
-      } else if (meta.action === 'STAFF_CALL') {
-        showToast(`Table ${meta.tableId || ''} requests ${meta.requestLabel || 'Staff Assistance'}!`, '⚠️');
-      } else if (meta.action === 'BILL_REQUEST') {
-        showToast(`Table ${meta.tableId || ''} requested their bill!`, '💳');
-      } else {
-        showToast('Real-time order sync received from customer', '🔔');
-      }
-
       // Re-render Admin View (updates metrics, kanban cards, and call counts instantly)
       const appEl = document.getElementById('app');
       if (appEl) {
         renderAdminView(appEl, tenant);
       }
-    } else if (route.view === 'customer') {
-      if (meta.tableId && route.tableId && meta.tableId !== route.tableId) {
-        return; // Filter out notifications meant for other dining tables
+
+      // If action is order status change (card moved), suppress duplicate echo toast & chime on staff OS
+      if (meta.action === 'ORDER_STATUS_CHANGED') {
+        return;
       }
+
+      // Audio notification & toasts for incoming customer actions only
+      if (meta.action === 'NEW_ORDER') {
+        SoundFX.chime('order');
+        showToast(`New Order #${meta.orderId || ''} received from Table ${meta.tableId || ''}! 🛎️`, '📥');
+      } else if (meta.action === 'STAFF_CALL') {
+        SoundFX.chime('notice');
+        showToast(`Table ${meta.tableId || ''} requests ${meta.requestLabel || 'Staff Assistance'}!`, '⚠️');
+      } else if (meta.action === 'BILL_REQUEST') {
+        SoundFX.chime('notice');
+        showToast(`Table ${meta.tableId || ''} requested their bill!`, '💳');
+      }
+    } else if (route.view === 'customer') {
+      // Filter out notifications meant for other dining tables
+      if (meta.tableId && route.tableId && meta.tableId !== route.tableId) {
+        return;
+      }
+      if (meta.orderId) {
+        const targetOrder = (state.orders || []).find(o => o.id === meta.orderId);
+        if (targetOrder && targetOrder.tableId && route.tableId && targetOrder.tableId !== route.tableId) {
+          return;
+        }
+      }
+
       const tenant = getCurrentTenant(route.tenantSlug || meta.tenantSlug);
       const table = state.tables.find(t => t.id === route.tableId) || { id: route.tableId, name: `Table ${route.tableId}`, section: 'Indoor' };
 
-      // Chime for customer
-      SoundFX.chime('success');
-
-      // Customer Toast
+      // Chime & toast for customer only on their order status transition or bill settlement
       if (meta.action === 'ORDER_STATUS_CHANGED') {
+        SoundFX.chime('success');
         const statusMap = {
           RECEIVED: 'Order Received by Kitchen 📥',
           CONFIRMED: 'Chef Confirmed your Order! 👨‍🍳',
@@ -7084,8 +7129,9 @@
           COMPLETED: 'Order Completed. Thank you! ⭐'
         };
         showToast(statusMap[meta.newStatus] || `Order #${meta.orderId}: ${meta.newStatus}`, '👨‍🍳');
-      } else {
-        showToast('Live order updates synced', '✓');
+      } else if (meta.action === 'BILL_SETTLED') {
+        SoundFX.chime('success');
+        showToast('Your bill has been settled. Thank you for dining with us! ⭐', '💳');
       }
 
       // Re-render customer background (dishes, badges, cart count)

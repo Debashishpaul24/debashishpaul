@@ -370,6 +370,11 @@
         const idx = state.orders.findIndex(o => o.id === updated.id);
         const prevStatus = idx !== -1 ? state.orders[idx].status : null;
 
+        // Ignore self-echo if order in local state already has this status
+        if (prevStatus === updated.status) {
+          return;
+        }
+
         if (idx !== -1) {
           state.orders[idx] = updated;
         } else {
