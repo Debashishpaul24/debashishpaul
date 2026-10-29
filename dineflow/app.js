@@ -525,7 +525,7 @@
             this.client.unsubscribe(prevSlug === '#' ? 'dineflow/#' : `dineflow/${prevSlug}/#`);
           }
           this.client.subscribe(normalizedSlug === '#' ? 'dineflow/#' : `dineflow/${normalizedSlug}/#`);
-        } catch (e) {}
+        } catch (e) { }
       } else {
         this.connect();
       }
@@ -546,7 +546,7 @@
 
       try {
         if (this.client) {
-          try { this.client.disconnect(); } catch (e) {}
+          try { this.client.disconnect(); } catch (e) { }
         }
         this.client = new Paho.MQTT.Client(s.host, s.port, s.path, clientId);
 
@@ -563,7 +563,7 @@
           try {
             const parsed = JSON.parse(message.payloadString);
             handleRemoteOpsEvent(parsed);
-          } catch (e) {}
+          } catch (e) { }
         };
 
         this.client.connect({
@@ -576,7 +576,7 @@
             if (this.currentTenantSlug) {
               try {
                 this.client.subscribe(this.currentTenantSlug === '#' ? 'dineflow/#' : `dineflow/${this.currentTenantSlug}/#`);
-              } catch (e) {}
+              } catch (e) { }
             }
             // Flush outbox
             while (this.outbox.length > 0) {
@@ -585,7 +585,7 @@
                 const msg = new Paho.MQTT.Message(JSON.stringify(item.payload));
                 msg.destinationName = item.topic;
                 this.client.send(msg);
-              } catch (e) {}
+              } catch (e) { }
             }
           },
           onFailure: () => {
@@ -607,7 +607,7 @@
       if (this.client && this.isConnected && this.currentTenantSlug) {
         try {
           this.client.unsubscribe(`dineflow/${this.currentTenantSlug}/#`);
-        } catch (e) {}
+        } catch (e) { }
       }
     }
   };
@@ -912,7 +912,7 @@
       document.documentElement.classList.remove('df-deep-loading');
       const bootLoader = document.getElementById('df-boot-loader');
       if (bootLoader) bootLoader.style.display = 'none';
-    } catch (e) {}
+    } catch (e) { }
   }
 
   function renderApp() {
@@ -1053,7 +1053,7 @@
       if (newInput) {
         newInput.focus();
         if (cursorStart !== null) {
-          try { newInput.setSelectionRange(cursorStart, cursorEnd); } catch (e) {}
+          try { newInput.setSelectionRange(cursorStart, cursorEnd); } catch (e) { }
         }
       }
     }
@@ -1180,15 +1180,15 @@
 
           <div class="df-outlets-grid">
             ${Object.values(state.tenants || {}).map(t => {
-              const totalTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug).length || 8;
-              const occTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug && tbl.status === 'occupied').length;
-              const tenantOrders = (state.orders || []).filter(o => o.tenantId === t.slug);
-              const shiftRev = tenantOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
-              const defaultTable = t.slug === 'bella-vista' ? 'BV-02' : (t.slug === 'sakura-asian' ? 'SK-02' : 'T12');
-              const primaryColor = (t.theme && t.theme.primaryColor) || '#E5A93C';
-              const cuisineLabel = t.slug === 'bella-vista' ? 'Italian Trattoria' : (t.slug === 'sakura-asian' ? 'Pan-Asian & Robata' : 'Bistro & Craft Bar');
+      const totalTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug).length || 8;
+      const occTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug && tbl.status === 'occupied').length;
+      const tenantOrders = (state.orders || []).filter(o => o.tenantId === t.slug);
+      const shiftRev = tenantOrders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+      const defaultTable = t.slug === 'bella-vista' ? 'BV-02' : (t.slug === 'sakura-asian' ? 'SK-02' : 'T12');
+      const primaryColor = (t.theme && t.theme.primaryColor) || '#E5A93C';
+      const cuisineLabel = t.slug === 'bella-vista' ? 'Italian Trattoria' : (t.slug === 'sakura-asian' ? 'Pan-Asian & Robata' : 'Bistro & Craft Bar');
 
-              return `
+      return `
                 <div class="df-outlet-card" style="--outlet-color: ${primaryColor};">
                   <div class="df-outlet-top">
                     <div class="df-outlet-brand">
@@ -1235,7 +1235,7 @@
                   </div>
                 </div>
               `;
-            }).join('')}
+    }).join('')}
           </div>
         </section>
 
@@ -1532,13 +1532,13 @@
             </div>
             <div class="df-demo-profile-btns">
               ${allAccounts.map(acc => {
-                const isSuper = acc.role === 'SUPER_ADMIN';
-                const tenantName = isSuper 
-                  ? 'Platform Owner HQ' 
-                  : ((state.tenants && state.tenants[acc.tenantId]?.name) || acc.tenantId || 'Partner Outlet');
-                const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Staff Terminal 👨‍🍳';
-                const badgeColor = isSuper ? '#818CF8' : (acc.tenantId === 'bella-vista' ? '#F59E0B' : (acc.tenantId === 'sakura-asian' ? '#EC4899' : '#10B981'));
-                return `
+      const isSuper = acc.role === 'SUPER_ADMIN';
+      const tenantName = isSuper
+        ? 'Platform Owner HQ'
+        : ((state.tenants && state.tenants[acc.tenantId]?.name) || acc.tenantId || 'Partner Outlet');
+      const badgeLabel = isSuper ? 'Owner HQ ⚡' : 'Staff Terminal 👨‍🍳';
+      const badgeColor = isSuper ? '#818CF8' : (acc.tenantId === 'bella-vista' ? '#F59E0B' : (acc.tenantId === 'sakura-asian' ? '#EC4899' : '#10B981'));
+      return `
                   <button class="df-demo-btn btn-quick-login" data-pin="${acc.pin}" title="Login as ${acc.name}">
                     <div class="df-demo-btn-info">
                       <span class="df-demo-btn-emoji">${acc.avatarEmoji || (isSuper ? '⚡' : '👨‍🍳')}</span>
@@ -1553,7 +1553,7 @@
                     <div class="df-demo-btn-pin" style="color: ${badgeColor}; border-color: rgba(255,255,255,0.15);">PIN: ${acc.pin}</div>
                   </button>
                 `;
-              }).join('')}
+    }).join('')}
             </div>
           </div>
 
@@ -2725,14 +2725,14 @@
                 <!-- 5-Step Animated Visual Stepper -->
                 <div class="df-stepper-track">
                   ${statusSteps.map((step, idx) => {
-                    const statusOrder = ['RECEIVED', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED', 'COMPLETED'];
-                    const currentIdx = statusOrder.indexOf(activeOrder.status);
-                    const stepIdx = statusOrder.indexOf(step.key);
+      const statusOrder = ['RECEIVED', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED', 'COMPLETED'];
+      const currentIdx = statusOrder.indexOf(activeOrder.status);
+      const stepIdx = statusOrder.indexOf(step.key);
 
-                    const isDone = currentIdx > stepIdx;
-                    const isActive = currentIdx === stepIdx;
+      const isDone = currentIdx > stepIdx;
+      const isActive = currentIdx === stepIdx;
 
-                    return `
+      return `
                       <div class="df-step-node ${isDone ? 'completed' : ''} ${isActive ? 'active' : ''}">
                         <div class="df-step-circle">
                           ${isDone ? '✓' : idx + 1}
@@ -2741,7 +2741,7 @@
                         <div class="df-step-time">${step.desc}</div>
                       </div>
                     `;
-                  }).join('')}
+    }).join('')}
                 </div>
               </div>
 
@@ -3205,11 +3205,11 @@
             </p>
 
             ${[
-              { key: 'overall', label: 'Overall Dining Experience' },
-              { key: 'food', label: 'Food Taste & Presentation' },
-              { key: 'service', label: 'Service Speed & Hospitality' },
-              { key: 'ambience', label: 'Restaurant Ambience & Music' }
-            ].map(dim => `
+        { key: 'overall', label: 'Overall Dining Experience' },
+        { key: 'food', label: 'Food Taste & Presentation' },
+        { key: 'service', label: 'Service Speed & Hospitality' },
+        { key: 'ambience', label: 'Restaurant Ambience & Music' }
+      ].map(dim => `
               <div style="margin-bottom: 1rem;">
                 <label style="font-size: 0.82rem; font-weight: 700; color: #fff;">${dim.label}</label>
                 <div class="df-rating-stars" data-dim="${dim.key}">
@@ -3354,10 +3354,10 @@
             </div>
             <div class="df-venue-dropdown-list">
               ${Object.values(state.tenants || {}).map(t => {
-                const isCurrent = t.slug === tenant.slug;
-                const occCount = (state.tables || []).filter(tbl => tbl.tenantId === t.slug && tbl.status === 'occupied').length;
-                const totalTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug).length;
-                return `
+      const isCurrent = t.slug === tenant.slug;
+      const occCount = (state.tables || []).filter(tbl => tbl.tenantId === t.slug && tbl.status === 'occupied').length;
+      const totalTbls = (state.tables || []).filter(tbl => tbl.tenantId === t.slug).length;
+      return `
                   <a href="?r=${t.slug}&view=admin" class="df-venue-item ${isCurrent ? 'active' : ''}" data-slug="${t.slug}">
                     <div class="df-venue-item-info">
                       <span class="df-venue-item-icon">${t.logoEmoji || '🍽️'}</span>
@@ -3369,7 +3369,7 @@
                     <span class="df-venue-item-status">${occCount} Active</span>
                   </a>
                 `;
-              }).join('')}
+    }).join('')}
             </div>
             <div class="df-venue-dropdown-footer">
               <a href="?view=hub&section=restaurant-directory" class="df-venue-footer-link">
@@ -3670,8 +3670,8 @@
 
       <div class="df-kanban-board">
         ${cols.map(col => {
-          const orders = state.orders.filter(o => (!o.tenantId || o.tenantId === tenant.slug || o.tenantId === tenant.id) && (o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED')));
-          return `
+        const orders = state.orders.filter(o => (!o.tenantId || o.tenantId === tenant.slug || o.tenantId === tenant.id) && (o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED')));
+        return `
             <div class="df-kanban-col" data-col-status="${col.key}">
               <div class="df-kanban-col-header">
                 <span class="df-kanban-col-title" style="color: ${col.color};" title="${col.title}">${col.title}</span>
@@ -3681,13 +3681,13 @@
               </div>
               <div class="df-kanban-cards">
                 ${orders.length ? orders.map(order => {
-                  const orderDate = new Date(order.timestamp || Date.now());
-                  const elapsedMins = Math.max(0, Math.floor((Date.now() - orderDate.getTime()) / 60000));
-                  const isPending = order.status === 'RECEIVED' || order.status === 'CONFIRMED' || order.status === 'PREPARING';
-                  const isOverdue = isPending && elapsedMins >= 20;
-                  const isWarning = isPending && elapsedMins >= 10 && !isOverdue;
+          const orderDate = new Date(order.timestamp || Date.now());
+          const elapsedMins = Math.max(0, Math.floor((Date.now() - orderDate.getTime()) / 60000));
+          const isPending = order.status === 'RECEIVED' || order.status === 'CONFIRMED' || order.status === 'PREPARING';
+          const isOverdue = isPending && elapsedMins >= 20;
+          const isWarning = isPending && elapsedMins >= 10 && !isOverdue;
 
-                  return `
+          return `
                   <div class="df-order-admin-card ${isOverdue ? 'df-card-overdue' : (isWarning ? 'df-card-warning' : '')}" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
                     <div class="df-order-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.35rem; width: 100%;">
                       <div style="display: flex; align-items: center; gap: 0.35rem; min-width: 0; flex: 1;">
@@ -3751,7 +3751,7 @@
                     </div>
                   </div>
                 `;
-              }).join('') : `
+        }).join('') : `
                   <div style="text-align: center; padding: 2rem 0; color: var(--text-dim); font-size: 0.8rem;">
                     No orders in this stage
                   </div>
@@ -3759,7 +3759,7 @@
               </div>
             </div>
           `;
-        }).join('')}
+      }).join('')}
       </div>
     `;
 
@@ -3929,7 +3929,7 @@
 
       if (occupiedTables.length > 0 && tablesWithPendingBills.length === occupiedTables.length) {
         SoundFX.chime('alert');
-        showToast('bill is pending by customer, tables can be marked as available once bill is cleared', '💳');
+        showToast('Payment pending — settle bill to clear table', '💳');
         return;
       }
 
@@ -3966,7 +3966,7 @@
 
       if (tablesWithPendingBills.length > 0) {
         SoundFX.chime('notice');
-        showToast(`${tablesToClear.length} table(s) cleared. ${tablesWithPendingBills.length} table(s) retained: bill is pending by customer, tables can be marked as available once bill is cleared`, '💳');
+        showToast(`${tablesToClear.length} table(s) cleared. ${tablesWithPendingBills.length} retained (payment pending)`, '💳');
       } else {
         SoundFX.chime('success');
         showToast(`All ${tablesToClear.length} dining tables cleared & marked Available!`, '🧹');
@@ -4069,13 +4069,13 @@
 
       <div class="df-tables-grid">
         ${tenantTables.map(table => {
-          // Construct normalized target URL for table
-          const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
-          const hasPendingBill = state.billRequests.some(b => b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
-          const hasUnpaidOrders = state.orders.some(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
-          const isBillPending = hasPendingBill || hasUnpaidOrders;
+      // Construct normalized target URL for table
+      const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
+      const hasPendingBill = state.billRequests.some(b => b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
+      const hasUnpaidOrders = state.orders.some(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+      const isBillPending = hasPendingBill || hasUnpaidOrders;
 
-          return `
+      return `
             <div class="df-table-admin-card" data-table-status="${table.status}">
               <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff;">${table.name}</h4>
@@ -4106,7 +4106,7 @@
                 <button class="df-pill-btn btn-view-tent" data-id="${table.id}" title="Print QR Stand Tent">
                   🖨️ Print Tent
                 </button>
-                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" title="${table.status === 'occupied' ? (isBillPending ? 'Bill is pending by customer, tables can be marked as available once bill is cleared' : 'Click to Clear Table (Mark Available)') : 'Click to Seat Guests (Mark Occupied)'}">
+                <button class="df-pill-btn btn-toggle-table ${table.status === 'occupied' ? 'danger' : ''}" data-id="${table.id}" title="${table.status === 'occupied' ? (isBillPending ? 'Payment pending — settle bill to clear table' : 'Click to Clear Table (Mark Available)') : 'Click to Seat Guests (Mark Occupied)'}">
                   ${table.status === 'occupied' ? '🧹 Clear' : '🪑 Seat'}
                 </button>
                 <a href="${tableUrl}" target="_blank" class="df-pill-btn primary btn-test-link" title="Test Customer Experience">
@@ -4115,7 +4115,7 @@
               </div>
             </div>
           `;
-        }).join('')}
+    }).join('')}
       </div>
     `;
 
@@ -4150,7 +4150,7 @@
 
             if (hasPendingBill || hasUnpaidOrders) {
               SoundFX.chime('alert');
-              showToast('bill is pending by customer, tables can be marked as available once bill is cleared', '💳');
+              showToast('Payment pending — settle bill to clear table', '💳');
               return;
             }
 
@@ -4218,7 +4218,7 @@
 
       if (occupiedTables.length > 0 && tablesWithPendingBills.length === occupiedTables.length) {
         SoundFX.chime('alert');
-        showToast('bill is pending by customer, tables can be marked as available once bill is cleared', '💳');
+        showToast('Payment pending — settle bill to clear table', '💳');
         return;
       }
 
@@ -4255,7 +4255,7 @@
 
       if (tablesWithPendingBills.length > 0) {
         SoundFX.chime('notice');
-        showToast(`${tablesToClear.length} table(s) cleared. ${tablesWithPendingBills.length} table(s) retained: bill is pending by customer, tables can be marked as available once bill is cleared`, '💳');
+        showToast(`${tablesToClear.length} table(s) cleared. ${tablesWithPendingBills.length} retained (payment pending)`, '💳');
       } else {
         SoundFX.chime('success');
         showToast(`All ${tablesToClear.length} tables cleared & marked Available!`, '🧹');
@@ -5274,15 +5274,15 @@
           <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: #fff;">Hourly Order Distribution</h4>
           <div style="display: flex; align-items: flex-end; gap: 0.65rem; height: 160px; padding-top: 1.5rem;">
             ${[
-              { hour: '12 PM', val: 65 },
-              { hour: '1 PM', val: 95 },
-              { hour: '2 PM', val: 80 },
-              { hour: '3 PM', val: 35 },
-              { hour: '7 PM', val: 70 },
-              { hour: '8 PM', val: 100 },
-              { hour: '9 PM', val: 90 },
-              { hour: '10 PM', val: 50 }
-            ].map(b => `
+        { hour: '12 PM', val: 65 },
+        { hour: '1 PM', val: 95 },
+        { hour: '2 PM', val: 80 },
+        { hour: '3 PM', val: 35 },
+        { hour: '7 PM', val: 70 },
+        { hour: '8 PM', val: 100 },
+        { hour: '9 PM', val: 90 },
+        { hour: '10 PM', val: 50 }
+      ].map(b => `
               <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; height: 100%; justify-content: flex-end;">
                 <div style="width: 100%; height: ${b.val}%; background: linear-gradient(to top, var(--brand-primary), #F59E0B); border-radius: 4px;"></div>
                 <span style="font-size: 0.65rem; color: var(--text-dim);">${b.hour}</span>
@@ -5295,12 +5295,12 @@
           <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: #fff;">Top Selling Items by Volume</h4>
           <div style="display: flex; flex-direction: column; gap: 0.65rem;">
             ${[
-              { name: 'Royal Dum Handi Chicken Biryani', orders: 142, pct: 90 },
-              { name: 'Awadhi Mutton Dum Biryani', orders: 110, pct: 75 },
-              { name: 'The Big Boss Truffle Smash Burger', orders: 88, pct: 60 },
-              { name: 'Burrata Margherita Pizza', orders: 79, pct: 54 },
-              { name: 'Belgian Molten Lava Cake', orders: 65, pct: 45 }
-            ].map(item => `
+        { name: 'Royal Dum Handi Chicken Biryani', orders: 142, pct: 90 },
+        { name: 'Awadhi Mutton Dum Biryani', orders: 110, pct: 75 },
+        { name: 'The Big Boss Truffle Smash Burger', orders: 88, pct: 60 },
+        { name: 'Burrata Margherita Pizza', orders: 79, pct: 54 },
+        { name: 'Belgian Molten Lava Cake', orders: 65, pct: 45 }
+      ].map(item => `
               <div>
                 <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem;">
                   <span style="font-weight: 600; color: #fff;">${item.name}</span>
@@ -5540,9 +5540,9 @@
           <div style="display: flex; align-items: center; gap: 0.65rem; font-size: 0.76rem; color: #E2E8F0;">
             <span style="font-size: 1.1rem;">${isSessionSuperAdmin ? '⚡' : '🛡️'}</span>
             <span>
-              ${isSessionSuperAdmin 
-                ? '<strong>Owner HQ Authority:</strong> You have full rights to modify staff profiles, reset PIN credentials, and reassign team members across all outlets.' 
-                : `<strong>Manager RBAC Active:</strong> You can edit and modify credentials for staff at <strong>${tenant.name}</strong>. Owner HQ profiles are strictly protected and cannot be modified.`}
+              ${isSessionSuperAdmin
+          ? '<strong>Owner HQ Authority:</strong> You have full rights to modify staff profiles, reset PIN credentials, and reassign team members across all outlets.'
+          : `<strong>Manager RBAC Active:</strong> You can edit and modify credentials for staff at <strong>${tenant.name}</strong>. Owner HQ profiles are strictly protected and cannot be modified.`}
             </span>
           </div>
           <span class="df-micro-badge status-available">${filteredStaff.length} PROFILES LOADED</span>
@@ -5570,9 +5570,9 @@
                   <div class="df-team-info">
                     <div class="df-team-name-row">
                       <span class="df-team-name">${m.name}</span>
-                      ${isSuper 
-                        ? '<span class="df-staff-scope-pill owner-hq" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">Owner HQ ⚡</span>' 
-                        : '<span class="df-staff-scope-pill staff-only" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">Staff OS 🔒</span>'}
+                      ${isSuper
+                ? '<span class="df-staff-scope-pill owner-hq" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">Owner HQ ⚡</span>'
+                : '<span class="df-staff-scope-pill staff-only" style="font-size: 0.62rem; padding: 0.1rem 0.35rem;">Staff OS 🔒</span>'}
                     </div>
                     <div class="df-team-role">${m.roleTitle} &bull; ${m.department || 'Floor'}</div>
                   </div>
@@ -5732,7 +5732,7 @@
     const isSessionSuperAdmin = state.session && state.session.role === 'SUPER_ADMIN';
     const sessionTenantId = state.session?.tenantId || state.currentTenantId;
     const tenantsList = state.tenants ? Object.values(state.tenants) : [];
-    const defaultTenantSlug = isSessionSuperAdmin 
+    const defaultTenantSlug = isSessionSuperAdmin
       ? (preselectedTenant || state.currentTenantId || tenantsList[0]?.slug || 'the-urban-plate')
       : sessionTenantId;
 
@@ -6361,7 +6361,7 @@
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        logs = logs.filter(l => 
+        logs = logs.filter(l =>
           (l.action && l.action.toLowerCase().includes(q)) ||
           (l.details && l.details.toLowerCase().includes(q)) ||
           (l.managerName && l.managerName.toLowerCase().includes(q)) ||
@@ -6379,7 +6379,7 @@
       // Calculate dynamic KPIs from logs
       const totalAmount = logs.reduce((sum, l) => sum + (l.amount || 0), 0) || (totalOrdersRev * 12);
       const ordersCount = logs.filter(l => l.category === 'PAYMENT' || l.category === 'DISCOUNT').length || 248;
-      
+
       const upiLogs = logs.filter(l => l.paymentMethod === 'UPI');
       const cardLogs = logs.filter(l => l.paymentMethod === 'Card');
       const cashLogs = logs.filter(l => l.paymentMethod === 'Cash');
@@ -6544,15 +6544,15 @@
                 </div>
 
                 ${allManagers.map((m, idx) => {
-                  const mLogs = logs.filter(l => l.managerId === m.id);
-                  const mOrdersCount = mLogs.length ? mLogs.length : (21 - idx * 4);
-                  const mUpi = 65 + (idx % 2 === 0 ? 5 : -5);
-                  const mCard = 22 + (idx % 2 === 0 ? -3 : 4);
-                  const mCash = 100 - mUpi - mCard;
-                  const shiftTime = idx === 0 ? '5h 14m' : idx === 1 ? '4h 30m' : '3h 45m';
-                  const venueName = m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform Operations';
+        const mLogs = logs.filter(l => l.managerId === m.id);
+        const mOrdersCount = mLogs.length ? mLogs.length : (21 - idx * 4);
+        const mUpi = 65 + (idx % 2 === 0 ? 5 : -5);
+        const mCard = 22 + (idx % 2 === 0 ? -3 : 4);
+        const mCash = 100 - mUpi - mCard;
+        const shiftTime = idx === 0 ? '5h 14m' : idx === 1 ? '4h 30m' : '3h 45m';
+        const venueName = m.tenantId && state.tenants[m.tenantId] ? state.tenants[m.tenantId].name : 'Platform Operations';
 
-                  return `
+        return `
                     <div class="df-manager-card-item">
                       <div class="df-manager-header-row">
                         <div class="df-manager-identity">
@@ -6560,9 +6560,9 @@
                           <div style="min-width: 0; flex: 1;">
                             <div class="df-manager-name-line">
                               <span class="df-manager-name">${m.name}</span>
-                              ${m.role === 'SUPER_ADMIN' 
-                                ? '<span class="df-staff-scope-pill owner-hq" style="font-size: 0.62rem; padding: 0.12rem 0.4rem; white-space: nowrap;">Owner HQ ⚡</span>' 
-                                : '<span class="df-staff-scope-pill staff-only" style="font-size: 0.62rem; padding: 0.12rem 0.4rem; white-space: nowrap;">Staff OS 🔒</span>'}
+                              ${m.role === 'SUPER_ADMIN'
+            ? '<span class="df-staff-scope-pill owner-hq" style="font-size: 0.62rem; padding: 0.12rem 0.4rem; white-space: nowrap;">Owner HQ ⚡</span>'
+            : '<span class="df-staff-scope-pill staff-only" style="font-size: 0.62rem; padding: 0.12rem 0.4rem; white-space: nowrap;">Staff OS 🔒</span>'}
                             </div>
                             <div class="df-manager-sub" title="${m.roleTitle} • ${m.department || 'Floor Operations'}">${m.roleTitle} &bull; ${m.department || 'Floor'}</div>
                           </div>
@@ -6604,7 +6604,7 @@
                       </div>
                     </div>
                   `;
-                }).join('')}
+      }).join('')}
               </div>
 
               <!-- Right Column: Live Audit & Security Stream -->
@@ -6639,17 +6639,17 @@
                     </thead>
                     <tbody>
                       ${logs.length ? logs.map(l => {
-                        let badgeClass = 'payment';
-                        if (l.category === 'DISCOUNT') badgeClass = 'discount';
-                        else if (l.category === 'OVERRIDE') badgeClass = 'override';
-                        else if (l.category === 'STOCK') badgeClass = 'stock';
-                        else if (l.category === 'SHIFT' || l.category === 'RECONCILIATION') badgeClass = 'shift';
+        let badgeClass = 'payment';
+        if (l.category === 'DISCOUNT') badgeClass = 'discount';
+        else if (l.category === 'OVERRIDE') badgeClass = 'override';
+        else if (l.category === 'STOCK') badgeClass = 'stock';
+        else if (l.category === 'SHIFT' || l.category === 'RECONCILIATION') badgeClass = 'shift';
 
-                        let flagClass = 'verified';
-                        if (l.severity === 'alert') flagClass = 'alert';
-                        else if (l.severity === 'warning') flagClass = 'warning';
+        let flagClass = 'verified';
+        if (l.severity === 'alert') flagClass = 'alert';
+        else if (l.severity === 'warning') flagClass = 'warning';
 
-                        return `
+        return `
                           <tr>
                             <td style="white-space: nowrap; color: var(--text-muted); font-size: 0.75rem;">
                               ${l.timestamp}
@@ -6677,7 +6677,7 @@
                             </td>
                           </tr>
                         `;
-                      }).join('') : `
+      }).join('') : `
                         <tr>
                           <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
                             No audit records found matching your filters.
