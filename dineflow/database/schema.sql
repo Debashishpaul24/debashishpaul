@@ -360,9 +360,13 @@ CREATE POLICY "Guests can submit reviews" ON reviews FOR INSERT WITH CHECK (TRUE
 -- Operational updates: Allow updates for order status, tables, requests (Staff and Floor Terminal)
 CREATE POLICY "Staff can update orders" ON orders FOR UPDATE USING (TRUE);
 CREATE POLICY "Staff can update tables" ON tables FOR UPDATE USING (TRUE);
+CREATE POLICY "Staff can insert tables" ON tables FOR INSERT WITH CHECK (TRUE);
+CREATE POLICY "Staff can delete tables" ON tables FOR DELETE USING (TRUE);
 CREATE POLICY "Staff can update staff requests" ON staff_requests FOR UPDATE USING (TRUE);
 CREATE POLICY "Staff can update bill requests" ON bill_requests FOR UPDATE USING (TRUE);
-CREATE POLICY "Staff can view staff accounts" ON staff_accounts FOR SELECT USING (TRUE);
+CREATE POLICY "Staff can manage menu items" ON menu_items FOR ALL USING (TRUE);
+CREATE POLICY "Staff can manage categories" ON categories FOR ALL USING (TRUE);
+CREATE POLICY "Staff can manage staff accounts" ON staff_accounts FOR ALL USING (TRUE);
 CREATE POLICY "Staff can view and record audit logs" ON audit_logs FOR ALL USING (TRUE);
 CREATE POLICY "Staff can view CRM customers" ON customers FOR ALL USING (TRUE);
 

@@ -104,6 +104,20 @@
       };
     },
 
+    tableToDb(table, tenantId) {
+      return {
+        tenant_id: table.tenantId || tenantId || currentTenant,
+        id: table.id,
+        name: table.name || `Table ${table.id}`,
+        section: table.section || 'Indoor AC Dining',
+        capacity: Number(table.capacity) || 4,
+        status: table.status || 'available',
+        qr_scans: Number(table.qrScans) || 0,
+        last_scanned: table.lastScanned || 'Never',
+        manually_occupied: Boolean(table.manuallyOccupied)
+      };
+    },
+
     staffRequestFromDb(db) {
       return {
         id: db.id,
@@ -146,6 +160,42 @@
         addOns: Array.isArray(db.add_ons) ? db.add_ons : [],
         customizationOptions: Array.isArray(db.customization_options) ? db.customization_options : [],
         prepTimeMins: Number(db.prep_time_mins) || 15
+      };
+    },
+
+    menuItemToDb(item, tenantId) {
+      return {
+        id: item.id,
+        tenant_id: item.tenantId || tenantId || currentTenant,
+        category_id: item.categoryId || 'cat-specials',
+        name: item.name,
+        description: item.description || '',
+        price: Number(item.price) || 0,
+        is_veg: Boolean(item.isVeg),
+        spice_level: item.spiceLevel || 'medium',
+        is_bestseller: Boolean(item.isBestseller),
+        is_recommended: Boolean(item.isRecommended),
+        is_available: item.isAvailable !== false,
+        image: item.image || 'images/paneer-tikka.jpg',
+        allergens: Array.isArray(item.allergens) ? item.allergens : [],
+        add_ons: Array.isArray(item.addOns) ? item.addOns : [],
+        customization_options: Array.isArray(item.customizationOptions) ? item.customizationOptions : [],
+        prep_time_mins: Number(item.prepTimeMins) || 15
+      };
+    },
+
+    reviewToDb(rev, tenantId) {
+      return {
+        id: rev.id || `rev-${Date.now()}`,
+        tenant_id: rev.tenantId || tenantId || currentTenant,
+        customer_name: rev.customerName || 'Guest Diner',
+        rating_overall: Number(rev.ratingOverall) || 5,
+        rating_food: Number(rev.ratingFood) || 5,
+        rating_service: Number(rev.ratingService) || 5,
+        rating_ambience: Number(rev.ratingAmbience) || 5,
+        comment: rev.comment || '',
+        table_id: rev.tableId || null,
+        date_label: rev.date || 'Today'
       };
     },
 
@@ -215,9 +265,11 @@
 
         if (tablesRes.data && tablesRes.data.length > 0) {
           const freshTables = tablesRes.data.map(Transformers.tableFromDb);
-          // Merge preserving tables from other tenants
+          const freshIds = new Set(freshTables.map(t => t.id));
+          // Preserve any newly added local tables (e.g. Table 21) not yet in cloud snapshot
+          const pendingLocalTables = (state.tables || []).filter(t => t.tenantId === slug && !freshIds.has(t.id));
           const otherTables = (state.tables || []).filter(t => t.tenantId !== slug);
-          state.tables = [...freshTables, ...otherTables];
+          state.tables = [...freshTables, ...pendingLocalTables, ...otherTables];
         }
 
         if (ordersRes.data) {
@@ -264,8 +316,10 @@
 
         if (itemsRes.data && itemsRes.data.length > 0) {
           const freshItems = itemsRes.data.map(Transformers.menuItemFromDb);
+          const freshItemIds = new Set(freshItems.map(i => i.id));
+          const pendingItems = (state.menuItems || []).filter(i => i.tenantId === slug && !freshItemIds.has(i.id));
           const otherItems = (state.menuItems || []).filter(m => m.tenantId !== slug);
-          state.menuItems = [...freshItems, ...otherItems];
+          state.menuItems = [...freshItems, ...pendingItems, ...otherItems];
         }
 
         if (catsRes.data && catsRes.data.length > 0) {
@@ -403,8 +457,21 @@
     },
 
     handleLiveTableEvent(payload) {
-      if (payload.eventType === 'UPDATE' && payload.new) {
-        const state = DineFlowStore.get();
+      const state = DineFlowStore.get();
+      if (payload.eventType === 'INSERT' && payload.new) {
+        const table = Transformers.tableFromDb(payload.new);
+        const idx = state.tables.findIndex(t => t.id === table.id && t.tenantId === table.tenantId);
+        if (idx === -1) {
+          state.tables.push(table);
+          DineFlowStore.saveLocalOnly(state);
+          this.notifyUI({
+            action: 'TABLE_CREATED',
+            table: table,
+            tableId: table.id,
+            tenantSlug: table.tenantId
+          });
+        }
+      } else if (payload.eventType === 'UPDATE' && payload.new) {
         const updated = Transformers.tableFromDb(payload.new);
         const idx = state.tables.findIndex(t => t.id === updated.id && t.tenantId === updated.tenantId);
         if (idx !== -1) {
@@ -417,6 +484,14 @@
             tenantSlug: updated.tenantId
           });
         }
+      } else if (payload.eventType === 'DELETE' && payload.old) {
+        const oldId = payload.old.id;
+        state.tables = state.tables.filter(t => t.id !== oldId);
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({
+          action: 'TABLE_DELETED',
+          tableId: oldId
+        });
       }
     },
 
@@ -643,6 +718,92 @@
                 security_flag: log.securityFlag || '✓ Verified'
               };
               await sb.from('audit_logs').insert(row);
+            }
+            break;
+          }
+
+          case 'TABLE_CREATED':
+          case 'TABLE_UPSERTED': {
+            if (meta.table) {
+              const row = Transformers.tableToDb(meta.table, tenantId);
+              const { error } = await sb.from('tables').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Table ${row.id} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'MENU_ITEM_CREATED': {
+            if (meta.item) {
+              const row = Transformers.menuItemToDb(meta.item, tenantId);
+              const { error } = await sb.from('menu_items').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Menu item ${row.name} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'MENU_ITEM_AVAILABILITY_CHANGED': {
+            if (meta.itemId) {
+              const { error } = await sb.from('menu_items')
+                .update({ is_available: Boolean(meta.isAvailable) })
+                .match({ tenant_id: tenantId, id: meta.itemId });
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Menu item ${meta.itemId} stock updated to ${meta.isAvailable}`);
+            }
+            break;
+          }
+
+          case 'MENU_ITEM_DELETED': {
+            if (meta.itemId) {
+              const { error } = await sb.from('menu_items')
+                .delete()
+                .match({ tenant_id: tenantId, id: meta.itemId });
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Menu item ${meta.itemId} deleted from PostgreSQL`);
+            }
+            break;
+          }
+
+          case 'REVIEW_SUBMITTED': {
+            if (meta.review) {
+              const row = Transformers.reviewToDb(meta.review, tenantId);
+              const { error } = await sb.from('reviews').insert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Review ${row.id} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'STAFF_ACCOUNT_CREATED': {
+            if (meta.account) {
+              const acc = meta.account;
+              const row = {
+                id: acc.id,
+                tenant_id: acc.tenantId || tenantId,
+                name: acc.name,
+                role_title: acc.roleTitle || acc.title || 'Staff Member',
+                role: acc.role || 'RESTAURANT_ADMIN',
+                pin: acc.pin || '1234',
+                email: acc.email || `${acc.id}@dineflow.io`,
+                avatar_emoji: acc.avatarEmoji || '👨‍🍳',
+                department: acc.department || 'Kitchen & Floor',
+                is_active: acc.isActive !== false
+              };
+              const { error } = await sb.from('staff_accounts').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Staff account ${row.name} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'STAFF_ACCOUNT_REVOKED': {
+            if (meta.staffId) {
+              const { error } = await sb.from('staff_accounts')
+                .update({ is_active: false })
+                .eq('id', meta.staffId);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Staff account ${meta.staffId} revoked in PostgreSQL!`);
             }
             break;
           }

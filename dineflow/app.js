@@ -3238,8 +3238,9 @@
 
     document.getElementById('btn-submit-feedback')?.addEventListener('click', () => {
       const comment = document.getElementById('feedback-comment')?.value.trim() || 'Wonderful meal and impeccable service!';
-      state.reviews.unshift({
+      const reviewObj = {
         id: `rev-${Date.now()}`,
+        tenantId: tenant.slug || tenant.id || 'the-urban-plate',
         customerName: 'Guest Diner',
         ratingOverall: ratings.overall,
         ratingFood: ratings.food,
@@ -3248,9 +3249,15 @@
         comment,
         tableId: table.id,
         date: 'Just now'
-      });
+      };
+      state.reviews.unshift(reviewObj);
 
-      DineFlowStore.save(state);
+      DineFlowStore.save(state, {
+        action: 'REVIEW_SUBMITTED',
+        source: 'customer',
+        review: reviewObj,
+        tenantSlug: tenant.slug || tenant.id
+      });
       SoundFX.chime('success');
       modalContainer.innerHTML = '';
       showToast('Thank you for your generous feedback!', '⭐');
@@ -4174,7 +4181,7 @@
     document.getElementById('btn-add-table')?.addEventListener('click', () => {
       const prefix = tenantSlug === 'bella-vista' ? 'BV-' : (tenantSlug === 'sakura-asian' ? 'SK-' : 'T');
       const nextId = `${prefix}${String(tenantTables.length + 1).padStart(2, '0')}`;
-      state.tables.push({
+      const newTable = {
         id: nextId,
         tenantId: tenantSlug,
         name: `Table ${nextId}`,
@@ -4183,8 +4190,15 @@
         status: 'available',
         qrScans: 0,
         lastScanned: 'Never'
+      };
+      state.tables.push(newTable);
+      DineFlowStore.save(state, {
+        action: 'TABLE_CREATED',
+        source: 'staff',
+        table: newTable,
+        tableId: nextId,
+        tenantSlug: tenantSlug
       });
-      DineFlowStore.save(state);
       SoundFX.chime('success');
       showToast(`Added ${nextId} to ${tenant.name} tables`);
       renderAdminView(document.getElementById('app'), tenant);
@@ -4790,7 +4804,13 @@
         const it = state.menuItems.find(m => m.id === id);
         if (it) {
           it.isAvailable = !it.isAvailable;
-          DineFlowStore.save(state);
+          DineFlowStore.save(state, {
+            action: 'MENU_ITEM_AVAILABILITY_CHANGED',
+            source: 'staff',
+            itemId: id,
+            isAvailable: it.isAvailable,
+            tenantSlug: tenantSlug
+          });
           SoundFX.chime('success');
           showToast(`${it.name} marked as ${it.isAvailable ? 'In Stock' : 'Sold Out'}`);
           renderMenuManager(container, tenant);
@@ -4802,7 +4822,12 @@
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
         state.menuItems = state.menuItems.filter(m => m.id !== id);
-        DineFlowStore.save(state);
+        DineFlowStore.save(state, {
+          action: 'MENU_ITEM_DELETED',
+          source: 'staff',
+          itemId: id,
+          tenantSlug: tenantSlug
+        });
         showToast('Dish removed from menu');
         renderMenuManager(container, tenant);
       });
@@ -4887,9 +4912,9 @@
         return;
       }
 
-      state.menuItems.unshift({
+      const newItem = {
         id: `item-${Date.now()}`,
-        tenantId: tenant.id,
+        tenantId: tenant.slug || tenant.id,
         categoryId: cat,
         name,
         description: desc,
@@ -4902,9 +4927,16 @@
         image: img,
         allergens: ['Dairy'],
         addOns: []
-      });
+      };
 
-      DineFlowStore.save(state);
+      state.menuItems.unshift(newItem);
+
+      DineFlowStore.save(state, {
+        action: 'MENU_ITEM_CREATED',
+        source: 'staff',
+        item: newItem,
+        tenantSlug: tenant.slug || tenant.id
+      });
       SoundFX.chime('success');
       modalContainer.innerHTML = '';
       showToast(`Added ${name} to digital menu!`);
@@ -5575,7 +5607,12 @@
               severity: 'warning'
             });
 
-            DineFlowStore.save(state);
+            DineFlowStore.save(state, {
+              action: 'STAFF_ACCOUNT_REVOKED',
+              source: 'staff',
+              staffId: staffId,
+              tenantSlug: tenantSlug
+            });
             SoundFX.chime('notice');
             showToast(`Staff profile for "${staffName}" revoked.`, '🗑️');
             renderContent();
@@ -5856,7 +5893,12 @@
         severity: 'info'
       });
 
-      DineFlowStore.save(state);
+      DineFlowStore.save(state, {
+        action: 'STAFF_ACCOUNT_CREATED',
+        source: 'staff',
+        account: newAccount,
+        tenantSlug: outletSlug
+      });
       SoundFX.chime('success');
       showToast(`Staff profile created for ${newAccount.name}! Restricted to Staff OS.`, newAccount.avatarEmoji);
       closeModal();
@@ -6798,7 +6840,12 @@
               severity: 'warning'
             });
 
-            DineFlowStore.save(state);
+            DineFlowStore.save(state, {
+              action: 'STAFF_ACCOUNT_REVOKED',
+              source: 'staff',
+              staffId: staffId,
+              tenantSlug: tenantSlug
+            });
             SoundFX.chime('notice');
             showToast(`Staff profile for "${staffName}" revoked.`, '🗑️');
             renderMain();
