@@ -3647,19 +3647,18 @@
 
                   return `
                   <div class="df-order-admin-card ${isOverdue ? 'df-card-overdue' : (isWarning ? 'df-card-warning' : '')}" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
-                    <div class="df-order-card-header">
-                      <div style="display: flex; align-items: center; gap: 0.35rem;">
-                        <span class="df-drag-handle" title="Drag &amp; drop ticket across stages">⠿</span>
-                        <span class="df-order-card-table">Table ${order.tableId}</span>
+                    <div class="df-order-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.35rem; width: 100%;">
+                      <div style="display: flex; align-items: center; gap: 0.35rem; min-width: 0; flex: 1;">
+                        <span class="df-drag-handle" title="Drag &amp; drop ticket across stages" style="flex-shrink: 0;">&#10031;</span>
+                        <span class="df-order-card-table" style="white-space: nowrap; font-weight: 800; font-size: 0.85rem;">Table ${order.tableId}</span>
+                        <span style="font-size: 0.68rem; color: var(--text-dim); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">#${order.id}</span>
                       </div>
-                      <div style="display: flex; align-items: center; gap: 0.35rem;">
-                        <span class="df-elapsed-badge" data-order-timestamp="${orderDate.getTime()}" style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; ${isOverdue ? 'background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4);' : (isWarning ? 'background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.12); color: #94A3B8;')}">
-                          ⏱️ ${elapsedMins}m ${isOverdue ? '• LATE' : ''}
+                      <div style="flex-shrink: 0;">
+                        <span class="df-elapsed-badge" data-order-timestamp="${orderDate.getTime()}" style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 2px; ${isOverdue ? 'background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4);' : (isWarning ? 'background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.12); color: #94A3B8;')}">
+                          &#9201; ${elapsedMins}m${isOverdue ? ' LATE' : ''}
                         </span>
-                        <span style="font-size: 0.72rem; color: var(--text-dim); font-weight: 700;">#${order.id}</span>
                       </div>
-                    </div>
-                    <div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
+                    </div><div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
                       ${order.customerName}
                     </div>
                     <div class="df-order-items-snippet">
@@ -3924,7 +3923,7 @@
         const isOverdue = isPending && elapsed >= 20;
         const isWarning = isPending && elapsed >= 10 && !isOverdue;
 
-        badge.innerHTML = `â±ï¸ ${elapsed}m ${isOverdue ? 'â€¢ LATE' : ''}`;
+        badge.innerHTML = `&#9201; ${elapsed}m${isOverdue ? " LATE" : ""}`;
         if (isOverdue) {
           badge.style.background = 'rgba(239, 68, 68, 0.2)';
           badge.style.color = '#EF4444';

@@ -1842,6 +1842,14 @@ body.splash-active {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.df-elapsed-badge {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  letter-spacing: 0.2px;
 }
 
 .df-order-card-table {
