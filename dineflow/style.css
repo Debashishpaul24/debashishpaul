@@ -5056,3 +5056,75 @@ body.splash-active {
   border-color: rgba(239, 68, 68, 0.6) !important;
   box-shadow: 0 0 16px rgba(239, 68, 68, 0.25) !important;
 }
+
+
+/* Add Table Modal & Capacity Controls */
+.btn-capacity-preset {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: #94A3B8;
+  border-radius: 8px;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.btn-capacity-preset:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-capacity-preset.active {
+  background: rgba(229, 169, 60, 0.16) !important;
+  border-color: var(--brand-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(229, 169, 60, 0.25);
+}
+
+.btn-table-tag {
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  color: #94A3B8;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  transition: all 0.15s ease;
+}
+
+.btn-table-tag:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-table-tag.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+#btn-cap-minus:hover, #btn-cap-plus:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: var(--brand-primary) !important;
+}
+
+#new-table-capacity::-webkit-inner-spin-button,
+#new-table-capacity::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#new-table-capacity {
+  -moz-appearance: textfield;
+}

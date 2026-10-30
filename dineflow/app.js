@@ -545,6 +545,11 @@
         }
         stateChanged = true;
       }
+    } else if (event.action === 'TABLE_CREATED') {
+      if (event.table && !state.tables.some(t => t.id === event.table.id && (!t.tenantId || t.tenantId === event.tenantSlug))) {
+        state.tables.push(event.table);
+        stateChanged = true;
+      }
     }
 
     if (stateChanged) {
@@ -4200,7 +4205,14 @@
               </div>
             </div>
           `;
-    }).join('')}
+    }).join('') : `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3.5rem 1rem; color: var(--text-muted); background: var(--bg-card); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.65rem;">🪑</div>
+            <h4 style="color: #fff; font-size: 1.1rem; font-weight: 800; margin-bottom: 0.35rem;">No Tables Configured Yet</h4>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.25rem; max-width: 400px; margin-left: auto; margin-right: auto;">Add dining tables with custom seating capacity, dining zones, and instant high-precision vector QR codes.</p>
+            <button class="df-pill-btn primary" id="btn-add-table-empty" style="padding: 0.6rem 1.25rem; font-weight: 800;">+ Add First Table</button>
+          </div>
+        `}
       </div>
     `;
 
@@ -4354,30 +4366,416 @@
     });
 
     // Add Table
-    document.getElementById('btn-add-table')?.addEventListener('click', () => {
-      const prefix = tenantSlug === 'bella-vista' ? 'BV-' : (tenantSlug === 'sakura-asian' ? 'SK-' : 'T');
-      const nextId = `${prefix}${String(tenantTables.length + 1).padStart(2, '0')}`;
+    const handleOpenAddTable = () => {
+      openAddTableModal(tenant, () => renderAdminView(document.getElementById('app'), tenant));
+    };
+    document.getElementById('btn-add-table')?.addEventListener('click', handleOpenAddTable);
+    document.getElementById('btn-add-table-empty')?.addEventListener('click', handleOpenAddTable);
+  }
+
+  // ------------------------------------------------------------------------------
+  // ADD DINING TABLE MODAL (Configurable Capacity, Section & Seating Options)
+  // ------------------------------------------------------------------------------
+  function openAddTableModal(tenant, onComplete) {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
+
+    state = DineFlowStore.get();
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantTables = state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug);
+
+    // Compute smart sequential table ID
+    const prefix = tenantSlug === 'bella-vista' ? 'BV-' : (tenantSlug === 'sakura-asian' ? 'SK-' : 'T');
+    const existingNums = tenantTables
+      .map(t => {
+        if (!t || typeof t.id !== 'string') return 0;
+        if (prefix === 'T') {
+          const m = t.id.match(/^T(\d+)$/i);
+          return m ? parseInt(m[1], 10) : 0;
+        } else {
+          const m = t.id.match(new RegExp(`^${prefix}(\\d+)$`, 'i'));
+          return m ? parseInt(m[1], 10) : 0;
+        }
+      })
+      .filter(n => n > 0);
+
+    const maxNum = existingNums.length > 0 ? Math.max(...existingNums) : tenantTables.length;
+    const defaultTableId = `${prefix}${String(maxNum + 1).padStart(2, '0')}`;
+    const defaultTableName = `Table ${defaultTableId}`;
+
+    // Collect unique sections from existing tables for this venue
+    const collectedSections = Array.from(new Set(tenantTables.map(t => t.section).filter(Boolean)));
+    const recommendedSections = [
+      'Indoor AC Dining',
+      'Garden Patio (Outdoor)',
+      'Indoor Family Booth',
+      'Rooftop Lounge & Bar',
+      'Private Dining (VIP)',
+      'Bar Counter Seating'
+    ];
+    recommendedSections.forEach(sec => {
+      if (!collectedSections.includes(sec)) collectedSections.push(sec);
+    });
+    const defaultSection = collectedSections[0] || 'Indoor AC Dining';
+
+    modalContainer.innerHTML = `
+      <div class="df-modal-backdrop active" id="add-table-backdrop">
+        <div class="df-bottom-sheet" style="max-width: 540px; align-self: center; border-radius: 20px; background: #0E131F; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 24px 60px rgba(0,0,0,0.85); overflow: hidden;">
+          <div class="df-sheet-header" style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(229, 169, 60, 0.15); color: var(--brand-primary); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                🪑
+              </div>
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">Add Dining Table</h3>
+                <span style="font-size: 0.72rem; color: var(--text-dim);">${tenant.name} • Capacity &amp; Floor Provisioning</span>
+              </div>
+            </div>
+            <button class="df-sheet-close" id="btn-close-add-table" style="background: none; border: none; font-size: 1.25rem; color: var(--text-dim); cursor: pointer;">✕</button>
+          </div>
+
+          <div class="df-sheet-body" style="padding: 1.25rem 1.5rem; max-height: 82vh; overflow-y: auto;">
+            <form id="df-add-table-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1.1rem;">
+              
+              <!-- 1. Table ID & Display Name -->
+              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Table Identifier / Code *
+                  </label>
+                  <input type="text" id="new-table-id" value="${defaultTableId}" placeholder="e.g. T22, BV-09" style="width: 100%; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;" required>
+                  <span id="table-id-error" style="display: none; font-size: 0.7rem; color: #EF4444; margin-top: 0.25rem; font-weight: 600;">⚠️ Table ID already in use</span>
+                </div>
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Display Name *
+                  </label>
+                  <input type="text" id="new-table-name" value="${defaultTableName}" placeholder="e.g. Table T22, Patio 04" style="width: 100%; font-weight: 700;" required>
+                </div>
+              </div>
+
+              <!-- 2. Seating Capacity (Core User Request) -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0;">
+                    Seating Capacity *
+                  </label>
+                  <span style="font-size: 0.72rem; color: var(--text-dim);">Max covers/guests per sitting</span>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="df-capacity-presets" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; margin-bottom: 0.6rem;">
+                  <button type="button" class="btn-capacity-preset" data-capacity="2">
+                    <span style="font-size: 1rem;">👥</span>
+                    <span>2 Seats</span>
+                  </button>
+                  <button type="button" class="btn-capacity-preset active" data-capacity="4">
+                    <span style="font-size: 1rem;">👥</span>
+                    <span>4 Seats</span>
+                  </button>
+                  <button type="button" class="btn-capacity-preset" data-capacity="6">
+                    <span style="font-size: 1rem;">👨‍👩‍👧</span>
+                    <span>6 Seats</span>
+                  </button>
+                  <button type="button" class="btn-capacity-preset" data-capacity="8">
+                    <span style="font-size: 1rem;">👨‍👩‍👦‍👦</span>
+                    <span>8 Seats</span>
+                  </button>
+                  <button type="button" class="btn-capacity-preset" data-capacity="10">
+                    <span style="font-size: 1rem;">🎉</span>
+                    <span>10+ Seats</span>
+                  </button>
+                </div>
+
+                <!-- Fine-tuning Stepper -->
+                <div style="display: flex; align-items: center; gap: 0.65rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 0.35rem 0.65rem;">
+                  <button type="button" id="btn-cap-minus" style="width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer;">−</button>
+                  <div style="flex: 1; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <input type="number" id="new-table-capacity" value="4" min="1" max="60" style="width: 60px; text-align: center; font-size: 1.2rem; font-weight: 800; padding: 0.2rem; background: transparent; border: none; color: #fff;">
+                    <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Guests / Seats</span>
+                  </div>
+                  <button type="button" id="btn-cap-plus" style="width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer;">+</button>
+                </div>
+              </div>
+
+              <!-- 3. Dining Section / Floor Zone -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                  Dining Section / Floor Zone *
+                </label>
+                <select id="new-table-section-select" style="width: 100%; margin-bottom: 0.4rem;">
+                  ${collectedSections.map(sec => `<option value="${sec}" ${sec === defaultSection ? 'selected' : ''}>📍 ${sec}</option>`).join('')}
+                  <option value="__custom__">➕ Add Custom Section / Zone Name...</option>
+                </select>
+                <input type="text" id="new-table-custom-section" placeholder="e.g. Mezzanine Level, Poolside Terrace" style="width: 100%; display: none; margin-top: 0.35rem;">
+              </div>
+
+              <!-- 4. Initial Seating Status -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.45rem; display: block;">
+                  Initial Table Status
+                </label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                  <label id="label-status-avail" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 0.85rem; border: 1px solid #10B981; background: rgba(16, 185, 129, 0.12); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                    <input type="radio" name="table-status-choice" value="available" checked style="accent-color: #10B981;">
+                    <div>
+                      <div style="font-size: 0.82rem; font-weight: 700; color: #10B981;">🟢 Available</div>
+                      <div style="font-size: 0.68rem; color: var(--text-dim);">Vacant, ready for walk-ins &amp; QR orders</div>
+                    </div>
+                  </label>
+                  <label id="label-status-occ" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 0.85rem; border: 1px solid var(--border-subtle); background: rgba(255, 255, 255, 0.03); border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                    <input type="radio" name="table-status-choice" value="occupied" style="accent-color: #EF4444;">
+                    <div>
+                      <div style="font-size: 0.82rem; font-weight: 700; color: #CBD5E1;">🔴 Occupied</div>
+                      <div style="font-size: 0.68rem; color: var(--text-dim);">Guests seated immediately</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 5. Atmosphere / Features (Optional) -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                  Table Feature / Tag (Optional)
+                </label>
+                <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                  <button type="button" class="btn-table-tag active" data-tag="Standard Dining">🪑 Standard Table</button>
+                  <button type="button" class="btn-table-tag" data-tag="Window View">🪟 Window View</button>
+                  <button type="button" class="btn-table-tag" data-tag="Cozy Booth">🛋️ Cozy Booth</button>
+                  <button type="button" class="btn-table-tag" data-tag="Patio Outdoor">🌿 Patio Outdoor</button>
+                  <button type="button" class="btn-table-tag" data-tag="VIP Lounge">👑 VIP Lounge</button>
+                </div>
+              </div>
+
+              <!-- 6. Live QR Preview Card -->
+              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 0.85rem 1rem; display: flex; align-items: center; gap: 1rem;">
+                <div id="add-table-qr-mini" style="width: 68px; height: 68px; background: #fff; padding: 4px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                  <!-- Live SVG QR -->
+                </div>
+                <div style="min-width: 0; flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.2rem;">
+                    <span id="preview-table-name" style="font-weight: 800; font-size: 0.95rem; color: #fff;">${defaultTableName}</span>
+                    <span id="preview-table-cap" class="df-micro-badge" style="background: rgba(229, 169, 60, 0.15); color: var(--brand-primary); font-size: 0.65rem; padding: 2px 6px;">👥 4p</span>
+                  </div>
+                  <div id="preview-table-sec" style="font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.25rem;">${defaultSection}</div>
+                  <div id="preview-table-url" style="font-size: 0.68rem; color: var(--text-dim); font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${getDineFlowTableUrl(tenant.slug, defaultTableId)}
+                  </div>
+                </div>
+              </div>
+
+              <!-- 7. Actions -->
+              <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                <button type="button" id="btn-cancel-add-table" class="df-pill-btn" style="flex: 1; padding: 0.75rem; text-align: center; justify-content: center;">
+                  Cancel
+                </button>
+                <button type="submit" id="btn-submit-add-table" class="df-pill-btn primary" style="flex: 2; padding: 0.75rem; text-align: center; justify-content: center; font-weight: 800;">
+                  + Add Table to Floor Plan
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const idInput = document.getElementById('new-table-id');
+    const nameInput = document.getElementById('new-table-name');
+    const capInput = document.getElementById('new-table-capacity');
+    const secSelect = document.getElementById('new-table-section-select');
+    const secCustomInput = document.getElementById('new-table-custom-section');
+    const submitBtn = document.getElementById('btn-submit-add-table');
+    const errorEl = document.getElementById('table-id-error');
+
+    let hasManuallyEditedName = false;
+
+    function getSelectedSection() {
+      if (secSelect?.value === '__custom__') {
+        return (secCustomInput?.value || '').trim() || 'Indoor AC Dining';
+      }
+      return secSelect?.value || 'Indoor AC Dining';
+    }
+
+    function updateLivePreview() {
+      const tid = (idInput?.value || defaultTableId).trim().toUpperCase();
+      const tname = (nameInput?.value || `Table ${tid}`).trim();
+      const cap = parseInt(capInput?.value, 10) || 4;
+      const sec = getSelectedSection();
+
+      const nameEl = document.getElementById('preview-table-name');
+      const capEl = document.getElementById('preview-table-cap');
+      const secEl = document.getElementById('preview-table-sec');
+      const urlEl = document.getElementById('preview-table-url');
+      const qrHolder = document.getElementById('add-table-qr-mini');
+
+      if (nameEl) nameEl.textContent = tname || `Table ${tid}`;
+      if (capEl) capEl.textContent = `👥 ${cap}p`;
+      if (secEl) secEl.textContent = sec;
+
+      const tableUrl = getDineFlowTableUrl(tenant.slug, tid);
+      if (urlEl) urlEl.textContent = tableUrl;
+      if (qrHolder && window.DineFlowQR) {
+        qrHolder.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 60, darkColor: '#0f172a' });
+      }
+
+      const isDuplicate = tenantTables.some(t => t.id && t.id.toLowerCase() === tid.toLowerCase());
+      if (errorEl) errorEl.style.display = (isDuplicate && tid) ? 'block' : 'none';
+      if (submitBtn) submitBtn.disabled = Boolean(isDuplicate || !tid);
+    }
+
+    // Initial QR render
+    updateLivePreview();
+
+    // Table ID change
+    idInput?.addEventListener('input', () => {
+      idInput.value = idInput.value.toUpperCase();
+      if (!hasManuallyEditedName && nameInput) {
+        nameInput.value = `Table ${idInput.value}`;
+      }
+      updateLivePreview();
+    });
+
+    nameInput?.addEventListener('input', () => {
+      hasManuallyEditedName = true;
+      updateLivePreview();
+    });
+
+    // Capacity Quick Presets
+    document.querySelectorAll('.btn-capacity-preset').forEach(preset => {
+      preset.addEventListener('click', () => {
+        document.querySelectorAll('.btn-capacity-preset').forEach(p => p.classList.remove('active'));
+        preset.classList.add('active');
+        const cap = parseInt(preset.getAttribute('data-capacity'), 10) || 4;
+        if (capInput) capInput.value = cap;
+        updateLivePreview();
+      });
+    });
+
+    // Stepper minus / plus
+    document.getElementById('btn-cap-minus')?.addEventListener('click', () => {
+      const cur = parseInt(capInput?.value, 10) || 4;
+      const next = Math.max(1, cur - 1);
+      if (capInput) capInput.value = next;
+      document.querySelectorAll('.btn-capacity-preset').forEach(p => {
+        p.classList.toggle('active', parseInt(p.getAttribute('data-capacity'), 10) === next);
+      });
+      updateLivePreview();
+    });
+
+    document.getElementById('btn-cap-plus')?.addEventListener('click', () => {
+      const cur = parseInt(capInput?.value, 10) || 4;
+      const next = Math.min(60, cur + 1);
+      if (capInput) capInput.value = next;
+      document.querySelectorAll('.btn-capacity-preset').forEach(p => {
+        p.classList.toggle('active', parseInt(p.getAttribute('data-capacity'), 10) === next);
+      });
+      updateLivePreview();
+    });
+
+    capInput?.addEventListener('input', () => {
+      const val = parseInt(capInput.value, 10) || 4;
+      document.querySelectorAll('.btn-capacity-preset').forEach(p => {
+        p.classList.toggle('active', parseInt(p.getAttribute('data-capacity'), 10) === val);
+      });
+      updateLivePreview();
+    });
+
+    // Section dropdown change
+    secSelect?.addEventListener('change', () => {
+      if (secSelect.value === '__custom__') {
+        if (secCustomInput) {
+          secCustomInput.style.display = 'block';
+          secCustomInput.focus();
+        }
+      } else {
+        if (secCustomInput) secCustomInput.style.display = 'none';
+      }
+      updateLivePreview();
+    });
+
+    secCustomInput?.addEventListener('input', updateLivePreview);
+
+    // Initial Status Radio styling
+    const availLabel = document.getElementById('label-status-avail');
+    const occLabel = document.getElementById('label-status-occ');
+    document.querySelectorAll('input[name="table-status-choice"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.value === 'available') {
+          availLabel.style.border = '1px solid #10B981';
+          availLabel.style.background = 'rgba(16, 185, 129, 0.12)';
+          occLabel.style.border = '1px solid var(--border-subtle)';
+          occLabel.style.background = 'rgba(255, 255, 255, 0.03)';
+        } else {
+          occLabel.style.border = '1px solid #EF4444';
+          occLabel.style.background = 'rgba(239, 68, 68, 0.12)';
+          availLabel.style.border = '1px solid var(--border-subtle)';
+          availLabel.style.background = 'rgba(255, 255, 255, 0.03)';
+        }
+      });
+    });
+
+    // Table Feature tags
+    document.querySelectorAll('.btn-table-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        document.querySelectorAll('.btn-table-tag').forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+      });
+    });
+
+    // Close / Cancel modal
+    const closeModal = () => {
+      modalContainer.innerHTML = '';
+    };
+    document.getElementById('btn-close-add-table')?.addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-add-table')?.addEventListener('click', closeModal);
+    document.getElementById('add-table-backdrop')?.addEventListener('click', (e) => {
+      if (e.target.id === 'add-table-backdrop') closeModal();
+    });
+
+    // Submit handler
+    document.getElementById('df-add-table-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const tid = (idInput?.value || '').trim().toUpperCase();
+      if (!tid) {
+        showToast('Please specify a valid Table ID', '⚠️');
+        return;
+      }
+      if (tenantTables.some(t => t.id && t.id.toLowerCase() === tid.toLowerCase())) {
+        showToast(`Table ID ${tid} already exists in ${tenant.name}`, '⚠️');
+        return;
+      }
+
+      const tname = (nameInput?.value || `Table ${tid}`).trim();
+      const cap = Math.max(1, parseInt(capInput?.value, 10) || 4);
+      const section = getSelectedSection();
+      const selectedStatus = document.querySelector('input[name="table-status-choice"]:checked')?.value || 'available';
+
       const newTable = {
-        id: nextId,
+        id: tid,
         tenantId: tenantSlug,
-        name: `Table ${nextId}`,
-        section: 'Indoor AC Dining',
-        capacity: 4,
-        status: 'available',
+        name: tname,
+        section: section,
+        capacity: cap,
+        status: selectedStatus,
         qrScans: 0,
-        lastScanned: 'Never'
+        lastScanned: 'Never',
+        manuallyOccupied: selectedStatus === 'occupied'
       };
+
       state.tables.push(newTable);
       DineFlowStore.save(state, {
         action: 'TABLE_CREATED',
         source: 'staff',
         table: newTable,
-        tableId: nextId,
+        tableId: tid,
         tenantSlug: tenantSlug
       });
+
       SoundFX.chime('success');
-      showToast(`Added ${nextId} to ${tenant.name} tables`);
-      renderAdminView(document.getElementById('app'), tenant);
+      closeModal();
+      showToast(`Added ${newTable.name} (${newTable.capacity} Seats • ${newTable.section})`, '🪑');
+      if (typeof onComplete === 'function') onComplete();
     });
   }
 
