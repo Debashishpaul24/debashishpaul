@@ -24,6 +24,13 @@
   let currentAdminTab = 'orders';
   let activeTrackingOrderId = null;
 
+  // Universal Table Sorter & Serial Extractor
+  const sortTablesSerially = (typeof window !== 'undefined' && window.sortTablesSerially) ? window.sortTablesSerially : (arr) => arr;
+  const extractTableSerialNumber = (typeof window !== 'undefined' && window.extractTableSerialNumber) ? window.extractTableSerialNumber : (t) => {
+    const m = String(t && (t.id || t.name) || '').match(/\d+/);
+    return m ? parseInt(m[0], 10) : 999999;
+  };
+
   // ------------------------------------------------------------------------------
   // ZERO-NETWORK RESILIENT DISH IMAGE FALLBACK ENGINE
   // Renders exquisite, category-tailored glassmorphic vector badges if corporate VPNs,
@@ -550,6 +557,7 @@
     } else if (event.action === 'TABLE_CREATED') {
       if (event.table && !state.tables.some(t => t.id === event.table.id && (!t.tenantId || t.tenantId === event.tenantSlug))) {
         state.tables.push(event.table);
+        state.tables = sortTablesSerially(state.tables);
         stateChanged = true;
       }
     }
@@ -3383,7 +3391,7 @@
   function renderAdminView(container, tenant) {
     const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
     const tenantOrders = state.orders.filter(o => !o.tenantId || o.tenantId === tenantSlug);
-    const tenantTables = state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug);
+    const tenantTables = sortTablesSerially(state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug));
     const tenantCalls = state.staffRequests.filter(r => (!r.tenantId || r.tenantId === tenantSlug) && r.status === 'PENDING');
     const tenantBills = state.billRequests.filter(b => (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
 
@@ -4121,7 +4129,7 @@
   // TABLES & QR CODE MANAGEMENT
   function renderTablesAndQRs(container, tenant) {
     const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
-    const tenantTables = state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug);
+    const tenantTables = sortTablesSerially(state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug));
 
     container.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
@@ -4389,22 +4397,13 @@
 
     state = DineFlowStore.get();
     const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
-    const tenantTables = state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug);
+    const tenantTables = sortTablesSerially(state.tables.filter(t => !t.tenantId || t.tenantId === tenantSlug));
 
     // Compute smart sequential table ID
     const prefix = tenantSlug === 'bella-vista' ? 'BV-' : (tenantSlug === 'sakura-asian' ? 'SK-' : 'T');
     const existingNums = tenantTables
-      .map(t => {
-        if (!t || typeof t.id !== 'string') return 0;
-        if (prefix === 'T') {
-          const m = t.id.match(/^T(\d+)$/i);
-          return m ? parseInt(m[1], 10) : 0;
-        } else {
-          const m = t.id.match(new RegExp(`^${prefix}(\\d+)$`, 'i'));
-          return m ? parseInt(m[1], 10) : 0;
-        }
-      })
-      .filter(n => n > 0);
+      .map(t => extractTableSerialNumber(t))
+      .filter(n => n > 0 && n < 999999);
 
     const maxNum = existingNums.length > 0 ? Math.max(...existingNums) : tenantTables.length;
     const defaultTableId = `${prefix}${String(maxNum + 1).padStart(2, '0')}`;
@@ -4771,6 +4770,7 @@
       };
 
       state.tables.push(newTable);
+      state.tables = sortTablesSerially(state.tables);
       DineFlowStore.save(state, {
         action: 'TABLE_CREATED',
         source: 'staff',
@@ -5164,7 +5164,8 @@
 
   // Batch Print All Table QR Stands to a Clean Multi-Page PDF Document
   function batchPrintAllTables(tables, tenant) {
-    const cardsHTML = tables.map(table => {
+    const sortedTables = sortTablesSerially(tables);
+    const cardsHTML = sortedTables.map(table => {
       const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
       const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#0b0f17', margin: 2 }) : '';
       return `

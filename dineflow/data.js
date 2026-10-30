@@ -1830,6 +1830,103 @@ const DINEFLOW_DEFAULT_DATA = {
   ]
 };
 
+// ------------------------------------------------------------------------------
+// UNIVERSAL SERIAL TABLE SORTER & UTILITIES
+// Guarantees dining tables across all restaurants appear in ascending serial order:
+// e.g. T01, T02 ... T09, T10, T11, T12, T14, T17, T18, T19, T20
+// BV-01 ... BV-08, SK-01 ... SK-08, Table 1 ... Table 20
+// ------------------------------------------------------------------------------
+function extractTableSerialNumber(table) {
+  if (!table) return 999999;
+  const idStr = String(table.id || '').trim();
+  const nameStr = String(table.name || '').trim();
+
+  // Match contiguous sequence of digits from table id first
+  const idMatch = idStr.match(/\d+/);
+  if (idMatch) {
+    const val = parseInt(idMatch[0], 10);
+    if (!isNaN(val)) return val;
+  }
+
+  // Fallback: match contiguous sequence of digits from table name
+  const nameMatch = nameStr.match(/\d+/);
+  if (nameMatch) {
+    const val = parseInt(nameMatch[0], 10);
+    if (!isNaN(val)) return val;
+  }
+
+  return 999999;
+}
+
+function extractTablePrefix(table) {
+  if (!table) return '';
+  const idStr = String(table.id || '').trim();
+  const m = idStr.match(/^[^\d]+/);
+  if (m) {
+    const raw = m[0].toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (raw === 'T' || raw === 'TABLE' || raw === 'TABLET' || raw === 'TBL') return 'T';
+    return raw;
+  }
+  const nameStr = String(table.name || '').trim();
+  const nm = nameStr.match(/^[^\d]+/);
+  if (nm) {
+    const raw = nm[0].toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (raw === 'T' || raw === 'TABLE' || raw === 'TABLET' || raw === 'TBL') return 'T';
+    return raw;
+  }
+  return '';
+}
+
+function compareTablesSerially(a, b) {
+  if (!a && !b) return 0;
+  if (!a) return 1;
+  if (!b) return -1;
+
+  // 1. Group by tenantId when sorting multi-tenant arrays
+  const tenantA = String(a.tenantId || '').trim();
+  const tenantB = String(b.tenantId || '').trim();
+  if (tenantA !== tenantB) {
+    return tenantA.localeCompare(tenantB);
+  }
+
+  // 2. Group by normalized prefix (e.g., 'T', 'BV', 'SK')
+  const prefixA = extractTablePrefix(a);
+  const prefixB = extractTablePrefix(b);
+  if (prefixA !== prefixB) {
+    return prefixA.localeCompare(prefixB);
+  }
+
+  // 3. Compare numeric serials (e.g. 9 < 11 < 12 < 14 < 20)
+  const numA = extractTableSerialNumber(a);
+  const numB = extractTableSerialNumber(b);
+  if (numA !== numB) {
+    return numA - numB;
+  }
+
+  // 4. Fallback to natural alphanumeric sort on id
+  const idA = String(a.id || '');
+  const idB = String(b.id || '');
+  const idComp = idA.localeCompare(idB, undefined, { numeric: true, sensitivity: 'base' });
+  if (idComp !== 0) return idComp;
+
+  // 5. Final fallback to natural alphanumeric sort on name
+  const nameA = String(a.name || '');
+  const nameB = String(b.name || '');
+  return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+}
+
+function sortTablesSerially(tables) {
+  if (!Array.isArray(tables)) return [];
+  return [...tables].sort(compareTablesSerially);
+}
+
+if (typeof window !== 'undefined') {
+  window.extractTableSerialNumber = extractTableSerialNumber;
+  window.extractTablePrefix = extractTablePrefix;
+  window.compareTablesSerially = compareTablesSerially;
+  window.sortTablesSerially = sortTablesSerially;
+}
+
 // Store helper for localStorage persistence with state change broadcast
 const DineFlowStore = {
   KEY: 'DINEFLOW_SaaS_STORE_v5',
@@ -2011,6 +2108,11 @@ const DineFlowStore = {
             });
           }
 
+          // Universal Serial Order Guarantee: ensure tables are sorted serially across all tenants
+          if (Array.isArray(data.tables)) {
+            data.tables = sortTablesSerially(data.tables);
+          }
+
           if (updated || !localStorage.getItem(this.KEY)) {
             this.save(data);
           }
@@ -2028,6 +2130,9 @@ const DineFlowStore = {
 
   save(data, meta = {}) {
     try {
+      if (data && Array.isArray(data.tables)) {
+        data.tables = sortTablesSerially(data.tables);
+      }
       localStorage.setItem(this.KEY, JSON.stringify(data));
       if (this.broadcastChannel) {
         this.broadcastChannel.postMessage({
@@ -2091,6 +2196,9 @@ const DineFlowStore = {
 
   saveLocalOnly(data) {
     try {
+      if (data && Array.isArray(data.tables)) {
+        data.tables = sortTablesSerially(data.tables);
+      }
       localStorage.setItem(this.KEY, JSON.stringify(data));
     } catch (e) {
       console.error('Failed saving localStorage local-only', e);
