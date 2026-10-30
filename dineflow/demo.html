@@ -2126,37 +2126,53 @@
       }
 
 
+      function switchDesktopView(viewName, authRole, urlDisplay, sandboxRole, telemetryMsg, telemetryEmoji) {
+        if (authRole) ensureDemoAuth(authRole);
+        urlText.textContent = urlDisplay;
+        updateSandboxUrlQuery({ role: sandboxRole });
+        logTelemetry(telemetryMsg, telemetryEmoji);
+
+        try {
+          const iframeWin = desktopIframe.contentWindow;
+          if (iframeWin && typeof iframeWin.navigateTo === 'function') {
+            iframeWin.navigateTo({ view: viewName });
+            return;
+          }
+        } catch (e) {
+          console.warn('Direct iframe navigateTo failed, falling back to src:', e);
+        }
+
+        const targetSrc = `./?view=${viewName}`;
+        if (!desktopIframe.src.includes(`view=${viewName}`)) {
+          desktopIframe.src = targetSrc;
+        }
+      }
+
       // Tab Switcher for Desktop Frame
       tabStaff.addEventListener('click', () => {
         tabStaff.classList.add('active');
         tabSaas.classList.remove('active');
         tabHub.classList.remove('active');
-        ensureDemoAuth('RESTAURANT_ADMIN');
-        desktopIframe.src = './?view=admin';
-        urlText.textContent = 'https://dineflow.io/kitchen?view=admin';
-        updateSandboxUrlQuery({ role: 'staff' });
-        logTelemetry('Switched desktop view to Kitchen Staff OS (KDS)', '👨‍🍳');
+
+        switchDesktopView('admin', 'RESTAURANT_ADMIN', 'https://dineflow.io/kitchen?view=admin', 'staff', 'Switched desktop view to Kitchen Staff OS (KDS)', '👨‍🍳');
+
       });
 
       tabSaas.addEventListener('click', () => {
         tabSaas.classList.add('active');
         tabStaff.classList.remove('active');
         tabHub.classList.remove('active');
-        ensureDemoAuth('SUPER_ADMIN');
-        desktopIframe.src = './?view=super-admin';
-        urlText.textContent = 'https://dineflow.io/hq?view=super-admin';
-        updateSandboxUrlQuery({ role: 'saas' });
-        logTelemetry('Switched desktop view to SaaS Platform Super Admin HQ', '⚡');
+
+        switchDesktopView('super-admin', 'SUPER_ADMIN', 'https://dineflow.io/hq?view=super-admin', 'saas', 'Switched desktop view to SaaS Platform Super Admin HQ', '⚡');
+
       });
 
       tabHub.addEventListener('click', () => {
         tabHub.classList.add('active');
         tabStaff.classList.remove('active');
         tabSaas.classList.remove('active');
-        desktopIframe.src = './?view=hub';
-        urlText.textContent = 'https://dineflow.io/hub?view=hub';
-        updateSandboxUrlQuery({ role: 'hub' });
-        logTelemetry('Switched desktop view to DineFlow Platform Showcase Hub', '🌐');
+        switchDesktopView('hub', null, 'https://dineflow.io/hub?view=hub', 'hub', 'Switched desktop view to DineFlow Platform Showcase Hub', '🌐');
+
       });
 
       // --------------------------------------------------------------------------
@@ -2567,7 +2583,7 @@
           logTelemetry('Demo restored to initial at-table state with QR stand', '🔄');
 
           mobileIframe.src = './?r=the-urban-plate&t=T12&v=1.9.4';
-          ensureDemoAuth('RESTAURANT_ADMIN');
+  
           tabStaff.click();
           updateSandboxUrlQuery({ step: null, sim: null, role: 'staff' });
         } catch (e) {}

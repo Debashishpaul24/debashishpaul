@@ -267,6 +267,14 @@ html.df-deep-loading #app {
 
 html.df-deep-loading #df-boot-loader {
   display: flex !important;
+  animation: df-boot-fadein 0.15s ease 0.25s forwards;
+}
+
+@keyframes df-boot-fadein {
+  to {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 #df-boot-loader {
@@ -281,6 +289,8 @@ html.df-deep-loading #df-boot-loader {
   gap: 1rem;
   color: #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .df-boot-logo {

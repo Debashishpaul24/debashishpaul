@@ -10,6 +10,8 @@
 (function () {
   'use strict';
 
+
+
   // State Container
   let state = DineFlowStore.get();
   let currentFilterCategory = 'all';
@@ -1004,8 +1006,7 @@
   }
 
   function renderApp() {
-    // Always dismiss boot shield first
-    dismissBootLoader();
+
 
     const activeEl = document.activeElement;
     const isSearchFocused = activeEl && activeEl.id === 'df-search-input';
@@ -1079,6 +1080,7 @@
           SoundFX.chime('alert');
           showToast('Session Terminated: Your staff profile was revoked by the restaurant owner.', '🔒');
           renderLoginView(appEl, `?r=${targetTenantSlug}&view=admin`, 'RESTAURANT_ADMIN', 'staff', targetTenantSlug);
+          dismissBootLoader();
           return;
         }
 
@@ -1117,6 +1119,7 @@
           return;
         }
         renderLoginView(appEl, '?view=super-admin', 'SUPER_ADMIN', 'owner');
+        dismissBootLoader();
         return;
       }
       renderSuperAdminView(appEl);
@@ -1125,6 +1128,7 @@
       if (!isSuperAuth) {
         removeFloatingRoleSwitcher();
         renderLoginView(appEl, '?view=onboarding', 'SUPER_ADMIN');
+        dismissBootLoader();
         return;
       }
       renderOnboardingView(appEl);
@@ -1145,6 +1149,9 @@
         }
       }
     }
+
+    // Dismiss boot shield after target view has been fully mounted in #app
+    dismissBootLoader();
   }
 
   // ------------------------------------------------------------------------------
@@ -4158,7 +4165,7 @@
       </div>
 
       <div class="df-tables-grid">
-        ${tenantTables.map(table => {
+        ${tenantTables.length ? tenantTables.map(table => {
       // Construct normalized target URL for table
       const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
       const hasPendingBill = state.billRequests.some(b => b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
@@ -7806,11 +7813,16 @@
     if (link.target === '_blank' || href.startsWith('http') || href.startsWith('//') || href.startsWith('../')) {
       return;
     }
-    if (href.startsWith('?') || href === './') {
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (href.startsWith('?') || href.startsWith('./?') || href === './' || href === '.') {
       e.preventDefault();
-      window.history.pushState({}, '', href);
+      const cleanUrl = href.replace(/^\.\//, '');
+      window.history.pushState({}, '', cleanUrl || './');
       renderApp();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
     }
+
   });
 
   // Browser Back/Forward Navigation
@@ -7821,10 +7833,18 @@
   // Expose global staff management hooks
   window.dfOpenEditStaffModal = openEditStaffModal;
   window.dfOpenCreateStaffModal = openCreateStaffModal;
+  window.navigateTo = navigateTo;
+  window.renderApp = renderApp;
+  window.dismissBootLoader = dismissBootLoader;
 
-  // Initial Boot
-  window.addEventListener('DOMContentLoaded', () => {
+  // Initial Boot: execute immediately if #app is present, otherwise wait for DOMContentLoaded
+  if (document.getElementById('app')) {
     renderApp();
-  });
+  } else {
+    window.addEventListener('DOMContentLoaded', () => {
+      renderApp();
+    });
+  }
+
 
 })();
