@@ -5968,7 +5968,11 @@
       state.settings = state.settings || {};
       state.settings.toneProfile = document.getElementById('cfg-tone-profile')?.value || state.settings.toneProfile || 'executive';
 
-      DineFlowStore.save(state);
+      DineFlowStore.save(state, {
+        action: 'TENANT_UPDATED',
+        tenant: tenant,
+        tenantSlug: tenant.slug
+      });
       applyTenantBranding(tenant);
       SoundFX.chime('success');
       showToast('Branding updated and published live!');
@@ -6813,7 +6817,11 @@
         severity: 'info'
       });
 
-      DineFlowStore.save(state);
+      DineFlowStore.save(state, {
+        action: 'STAFF_ACCOUNT_UPDATED',
+        account: target,
+        tenantSlug: target.tenantId
+      });
       SoundFX.chime('success');
       showToast(`Staff profile for "${target.name}" updated successfully!`, target.avatarEmoji);
       closeModal();
@@ -7838,13 +7846,29 @@
   window.renderApp = renderApp;
   window.dismissBootLoader = dismissBootLoader;
 
-  // Initial Boot: execute immediately if #app is present, otherwise wait for DOMContentLoaded
-  if (document.getElementById('app')) {
-    renderApp();
-  } else {
-    window.addEventListener('DOMContentLoaded', () => {
+  // Asynchronous Database-First Application Boot Engine
+  async function initApp() {
+    try {
+      const route = parseRoute();
+      const currentSession = DineFlowStore.getSession();
+      const activeTenantSlug = route.tenantSlug || (currentSession && currentSession.tenantId) || 'the-urban-plate';
+
+      if (typeof window.DineFlowDB !== 'undefined' && typeof window.DineFlowDB.init === 'function') {
+        await window.DineFlowDB.init(activeTenantSlug);
+      }
+    } catch (e) {
+      console.warn('[DineFlow App] Initial hydration notice:', e);
+    } finally {
       renderApp();
-    });
+      dismissBootLoader();
+    }
+  }
+
+  // Initial Boot: hydrate cloud database before mounting views
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
   }
 
 

@@ -1939,18 +1939,36 @@ if (typeof window !== 'undefined') {
   window.sortTablesSerially = sortTablesSerially;
 }
 
-// Store helper for localStorage persistence with state change broadcast
+// ==============================================================================
+// DineFlowStore: 100% Database-First In-Memory State Manager
+// All platform data is fetched directly from Supabase PostgreSQL.
+// LocalStorage is strictly partitioned for active user authentication sessions only.
+// ==============================================================================
 const DineFlowStore = {
-  KEY: 'DINEFLOW_SaaS_STORE_v5',
-  PREV_KEY: 'DINEFLOW_SaaS_STORE_v4',
+  SESSION_KEY: 'DINEFLOW_SESSION_v1',
   broadcastChannel: null,
+  _dbState: null,
+  _isDatabaseLoaded: false,
 
   init() {
+    // 1. Purge legacy monolithic localStorage blobs to prevent stale client cache
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('DINEFLOW_SaaS_STORE_v5');
+        localStorage.removeItem('DINEFLOW_SaaS_STORE_v4');
+        localStorage.removeItem('DINEFLOW_SaaS_STORE_v3');
+        localStorage.removeItem('DINEFLOW_SaaS_STORE_v2');
+      }
+    } catch (e) {}
+
+    // 2. Real-time Cross-Tab Broadcast Channel
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       this.broadcastChannel = new BroadcastChannel('dineflow_realtime_sync');
       this.broadcastChannel.onmessage = (event) => {
         if (event.data && event.data.type === 'SYNC') {
-          // Trigger local render callback if registered
+          if (event.data.payload) {
+            this._dbState = event.data.payload;
+          }
           if (typeof window.onDineFlowRemoteSync === 'function') {
             window.onDineFlowRemoteSync(event.data);
           }
@@ -1959,203 +1977,95 @@ const DineFlowStore = {
     }
   },
 
-  get() {
+  getSession() {
     try {
-      let stored = localStorage.getItem(this.KEY);
-      if (!stored && this.PREV_KEY) {
-        stored = localStorage.getItem(this.PREV_KEY);
-      }
-      if (stored) {
-        const data = JSON.parse(stored);
-        // Resilient corporate VPN migration: ensure all dish images reference local bundled assets
-        if (data && Array.isArray(data.menuItems)) {
-          let updated = false;
-          data.menuItems.forEach((item) => {
-            if (!item.image || item.image.includes('unsplash.com')) {
-              item.image = 'images/' + item.id + '.jpg';
-              updated = true;
-            }
-          });
-          if (data.tenants) {
-            if (data.tenants['the-urban-plate'] && data.tenants['the-urban-plate'].coverImage.includes('unsplash.com')) {
-              data.tenants['the-urban-plate'].coverImage = 'images/cover-the-urban-plate.jpg';
-              updated = true;
-            }
-            if (data.tenants['bella-vista'] && data.tenants['bella-vista'].coverImage.includes('unsplash.com')) {
-              data.tenants['bella-vista'].coverImage = 'images/cover-bella-vista.jpg';
-              updated = true;
-            }
-            if (data.tenants['sakura-asian'] && data.tenants['sakura-asian'].coverImage.includes('unsplash.com')) {
-              data.tenants['sakura-asian'].coverImage = 'images/cover-sakura-asian.jpg';
-              updated = true;
-            }
-          }
-          if (!data.staffAccounts || !Array.isArray(data.staffAccounts)) {
-            data.staffAccounts = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.staffAccounts));
-            updated = true;
-          } else {
-            // Ensure Tarun Rajak profile exists across all active sessions
-            if (!data.staffAccounts.some(s => s.name && s.name.toLowerCase().includes('tarun'))) {
-              const tarunAccount = DINEFLOW_DEFAULT_DATA.staffAccounts.find(s => s.id === 'staff-05');
-              if (tarunAccount) {
-                data.staffAccounts.push(JSON.parse(JSON.stringify(tarunAccount)));
-                updated = true;
-              }
-            }
-            updated = true;
-          }
-          if (!data.session) {
-            data.session = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.session));
-            updated = true;
-          }
-          if (!data.settings || typeof data.settings.toneProfile !== 'string') {
-            data.settings = { toneProfile: 'executive' };
-            updated = true;
-          }
-          if (!data.auditLogs || !Array.isArray(data.auditLogs) || data.auditLogs.length === 0) {
-            data.auditLogs = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.auditLogs || []));
-            updated = true;
-          }
-
-          // Multi-Tenant Isolation Migration: Ensure partitioned tables exist
-          if (!Array.isArray(data.tables) || !data.tables.some(t => t.tenantId === 'bella-vista')) {
-            data.tables = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.tables));
-            updated = true;
-          } else {
-            // Ensure every table has tenantId
-            data.tables.forEach(t => {
-              if (!t.tenantId) {
-                t.tenantId = 'the-urban-plate';
-                updated = true;
-              }
-            });
-          }
-
-          // Multi-Tenant Isolation Migration: Ensure offers are partitioned
-          if (!Array.isArray(data.offers) || !data.offers.some(o => o.tenantId === 'bella-vista')) {
-            data.offers = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.offers));
-            updated = true;
-          }
-
-          // Multi-Tenant Isolation Migration: Ensure orders have tenantId and other restaurants have sample orders
-          if (Array.isArray(data.orders)) {
-            data.orders.forEach(o => {
-              if (!o.tenantId) {
-                o.tenantId = 'the-urban-plate';
-                updated = true;
-              }
-            });
-            if (!data.orders.some(o => o.tenantId === 'bella-vista')) {
-              const bvOrders = DINEFLOW_DEFAULT_DATA.orders.filter(o => o.tenantId === 'bella-vista');
-              data.orders.push(...JSON.parse(JSON.stringify(bvOrders)));
-              updated = true;
-            }
-            if (!data.orders.some(o => o.tenantId === 'sakura-asian')) {
-              const skOrders = DINEFLOW_DEFAULT_DATA.orders.filter(o => o.tenantId === 'sakura-asian');
-              data.orders.push(...JSON.parse(JSON.stringify(skOrders)));
-              updated = true;
-            }
-          }
-
-          // Multi-Tenant Isolation Migration: Ensure staffRequests & billRequests have tenantId
-          if (Array.isArray(data.staffRequests)) {
-            data.staffRequests.forEach(r => {
-              if (!r.tenantId) {
-                r.tenantId = 'the-urban-plate';
-                updated = true;
-              }
-            });
-            if (!data.staffRequests.some(r => r.tenantId === 'bella-vista')) {
-              const bvReqs = DINEFLOW_DEFAULT_DATA.staffRequests.filter(r => r.tenantId === 'bella-vista' || r.tenantId === 'sakura-asian');
-              data.staffRequests.push(...JSON.parse(JSON.stringify(bvReqs)));
-              updated = true;
-            }
-          }
-          if (Array.isArray(data.billRequests)) {
-            data.billRequests.forEach(b => {
-              if (!b.tenantId) {
-                b.tenantId = 'the-urban-plate';
-                updated = true;
-              }
-            });
-            if (!data.billRequests.some(b => b.tenantId === 'bella-vista')) {
-              const bvBills = DINEFLOW_DEFAULT_DATA.billRequests.filter(b => b.tenantId === 'bella-vista');
-              data.billRequests.push(...JSON.parse(JSON.stringify(bvBills)));
-              updated = true;
-            }
-          }
-
-          // Multi-Tenant Isolation Migration: Ensure categories exist for Bella Vista and Sakura Asian
-          if (!Array.isArray(data.categories) || !data.categories.some(c => c.tenantId === 'bella-vista')) {
-            const extraCategories = DINEFLOW_DEFAULT_DATA.categories.filter(c => c.tenantId === 'bella-vista' || c.tenantId === 'sakura-asian');
-            data.categories = Array.isArray(data.categories) ? data.categories : JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.categories));
-            data.categories.push(...JSON.parse(JSON.stringify(extraCategories)));
-            updated = true;
-          }
-
-          // Multi-Tenant Isolation Migration: Ensure menuItems exist for Bella Vista and Sakura Asian
-          if (!Array.isArray(data.menuItems) || !data.menuItems.some(i => i.tenantId === 'bella-vista')) {
-            const extraItems = DINEFLOW_DEFAULT_DATA.menuItems.filter(i => i.tenantId === 'bella-vista' || i.tenantId === 'sakura-asian');
-            data.menuItems = Array.isArray(data.menuItems) ? data.menuItems : JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.menuItems));
-            data.menuItems.push(...JSON.parse(JSON.stringify(extraItems)));
-            updated = true;
-          }
-
-          // Tenant-Isolated Auto-reconciliation of table statuses using composite keys: `${tenantId}::${tableId}`
-          if (Array.isArray(data.tables) && Array.isArray(data.orders)) {
-            const activeTableKeys = new Set(
-              data.orders
-                .filter(o => o.status && o.status !== 'COMPLETED' && o.status !== 'CANCELLED')
-                .map(o => `${o.tenantId || 'the-urban-plate'}::${o.tableId}`)
-            );
-            if (Array.isArray(data.billRequests)) {
-              data.billRequests.filter(b => b.status === 'PENDING').forEach(b => activeTableKeys.add(`${b.tenantId || 'the-urban-plate'}::${b.tableId}`));
-            }
-            if (Array.isArray(data.staffRequests)) {
-              data.staffRequests.filter(s => s.status === 'PENDING').forEach(s => activeTableKeys.add(`${s.tenantId || 'the-urban-plate'}::${s.tableId}`));
-            }
-            data.tables.forEach(table => {
-              const tableKey = `${table.tenantId || 'the-urban-plate'}::${table.id}`;
-              if (activeTableKeys.has(tableKey) || table.manuallyOccupied === true) {
-                if (table.status !== 'occupied') {
-                  table.status = 'occupied';
-                  updated = true;
-                }
-              } else {
-                if (table.status !== 'available') {
-                  table.status = 'available';
-                  updated = true;
-                }
-              }
-            });
-          }
-
-          // Universal Serial Order Guarantee: ensure tables are sorted serially across all tenants
-          if (Array.isArray(data.tables)) {
-            data.tables = sortTablesSerially(data.tables);
-          }
-
-          if (updated || !localStorage.getItem(this.KEY)) {
-            this.save(data);
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem(this.SESSION_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && typeof parsed === 'object') {
+            return parsed;
           }
         }
-        return data;
       }
     } catch (e) {
-      console.warn('Failed reading localStorage', e);
+      console.warn('[DineFlowStore] Error reading session:', e);
     }
-    // Return clone of default
-    const fresh = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
-    this.save(fresh);
-    return fresh;
+    return JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.session));
+  },
+
+  saveSession(session) {
+    try {
+      if (typeof localStorage !== 'undefined' && session) {
+        localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+      }
+    } catch (e) {
+      console.warn('[DineFlowStore] Error saving session:', e);
+    }
+  },
+
+  // Commits fresh PostgreSQL cloud state into memory
+  setDatabaseState(freshState) {
+    if (!freshState || typeof freshState !== 'object') return;
+
+    if (!this._dbState) {
+      this._dbState = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
+    }
+
+    if (freshState.tenants) this._dbState.tenants = freshState.tenants;
+    if (freshState.staffAccounts) this._dbState.staffAccounts = freshState.staffAccounts;
+    if (freshState.tables) {
+      this._dbState.tables = (typeof sortTablesSerially === 'function')
+        ? sortTablesSerially(freshState.tables)
+        : freshState.tables;
+    }
+    if (freshState.categories) this._dbState.categories = freshState.categories;
+    if (freshState.menuItems) this._dbState.menuItems = freshState.menuItems;
+    if (freshState.orders) this._dbState.orders = freshState.orders;
+    if (freshState.staffRequests) this._dbState.staffRequests = freshState.staffRequests;
+    if (freshState.billRequests) this._dbState.billRequests = freshState.billRequests;
+    if (freshState.customers) this._dbState.customers = freshState.customers;
+    if (freshState.reviews) this._dbState.reviews = freshState.reviews;
+    if (freshState.offers) this._dbState.offers = freshState.offers;
+    if (freshState.auditLogs) this._dbState.auditLogs = freshState.auditLogs;
+
+    // Preserve active session credentials
+    this._dbState.session = this.getSession();
+    this._isDatabaseLoaded = true;
+  },
+
+  get() {
+    if (this._dbState) {
+      this._dbState.session = this.getSession();
+      return this._dbState;
+    }
+
+    // Fallback baseline until PostgreSQL hydration completes
+    const fallback = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
+    fallback.session = this.getSession();
+    if (fallback.tables && typeof sortTablesSerially === 'function') {
+      fallback.tables = sortTablesSerially(fallback.tables);
+    }
+    this._dbState = fallback;
+    return this._dbState;
   },
 
   save(data, meta = {}) {
     try {
       if (data && Array.isArray(data.tables)) {
-        data.tables = sortTablesSerially(data.tables);
+        data.tables = (typeof sortTablesSerially === 'function')
+          ? sortTablesSerially(data.tables)
+          : data.tables;
       }
-      localStorage.setItem(this.KEY, JSON.stringify(data));
+
+      // Persist active session credentials in localStorage (no business data)
+      if (data && data.session) {
+        this.saveSession(data.session);
+      }
+
+      this._dbState = data;
+
+      // Cross-tab broadcast
       if (this.broadcastChannel) {
         this.broadcastChannel.postMessage({
           type: 'SYNC',
@@ -2164,14 +2074,18 @@ const DineFlowStore = {
           timestamp: Date.now()
         });
       }
+
+      // Live MQTT peer broadcast
       if (meta && meta.action && typeof window !== 'undefined' && window.DineFlowCloudSync && typeof window.DineFlowCloudSync.broadcast === 'function') {
         window.DineFlowCloudSync.broadcast(meta);
       }
+
+      // Live PostgreSQL Cloud persistence
       if (meta && meta.action && typeof window !== 'undefined' && window.DineFlowDB && typeof window.DineFlowDB.pushAction === 'function') {
         window.DineFlowDB.pushAction(meta, data);
       }
     } catch (e) {
-      console.error('Failed saving localStorage', e);
+      console.error('[DineFlowStore] Failed saving in-memory state:', e);
     }
   },
 
@@ -2219,16 +2133,28 @@ const DineFlowStore = {
   saveLocalOnly(data) {
     try {
       if (data && Array.isArray(data.tables)) {
-        data.tables = sortTablesSerially(data.tables);
+        data.tables = (typeof sortTablesSerially === 'function')
+          ? sortTablesSerially(data.tables)
+          : data.tables;
       }
-      localStorage.setItem(this.KEY, JSON.stringify(data));
+      if (data && data.session) {
+        this.saveSession(data.session);
+      }
+      this._dbState = data;
     } catch (e) {
-      console.error('Failed saving localStorage local-only', e);
+      console.error('[DineFlowStore] Failed saving in-memory local-only state:', e);
     }
   },
 
-  reset() {
-    localStorage.removeItem(this.KEY);
+  async reset() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(this.SESSION_KEY);
+      }
+      if (typeof window !== 'undefined' && window.DineFlowDB && typeof window.DineFlowDB.hydrateAll === 'function') {
+        await window.DineFlowDB.hydrateAll();
+      }
+    } catch (e) {}
     return this.get();
   },
 

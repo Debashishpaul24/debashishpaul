@@ -224,6 +224,158 @@
         sortOrder: Number(db.sort_order) || 0,
         isActive: Boolean(db.is_active)
       };
+    },
+
+    categoryToDb(cat, tenantId) {
+      return {
+        id: cat.id,
+        tenant_id: cat.tenantId || tenantId || currentTenant,
+        name: cat.name,
+        icon: cat.icon || '🍽️',
+        sort_order: Number(cat.sortOrder) || 0,
+        is_active: cat.isActive !== false
+      };
+    },
+
+    tenantFromDb(db) {
+      return {
+        id: db.id,
+        name: db.name,
+        slug: db.slug || db.id,
+        tagline: db.tagline || 'Modern Dining Experience',
+        branch: db.branch || 'Main',
+        address: db.address || '',
+        phone: db.phone || '',
+        email: db.email || '',
+        currency: db.currency || '₹',
+        taxRate: Number(db.tax_rate) || 5,
+        serviceChargeRate: Number(db.service_charge_rate) || 5,
+        theme: {
+          primaryColor: db.primary_color || '#E5A93C',
+          secondaryColor: db.secondary_color || '#0F172A',
+          radius: '12px'
+        },
+        coverImage: db.cover_image || `images/cover-${db.slug}.jpg`,
+        logoEmoji: db.logo_emoji || '🍽️',
+        wifiName: db.wifi_name || 'Guest-WiFi',
+        wifiPass: db.wifi_pass || 'welcome123',
+        upiVpa: db.upi_vpa || 'merchant@upi',
+        plan: db.plan || 'Enterprise Pro',
+        status: db.status || 'active'
+      };
+    },
+
+    offerFromDb(db) {
+      return {
+        id: db.id,
+        tenantId: db.tenant_id,
+        code: db.code,
+        title: db.title,
+        description: db.description || '',
+        type: db.type || 'percentage',
+        value: Number(db.value) || 0,
+        minOrder: Number(db.min_order) || 0,
+        maxDiscount: db.max_discount ? Number(db.max_discount) : null,
+        categoryScope: db.category_scope || 'all',
+        expiry: db.expiry || 'Active',
+        isActive: db.is_active !== false
+      };
+    },
+
+    offerToDb(offer, tenantId) {
+      return {
+        id: offer.id,
+        tenant_id: offer.tenantId || tenantId || currentTenant,
+        code: offer.code,
+        title: offer.title,
+        description: offer.description || '',
+        type: offer.type || 'percentage',
+        value: Number(offer.value) || 0,
+        min_order: Number(offer.minOrder) || 0,
+        max_discount: offer.maxDiscount ? Number(offer.maxDiscount) : null,
+        category_scope: offer.categoryScope || 'all',
+        expiry: offer.expiry || 'Active',
+        is_active: offer.isActive !== false
+      };
+    },
+
+    customerFromDb(db) {
+      return {
+        id: db.id,
+        tenantId: db.tenant_id,
+        name: db.name,
+        phone: db.phone || '',
+        email: db.email || '',
+        ordersCount: Number(db.orders_count) || 1,
+        totalSpend: Number(db.total_spend) || 0,
+        favDish: db.fav_dish || 'Chef Special',
+        lastVisit: db.last_visit || 'Today'
+      };
+    },
+
+    customerToDb(cust, tenantId) {
+      return {
+        id: cust.id,
+        tenant_id: cust.tenantId || tenantId || currentTenant,
+        name: cust.name,
+        phone: cust.phone || '',
+        email: cust.email || '',
+        orders_count: Number(cust.ordersCount) || 1,
+        total_spend: Number(cust.totalSpend) || 0,
+        fav_dish: cust.favDish || '',
+        last_visit: cust.lastVisit || 'Today'
+      };
+    },
+
+    reviewFromDb(db) {
+      return {
+        id: db.id,
+        tenantId: db.tenant_id,
+        customerName: db.customer_name,
+        ratingOverall: Number(db.rating_overall) || 5,
+        ratingFood: Number(db.rating_food) || 5,
+        ratingService: Number(db.rating_service) || 5,
+        ratingAmbience: Number(db.rating_ambience) || 5,
+        comment: db.comment || '',
+        tableId: db.table_id || null,
+        date: db.date_label || 'Today'
+      };
+    },
+
+    auditLogFromDb(db) {
+      return {
+        id: db.id,
+        tenantId: db.tenant_id,
+        timestamp: db.created_at ? `Today, ${new Date(db.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Today',
+        isoTime: db.created_at || new Date().toISOString(),
+        managerId: db.manager_id,
+        managerName: db.manager_name || 'Manager',
+        category: db.category || 'INFO',
+        action: db.action || 'Operation',
+        details: db.details || '',
+        orderId: db.order_id || 'N/A',
+        amount: Number(db.amount) || 0,
+        paymentMethod: db.payment_method || 'UPI',
+        severity: db.severity || 'info',
+        securityFlag: db.security_flag || '✓ Verified'
+      };
+    },
+
+    auditLogToDb(log, tenantId) {
+      return {
+        id: log.id,
+        tenant_id: log.tenantId || tenantId || currentTenant,
+        manager_id: log.managerId || null,
+        manager_name: log.managerName || 'Manager',
+        category: log.category || 'INFO',
+        action: log.action || 'Operation',
+        details: log.details || '',
+        order_id: log.orderId || 'N/A',
+        amount: Number(log.amount) || 0,
+        payment_method: log.paymentMethod || 'UPI',
+        severity: log.severity || 'info',
+        security_flag: log.securityFlag || '✓ Verified'
+      };
     }
   };
 
@@ -233,141 +385,171 @@
   const DineFlowDB = {
     isOnline: true,
     initializedTenants: new Set(),
+    _initPromise: null,
 
     async init(tenantSlug) {
       const slug = tenantSlug || currentTenant;
-      if (this.initializedTenants.has(slug)) {
-        return; // Guard: Already initialized and subscribed for this tenant
+      if (this.initializedTenants.has(slug) && isHydrated) {
+        return true;
       }
-      this.initializedTenants.add(slug);
-      currentTenant = slug;
-
-      const sb = getClient();
-      if (!sb) {
-        this.initializedTenants.delete(slug);
-        setTimeout(() => this.init(slug), 500);
-        return;
+      if (this._initPromise) {
+        return this._initPromise;
       }
+      this._initPromise = (async () => {
+        try {
+          this.initializedTenants.add(slug);
+          currentTenant = slug;
 
-      console.log(`[DineFlowDB] Initializing live connection for tenant: "${slug}"`);
-      await this.hydrate(slug);
-      this.subscribeRealtime(slug);
-      this.flushOutbox();
+          const sb = getClient();
+          if (!sb) {
+            this.initializedTenants.delete(slug);
+            return false;
+          }
+
+          console.log(`[DineFlowDB] Initializing live connection for tenant: "${slug}"`);
+          await this.hydrateAll(slug);
+          this.subscribeRealtime(slug);
+          this.flushOutbox();
+          return true;
+        } finally {
+          this._initPromise = null;
+        }
+      })();
+      return this._initPromise;
     },
 
-    // 1. Fetch fresh restaurant state from PostgreSQL & update DineFlowStore
-    async hydrate(tenantSlug) {
+    // 1. Fetch complete platform state from PostgreSQL & populate DineFlowStore
+    async hydrateAll(tenantSlug) {
       const sb = getClient();
-      if (!sb) return;
+      if (!sb) return false;
 
-      const slug = tenantSlug || currentTenant;
+      const slug = tenantSlug || currentTenant || 'the-urban-plate';
+      currentTenant = slug;
 
       try {
-        console.log(`[DineFlowDB] 📥 Fetching live cloud data for "${slug}"...`);
+        console.log(`[DineFlowDB] 🌐 Hydrating complete database from PostgreSQL for "${slug}"...`);
 
-        const [tablesRes, ordersRes, staffRes, billsRes, itemsRes, catsRes, staffAccRes] = await Promise.all([
-          sb.from('tables').select('*').eq('tenant_id', slug),
-          sb.from('orders').select('*').eq('tenant_id', slug).order('created_at', { ascending: false }).limit(60),
-          sb.from('staff_requests').select('*').eq('tenant_id', slug).eq('status', 'PENDING'),
-          sb.from('bill_requests').select('*').eq('tenant_id', slug).eq('status', 'PENDING'),
-          sb.from('menu_items').select('*').eq('tenant_id', slug),
-          sb.from('categories').select('*').eq('tenant_id', slug).order('sort_order', { ascending: true }),
-          sb.from('staff_accounts').select('*')
+        const [
+          tenantsRes,
+          staffAccRes,
+          tablesRes,
+          catsRes,
+          itemsRes,
+          ordersRes,
+          staffReqRes,
+          billsRes,
+          customersRes,
+          reviewsRes,
+          offersRes,
+          auditLogsRes
+        ] = await Promise.all([
+          sb.from('tenants').select('*'),
+          sb.from('staff_accounts').select('*').eq('is_active', true),
+          sb.from('tables').select('*'),
+          sb.from('categories').select('*').order('sort_order', { ascending: true }),
+          sb.from('menu_items').select('*'),
+          sb.from('orders').select('*').order('created_at', { ascending: false }).limit(100),
+          sb.from('staff_requests').select('*').order('created_at', { ascending: false }).limit(50),
+          sb.from('bill_requests').select('*').order('created_at', { ascending: false }).limit(50),
+          sb.from('customers').select('*').order('created_at', { ascending: false }).limit(50),
+          sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(50),
+          sb.from('offers').select('*').eq('is_active', true),
+          sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(60)
         ]);
 
-        if (tablesRes.error) throw tablesRes.error;
+        const dbState = {};
 
-        // Retrieve current in-memory store
-        const state = DineFlowStore.get();
+        // 1. Tenants Map
+        if (tenantsRes.data && tenantsRes.data.length > 0) {
+          dbState.tenants = {};
+          tenantsRes.data.forEach(row => {
+            const t = Transformers.tenantFromDb(row);
+            dbState.tenants[t.slug] = t;
+          });
+        }
 
+        // 2. Staff Accounts (directly from PostgreSQL)
+        if (staffAccRes.data && staffAccRes.data.length > 0) {
+          dbState.staffAccounts = staffAccRes.data.map(Transformers.staffAccountFromDb);
+        }
+
+        // 3. Tables (serially sorted from PostgreSQL)
         if (tablesRes.data && tablesRes.data.length > 0) {
-          const freshTables = tablesRes.data.map(Transformers.tableFromDb);
-          const freshIds = new Set(freshTables.map(t => t.id));
-          // Preserve any newly added local tables (e.g. Table 21) not yet in cloud snapshot
-          const pendingLocalTables = (state.tables || []).filter(t => t.tenantId === slug && !freshIds.has(t.id));
-          const otherTables = (state.tables || []).filter(t => t.tenantId !== slug);
-          state.tables = [...freshTables, ...pendingLocalTables, ...otherTables];
+          const rawTables = tablesRes.data.map(Transformers.tableFromDb);
+          dbState.tables = (typeof sortTablesSerially === 'function') ? sortTablesSerially(rawTables) : rawTables;
         }
 
-        if (ordersRes.data) {
-          const freshOrders = ordersRes.data.map(Transformers.orderFromDb);
-          const freshIds = new Set(freshOrders.map(o => o.id));
-
-          // Retain recent local orders (within 5 minutes) not yet in cloud snapshot
-          // to prevent optimistic UI orders from flickering or disappearing
-          const now = Date.now();
-          const pendingRecentOrders = (state.orders || []).filter(o => {
-            if (o.tenantId !== slug) return false;
-            if (freshIds.has(o.id)) return false;
-            const ageMs = now - new Date(o.timestamp || now).getTime();
-            return ageMs < 5 * 60 * 1000;
-          });
-
-          const otherOrders = (state.orders || []).filter(o => o.tenantId !== slug);
-          state.orders = [...pendingRecentOrders, ...freshOrders, ...otherOrders];
-        }
-
-        if (staffRes.data) {
-          const freshStaff = staffRes.data.map(Transformers.staffRequestFromDb);
-          const freshStaffIds = new Set(freshStaff.map(s => s.id));
-          const pendingRecentStaff = (state.staffRequests || []).filter(s => {
-            if (s.tenantId !== slug) return false;
-            if (freshStaffIds.has(s.id)) return false;
-            return s.status === 'PENDING';
-          });
-          const otherStaff = (state.staffRequests || []).filter(s => s.tenantId !== slug);
-          state.staffRequests = [...pendingRecentStaff, ...freshStaff, ...otherStaff];
-        }
-
-        if (billsRes.data) {
-          const freshBills = billsRes.data.map(Transformers.billRequestFromDb);
-          const freshBillIds = new Set(freshBills.map(b => b.id));
-          const pendingRecentBills = (state.billRequests || []).filter(b => {
-            if (b.tenantId !== slug) return false;
-            if (freshBillIds.has(b.id)) return false;
-            return b.status === 'PENDING';
-          });
-          const otherBills = (state.billRequests || []).filter(b => b.tenantId !== slug);
-          state.billRequests = [...pendingRecentBills, ...freshBills, ...otherBills];
-        }
-
-        if (itemsRes.data && itemsRes.data.length > 0) {
-          const freshItems = itemsRes.data.map(Transformers.menuItemFromDb);
-          const freshItemIds = new Set(freshItems.map(i => i.id));
-          const pendingItems = (state.menuItems || []).filter(i => i.tenantId === slug && !freshItemIds.has(i.id));
-          const otherItems = (state.menuItems || []).filter(m => m.tenantId !== slug);
-          state.menuItems = [...freshItems, ...pendingItems, ...otherItems];
-        }
-
+        // 4. Categories
         if (catsRes.data && catsRes.data.length > 0) {
-          const freshCats = catsRes.data.map(Transformers.categoryFromDb);
-          const otherCats = (state.categories || []).filter(c => c.tenantId !== slug);
-          state.categories = [...freshCats, ...otherCats];
+          dbState.categories = catsRes.data.map(Transformers.categoryFromDb);
         }
 
-        if (staffAccRes && staffAccRes.data && staffAccRes.data.length > 0) {
-          const freshStaffAccs = staffAccRes.data.map(Transformers.staffAccountFromDb);
-          const freshStaffIds = new Set(freshStaffAccs.map(s => s.id));
-          const pendingStaff = (state.staffAccounts || []).filter(s => !freshStaffIds.has(s.id));
-          state.staffAccounts = [...freshStaffAccs, ...pendingStaff];
+        // 5. Menu Items
+        if (itemsRes.data && itemsRes.data.length > 0) {
+          dbState.menuItems = itemsRes.data.map(Transformers.menuItemFromDb);
         }
 
-        // Save fresh data to local cache
-        DineFlowStore.saveLocalOnly(state);
+        // 6. Orders
+        if (ordersRes.data) {
+          dbState.orders = ordersRes.data.map(Transformers.orderFromDb);
+        }
+
+        // 7. Staff Requests
+        if (staffReqRes.data) {
+          dbState.staffRequests = staffReqRes.data.map(Transformers.staffRequestFromDb);
+        }
+
+        // 8. Bill Requests
+        if (billsRes.data) {
+          dbState.billRequests = billsRes.data.map(Transformers.billRequestFromDb);
+        }
+
+        // 9. Customers (CRM)
+        if (customersRes.data && customersRes.data.length > 0) {
+          dbState.customers = customersRes.data.map(Transformers.customerFromDb);
+        }
+
+        // 10. Reviews
+        if (reviewsRes.data && reviewsRes.data.length > 0) {
+          dbState.reviews = reviewsRes.data.map(Transformers.reviewFromDb);
+        }
+
+        // 11. Offers & Coupons
+        if (offersRes.data && offersRes.data.length > 0) {
+          dbState.offers = offersRes.data.map(Transformers.offerFromDb);
+        }
+
+        // 12. Security Audit Logs
+        if (auditLogsRes.data && auditLogsRes.data.length > 0) {
+          dbState.auditLogs = auditLogsRes.data.map(Transformers.auditLogFromDb);
+        }
+
+        // Update DineFlowStore with clean database state
+        if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.setDatabaseState === 'function') {
+          DineFlowStore.setDatabaseState(dbState);
+        }
+
         isHydrated = true;
-        console.log(`[DineFlowDB] ✓ Cloud data hydrated: ${ordersRes.data?.length || 0} orders, ${tablesRes.data?.length || 0} tables.`);
+        this.isOnline = true;
+        console.log(`[DineFlowDB] ✓ 100% database fetched from PostgreSQL: ${dbState.tables?.length || 0} tables, ${dbState.staffAccounts?.length || 0} staff, ${dbState.menuItems?.length || 0} dishes.`);
 
-        // Trigger visual UI update without flashing or resetting modals
         if (typeof window.onDineFlowRemoteSync === 'function') {
           window.onDineFlowRemoteSync({
             type: 'SYNC',
-            payload: state,
+            payload: DineFlowStore.get(),
             meta: { action: 'CLOUD_HYDRATED', tenantSlug: slug }
           });
         }
+
+        return true;
       } catch (err) {
-        console.warn('[DineFlowDB] Hydration notice (using local offline cache):', err.message || err);
+        console.warn('[DineFlowDB] HydrateAll notice:', err.message || err);
+        return false;
       }
+    },
+
+    async hydrate(tenantSlug) {
+      return this.hydrateAll(tenantSlug);
     },
 
     // 2. Subscribe to PostgreSQL Realtime WebSocket Channel
@@ -409,6 +591,26 @@
           'postgres_changes',
           { event: '*', schema: 'public', table: 'staff_accounts' },
           (payload) => this.handleLiveStaffAccountEvent(payload)
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'menu_items' },
+          (payload) => this.handleLiveMenuItemEvent(payload)
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'categories' },
+          (payload) => this.handleLiveCategoryEvent(payload)
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'reviews' },
+          (payload) => this.handleLiveReviewEvent(payload)
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'offers' },
+          (payload) => this.handleLiveOfferEvent(payload)
         )
         .subscribe((status, err) => {
           if (status === 'SUBSCRIBED') {
@@ -621,6 +823,80 @@
       }
       DineFlowStore.saveLocalOnly(state);
       this.notifyUI({ action: 'STAFF_ACCOUNT_UPDATED', tenantSlug: currentTenant });
+    },
+
+    handleLiveMenuItemEvent(payload) {
+      const state = DineFlowStore.get();
+      state.menuItems = Array.isArray(state.menuItems) ? state.menuItems : [];
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        const item = Transformers.menuItemFromDb(payload.new);
+        const idx = state.menuItems.findIndex(i => i.id === item.id);
+        if (idx >= 0) {
+          state.menuItems[idx] = item;
+        } else {
+          state.menuItems.push(item);
+        }
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({ action: 'MENU_ITEM_UPDATED', itemId: item.id, tenantSlug: item.tenantId });
+      } else if (payload.eventType === 'DELETE' && payload.old) {
+        state.menuItems = state.menuItems.filter(i => i.id !== payload.old.id);
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({ action: 'MENU_ITEM_DELETED', itemId: payload.old.id });
+      }
+    },
+
+    handleLiveCategoryEvent(payload) {
+      const state = DineFlowStore.get();
+      state.categories = Array.isArray(state.categories) ? state.categories : [];
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        const cat = Transformers.categoryFromDb(payload.new);
+        const idx = state.categories.findIndex(c => c.id === cat.id);
+        if (idx >= 0) {
+          state.categories[idx] = cat;
+        } else {
+          state.categories.push(cat);
+        }
+        state.categories.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({ action: 'CATEGORIES_UPDATED', tenantSlug: cat.tenantId });
+      } else if (payload.eventType === 'DELETE' && payload.old) {
+        state.categories = state.categories.filter(c => c.id !== payload.old.id);
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({ action: 'CATEGORIES_UPDATED' });
+      }
+    },
+
+    handleLiveReviewEvent(payload) {
+      const state = DineFlowStore.get();
+      state.reviews = Array.isArray(state.reviews) ? state.reviews : [];
+      if (payload.eventType === 'INSERT' && payload.new) {
+        const rev = Transformers.reviewFromDb(payload.new);
+        if (!state.reviews.some(r => r.id === rev.id)) {
+          state.reviews.unshift(rev);
+          DineFlowStore.saveLocalOnly(state);
+          this.notifyUI({ action: 'REVIEW_SUBMITTED', review: rev, tenantSlug: rev.tenantId });
+        }
+      }
+    },
+
+    handleLiveOfferEvent(payload) {
+      const state = DineFlowStore.get();
+      state.offers = Array.isArray(state.offers) ? state.offers : [];
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        const offer = Transformers.offerFromDb(payload.new);
+        const idx = state.offers.findIndex(o => o.id === offer.id);
+        if (idx >= 0) {
+          state.offers[idx] = offer;
+        } else {
+          state.offers.push(offer);
+        }
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({ action: 'OFFERS_UPDATED', tenantSlug: offer.tenantId });
+      } else if (payload.eventType === 'DELETE' && payload.old) {
+        state.offers = state.offers.filter(o => o.id !== payload.old.id);
+        DineFlowStore.saveLocalOnly(state);
+        this.notifyUI({ action: 'OFFERS_UPDATED' });
+      }
     },
 
     // Notify DineFlow SPA UI through the existing remote sync callback
@@ -888,7 +1164,8 @@
             break;
           }
 
-          case 'STAFF_ACCOUNT_CREATED': {
+          case 'STAFF_ACCOUNT_CREATED':
+          case 'STAFF_ACCOUNT_UPDATED': {
             if (meta.account) {
               const acc = meta.account;
               const row = {
@@ -917,6 +1194,68 @@
                 .eq('id', meta.staffId);
               if (error) throw error;
               console.log(`[DineFlowDB] ✓ Staff account ${meta.staffId} revoked in PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'TENANT_UPDATED': {
+            if (meta.tenant) {
+              const t = meta.tenant;
+              const row = {
+                name: t.name,
+                tagline: t.tagline,
+                primary_color: t.primaryColor || (t.theme && t.theme.primaryColor),
+                currency: t.currency,
+                tax_rate: Number(t.taxRate) || 5,
+                service_charge_rate: Number(t.serviceChargeRate) || 5,
+                wifi_name: t.wifiName,
+                wifi_pass: t.wifiPass,
+                updated_at: new Date().toISOString()
+              };
+              const { error } = await sb.from('tenants').update(row).eq('slug', t.slug || tenantId);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Tenant ${t.name} branding updated in PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'CATEGORY_CREATED': {
+            if (meta.category) {
+              const row = Transformers.categoryToDb(meta.category, tenantId);
+              const { error } = await sb.from('categories').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Category ${row.name} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'OFFER_CREATED':
+          case 'OFFER_UPDATED': {
+            if (meta.offer) {
+              const row = Transformers.offerToDb(meta.offer, tenantId);
+              const { error } = await sb.from('offers').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Offer ${row.title} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'OFFER_DELETED': {
+            if (meta.offerId) {
+              const { error } = await sb.from('offers').delete().match({ tenant_id: tenantId, id: meta.offerId });
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Offer ${meta.offerId} deleted from PostgreSQL`);
+            }
+            break;
+          }
+
+          case 'CUSTOMER_CREATED':
+          case 'CUSTOMER_UPDATED': {
+            if (meta.customer) {
+              const row = Transformers.customerToDb(meta.customer, tenantId);
+              const { error } = await sb.from('customers').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Customer ${row.name} synced to PostgreSQL!`);
             }
             break;
           }
