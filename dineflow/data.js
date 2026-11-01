@@ -84,13 +84,13 @@ const DINEFLOW_DEFAULT_DATA = {
       department: 'Asian Cuisine Operations'
     },
     {
-      id: 'staff-05',
+      id: 'staff-mvv31yks',
       name: 'Tarun Rajak',
-      roleTitle: 'Floor Operations Lead',
+      roleTitle: 'Floor Supervisor',
       role: 'RESTAURANT_ADMIN',
       tenantId: 'the-urban-plate',
-      pin: '2468',
-      email: 'tarun@theurbanplate.in',
+      pin: '9861',
+      email: 'tarunrajak@theurbanplate.in',
       password: 'admin',
       avatarEmoji: '🧑‍💼',
       department: 'Floor & Guest Dining'
