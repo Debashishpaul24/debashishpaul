@@ -118,6 +118,22 @@
       };
     },
 
+    staffAccountFromDb(db) {
+      return {
+        id: db.id,
+        name: db.name,
+        roleTitle: db.role_title,
+        role: db.role || 'RESTAURANT_ADMIN',
+        tenantId: db.tenant_id,
+        pin: db.pin || '1234',
+        email: db.email,
+        password: db.password_hash || 'admin',
+        avatarEmoji: db.avatar_emoji || '👨‍🍳',
+        department: db.department || 'Kitchen & Floor',
+        isActive: db.is_active !== false
+      };
+    },
+
     staffRequestFromDb(db) {
       return {
         id: db.id,
@@ -249,13 +265,14 @@
       try {
         console.log(`[DineFlowDB] 📥 Fetching live cloud data for "${slug}"...`);
 
-        const [tablesRes, ordersRes, staffRes, billsRes, itemsRes, catsRes] = await Promise.all([
+        const [tablesRes, ordersRes, staffRes, billsRes, itemsRes, catsRes, staffAccRes] = await Promise.all([
           sb.from('tables').select('*').eq('tenant_id', slug),
           sb.from('orders').select('*').eq('tenant_id', slug).order('created_at', { ascending: false }).limit(60),
           sb.from('staff_requests').select('*').eq('tenant_id', slug).eq('status', 'PENDING'),
           sb.from('bill_requests').select('*').eq('tenant_id', slug).eq('status', 'PENDING'),
           sb.from('menu_items').select('*').eq('tenant_id', slug),
-          sb.from('categories').select('*').eq('tenant_id', slug).order('sort_order', { ascending: true })
+          sb.from('categories').select('*').eq('tenant_id', slug).order('sort_order', { ascending: true }),
+          sb.from('staff_accounts').select('*')
         ]);
 
         if (tablesRes.error) throw tablesRes.error;
@@ -328,6 +345,13 @@
           state.categories = [...freshCats, ...otherCats];
         }
 
+        if (staffAccRes && staffAccRes.data && staffAccRes.data.length > 0) {
+          const freshStaffAccs = staffAccRes.data.map(Transformers.staffAccountFromDb);
+          const freshStaffIds = new Set(freshStaffAccs.map(s => s.id));
+          const pendingStaff = (state.staffAccounts || []).filter(s => !freshStaffIds.has(s.id));
+          state.staffAccounts = [...freshStaffAccs, ...pendingStaff];
+        }
+
         // Save fresh data to local cache
         DineFlowStore.saveLocalOnly(state);
         isHydrated = true;
@@ -380,6 +404,11 @@
           'postgres_changes',
           { event: '*', schema: 'public', table: 'bill_requests', filter: `tenant_id=eq.${slug}` },
           (payload) => this.handleLiveBillRequestEvent(payload)
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'staff_accounts' },
+          (payload) => this.handleLiveStaffAccountEvent(payload)
         )
         .subscribe((status, err) => {
           if (status === 'SUBSCRIBED') {
@@ -574,6 +603,24 @@
         DineFlowStore.saveLocalOnly(state);
         this.notifyUI({ action: 'BILL_REQUEST_UPDATED', tenantSlug: currentTenant });
       }
+    },
+
+    handleLiveStaffAccountEvent(payload) {
+      const state = DineFlowStore.get();
+      state.staffAccounts = Array.isArray(state.staffAccounts) ? state.staffAccounts : [];
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        const acc = Transformers.staffAccountFromDb(payload.new);
+        const idx = state.staffAccounts.findIndex(a => a.id === acc.id);
+        if (idx >= 0) {
+          state.staffAccounts[idx] = acc;
+        } else {
+          state.staffAccounts.push(acc);
+        }
+      } else if (payload.eventType === 'DELETE') {
+        state.staffAccounts = state.staffAccounts.filter(a => a.id !== (payload.old && payload.old.id));
+      }
+      DineFlowStore.saveLocalOnly(state);
+      this.notifyUI({ action: 'STAFF_ACCOUNT_UPDATED', tenantSlug: currentTenant });
     },
 
     // Notify DineFlow SPA UI through the existing remote sync callback

@@ -82,6 +82,18 @@ const DINEFLOW_DEFAULT_DATA = {
       password: 'admin',
       avatarEmoji: '\uD83D\uDC68\u200D\uD83C\uDF73',
       department: 'Asian Cuisine Operations'
+    },
+    {
+      id: 'staff-05',
+      name: 'Tarun Rajak',
+      roleTitle: 'Floor Operations Lead',
+      role: 'RESTAURANT_ADMIN',
+      tenantId: 'the-urban-plate',
+      pin: '2468',
+      email: 'tarun@theurbanplate.in',
+      password: 'admin',
+      avatarEmoji: '🧑‍💼',
+      department: 'Floor & Guest Dining'
     }
   ],
 
@@ -1980,6 +1992,16 @@ const DineFlowStore = {
           }
           if (!data.staffAccounts || !Array.isArray(data.staffAccounts)) {
             data.staffAccounts = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA.staffAccounts));
+            updated = true;
+          } else {
+            // Ensure Tarun Rajak profile exists across all active sessions
+            if (!data.staffAccounts.some(s => s.name && s.name.toLowerCase().includes('tarun'))) {
+              const tarunAccount = DINEFLOW_DEFAULT_DATA.staffAccounts.find(s => s.id === 'staff-05');
+              if (tarunAccount) {
+                data.staffAccounts.push(JSON.parse(JSON.stringify(tarunAccount)));
+                updated = true;
+              }
+            }
             updated = true;
           }
           if (!data.session) {

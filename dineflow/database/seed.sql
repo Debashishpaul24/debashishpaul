@@ -32,6 +32,9 @@ ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
 INSERT INTO staff_accounts (id, tenant_id, name, role_title, role, pin, email, password_hash, avatar_emoji, department)
 VALUES ('staff-04', 'sakura-asian', 'Kenji Sato', 'Izakaya Floor Manager', 'RESTAURANT_ADMIN', '4321', 'manager@sakuraasian.in', 'admin', '🍱', 'Asian Cuisine Operations')
 ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
+INSERT INTO staff_accounts (id, tenant_id, name, role_title, role, pin, email, password_hash, avatar_emoji, department)
+VALUES ('staff-05', 'the-urban-plate', 'Tarun Rajak', 'Floor Operations Lead', 'RESTAURANT_ADMIN', '2468', 'tarun@theurbanplate.in', 'admin', '🧑‍💼', 'Floor & Guest Dining')
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name;
 
 -- ------------------------------------------------------------------------------
 -- 3. MENU CATEGORIES
