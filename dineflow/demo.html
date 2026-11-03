@@ -356,7 +356,7 @@
     .sandbox-stage {
       flex: 1;
       display: grid;
-      grid-template-columns: 330px 1fr;
+      grid-template-columns: 285px 1fr;
       gap: 1.25rem;
       padding: 0.85rem 1.25rem 3.5rem;
       max-width: 1560px;
@@ -379,7 +379,7 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      max-width: 320px;
+      max-width: 275px;
       padding: 0.35rem 0.65rem;
       font-size: 0.74rem;
       color: var(--text-muted);
@@ -438,12 +438,12 @@
 
     /* iPhone 16 Pro Photorealistic Chassis */
     .iphone-frame {
-      width: 310px;
+      width: 275px;
       max-width: 100%;
-      height: 580px;
+      height: 520px;
       background: #1e2024;
-      border-radius: 40px;
-      padding: 9px;
+      border-radius: 36px;
+      padding: 8px;
       box-shadow:
         0 0 0 3px #3a3d45,
         0 0 0 5px #15171a,
@@ -458,20 +458,20 @@
     /* Dynamic Island */
     .dynamic-island {
       position: absolute;
-      top: 14px;
+      top: 13px;
       left: 50%;
       transform: translateX(-50%);
-      width: 92px;
-      height: 24px;
+      width: 84px;
+      height: 22px;
       background: #000;
-      border-radius: 16px;
+      border-radius: 14px;
       z-index: 60;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 8px;
+      padding: 0 7px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: #fff;
     }
 
@@ -493,7 +493,7 @@
     .screen-container {
       width: 100%;
       height: 100%;
-      border-radius: 32px;
+      border-radius: 28px;
       overflow: hidden;
       background: #07090E;
       position: relative;
@@ -525,11 +525,11 @@
     /* Bottom Home Indicator Bar */
     .home-indicator {
       position: absolute;
-      bottom: 18px;
+      bottom: 14px;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
-      height: 4px;
+      width: 104px;
+      height: 3.5px;
       background: rgba(255, 255, 255, 0.5);
       border-radius: 999px;
       z-index: 60;
@@ -589,8 +589,8 @@
       background: linear-gradient(145deg, #182030, #0d121c);
       border: 1px solid rgba(229, 169, 60, 0.45);
       border-radius: 12px;
-      padding: 0.65rem 0.75rem 0.5rem;
-      width: 190px;
+      padding: 0.55rem 0.65rem 0.45rem;
+      width: 175px;
       box-shadow: 
         0 15px 35px rgba(0, 0, 0, 0.7),
         0 0 25px rgba(229, 169, 60, 0.2);
@@ -695,8 +695,8 @@
       top: 38%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 205px;
-      height: 220px;
+      width: 185px;
+      height: 200px;
       pointer-events: none;
       z-index: 10;
     }
@@ -797,7 +797,7 @@
       flex-direction: column;
       gap: 0.35rem;
       width: 100%;
-      max-width: 320px;
+      max-width: 275px;
     }
 
     .quick-actions-label {
@@ -1356,16 +1356,16 @@
         display: flex !important;
       }
       .sandbox-stage {
-        grid-template-columns: 290px 1fr !important;
+        grid-template-columns: 260px 1fr !important;
         gap: 0.85rem;
         padding: 0.5rem 0.85rem 3rem;
       }
       .desktop-window {
-        height: 540px;
+        height: 520px;
       }
       .iphone-frame {
-        width: 290px;
-        height: 540px;
+        width: 255px;
+        height: 490px;
       }
     }
 
@@ -1430,7 +1430,8 @@
         height: 560px;
       }
       .iphone-frame {
-        height: 580px;
+        width: 275px;
+        height: 520px;
       }
       .drawer-controls-grid {
         flex-direction: column;
@@ -1698,7 +1699,7 @@
             </div>
           </div>
 
-          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=1.9.4" title="DineFlow Guest Mobile Ordering"></iframe>
+          <iframe id="mobile-iframe" class="screen-iframe" src="./?r=the-urban-plate&t=T12&v=3.0.0" title="DineFlow Guest Mobile Ordering"></iframe>
         </div>
 
         <!-- iOS Home Indicator -->
@@ -1713,11 +1714,11 @@
         <div class="badge-identity">
           <span class="role-icon">👨‍🍳</span>
           <div>
-            <strong>KITCHEN STAFF KDS &amp; SAAS HQ</strong>
+            <strong>RESTAURANT STAFF OS &amp; SAAS HQ</strong>
             <p class="role-caption">Live Cooking Tickets &bull; Waiter Calls &bull; Multi-Role Ops</p>
           </div>
         </div>
-        <span class="role-tag staff-tag">Back-of-House</span>
+        <span class="role-tag staff-tag">Operations OS</span>
       </div>
 
       <!-- Studio Browser Frame -->
@@ -1733,7 +1734,7 @@
           <!-- Switchable Persona Tabs -->
           <div class="window-tabs">
             <button id="tab-staff" class="window-tab active">
-              <span>👨‍🍳 Kitchen Staff OS (KDS)</span>
+              <span>👨‍🍳 Restaurant Staff OS</span>
               <span class="window-tab-badge">Manager</span>
             </button>
             <button id="tab-saas" class="window-tab">
@@ -1748,12 +1749,12 @@
           <!-- Address Bar -->
           <div class="window-urlbar">
             <span class="url-lock">🔒</span>
-            <span id="desktop-url-text">https://dineflow.io/kitchen?view=admin</span>
+            <span id="desktop-url-text">https://dineflow.io/ops?view=admin</span>
           </div>
         </div>
 
         <!-- Desktop Screen Iframe -->
-        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=1.9.4" title="DineFlow Operations & Governance Console"></iframe>
+        <iframe id="desktop-iframe" class="desktop-iframe" src="./?view=admin&v=3.0.0" title="DineFlow Operations & Governance Console"></iframe>
       </div>
     </section>
 
@@ -1798,6 +1799,17 @@
             </button>
             <button id="btn-kitchen-settle" class="btn-quick" title="Mark Table T12 bill as settled">
               <span>💳 Settle T12 Bill</span>
+            </button>
+          </div>
+        </div>
+        <div class="drawer-section">
+          <span class="drawer-section-title">⚡ Quick Views:</span>
+          <div class="drawer-btn-group">
+            <button id="btn-switch-tables" class="btn-quick" title="View Tables & QR Codes Matrix">
+              <span>🪑 Tables Matrix</span>
+            </button>
+            <button id="btn-switch-kds" class="btn-quick" title="View Live Kitchen Orders KDS">
+              <span>🍳 Kitchen KDS</span>
             </button>
           </div>
         </div>
@@ -2027,32 +2039,41 @@
       function ensureDemoAuth(role) {
         currentActiveRole = role;
         try {
-          let data = null;
-          const raw = localStorage.getItem('dineflow_data');
-          if (raw) {
-            data = JSON.parse(raw);
-          } else if (typeof DINEFLOW_DEFAULT_DATA !== 'undefined') {
-            data = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
-          }
-
-          if (data) {
-            if (role === 'SUPER_ADMIN') {
-              data.session = {
-                isAuthenticated: true,
+          let session;
+          if (role === 'SUPER_ADMIN') {
+            session = {
+              isAuthenticated: true,
+              role: 'SUPER_ADMIN',
+              user: {
+                id: 'staff-02',
+                name: 'Debashish Paul (HQ)',
                 role: 'SUPER_ADMIN',
-                user: { name: 'Debashish Paul (HQ)', email: 'admin@dineflow.io' },
-                tenantId: 'the-urban-plate'
-              };
-            } else {
-              data.session = {
-                isAuthenticated: true,
+                roleTitle: 'SaaS Platform Super Admin',
+                tenantId: null,
+                pin: '9999'
+              },
+              tenantId: 'the-urban-plate'
+            };
+          } else {
+            session = {
+              isAuthenticated: true,
+              role: 'RESTAURANT_ADMIN',
+              user: {
+                id: 'staff-01',
+                name: 'Chef Vikram Rao',
                 role: 'RESTAURANT_ADMIN',
-                user: { name: 'Chef Marco', email: 'marco@urbanplate.com' },
-                tenantId: 'the-urban-plate'
-              };
-            }
-            localStorage.setItem('dineflow_data', JSON.stringify(data));
+                roleTitle: 'Kitchen Operations Manager',
+                tenantId: 'the-urban-plate',
+                pin: '1234'
+              },
+              tenantId: 'the-urban-plate'
+            };
           }
+          localStorage.setItem('DINEFLOW_SESSION_v1', JSON.stringify(session));
+          // Clean legacy cache keys if present
+          localStorage.removeItem('dineflow_data');
+          localStorage.removeItem('DINEFLOW_SaaS_STORE_v5');
+          localStorage.removeItem('DINEFLOW_SaaS_STORE_v4');
         } catch (e) {
           console.warn('Session setup warning:', e);
         }
@@ -2154,7 +2175,7 @@
         tabSaas.classList.remove('active');
         tabHub.classList.remove('active');
 
-        switchDesktopView('admin', 'RESTAURANT_ADMIN', 'https://dineflow.io/kitchen?view=admin', 'staff', 'Switched desktop view to Kitchen Staff OS (KDS)', '👨‍🍳');
+        switchDesktopView('admin', 'RESTAURANT_ADMIN', 'https://dineflow.io/ops?view=admin', 'staff', 'Switched desktop view to Restaurant Staff OS & Operations HQ', '👨‍🍳');
 
       });
 
@@ -2573,6 +2594,8 @@
       document.getElementById('btn-reset-demo')?.addEventListener('click', () => {
         try {
           localStorage.removeItem('dineflow_data');
+          localStorage.removeItem('DINEFLOW_SESSION_v1');
+          ensureDemoAuth('RESTAURANT_ADMIN');
           isQrScanned = false;
           cameraReticle?.classList.remove('verified');
           qrScannerOverlay?.classList.remove('scanned');
@@ -2582,7 +2605,7 @@
           showSpotlight('<strong>Restored to Table Stand!</strong> Ready to scan Table T12 QR again.', '🔄');
           logTelemetry('Demo restored to initial at-table state with QR stand', '🔄');
 
-          mobileIframe.src = './?r=the-urban-plate&t=T12&v=1.9.4';
+          mobileIframe.src = './?r=the-urban-plate&t=T12&v=3.0.0';
   
           tabStaff.click();
           updateSandboxUrlQuery({ step: null, sim: null, role: 'staff' });
@@ -2668,6 +2691,39 @@
 
       document.getElementById('btn-kitchen-settle')?.addEventListener('click', () => {
         executeStage5_SettleBill();
+      });
+
+      // Quick Navigation View Triggers
+      document.getElementById('btn-switch-tables')?.addEventListener('click', () => {
+        tabStaff.click();
+        setTimeout(() => {
+          try {
+            const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+            const tablesTab = doc?.querySelector('.df-admin-nav-item[data-tab="tables"]');
+            if (tablesTab) {
+              tablesTab.click();
+              playChime('advance');
+              showSpotlight('<strong>Switched to Tables Matrix!</strong> View serial order and live QR stands.', '🪑');
+              logTelemetry('Staff navigated to Real-Time Tables & QR Codes Matrix', '🪑');
+            }
+          } catch (e) {}
+        }, 350);
+      });
+
+      document.getElementById('btn-switch-kds')?.addEventListener('click', () => {
+        tabStaff.click();
+        setTimeout(() => {
+          try {
+            const doc = desktopIframe.contentDocument || desktopIframe.contentWindow.document;
+            const ordersTab = doc?.querySelector('.df-admin-nav-item[data-tab="orders"]');
+            if (ordersTab) {
+              ordersTab.click();
+              playChime('advance');
+              showSpotlight('<strong>Switched to Kitchen KDS!</strong> Live multi-stage cooking tickets.', '🍳');
+              logTelemetry('Staff navigated to Kitchen Orders KDS', '🍳');
+            }
+          } catch (e) {}
+        }, 350);
       });
 
       // Developer Drawer Toggle
