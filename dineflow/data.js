@@ -1343,8 +1343,22 @@ const DINEFLOW_DEFAULT_DATA = {
     { id: 'SK-08', tenantId: 'sakura-asian', name: 'Bamboo Garden 08', section: 'Outdoor Bamboo', capacity: 8, status: 'available', qrScans: 18, lastScanned: '4 hrs ago' }
   ],
 
-  // Promotional Offers partitioned by tenantId
+  // Promotional Offers partitioned by tenantId (Global & Outlet-specific)
   offers: [
+    {
+      id: 'off-family-purba-krish',
+      tenantId: null, // Global VIP Family Pass across ALL restaurants (The Urban Plate, Bella Vista, Sakura Asian)
+      code: 'PURBA_KRISH',
+      title: '100% OFF Family Privilege',
+      description: 'VIP Family Member Pass: 100% full dining privilege for Purba & Krish.',
+      type: 'percentage',
+      value: 100,
+      minOrder: 0,
+      maxDiscount: null,
+      categoryScope: 'all',
+      expiry: '31 Dec 2030',
+      isActive: true
+    },
     {
       id: 'off-1',
       tenantId: 'the-urban-plate',
@@ -1946,6 +1960,8 @@ if (typeof window !== 'undefined') {
 // ==============================================================================
 const DineFlowStore = {
   SESSION_KEY: 'DINEFLOW_SESSION_v1',
+  OFFERS_KEY: 'DINEFLOW_CUSTOM_OFFERS_v1',
+  DELETED_OFFERS_KEY: 'DINEFLOW_DELETED_OFFERS_v1',
   broadcastChannel: null,
   _dbState: null,
   _isDatabaseLoaded: false,
@@ -2004,6 +2020,114 @@ const DineFlowStore = {
     }
   },
 
+  // Custom & Staff Promo Code Persistence Layer (Persists user-created/edited promo codes)
+  getCustomOffers() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem(this.OFFERS_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('[DineFlowStore] Error reading custom offers:', e);
+    }
+    return [];
+  },
+
+  saveCustomOffer(offer) {
+    if (!offer || !offer.id) return;
+    try {
+      const list = this.getCustomOffers();
+      const codeUpper = (offer.code || '').trim().toUpperCase();
+      const idx = list.findIndex(o => o.id === offer.id || ((o.code || '').trim().toUpperCase() === codeUpper));
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...offer };
+      } else {
+        list.unshift(offer);
+      }
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(this.OFFERS_KEY, JSON.stringify(list));
+      }
+      this.unmarkDeletedOffer(offer.id);
+    } catch (e) {
+      console.warn('[DineFlowStore] Error saving custom offer:', e);
+    }
+  },
+
+  deleteCustomOffer(offerId) {
+    if (!offerId) return;
+    try {
+      const list = this.getCustomOffers().filter(o => o.id !== offerId);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(this.OFFERS_KEY, JSON.stringify(list));
+      }
+      const deleted = this.getDeletedOfferIds();
+      if (!deleted.includes(offerId)) {
+        deleted.push(offerId);
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(this.DELETED_OFFERS_KEY, JSON.stringify(deleted));
+        }
+      }
+    } catch (e) {
+      console.warn('[DineFlowStore] Error deleting custom offer:', e);
+    }
+  },
+
+  getDeletedOfferIds() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem(this.DELETED_OFFERS_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      }
+    } catch (e) {}
+    return [];
+  },
+
+  unmarkDeletedOffer(offerId) {
+    try {
+      const deleted = this.getDeletedOfferIds().filter(id => id !== offerId);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(this.DELETED_OFFERS_KEY, JSON.stringify(deleted));
+      }
+    } catch (e) {}
+  },
+
+  mergeOffers(baseOffers = []) {
+    const deletedIds = this.getDeletedOfferIds();
+    const customOffers = this.getCustomOffers();
+    const defaultOffers = Array.isArray(DINEFLOW_DEFAULT_DATA?.offers) ? DINEFLOW_DEFAULT_DATA.offers : [];
+
+    const offerMap = new Map();
+
+    // 1. Seed base default offers (ensures PURBA_KRISH 100% Family Pass is always present)
+    defaultOffers.forEach(o => {
+      if (o && o.id && !deletedIds.includes(o.id)) {
+        offerMap.set(o.id, { ...o });
+      }
+    });
+
+    // 2. Overlay PostgreSQL cloud offers from Supabase
+    (baseOffers || []).forEach(o => {
+      if (o && o.id && !deletedIds.includes(o.id)) {
+        offerMap.set(o.id, { ...offerMap.get(o.id), ...o });
+      }
+    });
+
+    // 3. Overlay staff custom and edited offers (highest priority for user modifications)
+    customOffers.forEach(o => {
+      if (o && o.id && !deletedIds.includes(o.id)) {
+        offerMap.set(o.id, { ...offerMap.get(o.id), ...o });
+      }
+    });
+
+    return Array.from(offerMap.values());
+  },
+
   // Commits fresh PostgreSQL cloud state into memory
   setDatabaseState(freshState) {
     if (!freshState || typeof freshState !== 'object') return;
@@ -2026,7 +2150,11 @@ const DineFlowStore = {
     if (freshState.billRequests) this._dbState.billRequests = freshState.billRequests;
     if (freshState.customers) this._dbState.customers = freshState.customers;
     if (freshState.reviews) this._dbState.reviews = freshState.reviews;
-    if (freshState.offers) this._dbState.offers = freshState.offers;
+    if (freshState.offers) {
+      this._dbState.offers = this.mergeOffers(freshState.offers);
+    } else {
+      this._dbState.offers = this.mergeOffers(this._dbState.offers || []);
+    }
     if (freshState.auditLogs) this._dbState.auditLogs = freshState.auditLogs;
 
     // Preserve active session credentials
@@ -2037,12 +2165,14 @@ const DineFlowStore = {
   get() {
     if (this._dbState) {
       this._dbState.session = this.getSession();
+      this._dbState.offers = this.mergeOffers(this._dbState.offers || []);
       return this._dbState;
     }
 
     // Fallback baseline until PostgreSQL hydration completes
     const fallback = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
     fallback.session = this.getSession();
+    fallback.offers = this.mergeOffers(fallback.offers || []);
     if (fallback.tables && typeof sortTablesSerially === 'function') {
       fallback.tables = sortTablesSerially(fallback.tables);
     }

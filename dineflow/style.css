@@ -5204,6 +5204,14 @@ body.splash-active {
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
+.df-offer-type-pill.vip-family {
+  background: linear-gradient(135deg, rgba(229, 169, 60, 0.25) 0%, rgba(16, 185, 129, 0.25) 100%);
+  color: #FCD34D;
+  border: 1px solid rgba(252, 211, 77, 0.5);
+  font-weight: 900;
+  box-shadow: 0 0 10px rgba(229, 169, 60, 0.2);
+}
+
 .df-offer-status-badge {
   display: inline-flex;
   align-items: center;
@@ -5289,4 +5297,17 @@ body.splash-active {
   background: var(--brand-primary);
   border-color: var(--brand-primary);
   color: #07090E;
+}
+
+.btn-offer-preset.vip-100 {
+  border-color: rgba(252, 211, 77, 0.4);
+  background: rgba(252, 211, 77, 0.08);
+  color: #FCD34D;
+}
+
+.btn-offer-preset.vip-100.active {
+  background: linear-gradient(135deg, #F59E0B 0%, #10B981 100%);
+  border-color: #FCD34D;
+  color: #07090E;
+  font-weight: 900;
 }

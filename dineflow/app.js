@@ -810,6 +810,8 @@
 
     // Tenant-isolated Staff OS view: ?r=<tenant>&view=admin
     if (viewParam === 'admin') {
+      const tabParam = searchParams.get('tab');
+      if (tabParam) currentAdminTab = tabParam;
       return {
         view: 'admin',
         tenantSlug: rParam || (state.session && state.session.tenantId) || state.currentTenantId || 'the-urban-plate'
@@ -2008,7 +2010,10 @@
   function renderCustomerView(container, tenantSlug, tableId) {
     const tenant = getCurrentTenant(tenantSlug);
     const table = state.tables.find(t => t.id === tableId) || { id: tableId, name: `Table ${tableId}`, section: 'Indoor' };
-    const offers = (state.offers || []).filter(o => o.isActive && (!o.tenantId || o.tenantId === tenantSlug || o.tenantId === tenant.slug));
+    const allOffers = (state.offers && state.offers.length)
+      ? state.offers
+      : (typeof DineFlowStore !== 'undefined' ? DineFlowStore.get().offers : []);
+    const offers = allOffers.filter(o => o && o.isActive && (!o.tenantId || o.tenantId === 'all' || o.tenantId === tenantSlug || o.tenantId === tenant.slug));
 
     // Calculate cart item count
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -2098,16 +2103,21 @@
           <!-- Promotional Offers Scroll -->
           ${offers.length ? `
             <div class="df-offers-scroll">
-              ${offers.map(o => `
-                <div class="df-offer-badge-card">
-                  <div class="df-offer-icon-box">🏷️</div>
-                  <div class="df-offer-details">
-                    <h4>${o.title}</h4>
-                    <p>${o.description}</p>
-                    <span class="df-coupon-code">${o.code}</span>
+              ${offers.map(o => {
+                const isHundred = (o.type === 'percentage' && Number(o.value) >= 100);
+                return `
+                  <div class="df-offer-badge-card" data-code="${o.code}">
+                    <div class="df-offer-icon-box">${isHundred ? '👑' : '🏷️'}</div>
+                    <div class="df-offer-details">
+                      <h4>${o.title}</h4>
+                      <p>${o.description}</p>
+                      <span class="df-coupon-code" data-code="${o.code}" title="Click to copy promo code" style="${isHundred ? 'background: linear-gradient(135deg, #F59E0B 0%, #10B981 100%); color: #07090E; font-weight: 900;' : ''}">
+                        ${isHundred ? `👑 ${o.code}` : o.code}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
           ` : ''}
 
@@ -2383,6 +2393,18 @@
     // Bind initial food cards
     bindFoodCardEvents();
 
+    // Promotional offers copy to clipboard
+    document.querySelectorAll('.df-offers-scroll .df-coupon-code, .df-offers-scroll .df-offer-badge-card').forEach(el => {
+      el.addEventListener('click', () => {
+        const code = el.getAttribute('data-code');
+        if (code && navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(() => {
+            showToast(`Promo code "${code}" copied! Enter it in cart for your discount 🎉`, '🏷️');
+          }).catch(() => {});
+        }
+      });
+    });
+
     // Navigation Tabs
     document.getElementById('nav-tab-cart')?.addEventListener('click', () => openCartModal(tenant, table));
     document.getElementById('nav-tab-orders')?.addEventListener('click', () => openOrdersModal(tenant, table));
@@ -2564,9 +2586,18 @@
 
     function renderCartContents() {
       const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-      const tax = (subtotal - discountAmount) * (tenant.taxRate / 100);
-      const service = (subtotal - discountAmount) * (tenant.serviceChargeRate / 100);
-      const grandTotal = Math.max(0, subtotal - discountAmount + tax + service);
+      const isFullDiscount = Boolean(appliedCoupon && (
+        (appliedCoupon.type === 'percentage' && Number(appliedCoupon.value) >= 100) ||
+        discountAmount >= subtotal
+      ));
+
+      const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+      const taxRate = Number(tenant.taxRate || 5);
+      const serviceRate = Number(tenant.serviceChargeRate || 5);
+      // For 100% VIP family passes, taxes and service charges are 100% waived
+      const tax = isFullDiscount ? 0 : (discountedSubtotal * (taxRate / 100));
+      const service = isFullDiscount ? 0 : (discountedSubtotal * (serviceRate / 100));
+      const grandTotal = isFullDiscount ? 0 : Math.max(0, discountedSubtotal + tax + service);
 
       modalContainer.innerHTML = `
         <div class="df-modal-backdrop active" id="cart-backdrop">
@@ -2611,7 +2642,7 @@
 
                 <!-- Apply Promo Code -->
                 <div class="df-coupon-input-box">
-                  <input type="text" id="cart-coupon-input" placeholder="Enter Coupon Code (e.g. LUNCH20)" value="${appliedCoupon ? appliedCoupon.code : ''}">
+                  <input type="text" id="cart-coupon-input" placeholder="Enter Promo Code (e.g. PURBA_KRISH)" value="${appliedCoupon ? appliedCoupon.code : ''}" style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 700;">
                   <button class="df-pill-btn primary" id="btn-apply-coupon">
                     ${appliedCoupon ? 'Applied ✓' : 'Apply'}
                   </button>
@@ -2625,21 +2656,21 @@
                   </div>
                   ${discountAmount > 0 ? `
                     <div class="df-bill-row" style="color: #10B981; font-weight: 700;">
-                      <span>Coupon Discount (${appliedCoupon?.code})</span>
+                      <span>Coupon Discount (${appliedCoupon?.code}${isFullDiscount ? ' • 100% Family Pass' : ''})</span>
                       <span>−${tenant.currency}${discountAmount.toFixed(2)}</span>
                     </div>
                   ` : ''}
                   <div class="df-bill-row">
-                    <span>GST (${tenant.taxRate}%)</span>
-                    <span>${tenant.currency}${tax.toFixed(2)}</span>
+                    <span>GST (${taxRate}%)</span>
+                    <span>${isFullDiscount ? '₹0.00 (Waived)' : `${tenant.currency}${tax.toFixed(2)}`}</span>
                   </div>
                   <div class="df-bill-row">
-                    <span>Service Charge (${tenant.serviceChargeRate}%)</span>
-                    <span>${tenant.currency}${service.toFixed(2)}</span>
+                    <span>Service Charge (${serviceRate}%)</span>
+                    <span>${isFullDiscount ? '₹0.00 (Waived)' : `${tenant.currency}${service.toFixed(2)}`}</span>
                   </div>
-                  <div class="df-bill-row total">
+                  <div class="df-bill-row total" style="${isFullDiscount ? 'color: #10B981;' : ''}">
                     <span>Grand Total</span>
-                    <span>${tenant.currency}${grandTotal.toFixed(2)}</span>
+                    <span>${isFullDiscount ? `${tenant.currency}0.00 (100% VIP Pass)` : `${tenant.currency}${grandTotal.toFixed(2)}`}</span>
                   </div>
                 </div>
 
@@ -2650,8 +2681,10 @@
                 </div>
 
                 <!-- Place Order CTA -->
-                <button class="df-splash-btn" id="btn-place-order" style="width: 100%; text-align: center; padding: 1rem;">
-                  Place Order • ${tenant.currency}${grandTotal.toFixed(2)} 🚀
+                <button class="df-splash-btn" id="btn-place-order" style="width: 100%; text-align: center; padding: 1rem; ${isFullDiscount ? 'background: linear-gradient(135deg, #10B981 0%, #059669 100%);' : ''}">
+                  ${isFullDiscount 
+                    ? `Place Order • ${tenant.currency}0.00 (VIP Family Pass) 🚀`
+                    : `Place Order • ${tenant.currency}${grandTotal.toFixed(2)} 🚀`}
                 </button>
               ` : `
                 <div style="text-align: center; padding: 3rem 1rem;">
@@ -2697,25 +2730,55 @@
 
       // Coupon validation
       document.getElementById('btn-apply-coupon')?.addEventListener('click', () => {
-        const code = document.getElementById('cart-coupon-input')?.value.trim().toUpperCase();
+        const rawInput = document.getElementById('cart-coupon-input')?.value || '';
+        const code = rawInput.trim().toUpperCase();
+        if (!code) {
+          showToast('Please enter a promo code (e.g. PURBA_KRISH)', '⚠️');
+          return;
+        }
+
         const tenantSlug = tenant.slug || tenant.id || state.currentTenantId || 'the-urban-plate';
-        const found = (state.offers || []).find(o => o.code === code && o.isActive && (!o.tenantId || o.tenantId === tenantSlug));
+        const cleanInput = code.replace(/[\s_\-]+/g, '');
+
+        const allOffers = (state.offers && state.offers.length)
+          ? state.offers
+          : (typeof DineFlowStore !== 'undefined' ? DineFlowStore.get().offers : []);
+
+        const found = allOffers.find(o => {
+          if (!o || !o.isActive) return false;
+          const oCode = (o.code || '').trim().toUpperCase();
+          const cleanOfferCode = oCode.replace(/[\s_\-]+/g, '');
+          const codeMatch = (oCode === code || cleanOfferCode === cleanInput);
+          if (!codeMatch) return false;
+
+          // Global VIP offers (null, empty, or 'all') apply to ALL restaurants
+          const tenantMatch = (!o.tenantId || o.tenantId === 'all' || o.tenantId === tenantSlug || o.tenantId === tenant.slug || o.tenantId === tenant.id);
+          return tenantMatch;
+        });
+
         if (found) {
           if (found.minOrder && subtotal < Number(found.minOrder)) {
-            showToast(`Minimum order of ${tenant.currency}${found.minOrder} required for coupon ${code}`, '⚠️');
+            showToast(`Minimum order of ${tenant.currency}${found.minOrder} required for coupon ${found.code}`, '⚠️');
             return;
           }
           appliedCoupon = found;
           if (found.type === 'percentage') {
-            const calculated = (subtotal * Number(found.value)) / 100;
-            discountAmount = (found.maxDiscount && Number(found.maxDiscount) > 0)
-              ? Math.min(Number(found.maxDiscount), calculated)
-              : calculated;
+            const pct = Number(found.value) || 0;
+            const calculated = (subtotal * pct) / 100;
+            // 100% VIP Family Pass waives entire subtotal without cap
+            if (pct >= 100) {
+              discountAmount = subtotal;
+            } else {
+              discountAmount = (found.maxDiscount && Number(found.maxDiscount) > 0)
+                ? Math.min(Number(found.maxDiscount), calculated)
+                : calculated;
+            }
           } else {
-            discountAmount = Number(found.value) || 0;
+            discountAmount = Math.min(subtotal, Number(found.value) || 0);
           }
           SoundFX.chime('success');
-          showToast(`Coupon ${code} applied successfully! (−${tenant.currency}${discountAmount.toFixed(2)})`, '🎉');
+          const isFull = (discountAmount >= subtotal);
+          showToast(`Coupon "${found.code}" applied! ${isFull ? '👑 100% VIP Family Pass' : `(−${tenant.currency}${discountAmount.toFixed(2)})`}`, '🎉');
           renderCartContents();
         } else {
           showToast('Invalid or expired coupon code', '⚠️');
@@ -2729,6 +2792,11 @@
         const phone = document.getElementById('cust-phone-input')?.value.trim() || '';
         const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
         const newOrderId = getNextSerialOrderId(tenantSlug);
+
+        const isFull = Boolean(appliedCoupon && (
+          (appliedCoupon.type === 'percentage' && Number(appliedCoupon.value) >= 100) ||
+          discountAmount >= subtotal
+        ));
 
         const newOrder = {
           id: newOrderId,
@@ -2744,8 +2812,10 @@
           tax,
           serviceCharge: service,
           total: grandTotal,
-          paymentMethod: 'UPI',
-          paymentStatus: 'PENDING',
+          couponCode: appliedCoupon ? appliedCoupon.code : null,
+          isVipComp: isFull,
+          paymentMethod: isFull ? 'VIP Family Pass (100% OFF)' : 'UPI',
+          paymentStatus: isFull ? 'PAID' : 'PENDING',
           estimatedMinutes: 20
         };
 
@@ -5739,7 +5809,7 @@
                     Promo / Coupon Code *
                   </label>
                   <div style="position: relative;">
-                    <input type="text" id="offer-input-code" value="${offerToEdit ? offerToEdit.code : ''}" placeholder="e.g. LUNCH20, WELCOME100" style="width: 100%; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 800; letter-spacing: 1px;" required>
+                    <input type="text" id="offer-input-code" value="${offerToEdit ? offerToEdit.code : ''}" placeholder="e.g. PURBA_KRISH, LUNCH20" style="width: 100%; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 800; letter-spacing: 1px;" required>
                   </div>
                   <span id="offer-code-error" style="display: none; font-size: 0.72rem; color: #EF4444; margin-top: 0.3rem; font-weight: 600;"></span>
                 </div>
@@ -5756,12 +5826,30 @@
                 </div>
               </div>
 
+              <!-- Outlet Scope / Applicability -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                  Outlet Scope / Restaurant Applicability
+                </label>
+                <select id="offer-select-tenant" style="width: 100%; font-weight: 700;">
+                  <option value="all" ${(offerToEdit && (!offerToEdit.tenantId || offerToEdit.tenantId === 'all')) ? 'selected' : ''}>
+                    🌐 All Restaurants (Global VIP &amp; Family Member Pass)
+                  </option>
+                  <option value="${tenantSlug}" ${(!offerToEdit || offerToEdit.tenantId === tenantSlug || offerToEdit.tenantId === tenant.slug) ? 'selected' : ''}>
+                    📍 ${tenant.name} Only
+                  </option>
+                </select>
+                <span style="font-size: 0.68rem; color: var(--text-dim); margin-top: 0.2rem; display: block;">
+                  Select "All Restaurants" for VIP Family discounts (like PURBA_KRISH) valid across every outlet.
+                </span>
+              </div>
+
               <!-- 2. Offer Title -->
               <div>
                 <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
                   Headline Title *
                 </label>
-                <input type="text" id="offer-input-title" value="${offerToEdit ? offerToEdit.title : ''}" placeholder="e.g. 20% OFF on Mains & Biryanis, Flat ₹100 First Order" style="width: 100%; font-weight: 700;" required>
+                <input type="text" id="offer-input-title" value="${offerToEdit ? offerToEdit.title : ''}" placeholder="e.g. 100% OFF Family Privilege, 20% OFF Mains" style="width: 100%; font-weight: 700;" required>
               </div>
 
               <!-- 3. Offer Description -->
@@ -5769,7 +5857,7 @@
                 <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
                   Customer Description (Shown in Menu &amp; Cart)
                 </label>
-                <textarea id="offer-input-desc" rows="2" placeholder="e.g. Valid everyday from 12:00 PM to 4:00 PM on orders above ₹500." style="width: 100%; line-height: 1.4; resize: vertical;">${offerToEdit ? (offerToEdit.description || '') : ''}</textarea>
+                <textarea id="offer-input-desc" rows="2" placeholder="e.g. VIP Family Member Pass: 100% full dining privilege for Purba & Krish." style="width: 100%; line-height: 1.4; resize: vertical;">${offerToEdit ? (offerToEdit.description || '') : ''}</textarea>
               </div>
 
               <!-- 4. Discount Type & Value -->
@@ -5794,10 +5882,15 @@
                   <span id="offer-value-symbol" style="font-size: 1.1rem; font-weight: 800; color: var(--brand-primary);">
                     ${selectedType === 'percentage' ? '%' : tenant.currency}
                   </span>
-                  <input type="number" id="offer-input-value" value="${offerToEdit ? offerToEdit.value : 20}" min="1" step="1" style="flex: 1; font-size: 1.2rem; font-weight: 800; background: transparent; border: none; color: #fff;" required>
+                  <input type="number" id="offer-input-value" value="${offerToEdit ? offerToEdit.value : 20}" min="1" max="100" step="1" style="flex: 1; font-size: 1.2rem; font-weight: 800; background: transparent; border: none; color: #fff;" required>
                   <span id="offer-value-suffix" style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">
                     ${selectedType === 'percentage' ? 'Percent off subtotal' : 'Fixed deduction'}
                   </span>
+                </div>
+
+                <!-- VIP 100% Notice Banner -->
+                <div id="offer-vip-banner" style="display: ${(offerToEdit && offerToEdit.type === 'percentage' && Number(offerToEdit.value) >= 100) ? 'flex' : 'none'}; padding: 0.65rem 0.85rem; border-radius: 10px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.78rem; color: #10B981; font-weight: 700; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                  👑 100% Full VIP Family Pass: Waives entire bill subtotal, taxes, and service fees (Zero-bill dining).
                 </div>
               </div>
 
@@ -5859,8 +5952,31 @@
       </div>
     `;
 
-    const presetsPercentage = [10, 15, 20, 25, 30, 50];
+    const presetsPercentage = [10, 15, 20, 25, 50, 100];
     const presetsFlat = [50, 100, 150, 200, 250, 500];
+
+    function checkVipStatus() {
+      const valInput = document.getElementById('offer-input-value');
+      const vipBanner = document.getElementById('offer-vip-banner');
+      const maxWrap = document.getElementById('max-discount-wrapper');
+      const maxInp = document.getElementById('offer-input-max-discount');
+      const val = Number(valInput?.value) || 0;
+
+      if (selectedType === 'percentage' && val >= 100) {
+        if (vipBanner) vipBanner.style.display = 'flex';
+        if (maxWrap) maxWrap.style.opacity = '0.45';
+        if (maxInp) {
+          maxInp.disabled = true;
+          maxInp.value = '';
+        }
+      } else {
+        if (vipBanner) vipBanner.style.display = 'none';
+        if (selectedType === 'percentage') {
+          if (maxWrap) maxWrap.style.opacity = '1';
+          if (maxInp) maxInp.disabled = false;
+        }
+      }
+    }
 
     function updatePresets(type) {
       const pContainer = document.getElementById('offer-presets-container');
@@ -5868,8 +5984,8 @@
       const presets = (type === 'percentage') ? presetsPercentage : presetsFlat;
       const currentVal = Number(document.getElementById('offer-input-value')?.value) || 0;
       pContainer.innerHTML = presets.map(p => `
-        <button type="button" class="btn-offer-preset ${p === currentVal ? 'active' : ''}" data-val="${p}">
-          ${type === 'percentage' ? `${p}%` : `${tenant.currency}${p}`}
+        <button type="button" class="btn-offer-preset ${p === currentVal ? 'active' : ''} ${p === 100 && type === 'percentage' ? 'vip-100' : ''}" data-val="${p}">
+          ${type === 'percentage' ? (p === 100 ? '👑 100% VIP' : `${p}%`) : `${tenant.currency}${p}`}
         </button>
       `).join('');
 
@@ -5880,8 +5996,10 @@
           if (valInput) valInput.value = val;
           pContainer.querySelectorAll('.btn-offer-preset').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+          checkVipStatus();
         });
       });
+      checkVipStatus();
     }
 
     // Type Switchers
@@ -5891,6 +6009,9 @@
     const suffixEl = document.getElementById('offer-value-suffix');
     const maxWrapper = document.getElementById('max-discount-wrapper');
     const maxInput = document.getElementById('offer-input-max-discount');
+    const valInput = document.getElementById('offer-input-value');
+
+    valInput?.addEventListener('input', checkVipStatus);
 
     btnTypePercentage?.addEventListener('click', () => {
       selectedType = 'percentage';
@@ -5898,8 +6019,6 @@
       btnTypeFlat.classList.remove('active');
       if (symbolEl) symbolEl.textContent = '%';
       if (suffixEl) suffixEl.textContent = 'Percent off subtotal';
-      if (maxWrapper) maxWrapper.style.opacity = '1';
-      if (maxInput) maxInput.disabled = false;
       updatePresets('percentage');
     });
 
@@ -5914,6 +6033,8 @@
         maxInput.disabled = true;
         maxInput.value = '';
       }
+      const vipBanner = document.getElementById('offer-vip-banner');
+      if (vipBanner) vipBanner.style.display = 'none';
       updatePresets('flat');
     });
 
@@ -5959,10 +6080,12 @@
       const val = Number(document.getElementById('offer-input-value')?.value);
       const minOrder = Number(document.getElementById('offer-input-min-order')?.value) || 0;
       const maxDiscountVal = document.getElementById('offer-input-max-discount')?.value;
-      const maxDiscount = (selectedType === 'percentage' && maxDiscountVal && Number(maxDiscountVal) > 0) ? Number(maxDiscountVal) : null;
+      const maxDiscount = (selectedType === 'percentage' && val < 100 && maxDiscountVal && Number(maxDiscountVal) > 0) ? Number(maxDiscountVal) : null;
       const categoryScope = document.getElementById('offer-select-category')?.value || 'all';
-      const expiry = document.getElementById('offer-input-expiry')?.value.trim() || '31 Dec 2026';
+      const expiry = document.getElementById('offer-input-expiry')?.value.trim() || '31 Dec 2030';
       const isActive = activeCheck ? activeCheck.checked : true;
+      const tenantChoice = document.getElementById('offer-select-tenant')?.value || tenantSlug;
+      const targetTenantId = (tenantChoice === 'all') ? null : tenantChoice;
 
       const errEl = document.getElementById('offer-code-error');
       if (!code) {
@@ -5992,16 +6115,16 @@
         return;
       }
 
-      // Check uniqueness for this tenant
+      // Check uniqueness for this tenant or globally
       const isDuplicate = (state.offers || []).some(o => 
         o.id !== (offerToEdit ? offerToEdit.id : null) &&
-        (!o.tenantId || o.tenantId === tenantSlug || o.tenantId === tenant.slug) &&
+        (!o.tenantId || o.tenantId === 'all' || !targetTenantId || o.tenantId === targetTenantId) &&
         o.code.toUpperCase() === code
       );
 
       if (isDuplicate) {
         if (errEl) {
-          errEl.textContent = `⚠️ Code "${code}" is already in use at ${tenant.name}.`;
+          errEl.textContent = `⚠️ Code "${code}" is already in use.`;
           errEl.style.display = 'block';
         }
         codeInput?.focus();
@@ -6015,7 +6138,7 @@
         const idx = state.offers.findIndex(o => o.id === offerToEdit.id);
         savedOffer = {
           ...offerToEdit,
-          tenantId: tenantSlug,
+          tenantId: targetTenantId,
           code,
           title,
           description: desc,
@@ -6035,7 +6158,7 @@
       } else {
         savedOffer = {
           id: 'off-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 4),
-          tenantId: tenantSlug,
+          tenantId: targetTenantId,
           code,
           title,
           description: desc,
@@ -6058,14 +6181,17 @@
         managerName: state.session?.user?.name || 'Chef Vikram Rao',
         category: 'DISCOUNT',
         action: isEdit ? 'Promo Code Updated' : 'Promo Code Created',
-        details: `${isEdit ? 'Updated' : 'Created'} promotional offer "${savedOffer.code}" (${savedOffer.title}, ${savedOffer.type === 'percentage' ? `${savedOffer.value}%` : `${tenant.currency}${savedOffer.value}`}).`,
+        details: `${isEdit ? 'Updated' : 'Created'} promotional offer "${savedOffer.code}" (${savedOffer.title}, ${savedOffer.type === 'percentage' ? `${savedOffer.value}%` : `${tenant.currency}${savedOffer.value}`}${!savedOffer.tenantId ? ' - Global Pass' : ''}).`,
         amount: Number(savedOffer.value) || 0,
         paymentMethod: null,
         securityFlag: '✓ Verified Config',
         severity: 'info'
       });
 
-      // Save & sync to Supabase
+      // Save to local registry and sync
+      if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.saveCustomOffer === 'function') {
+        DineFlowStore.saveCustomOffer(savedOffer);
+      }
       DineFlowStore.save(state, {
         action: isEdit ? 'OFFER_UPDATED' : 'OFFER_CREATED',
         offer: savedOffer,
@@ -6086,7 +6212,10 @@
   // ------------------------------------------------------------------------------
   function renderOffersManager(container, tenant) {
     const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
-    const tenantOffers = (state.offers || []).filter(off => !off.tenantId || off.tenantId === tenantSlug || off.tenantId === tenant.slug);
+    const allOffers = (state.offers && state.offers.length)
+      ? state.offers
+      : (typeof DineFlowStore !== 'undefined' ? DineFlowStore.get().offers : []);
+    const tenantOffers = allOffers.filter(off => !off.tenantId || off.tenantId === 'all' || off.tenantId === tenantSlug || off.tenantId === tenant.slug);
     const activeCount = tenantOffers.filter(o => o.isActive).length;
     const pausedCount = tenantOffers.length - activeCount;
 
@@ -6131,16 +6260,19 @@
           ${tenantOffers.map(off => {
             const catObj = (state.categories || []).find(c => c.id === off.categoryScope);
             const catLabel = off.categoryScope === 'all' || !off.categoryScope ? 'All Menu Items' : (catObj ? `${catObj.icon || '🍽️'} ${catObj.name}` : off.categoryScope);
+            const isGlobal = (!off.tenantId || off.tenantId === 'all');
+            const isVipFamily = (off.type === 'percentage' && Number(off.value) >= 100);
             return `
               <div class="df-offer-manage-card ${off.isActive ? '' : 'paused'}" data-id="${off.id}">
                 <div>
                   <!-- Top Row: Code & Badges -->
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; gap: 0.5rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; gap: 0.5rem; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                       <span class="df-offer-badge-code" title="Click to copy promo code" data-code="${off.code}">${off.code}</span>
-                      <span class="df-offer-type-pill ${off.type === 'percentage' ? 'percentage' : 'flat'}">
-                        ${off.type === 'percentage' ? `${off.value}% OFF` : `${tenant.currency}${off.value} FLAT`}
+                      <span class="df-offer-type-pill ${isVipFamily ? 'vip-family' : (off.type === 'percentage' ? 'percentage' : 'flat')}">
+                        ${isVipFamily ? '👑 100% VIP PASS' : (off.type === 'percentage' ? `${off.value}% OFF` : `${tenant.currency}${off.value} FLAT`)}
                       </span>
+                      ${isGlobal ? `<span class="df-offer-rule-chip" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">🌐 All Outlets</span>` : ''}
                     </div>
                     <span class="df-offer-status-badge ${off.isActive ? 'active' : 'paused'}">
                       <span style="width: 6px; height: 6px; border-radius: 50%; background: ${off.isActive ? '#10B981' : '#EF4444'};"></span>
@@ -6272,6 +6404,11 @@
               securityFlag: '⚠️ Promo Deleted',
               severity: 'warning'
             });
+
+            // Delete from persistent custom registry
+            if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.deleteCustomOffer === 'function') {
+              DineFlowStore.deleteCustomOffer(id);
+            }
 
             // Save & sync
             DineFlowStore.save(state, {

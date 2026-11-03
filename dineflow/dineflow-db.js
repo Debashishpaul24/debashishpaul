@@ -515,8 +515,13 @@
         }
 
         // 11. Offers & Coupons
-        if (offersRes.data && offersRes.data.length > 0) {
-          dbState.offers = offersRes.data.map(Transformers.offerFromDb);
+        const dbOffers = (offersRes.data && offersRes.data.length > 0)
+          ? offersRes.data.map(Transformers.offerFromDb)
+          : [];
+        if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.mergeOffers === 'function') {
+          dbState.offers = DineFlowStore.mergeOffers(dbOffers);
+        } else if (dbOffers.length > 0) {
+          dbState.offers = dbOffers;
         }
 
         // 12. Security Audit Logs
@@ -1234,19 +1239,39 @@
           case 'OFFER_SAVED':
           case 'OFFER_TOGGLED': {
             if (meta.offer) {
-              const row = Transformers.offerToDb(meta.offer, tenantId);
-              const { error } = await sb.from('offers').upsert(row);
-              if (error) throw error;
-              console.log(`[DineFlowDB] ✓ Offer ${row.title} (${row.code}) synced to PostgreSQL!`);
+              if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.saveCustomOffer === 'function') {
+                DineFlowStore.saveCustomOffer(meta.offer);
+              }
+              try {
+                const row = Transformers.offerToDb(meta.offer, tenantId);
+                const { error } = await sb.from('offers').upsert(row);
+                if (error) {
+                  console.warn(`[DineFlowDB] Notice: Offer saved locally. PostgreSQL cloud notice:`, error.message || error);
+                } else {
+                  console.log(`[DineFlowDB] ✓ Offer ${row.title} (${row.code}) synced to PostgreSQL!`);
+                }
+              } catch (offerErr) {
+                console.warn(`[DineFlowDB] Offer persistence handled in local registry:`, offerErr.message || offerErr);
+              }
             }
             break;
           }
 
           case 'OFFER_DELETED': {
             if (meta.offerId) {
-              const { error } = await sb.from('offers').delete().eq('id', meta.offerId);
-              if (error) throw error;
-              console.log(`[DineFlowDB] ✓ Offer ${meta.offerId} deleted from PostgreSQL`);
+              if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.deleteCustomOffer === 'function') {
+                DineFlowStore.deleteCustomOffer(meta.offerId);
+              }
+              try {
+                const { error } = await sb.from('offers').delete().eq('id', meta.offerId);
+                if (error) {
+                  console.warn(`[DineFlowDB] Notice: Offer deleted locally. PostgreSQL cloud notice:`, error.message || error);
+                } else {
+                  console.log(`[DineFlowDB] ✓ Offer ${meta.offerId} deleted from PostgreSQL`);
+                }
+              } catch (offerErr) {
+                console.warn(`[DineFlowDB] Offer deletion handled in local registry:`, offerErr.message || offerErr);
+              }
             }
             break;
           }

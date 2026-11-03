@@ -225,6 +225,9 @@ ON CONFLICT (tenant_id, id) DO UPDATE SET status = EXCLUDED.status;
 -- 5. PROMOTIONAL OFFERS
 -- ------------------------------------------------------------------------------
 INSERT INTO offers (id, tenant_id, code, title, description, type, value, min_order, max_discount, category_scope, expiry, is_active)
+VALUES ('off-family-purba-krish', 'the-urban-plate', 'PURBA_KRISH', '100% OFF Family Privilege', 'VIP Family Member Pass: 100% full dining privilege for Purba & Krish.', 'percentage', 100, 0, NULL, 'all', '31 Dec 2030', true)
+ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, value = EXCLUDED.value;
+INSERT INTO offers (id, tenant_id, code, title, description, type, value, min_order, max_discount, category_scope, expiry, is_active)
 VALUES ('off-1', 'the-urban-plate', 'LUNCH20', '20% OFF on Mains & Biryanis', 'Valid everyday from 12:00 PM to 4:00 PM on orders above ₹500.', 'percentage', 20, 500, 200, 'cat-biryani', '31 Oct 2026', true)
 ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title;
 INSERT INTO offers (id, tenant_id, code, title, description, type, value, min_order, max_discount, category_scope, expiry, is_active)
