@@ -5138,3 +5138,155 @@ body.splash-active {
 #new-table-capacity {
   -moz-appearance: textfield;
 }
+
+/* --------------------------------------------------------------------------
+   PROMO CODES & OFFERS MANAGEMENT (STAFF OS)
+   -------------------------------------------------------------------------- */
+.df-offer-manage-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.df-offer-manage-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(229, 169, 60, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.df-offer-manage-card.paused {
+  opacity: 0.72;
+  border-style: dashed;
+}
+
+.df-offer-badge-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--brand-primary);
+  background: rgba(229, 169, 60, 0.12);
+  border: 1px dashed rgba(229, 169, 60, 0.45);
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  user-select: all;
+}
+
+.df-offer-type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+}
+
+.df-offer-type-pill.percentage {
+  background: rgba(229, 169, 60, 0.15);
+  color: #F59E0B;
+  border: 1px solid rgba(229, 169, 60, 0.3);
+}
+
+.df-offer-type-pill.flat {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.df-offer-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.df-offer-status-badge.active {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+}
+
+.df-offer-status-badge.paused {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #EF4444;
+}
+
+.df-offer-rule-chip {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-offer-type-toggle {
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.03);
+  color: #94A3B8;
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-offer-type-toggle:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.btn-offer-type-toggle.active {
+  background: rgba(229, 169, 60, 0.15);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
+  box-shadow: 0 0 14px rgba(229, 169, 60, 0.2);
+}
+
+.btn-offer-preset {
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+  color: #CBD5E1;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.35rem 0.65rem;
+  transition: all 0.15s ease;
+}
+
+.btn-offer-preset:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-offer-preset.active {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #07090E;
+}

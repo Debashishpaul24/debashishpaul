@@ -404,4 +404,5 @@ CREATE POLICY "Staff can manage categories" ON categories FOR ALL USING (TRUE);
 CREATE POLICY "Staff can manage staff accounts" ON staff_accounts FOR ALL USING (TRUE);
 CREATE POLICY "Staff can view and record audit logs" ON audit_logs FOR ALL USING (TRUE);
 CREATE POLICY "Staff can view CRM customers" ON customers FOR ALL USING (TRUE);
+CREATE POLICY "Staff can manage offers" ON offers FOR ALL USING (TRUE);
 

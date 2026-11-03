@@ -44,7 +44,11 @@ CREATE POLICY "Staff can delete staff accounts" ON staff_accounts FOR DELETE USI
 DROP POLICY IF EXISTS "Guests can submit reviews" ON reviews;
 CREATE POLICY "Guests can submit reviews" ON reviews FOR INSERT WITH CHECK (TRUE);
 
--- 6. Add real-time publication for menu items & reviews
+-- 6. OFFERS & PROMO CODES: Allow staff to create, edit, toggle, and delete promo codes
+DROP POLICY IF EXISTS "Staff can manage offers" ON offers;
+CREATE POLICY "Staff can manage offers" ON offers FOR ALL USING (TRUE);
+
+-- 7. Add real-time publication for menu items, reviews & offers
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -59,5 +63,12 @@ BEGIN
         WHERE pubname = 'supabase_realtime' AND tablename = 'reviews'
     ) THEN
         ALTER PUBLICATION supabase_realtime ADD TABLE reviews;
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND tablename = 'offers'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE offers;
     END IF;
 END $$;

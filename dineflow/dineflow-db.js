@@ -453,7 +453,7 @@
           sb.from('bill_requests').select('*').order('created_at', { ascending: false }).limit(50),
           sb.from('customers').select('*').order('created_at', { ascending: false }).limit(50),
           sb.from('reviews').select('*').order('created_at', { ascending: false }).limit(50),
-          sb.from('offers').select('*').eq('is_active', true),
+          sb.from('offers').select('*'),
           sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(60)
         ]);
 
@@ -1230,19 +1230,21 @@
           }
 
           case 'OFFER_CREATED':
-          case 'OFFER_UPDATED': {
+          case 'OFFER_UPDATED':
+          case 'OFFER_SAVED':
+          case 'OFFER_TOGGLED': {
             if (meta.offer) {
               const row = Transformers.offerToDb(meta.offer, tenantId);
               const { error } = await sb.from('offers').upsert(row);
               if (error) throw error;
-              console.log(`[DineFlowDB] ✓ Offer ${row.title} synced to PostgreSQL!`);
+              console.log(`[DineFlowDB] ✓ Offer ${row.title} (${row.code}) synced to PostgreSQL!`);
             }
             break;
           }
 
           case 'OFFER_DELETED': {
             if (meta.offerId) {
-              const { error } = await sb.from('offers').delete().match({ tenant_id: tenantId, id: meta.offerId });
+              const { error } = await sb.from('offers').delete().eq('id', meta.offerId);
               if (error) throw error;
               console.log(`[DineFlowDB] ✓ Offer ${meta.offerId} deleted from PostgreSQL`);
             }

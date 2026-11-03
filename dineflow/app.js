@@ -2008,7 +2008,7 @@
   function renderCustomerView(container, tenantSlug, tableId) {
     const tenant = getCurrentTenant(tenantSlug);
     const table = state.tables.find(t => t.id === tableId) || { id: tableId, name: `Table ${tableId}`, section: 'Indoor' };
-    const offers = state.offers.filter(o => o.isActive);
+    const offers = (state.offers || []).filter(o => o.isActive && (!o.tenantId || o.tenantId === tenantSlug || o.tenantId === tenant.slug));
 
     // Calculate cart item count
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -2698,16 +2698,24 @@
       // Coupon validation
       document.getElementById('btn-apply-coupon')?.addEventListener('click', () => {
         const code = document.getElementById('cart-coupon-input')?.value.trim().toUpperCase();
-        const found = state.offers.find(o => o.code === code && o.isActive);
+        const tenantSlug = tenant.slug || tenant.id || state.currentTenantId || 'the-urban-plate';
+        const found = (state.offers || []).find(o => o.code === code && o.isActive && (!o.tenantId || o.tenantId === tenantSlug));
         if (found) {
+          if (found.minOrder && subtotal < Number(found.minOrder)) {
+            showToast(`Minimum order of ${tenant.currency}${found.minOrder} required for coupon ${code}`, '⚠️');
+            return;
+          }
           appliedCoupon = found;
           if (found.type === 'percentage') {
-            discountAmount = Math.min(found.maxDiscount, (subtotal * found.value) / 100);
+            const calculated = (subtotal * Number(found.value)) / 100;
+            discountAmount = (found.maxDiscount && Number(found.maxDiscount) > 0)
+              ? Math.min(Number(found.maxDiscount), calculated)
+              : calculated;
           } else {
-            discountAmount = found.value;
+            discountAmount = Number(found.value) || 0;
           }
           SoundFX.chime('success');
-          showToast(`Coupon ${code} applied successfully!`);
+          showToast(`Coupon ${code} applied successfully! (−${tenant.currency}${discountAmount.toFixed(2)})`, '🎉');
           renderCartContents();
         } else {
           showToast('Invalid or expired coupon code', '⚠️');
@@ -5684,37 +5692,613 @@
     });
   }
 
-  // OFFERS & COUPONS MANAGER
-  function renderOffersManager(container, tenant) {
-    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
-    const tenantOffers = state.offers.filter(off => !off.tenantId || off.tenantId === tenantSlug);
+  // ------------------------------------------------------------------------------
+  // PROMO CODES & OFFERS MODAL (ADD & EDIT)
+  // ------------------------------------------------------------------------------
+  function openOfferModal(tenant, offerToEdit, onSaveCallback) {
+    const modalContainer = document.getElementById('modal-container');
+    if (!modalContainer) return;
 
-    container.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <div>
-          <h2 style="font-size: 1.35rem; font-weight: 800;">Promotional Offers & Digital Coupons (${tenantOffers.length} Active)</h2>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Configure discount rules, flat discounts, and category coupons for ${tenant.name}.</p>
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const isEdit = Boolean(offerToEdit);
+    const tenantCategories = (state.categories || []).filter(c => !c.tenantId || c.tenantId === tenantSlug || c.tenantId === tenant.id);
+
+    // Initial state
+    let selectedType = offerToEdit ? (offerToEdit.type || 'percentage') : 'percentage';
+
+    modalContainer.innerHTML = `
+      <div class="df-modal-backdrop active" id="offer-modal-backdrop">
+        <div class="df-bottom-sheet" style="max-width: 560px; align-self: center; border-radius: 20px; background: #0E131F; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 24px 60px rgba(0,0,0,0.85); overflow: hidden;">
+          
+          <!-- Modal Header -->
+          <div class="df-sheet-header" style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(229, 169, 60, 0.15); color: var(--brand-primary); display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
+                🏷️
+              </div>
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0;">
+                  ${isEdit ? `Edit Promo Code: ${offerToEdit.code}` : 'Create New Promo Code'}
+                </h3>
+                <span style="font-size: 0.72rem; color: var(--text-dim);">
+                  ${tenant.name} • ${isEdit ? 'Update discount rules & validity' : 'Configure guest discounts & digital coupons'}
+                </span>
+              </div>
+            </div>
+            <button class="df-sheet-close" id="btn-close-offer-modal" style="background: none; border: none; font-size: 1.25rem; color: var(--text-dim); cursor: pointer;">✕</button>
+          </div>
+
+          <!-- Modal Body Form -->
+          <div class="df-sheet-body" style="padding: 1.35rem 1.5rem; max-height: 82vh; overflow-y: auto;">
+            <form id="df-offer-form" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 1.15rem;">
+
+              <!-- 1. Promo Code & Active Status -->
+              <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 0.85rem; align-items: start;">
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Promo / Coupon Code *
+                  </label>
+                  <div style="position: relative;">
+                    <input type="text" id="offer-input-code" value="${offerToEdit ? offerToEdit.code : ''}" placeholder="e.g. LUNCH20, WELCOME100" style="width: 100%; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 800; letter-spacing: 1px;" required>
+                  </div>
+                  <span id="offer-code-error" style="display: none; font-size: 0.72rem; color: #EF4444; margin-top: 0.3rem; font-weight: 600;"></span>
+                </div>
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Live Status
+                  </label>
+                  <label id="offer-status-wrapper" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.65rem 0.85rem; border: 1px solid ${(!offerToEdit || offerToEdit.isActive) ? '#10B981' : 'var(--border-subtle)'}; background: ${(!offerToEdit || offerToEdit.isActive) ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255,255,255,0.03)'}; border-radius: 10px; cursor: pointer; transition: all 0.2s;">
+                    <input type="checkbox" id="offer-input-active" ${(!offerToEdit || offerToEdit.isActive) ? 'checked' : ''} style="accent-color: #10B981; width: 16px; height: 16px;">
+                    <span id="offer-status-text" style="font-size: 0.82rem; font-weight: 700; color: ${(!offerToEdit || offerToEdit.isActive) ? '#10B981' : 'var(--text-muted)'};">
+                      ${(!offerToEdit || offerToEdit.isActive) ? '🟢 Active' : '⏸️ Paused'}
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 2. Offer Title -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                  Headline Title *
+                </label>
+                <input type="text" id="offer-input-title" value="${offerToEdit ? offerToEdit.title : ''}" placeholder="e.g. 20% OFF on Mains & Biryanis, Flat ₹100 First Order" style="width: 100%; font-weight: 700;" required>
+              </div>
+
+              <!-- 3. Offer Description -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                  Customer Description (Shown in Menu &amp; Cart)
+                </label>
+                <textarea id="offer-input-desc" rows="2" placeholder="e.g. Valid everyday from 12:00 PM to 4:00 PM on orders above ₹500." style="width: 100%; line-height: 1.4; resize: vertical;">${offerToEdit ? (offerToEdit.description || '') : ''}</textarea>
+              </div>
+
+              <!-- 4. Discount Type & Value -->
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.45rem; display: block;">
+                  Discount Mechanism *
+                </label>
+                <div style="display: flex; gap: 0.65rem; margin-bottom: 0.75rem;">
+                  <button type="button" class="btn-offer-type-toggle ${selectedType === 'percentage' ? 'active' : ''}" id="btn-type-percentage">
+                    <span>%</span> Percentage Discount
+                  </button>
+                  <button type="button" class="btn-offer-type-toggle ${selectedType === 'flat' ? 'active' : ''}" id="btn-type-flat">
+                    <span>${tenant.currency}</span> Flat Cash Discount
+                  </button>
+                </div>
+
+                <!-- Quick Presets -->
+                <div id="offer-presets-container" style="display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 0.65rem;"></div>
+
+                <!-- Value Input Field -->
+                <div style="display: flex; align-items: center; gap: 0.65rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 0.35rem 0.85rem;">
+                  <span id="offer-value-symbol" style="font-size: 1.1rem; font-weight: 800; color: var(--brand-primary);">
+                    ${selectedType === 'percentage' ? '%' : tenant.currency}
+                  </span>
+                  <input type="number" id="offer-input-value" value="${offerToEdit ? offerToEdit.value : 20}" min="1" step="1" style="flex: 1; font-size: 1.2rem; font-weight: 800; background: transparent; border: none; color: #fff;" required>
+                  <span id="offer-value-suffix" style="font-size: 0.8rem; color: var(--text-dim); font-weight: 600;">
+                    ${selectedType === 'percentage' ? 'Percent off subtotal' : 'Fixed deduction'}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 5. Minimum Order & Maximum Cap -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Minimum Order Subtotal (${tenant.currency})
+                  </label>
+                  <input type="number" id="offer-input-min-order" value="${offerToEdit ? (offerToEdit.minOrder || 0) : 0}" min="0" step="50" placeholder="0 = No minimum" style="width: 100%;">
+                  <span style="font-size: 0.68rem; color: var(--text-dim); margin-top: 0.2rem; display: block;">0 = Applies to any order total</span>
+                </div>
+                <div id="max-discount-wrapper" style="${selectedType === 'percentage' ? '' : 'opacity: 0.45;'}">
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Max Discount Cap (${tenant.currency})
+                  </label>
+                  <input type="number" id="offer-input-max-discount" value="${(offerToEdit && offerToEdit.maxDiscount) ? offerToEdit.maxDiscount : ''}" min="0" step="50" placeholder="e.g. 250 (Leave blank for no limit)" style="width: 100%;" ${selectedType === 'percentage' ? '' : 'disabled'}>
+                  <span style="font-size: 0.68rem; color: var(--text-dim); margin-top: 0.2rem; display: block;">Caps max percentage deduction</span>
+                </div>
+              </div>
+
+              <!-- 6. Category Scope & Expiry Date -->
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 0.85rem;">
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Applicable Menu Category
+                  </label>
+                  <select id="offer-select-category" style="width: 100%;">
+                    <option value="all" ${(!offerToEdit || offerToEdit.categoryScope === 'all') ? 'selected' : ''}>🌐 All Menu Categories</option>
+                    ${tenantCategories.map(cat => `
+                      <option value="${cat.id}" ${(offerToEdit && offerToEdit.categoryScope === cat.id) ? 'selected' : ''}>
+                        ${cat.icon || '🍽️'} ${cat.name}
+                      </option>
+                    `).join('')}
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 0.78rem; font-weight: 700; color: #E2E8F0; margin-bottom: 0.35rem; display: block;">
+                    Expiry Date / Validity
+                  </label>
+                  <input type="text" id="offer-input-expiry" value="${offerToEdit ? (offerToEdit.expiry || '31 Dec 2026') : '31 Dec 2026'}" placeholder="e.g. 31 Dec 2026 or Ongoing" style="width: 100%;">
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+                <button type="button" class="df-pill-btn secondary" id="btn-cancel-offer" style="padding: 0.65rem 1.25rem;">
+                  Cancel
+                </button>
+                <button type="button" class="df-pill-btn primary" id="btn-save-offer" style="padding: 0.65rem 1.75rem; font-weight: 800; box-shadow: 0 4px 15px rgba(229, 169, 60, 0.35);">
+                  ${isEdit ? '✓ Update Promo Code' : '+ Save Promo Code'}
+                </button>
+              </div>
+
+            </form>
+          </div>
+
         </div>
       </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
-        ${tenantOffers.map(off => `
-          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-              <span class="df-coupon-code" style="font-size: 0.85rem; padding: 0.25rem 0.65rem;">${off.code}</span>
-              <span style="font-size: 0.75rem; color: ${off.isActive ? '#10B981' : '#EF4444'}; font-weight: 700;">
-                ${off.isActive ? 'Active' : 'Paused'}
-              </span>
-            </div>
-            <h4 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem;">${off.title}</h4>
-            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.85rem;">${off.description}</p>
-            <div style="font-size: 0.75rem; color: var(--text-dim); border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
-              Min Order: ${tenant.currency}${off.minOrder} • Max Discount: ${tenant.currency}${off.maxDiscount}
-            </div>
-          </div>
-        `).join('')}
-      </div>
     `;
+
+    const presetsPercentage = [10, 15, 20, 25, 30, 50];
+    const presetsFlat = [50, 100, 150, 200, 250, 500];
+
+    function updatePresets(type) {
+      const pContainer = document.getElementById('offer-presets-container');
+      if (!pContainer) return;
+      const presets = (type === 'percentage') ? presetsPercentage : presetsFlat;
+      const currentVal = Number(document.getElementById('offer-input-value')?.value) || 0;
+      pContainer.innerHTML = presets.map(p => `
+        <button type="button" class="btn-offer-preset ${p === currentVal ? 'active' : ''}" data-val="${p}">
+          ${type === 'percentage' ? `${p}%` : `${tenant.currency}${p}`}
+        </button>
+      `).join('');
+
+      pContainer.querySelectorAll('.btn-offer-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const val = Number(btn.dataset.val);
+          const valInput = document.getElementById('offer-input-value');
+          if (valInput) valInput.value = val;
+          pContainer.querySelectorAll('.btn-offer-preset').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    }
+
+    // Type Switchers
+    const btnTypePercentage = document.getElementById('btn-type-percentage');
+    const btnTypeFlat = document.getElementById('btn-type-flat');
+    const symbolEl = document.getElementById('offer-value-symbol');
+    const suffixEl = document.getElementById('offer-value-suffix');
+    const maxWrapper = document.getElementById('max-discount-wrapper');
+    const maxInput = document.getElementById('offer-input-max-discount');
+
+    btnTypePercentage?.addEventListener('click', () => {
+      selectedType = 'percentage';
+      btnTypePercentage.classList.add('active');
+      btnTypeFlat.classList.remove('active');
+      if (symbolEl) symbolEl.textContent = '%';
+      if (suffixEl) suffixEl.textContent = 'Percent off subtotal';
+      if (maxWrapper) maxWrapper.style.opacity = '1';
+      if (maxInput) maxInput.disabled = false;
+      updatePresets('percentage');
+    });
+
+    btnTypeFlat?.addEventListener('click', () => {
+      selectedType = 'flat';
+      btnTypeFlat.classList.add('active');
+      btnTypePercentage.classList.remove('active');
+      if (symbolEl) symbolEl.textContent = tenant.currency;
+      if (suffixEl) suffixEl.textContent = 'Fixed deduction';
+      if (maxWrapper) maxWrapper.style.opacity = '0.45';
+      if (maxInput) {
+        maxInput.disabled = true;
+        maxInput.value = '';
+      }
+      updatePresets('flat');
+    });
+
+    // Active Toggle styling
+    const activeCheck = document.getElementById('offer-input-active');
+    const statusWrapper = document.getElementById('offer-status-wrapper');
+    const statusText = document.getElementById('offer-status-text');
+    activeCheck?.addEventListener('change', () => {
+      const isAct = activeCheck.checked;
+      if (statusWrapper) {
+        statusWrapper.style.borderColor = isAct ? '#10B981' : 'var(--border-subtle)';
+        statusWrapper.style.background = isAct ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255,255,255,0.03)';
+      }
+      if (statusText) {
+        statusText.style.color = isAct ? '#10B981' : 'var(--text-muted)';
+        statusText.textContent = isAct ? '🟢 Active' : '⏸️ Paused';
+      }
+    });
+
+    // Uppercase formatting on code input
+    const codeInput = document.getElementById('offer-input-code');
+    codeInput?.addEventListener('input', () => {
+      codeInput.value = codeInput.value.toUpperCase().replace(/\s+/g, '');
+      const errEl = document.getElementById('offer-code-error');
+      if (errEl) errEl.style.display = 'none';
+    });
+
+    // Close actions
+    const closeModal = () => {
+      modalContainer.innerHTML = '';
+    };
+    document.getElementById('btn-close-offer-modal')?.addEventListener('click', closeModal);
+    document.getElementById('btn-cancel-offer')?.addEventListener('click', closeModal);
+    document.getElementById('offer-modal-backdrop')?.addEventListener('click', (e) => {
+      if (e.target.id === 'offer-modal-backdrop') closeModal();
+    });
+
+    // Save action
+    document.getElementById('btn-save-offer')?.addEventListener('click', () => {
+      const code = codeInput?.value.trim().toUpperCase().replace(/\s+/g, '');
+      const title = document.getElementById('offer-input-title')?.value.trim();
+      const desc = document.getElementById('offer-input-desc')?.value.trim();
+      const val = Number(document.getElementById('offer-input-value')?.value);
+      const minOrder = Number(document.getElementById('offer-input-min-order')?.value) || 0;
+      const maxDiscountVal = document.getElementById('offer-input-max-discount')?.value;
+      const maxDiscount = (selectedType === 'percentage' && maxDiscountVal && Number(maxDiscountVal) > 0) ? Number(maxDiscountVal) : null;
+      const categoryScope = document.getElementById('offer-select-category')?.value || 'all';
+      const expiry = document.getElementById('offer-input-expiry')?.value.trim() || '31 Dec 2026';
+      const isActive = activeCheck ? activeCheck.checked : true;
+
+      const errEl = document.getElementById('offer-code-error');
+      if (!code) {
+        if (errEl) {
+          errEl.textContent = '⚠️ Promo code is required.';
+          errEl.style.display = 'block';
+        }
+        codeInput?.focus();
+        return;
+      }
+
+      if (!title) {
+        showToast('Please enter an offer title headline', '⚠️');
+        document.getElementById('offer-input-title')?.focus();
+        return;
+      }
+
+      if (!val || val <= 0) {
+        showToast('Please enter a valid discount value greater than 0', '⚠️');
+        document.getElementById('offer-input-value')?.focus();
+        return;
+      }
+
+      if (selectedType === 'percentage' && val > 100) {
+        showToast('Percentage discount cannot exceed 100%', '⚠️');
+        document.getElementById('offer-input-value')?.focus();
+        return;
+      }
+
+      // Check uniqueness for this tenant
+      const isDuplicate = (state.offers || []).some(o => 
+        o.id !== (offerToEdit ? offerToEdit.id : null) &&
+        (!o.tenantId || o.tenantId === tenantSlug || o.tenantId === tenant.slug) &&
+        o.code.toUpperCase() === code
+      );
+
+      if (isDuplicate) {
+        if (errEl) {
+          errEl.textContent = `⚠️ Code "${code}" is already in use at ${tenant.name}.`;
+          errEl.style.display = 'block';
+        }
+        codeInput?.focus();
+        return;
+      }
+
+      state.offers = Array.isArray(state.offers) ? state.offers : [];
+      let savedOffer;
+
+      if (isEdit) {
+        const idx = state.offers.findIndex(o => o.id === offerToEdit.id);
+        savedOffer = {
+          ...offerToEdit,
+          tenantId: tenantSlug,
+          code,
+          title,
+          description: desc,
+          type: selectedType,
+          value: val,
+          minOrder,
+          maxDiscount,
+          categoryScope,
+          expiry,
+          isActive
+        };
+        if (idx >= 0) {
+          state.offers[idx] = savedOffer;
+        } else {
+          state.offers.push(savedOffer);
+        }
+      } else {
+        savedOffer = {
+          id: 'off-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 4),
+          tenantId: tenantSlug,
+          code,
+          title,
+          description: desc,
+          type: selectedType,
+          value: val,
+          minOrder,
+          maxDiscount,
+          categoryScope,
+          expiry,
+          isActive
+        };
+        state.offers.unshift(savedOffer);
+      }
+
+      // Record audit log
+      DineFlowStore.recordLog({
+        tenantId: tenantSlug,
+        tenantName: tenant.name,
+        managerId: state.session?.user?.id || 'staff-01',
+        managerName: state.session?.user?.name || 'Chef Vikram Rao',
+        category: 'DISCOUNT',
+        action: isEdit ? 'Promo Code Updated' : 'Promo Code Created',
+        details: `${isEdit ? 'Updated' : 'Created'} promotional offer "${savedOffer.code}" (${savedOffer.title}, ${savedOffer.type === 'percentage' ? `${savedOffer.value}%` : `${tenant.currency}${savedOffer.value}`}).`,
+        amount: Number(savedOffer.value) || 0,
+        paymentMethod: null,
+        securityFlag: '✓ Verified Config',
+        severity: 'info'
+      });
+
+      // Save & sync to Supabase
+      DineFlowStore.save(state, {
+        action: isEdit ? 'OFFER_UPDATED' : 'OFFER_CREATED',
+        offer: savedOffer,
+        tenantSlug
+      });
+
+      SoundFX.chime('success');
+      showToast(`Promo code "${savedOffer.code}" ${isEdit ? 'updated' : 'created'} successfully! 🎉`, '🏷️');
+      closeModal();
+      if (typeof onSaveCallback === 'function') onSaveCallback();
+    });
+
+    updatePresets(selectedType);
+  }
+
+  // ------------------------------------------------------------------------------
+  // 5. PROMOTIONAL OFFERS & COUPONS MANAGER (STAFF OS)
+  // ------------------------------------------------------------------------------
+  function renderOffersManager(container, tenant) {
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantOffers = (state.offers || []).filter(off => !off.tenantId || off.tenantId === tenantSlug || off.tenantId === tenant.slug);
+    const activeCount = tenantOffers.filter(o => o.isActive).length;
+    const pausedCount = tenantOffers.length - activeCount;
+
+    container.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.35rem;">
+            <h2 style="font-size: 1.35rem; font-weight: 800; margin: 0; color: #fff;">
+              Promotional Offers &amp; Digital Coupons
+            </h2>
+            <span style="font-size: 0.76rem; font-weight: 800; background: rgba(229,169,60,0.15); color: var(--brand-primary); padding: 0.15rem 0.6rem; border-radius: 999px;">
+              ${tenantOffers.length} Total
+            </span>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
+            Configure discount rules, flat discounts, and category coupons for ${tenant.name}.
+            <span style="margin-left: 0.45rem;">
+              • <strong style="color: #10B981;">${activeCount} Active</strong>
+              ${pausedCount ? ` • <strong style="color: #F59E0B;">${pausedCount} Paused</strong>` : ''}
+            </span>
+          </p>
+        </div>
+
+        <button class="df-pill-btn primary" id="btn-add-offer" style="padding: 0.65rem 1.35rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 16px rgba(229, 169, 60, 0.3);">
+          <span style="font-size: 1rem;">🏷️</span> + Add Promo Code
+        </button>
+      </div>
+
+      ${tenantOffers.length === 0 ? `
+        <div style="text-align: center; padding: 4rem 1.5rem; background: var(--bg-card); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">
+          <div style="font-size: 3.5rem; margin-bottom: 0.85rem; opacity: 0.8;">🏷️</div>
+          <h3 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin-bottom: 0.45rem;">No Promo Codes Active</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 440px; margin: 0 auto 1.5rem; line-height: 1.5;">
+            Create digital percentage discounts, first-order welcome treats, or happy hour coupons to accelerate table turnover and diner delight.
+          </p>
+          <button class="df-pill-btn primary" id="btn-add-offer-empty" style="padding: 0.65rem 1.5rem; font-weight: 800;">
+            + Create First Promo Code
+          </button>
+        </div>
+      ` : `
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem;">
+          ${tenantOffers.map(off => {
+            const catObj = (state.categories || []).find(c => c.id === off.categoryScope);
+            const catLabel = off.categoryScope === 'all' || !off.categoryScope ? 'All Menu Items' : (catObj ? `${catObj.icon || '🍽️'} ${catObj.name}` : off.categoryScope);
+            return `
+              <div class="df-offer-manage-card ${off.isActive ? '' : 'paused'}" data-id="${off.id}">
+                <div>
+                  <!-- Top Row: Code & Badges -->
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span class="df-offer-badge-code" title="Click to copy promo code" data-code="${off.code}">${off.code}</span>
+                      <span class="df-offer-type-pill ${off.type === 'percentage' ? 'percentage' : 'flat'}">
+                        ${off.type === 'percentage' ? `${off.value}% OFF` : `${tenant.currency}${off.value} FLAT`}
+                      </span>
+                    </div>
+                    <span class="df-offer-status-badge ${off.isActive ? 'active' : 'paused'}">
+                      <span style="width: 6px; height: 6px; border-radius: 50%; background: ${off.isActive ? '#10B981' : '#EF4444'};"></span>
+                      ${off.isActive ? 'Active' : 'Paused'}
+                    </span>
+                  </div>
+
+                  <!-- Title & Description -->
+                  <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin: 0 0 0.35rem; line-height: 1.35;">${off.title}</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1rem; min-height: 2.4em;">
+                    ${off.description || 'Applies discount to guest order subtotal upon entering code during checkout.'}
+                  </p>
+
+                  <!-- Rule Chips -->
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.15rem;">
+                    <span class="df-offer-rule-chip" title="Minimum order subtotal">
+                      🛒 Min Order: <strong style="color: #fff;">${tenant.currency}${off.minOrder || 0}</strong>
+                    </span>
+                    ${off.type === 'percentage' && off.maxDiscount ? `
+                      <span class="df-offer-rule-chip" title="Maximum discount limit">
+                        🛑 Max Cap: <strong style="color: #fff;">${tenant.currency}${off.maxDiscount}</strong>
+                      </span>
+                    ` : ''}
+                    <span class="df-offer-rule-chip" title="Applicable category">
+                      📂 Scope: <strong style="color: #fff;">${catLabel}</strong>
+                    </span>
+                    <span class="df-offer-rule-chip" title="Offer validity period">
+                      📅 ${off.expiry || 'Open'}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.85rem; margin-top: auto; gap: 0.5rem;">
+                  <div style="display: flex; gap: 0.45rem;">
+                    <button class="btn-edit-offer df-pill-btn secondary" data-id="${off.id}" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; font-weight: 700;">
+                      ✏️ Edit
+                    </button>
+                    <button class="btn-toggle-offer df-pill-btn secondary" data-id="${off.id}" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; font-weight: 700; color: ${off.isActive ? '#F59E0B' : '#10B981'};">
+                      ${off.isActive ? '⏸️ Pause' : '▶️ Activate'}
+                    </button>
+                  </div>
+                  <button class="btn-delete-offer df-pill-btn secondary" data-id="${off.id}" style="padding: 0.35rem 0.65rem; font-size: 0.78rem; color: #EF4444;" title="Delete promo code">
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `}
+    `;
+
+    // Bind Add Offer button
+    const handleOpenAdd = () => {
+      openOfferModal(tenant, null, () => renderOffersManager(container, tenant));
+    };
+    container.querySelector('#btn-add-offer')?.addEventListener('click', handleOpenAdd);
+    container.querySelector('#btn-add-offer-empty')?.addEventListener('click', handleOpenAdd);
+
+    // Bind Edit Offer buttons
+    container.querySelectorAll('.btn-edit-offer').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const target = tenantOffers.find(o => o.id === id);
+        if (target) {
+          openOfferModal(tenant, target, () => renderOffersManager(container, tenant));
+        }
+      });
+    });
+
+    // Bind Toggle Status buttons
+    container.querySelectorAll('.btn-toggle-offer').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const target = tenantOffers.find(o => o.id === id);
+        if (target) {
+          target.isActive = !target.isActive;
+
+          // Record audit log
+          DineFlowStore.recordLog({
+            tenantId: tenantSlug,
+            tenantName: tenant.name,
+            managerId: state.session?.user?.id || 'staff-01',
+            managerName: state.session?.user?.name || 'Chef Vikram Rao',
+            category: 'DISCOUNT',
+            action: target.isActive ? 'Promo Code Activated' : 'Promo Code Paused',
+            details: `${target.isActive ? 'Activated' : 'Paused'} promo code "${target.code}" (${target.title}).`,
+            amount: Number(target.value) || 0,
+            paymentMethod: null,
+            securityFlag: '✓ Verified Config',
+            severity: 'info'
+          });
+
+          // Save & sync
+          DineFlowStore.save(state, {
+            action: 'OFFER_TOGGLED',
+            offer: target,
+            tenantSlug
+          });
+
+          SoundFX.chime('notice');
+          showToast(`Promo code "${target.code}" is now ${target.isActive ? 'Active 🟢' : 'Paused ⏸️'}.`, '🏷️');
+          renderOffersManager(container, tenant);
+        }
+      });
+    });
+
+    // Bind Delete Offer buttons
+    container.querySelectorAll('.btn-delete-offer').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const target = tenantOffers.find(o => o.id === id);
+        if (target) {
+          if (confirm(`Are you sure you want to delete promo code "${target.code}" (${target.title})? This will deactivate the code for all guest diners.`)) {
+            state.offers = (state.offers || []).filter(o => o.id !== id);
+
+            // Record audit log
+            DineFlowStore.recordLog({
+              tenantId: tenantSlug,
+              tenantName: tenant.name,
+              managerId: state.session?.user?.id || 'staff-01',
+              managerName: state.session?.user?.name || 'Chef Vikram Rao',
+              category: 'DISCOUNT',
+              action: 'Promo Code Deleted',
+              details: `Deleted promotional offer "${target.code}" (${target.title}).`,
+              amount: 0,
+              paymentMethod: null,
+              securityFlag: '⚠️ Promo Deleted',
+              severity: 'warning'
+            });
+
+            // Save & sync
+            DineFlowStore.save(state, {
+              action: 'OFFER_DELETED',
+              offerId: id,
+              tenantSlug
+            });
+
+            SoundFX.chime('alert');
+            showToast(`Promo code "${target.code}" deleted.`, '🗑️');
+            renderOffersManager(container, tenant);
+          }
+        }
+      });
+    });
+
+    // Click to copy promo code badge
+    container.querySelectorAll('.df-offer-badge-code').forEach(badge => {
+      badge.addEventListener('click', () => {
+        const code = badge.getAttribute('data-code');
+        if (code && navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(() => {
+            showToast(`Copied code "${code}" to clipboard!`, '📋');
+          }).catch(() => {});
+        }
+      });
+    });
   }
 
   // CUSTOMER CRM
