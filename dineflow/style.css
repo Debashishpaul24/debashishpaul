@@ -1868,6 +1868,14 @@ body.splash-active {
   font-size: 0.88rem;
 }
 
+.df-order-card-customer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  width: 100%;
+}
+
 .df-order-items-snippet {
   font-size: 0.78rem;
   color: var(--text-muted);

@@ -3986,8 +3986,9 @@
 
           return `
                   <div class="df-order-admin-card ${isOverdue ? 'df-card-overdue' : (isWarning ? 'df-card-warning' : '')}" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
-                    <div class="df-order-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.35rem; width: 100%;">
-                      <div style="display: flex; align-items: center; gap: 0.35rem; min-width: 0; flex: 1;">
+                    <!-- Card Top Header: Table + Order ID on left, Elapsed Timer on right -->
+                    <div class="df-order-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.3rem; width: 100%;">
+                      <div style="display: flex; align-items: center; gap: 0.35rem; min-width: 0; flex-shrink: 1;">
                         <span class="df-drag-handle" title="Drag ticket across stages" style="flex-shrink: 0; cursor: grab; display: inline-flex; align-items: center; opacity: 0.75;">
                           <svg width="8" height="13" viewBox="0 0 8 13" fill="currentColor">
                             <circle cx="2" cy="2" r="1.3" />
@@ -4000,19 +4001,26 @@
                         </span>
                         <span class="df-order-card-table" style="white-space: nowrap; font-weight: 800; font-size: 0.85rem;">Table ${order.tableId}</span>
                         <span class="df-order-card-id" style="font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 700; color: #38BDF8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.28); padding: 1px 6px; border-radius: 4px; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; line-height: 1.3;" title="Order ID #${order.id}">#${order.id}</span>
-                        ${isUnverified ? `
-                          <span class="df-verify-pill-unverified" title="Captain verification pending before kitchen cooks">⚠️ UNVERIFIED</span>
-                        ` : `
-                          <span class="df-verify-pill-verified" title="Table seated & verified">✓ SEATED</span>
-                        `}
                       </div>
                       <div style="flex-shrink: 0;">
                         <span class="df-elapsed-badge" data-order-timestamp="${orderDate.getTime()}" style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 2px; ${isOverdue ? 'background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4);' : (isWarning ? 'background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.12); color: #94A3B8;')}">
                           &#9201; ${elapsedMins}m${isOverdue ? ' LATE' : ''}
                         </span>
                       </div>
-                    </div><div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
-                      ${order.customerName}
+                    </div>
+
+                    <!-- Customer Meta Row: Name on left, Verification / Seating Status Pill on right (Never overlaps timer) -->
+                    <div class="df-order-card-customer-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.35rem; width: 100%;">
+                      <span style="font-size: 0.82rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1;">
+                        ${order.customerName}
+                      </span>
+                      <div style="flex-shrink: 0;">
+                        ${isUnverified ? `
+                          <span class="df-verify-pill-unverified" title="Captain verification pending before kitchen cooks">⚠️ UNVERIFIED</span>
+                        ` : `
+                          <span class="df-verify-pill-verified" title="Table seated & verified">✓ SEATED</span>
+                        `}
+                      </div>
                     </div>
 
                     ${isUnverified ? `
@@ -4050,9 +4058,9 @@
                         Note: "${order.items.find(i => i.specialInstructions)?.specialInstructions}"
                       </div>
                     ` : ''}
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; margin-top: 0.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap; gap: 0.35rem;">
                       <span style="font-size: 0.85rem; font-weight: 800; color: var(--brand-primary);">${tenant.currency}${order.total.toFixed(0)}</span>
-                      <div style="display: flex; gap: 0.35rem;">
+                      <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
                         <button class="df-pill-btn btn-print-kot" data-id="${order.id}" title="Print 80mm Kitchen Order Ticket (KOT)" style="font-size: 0.68rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-muted);">&#128424; KOT</button>
                         ${isUnverified ? '' : `
                           ${order.status === 'RECEIVED' || order.status === 'CONFIRMED' ? `
