@@ -76,6 +76,8 @@
         customerName: db.customer_name,
         customerPhone: db.customer_phone,
         status: db.status,
+        verificationStatus: db.verification_status || (db.status === 'RECEIVED' ? 'PENDING' : 'VERIFIED'),
+        cancelReason: db.cancel_reason || (db.status === 'CANCELLED' ? 'Rejected by floor staff' : null),
         items: Array.isArray(db.items) ? db.items : [],
         subtotal: Number(db.subtotal) || 0,
         discount: Number(db.discount) || 0,
@@ -960,6 +962,36 @@
               const { error } = await sb.from('orders').update(updates).eq('id', meta.orderId);
               if (error) throw error;
               console.log(`[DineFlowDB] ✓ Order ${meta.orderId} updated to ${meta.newStatus}`);
+
+              // If order is cancelled/prank-blocked, free the table in DB if no other active orders remain
+              if (meta.newStatus === 'CANCELLED' && meta.tableId) {
+                try {
+                  const { data: remainingOrders } = await sb.from('orders')
+                    .select('id')
+                    .eq('table_id', meta.tableId)
+                    .match({ tenant_id: tenantId })
+                    .neq('status', 'COMPLETED')
+                    .neq('status', 'CANCELLED');
+                  if (!remainingOrders || remainingOrders.length === 0) {
+                    await sb.from('tables')
+                      .update({ status: 'available' })
+                      .match({ tenant_id: tenantId, id: meta.tableId });
+                  }
+                } catch (e) {
+                  console.warn('[DineFlowDB] Non-critical table reset error on cancel:', e);
+                }
+              }
+            }
+            break;
+          }
+
+          case 'ALL_ORDERS_VERIFIED': {
+            try {
+              await sb.from('orders')
+                .update({ status: 'PREPARING', updated_at: new Date().toISOString() })
+                .match({ tenant_id: tenantId, status: 'RECEIVED' });
+            } catch (e) {
+              console.warn('[DineFlowDB] Non-critical error batch verifying orders:', e);
             }
             break;
           }

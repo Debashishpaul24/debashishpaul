@@ -1440,6 +1440,7 @@ const DINEFLOW_DEFAULT_DATA = {
       customerName: 'Rahul Verma',
       customerPhone: '+91 98311 00223',
       status: 'PREPARING', // RECEIVED | CONFIRMED | PREPARING | READY | SERVED | COMPLETED
+      verificationStatus: 'VERIFIED',
       timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
       items: [
         {
@@ -1473,7 +1474,8 @@ const DINEFLOW_DEFAULT_DATA = {
       tenantId: 'the-urban-plate',
       tableId: 'T04',
       customerName: 'Sneha Roy',
-      status: 'CONFIRMED',
+      status: 'RECEIVED',
+      verificationStatus: 'PENDING',
       timestamp: new Date(Date.now() - 6 * 60 * 1000).toISOString(),
       items: [
         { id: 'item-09', name: 'Burrata Margherita Pizza', price: 429, quantity: 1, customizations: { crust: 'Sourdough' } },

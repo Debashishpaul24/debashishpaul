@@ -455,13 +455,15 @@
       }
     } else if (event.action === 'ORDER_STATUS_CHANGED') {
       const order = state.orders.find(o => o.id === event.orderId);
-      if (order && order.status !== event.newStatus) {
+      if (order) {
         order.status = event.newStatus;
+        if (event.verificationStatus) order.verificationStatus = event.verificationStatus;
+        if (event.cancelReason) order.cancelReason = event.cancelReason;
         if (event.newStatus === 'COMPLETED') {
           order.paymentStatus = 'PAID';
           const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && b.status === 'PENDING');
           if (pendingBill) pendingBill.status = 'PAID';
-          const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.status !== 'COMPLETED');
+          const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
           if (!hasMoreOrders) {
             const tableObj = state.tables.find(t => t.id === order.tableId);
             if (tableObj) {
@@ -469,6 +471,17 @@
               delete tableObj.manuallyOccupied;
             }
           }
+        } else if (event.newStatus === 'CANCELLED') {
+          const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && o.id !== order.id && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+          if (!hasMoreOrders) {
+            const tableObj = state.tables.find(t => t.id === order.tableId);
+            if (tableObj && !tableObj.manuallyOccupied) {
+              tableObj.status = 'available';
+            }
+          }
+        } else if (event.newStatus === 'PREPARING' || event.newStatus === 'READY' || event.newStatus === 'SERVED') {
+          const tableObj = state.tables.find(t => t.id === order.tableId);
+          if (tableObj) tableObj.status = 'occupied';
         }
         stateChanged = true;
       }
@@ -2798,6 +2811,9 @@
           discountAmount >= subtotal
         ));
 
+        const targetTable = state.tables.find(t => t.id === table.id && (!t.tenantId || t.tenantId === tenantSlug));
+        const isAlreadySeated = Boolean(targetTable && (targetTable.status === 'occupied' || targetTable.manuallyOccupied));
+
         const newOrder = {
           id: newOrderId,
           tenantId: tenantSlug,
@@ -2805,6 +2821,7 @@
           customerName: name,
           customerPhone: phone,
           status: 'RECEIVED',
+          verificationStatus: isAlreadySeated ? 'VERIFIED' : 'PENDING',
           timestamp: new Date().toISOString(),
           items: JSON.parse(JSON.stringify(cart)),
           subtotal,
@@ -2823,10 +2840,9 @@
         state.orders.unshift(newOrder);
 
         // Mark table as occupied
-        const targetTable = state.tables.find(t => t.id === table.id && (!t.tenantId || t.tenantId === tenantSlug));
         if (targetTable) {
           targetTable.status = 'occupied';
-          targetTable.qrScans++;
+          targetTable.qrScans = (targetTable.qrScans || 0) + 1;
           targetTable.lastScanned = 'Just now';
         }
 
@@ -2863,12 +2879,19 @@
     if (!modalContainer) return;
 
     // Find latest active orders for this table
-    const tableOrders = state.orders.filter(o => o.tableId === table.id && o.tenantId === tenant.id);
-    const activeOrder = focusOrderId ? tableOrders.find(o => o.id === focusOrderId) : tableOrders[0];
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tableOrders = state.orders.filter(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug));
+    const activeOrder = focusOrderId ? tableOrders.find(o => o.id === focusOrderId) : (tableOrders.find(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED') || tableOrders[0]);
     activeTrackingOrderId = activeOrder ? activeOrder.id : (focusOrderId || null);
 
+    const isOrderVerified = Boolean(activeOrder && (activeOrder.verificationStatus === 'VERIFIED' || (activeOrder.status !== 'RECEIVED' && activeOrder.status !== 'CANCELLED')));
+
     const statusSteps = [
-      { key: 'RECEIVED', title: 'Order Received', desc: 'Sent directly to the kitchen brigade' },
+      {
+        key: 'RECEIVED',
+        title: isOrderVerified ? 'Table Verified' : 'Order Placed',
+        desc: isOrderVerified ? 'Verified by floor captain' : 'Awaiting floor captain verification'
+      },
       { key: 'CONFIRMED', title: 'Confirmed by Chef', desc: 'Ingredients prepared & wok seasoned' },
       { key: 'PREPARING', title: 'Simmering & Sautéing', desc: 'Freshly cooking on high flame' },
       { key: 'READY', title: 'Plated & Garnished', desc: 'Hot and ready at service counter' },
@@ -2882,82 +2905,136 @@
           <div class="df-sheet-header">
             <div>
               <h3 style="font-size: 1.2rem; font-weight: 700;">Live Order Tracking</h3>
-              <span style="font-size: 0.75rem; color: var(--brand-primary); font-weight: 700;">Table ${table.id} • ${table.section}</span>
+              <span style="font-size: 0.75rem; color: var(--brand-primary); font-weight: 700;">Table ${table.id} • ${table.section || 'Indoor'}</span>
             </div>
             <button class="df-sheet-close" id="btn-close-orders">✕</button>
           </div>
 
           <div class="df-sheet-body">
-            ${activeOrder ? `
-              <div class="df-order-tracking-card">
-                <div class="df-tracking-header">
-                  <div>
-                    <span class="df-order-badge">#${activeOrder.id}</span>
-                    <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 0.4rem;">
-                      ${activeOrder.customerName}
-                    </h4>
-                  </div>
-                  <div style="text-align: right;">
-                    <span style="font-size: 0.75rem; color: var(--text-dim);">Est. Prep Time</span>
-                    <div style="font-size: 1.15rem; font-weight: 800; color: var(--status-gold);">
-                      ~${activeOrder.estimatedMinutes || 20} mins
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 5-Step Animated Visual Stepper -->
-                <div class="df-stepper-track">
-                  ${statusSteps.map((step, idx) => {
-      const statusOrder = ['RECEIVED', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED', 'COMPLETED'];
-      const currentIdx = statusOrder.indexOf(activeOrder.status);
-      const stepIdx = statusOrder.indexOf(step.key);
-
-      const isDone = currentIdx > stepIdx;
-      const isActive = currentIdx === stepIdx;
-
-      return `
-                      <div class="df-step-node ${isDone ? 'completed' : ''} ${isActive ? 'active' : ''}">
-                        <div class="df-step-circle">
-                          ${isDone ? '✓' : idx + 1}
-                        </div>
-                        <div class="df-step-title">${step.title}</div>
-                        <div class="df-step-time">${step.desc}</div>
-                      </div>
-                    `;
-    }).join('')}
-                </div>
-              </div>
-
-              <!-- Ordered Items List -->
-              <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
-                <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem; text-transform: uppercase;">
-                  Ordered Items
-                </h4>
-                ${activeOrder.items.map(item => `
-                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.85rem;">
+            ${activeOrder ? (
+              activeOrder.status === 'CANCELLED' ? `
+                <div class="df-order-tracking-card" style="border: 1.5px solid rgba(239, 68, 68, 0.45); background: linear-gradient(180deg, rgba(239, 68, 68, 0.12), rgba(15, 23, 42, 0.95)); padding: 1.25rem;">
+                  <div class="df-tracking-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.25); padding-bottom: 0.75rem; margin-bottom: 1rem;">
                     <div>
-                      <span style="font-weight: 700; color: #fff;">${item.quantity} ×</span>
-                      <span>${item.name}</span>
+                      <span class="df-order-badge" style="background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.45);">#${activeOrder.id} • CANCELLED</span>
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 0.4rem;">
+                        ${activeOrder.customerName}
+                      </h4>
                     </div>
-                    <span style="font-weight: 700;">${tenant.currency}${item.price * item.quantity}</span>
+                    <div style="font-size: 2rem;">🚫</div>
                   </div>
-                `).join('')}
-                <div style="display: flex; justify-content: space-between; margin-top: 0.75rem; font-weight: 800; font-size: 0.95rem; color: var(--brand-primary);">
-                  <span>Total Amount</span>
-                  <span>${tenant.currency}${activeOrder.total.toFixed(2)}</span>
-                </div>
-              </div>
 
-              <!-- Action buttons -->
-              <div style="display: flex; gap: 0.75rem;">
-                <button class="df-pill-btn" id="btn-order-more" style="flex: 1; padding: 0.75rem; justify-content: center;">
-                  + Add More Dishes
-                </button>
-                <button class="df-pill-btn primary" id="btn-order-feedback" style="flex: 1; padding: 0.75rem; justify-content: center;">
-                  ⭐ Leave Review
-                </button>
-              </div>
-            ` : `
+                  <div style="text-align: center; padding: 0.5rem 0 1rem 0;">
+                    <div style="font-size: 1.05rem; font-weight: 800; color: #EF4444; margin-bottom: 0.35rem;">
+                      Order Not Confirmed
+                    </div>
+                    <p style="font-size: 0.8rem; color: #FCA5A5; line-height: 1.45; margin: 0 auto 1.25rem auto; max-width: 340px;">
+                      ${activeOrder.cancelReason || `Floor staff was unable to verify diners seated at Table ${table.id}. No food was cooked.`}
+                    </p>
+                    <div style="display: flex; gap: 0.65rem; justify-content: center; flex-wrap: wrap;">
+                      <button class="df-pill-btn primary" id="btn-call-waiter-from-cancelled" style="padding: 0.6rem 1rem;">
+                        🔔 Call Floor Captain
+                      </button>
+                      <button class="df-pill-btn" id="btn-reorder-cancelled" style="padding: 0.6rem 1rem;">
+                        🍽️ Browse Menu
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ` : `
+                <div class="df-order-tracking-card">
+                  <div class="df-tracking-header">
+                    <div>
+                      <span class="df-order-badge">#${activeOrder.id}</span>
+                      <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 0.4rem;">
+                        ${activeOrder.customerName}
+                      </h4>
+                    </div>
+                    <div style="text-align: right;">
+                      <span style="font-size: 0.75rem; color: var(--text-dim);">Est. Prep Time</span>
+                      <div style="font-size: 1.15rem; font-weight: 800; color: var(--status-gold);">
+                        ~${activeOrder.estimatedMinutes || 20} mins
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Anti-Spoof Waiter Verification Live Alert -->
+                  ${!isOrderVerified ? `
+                    <div class="df-customer-verify-alert" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(217, 119, 6, 0.08)); border: 1.5px dashed rgba(245, 158, 11, 0.55); border-radius: 8px; padding: 0.7rem 0.85rem; margin-bottom: 1.15rem; display: flex; align-items: center; gap: 0.75rem;">
+                      <span style="font-size: 1.4rem; animation: pulse 1.5s infinite;">⏳</span>
+                      <div>
+                        <div style="font-size: 0.82rem; font-weight: 800; color: #FBBF24;">Awaiting Table Verification</div>
+                        <div style="font-size: 0.72rem; color: #FDE68A; line-height: 1.35; margin-top: 2px;">
+                          Floor captain is verifying guests seated at <strong>Table ${table.id}</strong>. Cooking will start in seconds!
+                        </div>
+                      </div>
+                    </div>
+                  ` : `
+                    <div class="df-customer-verify-alert" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.06)); border: 1px solid rgba(16, 185, 129, 0.45); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 1.15rem; display: flex; align-items: center; gap: 0.75rem;">
+                      <span style="font-size: 1.25rem;">✅</span>
+                      <div>
+                        <div style="font-size: 0.82rem; font-weight: 800; color: #34D399;">Table ${table.id} Verified & Accepted</div>
+                        <div style="font-size: 0.72rem; color: #A7F3D0; line-height: 1.35; margin-top: 2px;">
+                          Captain confirmed your table. Your dishes are being cooked fresh by our chef brigade!
+                        </div>
+                      </div>
+                    </div>
+                  `}
+
+                  <!-- 5-Step Animated Visual Stepper -->
+                  <div class="df-stepper-track">
+                    ${statusSteps.map((step, idx) => {
+                      const statusOrder = ['RECEIVED', 'CONFIRMED', 'PREPARING', 'READY', 'SERVED', 'COMPLETED'];
+                      const currentIdx = statusOrder.indexOf(activeOrder.status);
+                      const stepIdx = statusOrder.indexOf(step.key);
+
+                      const isDone = currentIdx > stepIdx;
+                      const isActive = currentIdx === stepIdx;
+
+                      return `
+                        <div class="df-step-node ${isDone ? 'completed' : ''} ${isActive ? 'active' : ''}">
+                          <div class="df-step-circle">
+                            ${isDone ? '✓' : idx + 1}
+                          </div>
+                          <div class="df-step-title">${step.title}</div>
+                          <div class="df-step-time">${step.desc}</div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+
+                <!-- Ordered Items List -->
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
+                  <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.75rem; text-transform: uppercase;">
+                    Ordered Items
+                  </h4>
+                  ${activeOrder.items.map(item => `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.85rem;">
+                      <div>
+                        <span style="font-weight: 700; color: #fff;">${item.quantity} ×</span>
+                        <span>${item.name}</span>
+                      </div>
+                      <span style="font-weight: 700;">${tenant.currency}${item.price * item.quantity}</span>
+                    </div>
+                  `).join('')}
+                  <div style="display: flex; justify-content: space-between; margin-top: 0.75rem; font-weight: 800; font-size: 0.95rem; color: var(--brand-primary);">
+                    <span>Total Amount</span>
+                    <span>${tenant.currency}${activeOrder.total.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display: flex; gap: 0.75rem;">
+                  <button class="df-pill-btn" id="btn-order-more" style="flex: 1; padding: 0.75rem; justify-content: center;">
+                    + Add More Dishes
+                  </button>
+                  <button class="df-pill-btn primary" id="btn-order-feedback" style="flex: 1; padding: 0.75rem; justify-content: center;">
+                    ⭐ Leave Review
+                  </button>
+                </div>
+              `
+            ) : `
               <div style="text-align: center; padding: 3rem 1rem;">
                 <div style="font-size: 3rem; margin-bottom: 0.75rem;">📋</div>
                 <h4 style="font-size: 1.15rem; color: #fff; margin-bottom: 0.35rem;">No Active Orders Yet</h4>
@@ -2978,6 +3055,11 @@
     document.getElementById('btn-close-orders')?.addEventListener('click', closeOrdersModal);
     document.getElementById('btn-browse-orders')?.addEventListener('click', closeOrdersModal);
     document.getElementById('btn-order-more')?.addEventListener('click', closeOrdersModal);
+    document.getElementById('btn-call-waiter-from-cancelled')?.addEventListener('click', () => {
+      closeOrdersModal();
+      openCallStaffModal(tenant, table);
+    });
+    document.getElementById('btn-reorder-cancelled')?.addEventListener('click', closeOrdersModal);
     document.getElementById('orders-backdrop')?.addEventListener('click', (e) => {
       if (e.target.id === 'orders-backdrop') closeOrdersModal();
     });
@@ -3851,6 +3933,37 @@
         ` : '';
       })()}
 
+      ${(() => {
+        const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+        const unverifiedOrders = (state.orders || []).filter(o => 
+          (!o.tenantId || o.tenantId === tenantSlug) &&
+          (o.status === 'RECEIVED' || o.status === 'CONFIRMED') &&
+          o.verificationStatus !== 'VERIFIED'
+        );
+        if (!unverifiedOrders.length) return '';
+        const uniqueTables = [...new Set(unverifiedOrders.map(o => o.tableId))];
+        return `
+          <div class="df-unverified-orders-banner" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(239, 68, 68, 0.14)); border: 1.5px solid rgba(245, 158, 11, 0.5); border-radius: var(--radius-md); padding: 0.65rem 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 1.4rem; animation: pulse 1.5s infinite;">🛡️</span>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: #FBBF24;">
+                  ${unverifiedOrders.length} QR Order${unverifiedOrders.length > 1 ? 's' : ''} Awaiting Floor Verification (Anti-Spoof Gate)
+                </div>
+                <div style="font-size: 0.72rem; color: #FDE68A; font-weight: 600;">
+                  Check seated guests at ${uniqueTables.map(t => `<strong>Table ${t}</strong>`).join(', ')} before firing to kitchen.
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.35rem;">
+              <button class="df-pill-btn btn-accept-all-unverified" style="font-size: 0.72rem; padding: 0.3rem 0.75rem; background: #10B981; border-color: #10B981; color: #fff; font-weight: 700; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);">
+                ✅ Verify All Seated
+              </button>
+            </div>
+          </div>
+        `;
+      })()}
+
       <div class="df-kanban-board">
         ${cols.map(col => {
         const orders = state.orders.filter(o => (!o.tenantId || o.tenantId === tenant.slug || o.tenantId === tenant.id) && (o.status === col.key || (col.key === 'RECEIVED' && o.status === 'CONFIRMED')));
@@ -3869,6 +3982,7 @@
           const isPending = order.status === 'RECEIVED' || order.status === 'CONFIRMED' || order.status === 'PREPARING';
           const isOverdue = isPending && elapsedMins >= 20;
           const isWarning = isPending && elapsedMins >= 10 && !isOverdue;
+          const isUnverified = (order.status === 'RECEIVED' || order.status === 'CONFIRMED') && order.verificationStatus !== 'VERIFIED';
 
           return `
                   <div class="df-order-admin-card ${isOverdue ? 'df-card-overdue' : (isWarning ? 'df-card-warning' : '')}" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
@@ -3886,6 +4000,11 @@
                         </span>
                         <span class="df-order-card-table" style="white-space: nowrap; font-weight: 800; font-size: 0.85rem;">Table ${order.tableId}</span>
                         <span class="df-order-card-id" style="font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 700; color: #38BDF8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.28); padding: 1px 6px; border-radius: 4px; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; line-height: 1.3;" title="Order ID #${order.id}">#${order.id}</span>
+                        ${isUnverified ? `
+                          <span class="df-verify-pill-unverified" title="Captain verification pending before kitchen cooks">⚠️ UNVERIFIED</span>
+                        ` : `
+                          <span class="df-verify-pill-verified" title="Table seated & verified">✓ SEATED</span>
+                        `}
                       </div>
                       <div style="flex-shrink: 0;">
                         <span class="df-elapsed-badge" data-order-timestamp="${orderDate.getTime()}" style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; white-space: nowrap; display: inline-flex; align-items: center; gap: 2px; ${isOverdue ? 'background: rgba(239, 68, 68, 0.2); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.4);' : (isWarning ? 'background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.4);' : 'background: rgba(148, 163, 184, 0.12); color: #94A3B8;')}">
@@ -3895,6 +4014,31 @@
                     </div><div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
                       ${order.customerName}
                     </div>
+
+                    ${isUnverified ? `
+                      <!-- Waiter Confirmation Gate (1-Click Anti-Spoof Protection) -->
+                      <div class="df-verification-gate">
+                        <div class="df-vg-header">
+                          <div class="df-vg-title">
+                            <span style="font-size: 0.95rem;">⚠️</span>
+                            <span>Verify Table Seated</span>
+                          </div>
+                          <span class="df-vg-badge">Anti-Spoof Gate</span>
+                        </div>
+                        <p class="df-vg-desc">
+                          Check if guests are seated at <strong>Table ${order.tableId}</strong> before firing to kitchen:
+                        </p>
+                        <div class="df-vg-actions">
+                          <button class="df-pill-btn btn-accept-order" data-id="${order.id}" data-table="${order.tableId}">
+                            ✅ Accept & Fire
+                          </button>
+                          <button class="df-pill-btn btn-reject-order" data-id="${order.id}" data-table="${order.tableId}">
+                            🚫 Reject Prank
+                          </button>
+                        </div>
+                      </div>
+                    ` : ''}
+
                     <div class="df-order-items-snippet">
                       ${order.items.map(it => `
                         <div class="df-kds-item-row" style="cursor: pointer; user-select: none;" title="Click to strike-through item when prepared" onclick="this.classList.toggle('df-item-prepared');">
@@ -3910,11 +4054,13 @@
                       <span style="font-size: 0.85rem; font-weight: 800; color: var(--brand-primary);">${tenant.currency}${order.total.toFixed(0)}</span>
                       <div style="display: flex; gap: 0.35rem;">
                         <button class="df-pill-btn btn-print-kot" data-id="${order.id}" title="Print 80mm Kitchen Order Ticket (KOT)" style="font-size: 0.68rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-muted);">&#128424; KOT</button>
-                        ${order.status === 'RECEIVED' || order.status === 'CONFIRMED' ? `
-                          <button class="df-pill-btn primary btn-status-next" data-id="${order.id}" data-next="PREPARING" style="font-size: 0.68rem; padding: 0.25rem 0.65rem;">
-                            🍳 Cook
-                          </button>
-                        ` : ''}
+                        ${isUnverified ? '' : `
+                          ${order.status === 'RECEIVED' || order.status === 'CONFIRMED' ? `
+                            <button class="df-pill-btn primary btn-status-next" data-id="${order.id}" data-next="PREPARING" style="font-size: 0.68rem; padding: 0.25rem 0.65rem;">
+                              🍳 Cook
+                            </button>
+                          ` : ''}
+                        `}
                         ${order.status === 'PREPARING' ? `
                           <button class="df-pill-btn primary btn-status-next" data-id="${order.id}" data-next="READY" style="font-size: 0.68rem; padding: 0.25rem 0.65rem;">
                             🔔 Ready
@@ -3946,6 +4092,95 @@
       </div>
     `;
 
+    // 1-Click Waiter Confirmation Gate: Accept & Fire to Kitchen
+    function acceptAndFireOrder(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+      order.verificationStatus = 'VERIFIED';
+      order.status = 'PREPARING'; // Fire straight to kitchen brigade
+      
+      const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+      const targetTable = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === tenantSlug));
+      if (targetTable) {
+        targetTable.status = 'occupied';
+      }
+
+      DineFlowStore.save(state, {
+        action: 'ORDER_STATUS_CHANGED',
+        source: 'staff',
+        orderId: order.id,
+        newStatus: 'PREPARING',
+        verificationStatus: 'VERIFIED',
+        tableId: order.tableId,
+        tenantSlug: tenantSlug
+      });
+
+      DineFlowStore.recordLog({
+        tenantId: tenantSlug,
+        tenantName: tenant.name,
+        managerId: state.session?.user?.id || 'staff-01',
+        managerName: state.session?.user?.name || 'Floor Captain',
+        category: 'SECURITY',
+        action: 'Table Verified & Fired',
+        details: `Order #${order.id} for Table ${order.tableId} verified seated by captain & fired to kitchen (${order.items.length} items)`,
+        orderId: order.id,
+        amount: order.total
+      });
+
+      SoundFX.chime('success');
+      showToast(`✅ Table ${order.tableId} verified & fired to kitchen!`);
+      renderAdminView(document.getElementById('app'), tenant);
+    }
+
+    // 1-Click Waiter Confirmation Gate: Reject Remote Prank / Empty Table
+    function rejectPrankOrder(orderId) {
+      const order = state.orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const confirmed = window.confirm(`🚫 Reject Order #${order.id} (Table ${order.tableId}) as remote prank / empty table?\n\nThis cancels the order immediately so no food is cooked.`);
+      if (!confirmed) return;
+
+      const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+      order.verificationStatus = 'REJECTED';
+      order.status = 'CANCELLED';
+      order.cancelReason = 'Table unoccupied / Remote prank rejected by floor captain';
+
+      const hasMoreActive = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === tenantSlug) && o.id !== order.id && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+      if (!hasMoreActive) {
+        const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === tenantSlug));
+        if (tableObj && !tableObj.manuallyOccupied) {
+          tableObj.status = 'available';
+        }
+      }
+
+      DineFlowStore.save(state, {
+        action: 'ORDER_STATUS_CHANGED',
+        source: 'staff',
+        orderId: order.id,
+        newStatus: 'CANCELLED',
+        verificationStatus: 'REJECTED',
+        cancelReason: order.cancelReason,
+        tableId: order.tableId,
+        tenantSlug: tenantSlug
+      });
+
+      DineFlowStore.recordLog({
+        tenantId: tenantSlug,
+        tenantName: tenant.name,
+        managerId: state.session?.user?.id || 'staff-01',
+        managerName: state.session?.user?.name || 'Floor Captain',
+        category: 'SECURITY',
+        action: 'Remote Prank Blocked',
+        details: `Order #${order.id} for Table ${order.tableId} cancelled before cooking (Table unoccupied / remote prank prevented)`,
+        orderId: order.id,
+        amount: order.total
+      });
+
+      SoundFX.chime('alert');
+      showToast(`🚫 Order #${order.id} rejected as prank (No food cooked)`, '🛡️');
+      renderAdminView(document.getElementById('app'), tenant);
+    }
+
     // Unified order status progression handler (used by both buttons and drag-and-drop)
     function applyOrderStatusChange(orderId, nextStatus) {
       const order = state.orders.find(o => o.id === orderId);
@@ -3953,11 +4188,14 @@
       if (order.status === nextStatus) return;
 
       order.status = nextStatus;
+      if (nextStatus !== 'RECEIVED') {
+        order.verificationStatus = 'VERIFIED';
+      }
       if (nextStatus === 'COMPLETED') {
         order.paymentStatus = 'PAID';
         const pendingBill = state.billRequests.find(b => b.tableId === order.tableId && (!b.tenantId || b.tenantId === order.tenantId) && b.status === 'PENDING');
         if (pendingBill) pendingBill.status = 'PAID';
-        const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === order.tenantId) && o.status !== 'COMPLETED');
+        const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === order.tenantId) && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
         if (!hasMoreOrders) {
           const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === order.tenantId));
           if (tableObj) {
@@ -3965,12 +4203,26 @@
             delete tableObj.manuallyOccupied;
           }
         }
+      } else if (nextStatus === 'CANCELLED') {
+        order.verificationStatus = 'REJECTED';
+        const hasMoreOrders = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === order.tenantId) && o.id !== order.id && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+        if (!hasMoreOrders) {
+          const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === order.tenantId));
+          if (tableObj && !tableObj.manuallyOccupied) {
+            tableObj.status = 'available';
+          }
+        }
+      } else if (nextStatus === 'PREPARING' || nextStatus === 'READY' || nextStatus === 'SERVED') {
+        const tableObj = state.tables.find(t => t.id === order.tableId && (!t.tenantId || t.tenantId === order.tenantId));
+        if (tableObj) tableObj.status = 'occupied';
       }
+
       DineFlowStore.save(state, {
         action: 'ORDER_STATUS_CHANGED',
         source: 'staff',
         orderId: order.id,
         newStatus: nextStatus,
+        verificationStatus: order.verificationStatus,
         tableId: order.tableId,
         tenantSlug: tenant.slug || tenant.id
       });
@@ -3999,6 +4251,52 @@
         const orderId = btn.getAttribute('data-id');
         const nextStatus = btn.getAttribute('data-next');
         applyOrderStatusChange(orderId, nextStatus);
+      });
+    });
+
+    // Waiter Confirmation Gate: Accept & Fire to Kitchen
+    document.querySelectorAll('.btn-accept-order').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const orderId = btn.getAttribute('data-id');
+        acceptAndFireOrder(orderId);
+      });
+    });
+
+    // Waiter Confirmation Gate: Reject Prank / Empty Table
+    document.querySelectorAll('.btn-reject-order').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const orderId = btn.getAttribute('data-id');
+        rejectPrankOrder(orderId);
+      });
+    });
+
+    // Waiter Confirmation Gate: Verify All Seated
+    document.querySelectorAll('.btn-accept-all-unverified').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+        const unverified = state.orders.filter(o =>
+          (!o.tenantId || o.tenantId === tenantSlug) &&
+          (o.status === 'RECEIVED' || o.status === 'CONFIRMED') &&
+          o.verificationStatus !== 'VERIFIED'
+        );
+        if (!unverified.length) return;
+        unverified.forEach(o => {
+          o.verificationStatus = 'VERIFIED';
+          o.status = 'PREPARING';
+          const tbl = state.tables.find(t => t.id === o.tableId && (!t.tenantId || t.tenantId === tenantSlug));
+          if (tbl) tbl.status = 'occupied';
+        });
+        DineFlowStore.save(state, {
+          action: 'ALL_ORDERS_VERIFIED',
+          source: 'staff',
+          count: unverified.length,
+          tenantSlug
+        });
+        SoundFX.chime('success');
+        showToast(`✅ All ${unverified.length} orders verified & fired to kitchen!`);
+        renderAdminView(document.getElementById('app'), tenant);
       });
     });
 
@@ -4256,13 +4554,19 @@
       const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
       const hasPendingBill = state.billRequests.some(b => b.tableId === table.id && (!b.tenantId || b.tenantId === tenantSlug) && b.status === 'PENDING');
       const hasUnpaidOrders = state.orders.some(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && o.paymentStatus !== 'PAID' && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
+      const hasUnverifiedOrder = state.orders.some(o => o.tableId === table.id && (!o.tenantId || o.tenantId === tenantSlug) && (o.status === 'RECEIVED' || o.status === 'CONFIRMED') && o.verificationStatus !== 'VERIFIED');
       const isBillPending = hasPendingBill || hasUnpaidOrders;
 
       return `
             <div class="df-table-admin-card" data-table-status="${table.status}">
               <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <h4 style="font-size: 1.05rem; font-weight: 800; color: #fff;">${table.name}</h4>
-                <div style="display: flex; gap: 0.35rem; align-items: center;">
+                <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                  ${hasUnverifiedOrder ? `
+                    <span class="df-micro-badge" style="background: rgba(245, 158, 11, 0.22); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.5); font-size: 0.65rem; padding: 2px 6px;" title="Incoming QR order awaiting seated verification">
+                      ⚠️ Verify Order
+                    </span>
+                  ` : ''}
                   ${isBillPending ? `
                     <span class="df-micro-badge" style="background: rgba(239, 68, 68, 0.18); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.4); font-size: 0.65rem; padding: 2px 6px;" title="Customer bill is pending settlement">
                       💳 Bill Pending
@@ -8482,16 +8786,21 @@
 
       // Chime & toast for customer only on their order status transition or bill settlement
       if (meta.action === 'ORDER_STATUS_CHANGED') {
-        SoundFX.chime('success');
-        const statusMap = {
-          RECEIVED: 'Order Received by Kitchen 📥',
-          CONFIRMED: 'Chef Confirmed your Order! 👨‍🍳',
-          PREPARING: 'Now Cooking in the Kitchen! 🍳',
-          READY: 'Plated & Ready for Delivery! 🔔',
-          SERVED: 'Delivered to your Table! Enjoy! 🍽️',
-          COMPLETED: 'Order Completed. Thank you! ⭐'
-        };
-        showToast(statusMap[meta.newStatus] || `Order #${meta.orderId}: ${meta.newStatus}`, '👨‍🍳');
+        if (meta.newStatus === 'CANCELLED') {
+          SoundFX.chime('alert');
+          showToast(`Order #${meta.orderId || ''} was not confirmed by floor staff 🚫`, '⚠️');
+        } else {
+          SoundFX.chime('success');
+          const statusMap = {
+            RECEIVED: 'Order Received by Kitchen 📥',
+            CONFIRMED: 'Chef Confirmed your Order! 👨‍🍳',
+            PREPARING: 'Table Verified! Now Cooking in Kitchen! 🍳',
+            READY: 'Plated & Ready for Delivery! 🔔',
+            SERVED: 'Delivered to your Table! Enjoy! 🍽️',
+            COMPLETED: 'Order Completed. Thank you! ⭐'
+          };
+          showToast(statusMap[meta.newStatus] || `Order #${meta.orderId}: ${meta.newStatus}`, '👨‍🍳');
+        }
       } else if (meta.action === 'BILL_SETTLED') {
         SoundFX.chime('success');
         showToast('Your bill has been settled. Thank you for dining with us! ⭐', '💳');
@@ -8526,7 +8835,7 @@
   // Register PWA Service Worker (Auto-checks for latest updates)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=2.3.1').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=2.5.0').then(reg => {
         reg.update();
       }).catch(err => {
         console.warn('Service Worker registration skipped', err);
