@@ -3982,12 +3982,13 @@
           const isPending = order.status === 'RECEIVED' || order.status === 'CONFIRMED' || order.status === 'PREPARING';
           const isOverdue = isPending && elapsedMins >= 20;
           const isWarning = isPending && elapsedMins >= 10 && !isOverdue;
-          const isUnverified = (order.status === 'RECEIVED' || order.status === 'CONFIRMED') && order.verificationStatus !== 'VERIFIED';
+          const isIncoming = order.status === 'RECEIVED' || order.status === 'CONFIRMED';
+          const isUnverified = isIncoming && order.verificationStatus !== 'VERIFIED';
 
           return `
                   <div class="df-order-admin-card ${isOverdue ? 'df-card-overdue' : (isWarning ? 'df-card-warning' : '')}" draggable="true" data-order-id="${order.id}" data-current-status="${order.status}">
                     <!-- Card Top Header: Table + Order ID on left, Elapsed Timer on right -->
-                    <div class="df-order-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.3rem; width: 100%;">
+                    <div class="df-order-card-header" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; width: 100%;">
                       <div style="display: flex; align-items: center; gap: 0.35rem; min-width: 0; flex-shrink: 1;">
                         <span class="df-drag-handle" title="Drag ticket across stages" style="flex-shrink: 0; cursor: grab; display: inline-flex; align-items: center; opacity: 0.75;">
                           <svg width="8" height="13" viewBox="0 0 8 13" fill="currentColor">
@@ -4009,18 +4010,16 @@
                       </div>
                     </div>
 
-                    <!-- Customer Meta Row: Name on left, Verification / Seating Status Pill on right (Never overlaps timer) -->
-                    <div class="df-order-card-customer-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; margin-bottom: 0.35rem; width: 100%;">
+                    <!-- Customer Meta Row: Clean and uncrowded without double-pill stacking -->
+                    <div class="df-order-card-customer-row" style="display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; width: 100%;">
                       <span style="font-size: 0.82rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1;">
                         ${order.customerName}
                       </span>
-                      <div style="flex-shrink: 0;">
-                        ${isUnverified ? `
-                          <span class="df-verify-pill-unverified" title="Captain verification pending before kitchen cooks">⚠️ UNVERIFIED</span>
-                        ` : `
-                          <span class="df-verify-pill-verified" title="Table seated & verified">✓ SEATED</span>
-                        `}
-                      </div>
+                      ${(!isUnverified && isIncoming) ? `
+                        <div style="flex-shrink: 0;">
+                          <span class="df-verify-pill-verified" title="Repeat order from seated table">✓ SEATED</span>
+                        </div>
+                      ` : ''}
                     </div>
 
                     ${isUnverified ? `
@@ -4028,19 +4027,18 @@
                       <div class="df-verification-gate">
                         <div class="df-vg-header">
                           <div class="df-vg-title">
-                            <span style="font-size: 0.95rem;">⚠️</span>
-                            <span>Verify Table Seated</span>
+                            <span>⚠️ Table Check</span>
                           </div>
-                          <span class="df-vg-badge">Anti-Spoof Gate</span>
+                          <span class="df-vg-badge">Anti-Spoof</span>
                         </div>
                         <p class="df-vg-desc">
                           Check if guests are seated at <strong>Table ${order.tableId}</strong> before firing to kitchen:
                         </p>
                         <div class="df-vg-actions">
-                          <button class="df-pill-btn btn-accept-order" data-id="${order.id}" data-table="${order.tableId}">
+                          <button class="df-pill-btn btn-accept-order" data-id="${order.id}" data-table="${order.tableId}" title="Confirm seated & fire to kitchen">
                             ✅ Accept & Fire
                           </button>
-                          <button class="df-pill-btn btn-reject-order" data-id="${order.id}" data-table="${order.tableId}">
+                          <button class="df-pill-btn btn-reject-order" data-id="${order.id}" data-table="${order.tableId}" title="Reject remote prank order">
                             🚫 Reject Prank
                           </button>
                         </div>
@@ -4058,7 +4056,7 @@
                         Note: "${order.items.find(i => i.specialInstructions)?.specialInstructions}"
                       </div>
                     ` : ''}
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap; gap: 0.35rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 0.45rem; margin-top: auto; flex-wrap: wrap; gap: 0.35rem;">
                       <span style="font-size: 0.85rem; font-weight: 800; color: var(--brand-primary);">${tenant.currency}${order.total.toFixed(0)}</span>
                       <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
                         <button class="df-pill-btn btn-print-kot" data-id="${order.id}" title="Print 80mm Kitchen Order Ticket (KOT)" style="font-size: 0.68rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); color: var(--text-muted);">&#128424; KOT</button>

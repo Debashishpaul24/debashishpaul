@@ -1791,11 +1791,11 @@ body.splash-active {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  padding: 0.95rem;
+  padding: 0.85rem;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.45rem;
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
   cursor: grab;
   user-select: none;
@@ -1890,10 +1890,10 @@ body.splash-active {
   border: 1.5px dashed rgba(245, 158, 11, 0.65);
   border-radius: var(--radius-sm);
   padding: 0.65rem 0.75rem;
-  margin: 0.45rem 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
   box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08);
   animation: df-gate-glow 3s infinite ease-in-out;
 }
@@ -1913,31 +1913,35 @@ body.splash-active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.4rem;
+  gap: 0.35rem;
+  white-space: nowrap;
 }
 
 .df-vg-title {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.74rem;
+  gap: 0.3rem;
+  font-size: 0.72rem;
   font-weight: 800;
   color: #FBBF24;
+  white-space: nowrap;
 }
 
 .df-vg-badge {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   background: rgba(245, 158, 11, 0.22);
   color: #FDE68A;
-  padding: 2px 6px;
+  padding: 2px 5px;
   border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .df-vg-desc {
-  font-size: 0.7rem;
+  font-size: 0.69rem;
   color: #D1D5DB;
   margin: 0;
   line-height: 1.35;
@@ -1949,9 +1953,26 @@ body.splash-active {
 
 .df-vg-actions {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 0.45rem;
-  margin-top: 0.2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.df-vg-actions .btn-accept-order,
+.df-vg-actions .btn-reject-order {
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  box-sizing: border-box !important;
+  font-size: 0.7rem !important;
+  padding: 0 0.35rem !important;
+  border-radius: 99px !important;
 }
 
 .df-vg-actions .btn-accept-order {
@@ -1959,9 +1980,6 @@ body.splash-active {
   border: 1px solid #10B981 !important;
   color: #fff !important;
   font-weight: 800 !important;
-  font-size: 0.72rem !important;
-  padding: 0.42rem 0.5rem !important;
-  justify-content: center !important;
   box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35) !important;
   transition: transform 0.15s, box-shadow 0.15s;
 }
@@ -1976,9 +1994,6 @@ body.splash-active {
   border: 1px solid rgba(239, 68, 68, 0.45) !important;
   color: #EF4444 !important;
   font-weight: 700 !important;
-  font-size: 0.7rem !important;
-  padding: 0.42rem 0.45rem !important;
-  justify-content: center !important;
   transition: background 0.15s, border-color 0.15s;
 }
 
