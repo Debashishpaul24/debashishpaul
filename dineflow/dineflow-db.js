@@ -1271,39 +1271,19 @@
           case 'OFFER_SAVED':
           case 'OFFER_TOGGLED': {
             if (meta.offer) {
-              if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.saveCustomOffer === 'function') {
-                DineFlowStore.saveCustomOffer(meta.offer);
-              }
-              try {
-                const row = Transformers.offerToDb(meta.offer, tenantId);
-                const { error } = await sb.from('offers').upsert(row);
-                if (error) {
-                  console.warn(`[DineFlowDB] Notice: Offer saved locally. PostgreSQL cloud notice:`, error.message || error);
-                } else {
-                  console.log(`[DineFlowDB] ✓ Offer ${row.title} (${row.code}) synced to PostgreSQL!`);
-                }
-              } catch (offerErr) {
-                console.warn(`[DineFlowDB] Offer persistence handled in local registry:`, offerErr.message || offerErr);
-              }
+              const row = Transformers.offerToDb(meta.offer, tenantId);
+              const { error } = await sb.from('offers').upsert(row);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Offer ${row.title} (${row.code}) stored in PostgreSQL!`);
             }
             break;
           }
 
           case 'OFFER_DELETED': {
             if (meta.offerId) {
-              if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.deleteCustomOffer === 'function') {
-                DineFlowStore.deleteCustomOffer(meta.offerId);
-              }
-              try {
-                const { error } = await sb.from('offers').delete().eq('id', meta.offerId);
-                if (error) {
-                  console.warn(`[DineFlowDB] Notice: Offer deleted locally. PostgreSQL cloud notice:`, error.message || error);
-                } else {
-                  console.log(`[DineFlowDB] ✓ Offer ${meta.offerId} deleted from PostgreSQL`);
-                }
-              } catch (offerErr) {
-                console.warn(`[DineFlowDB] Offer deletion handled in local registry:`, offerErr.message || offerErr);
-              }
+              const { error } = await sb.from('offers').delete().eq('id', meta.offerId);
+              if (error) throw error;
+              console.log(`[DineFlowDB] ✓ Offer ${meta.offerId} deleted from PostgreSQL!`);
             }
             break;
           }

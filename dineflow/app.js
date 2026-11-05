@@ -3485,6 +3485,11 @@
               </div>
             `).join('')}
 
+            <div style="margin-bottom: 1rem;">
+              <label style="font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; display: block;">Your Name (Optional)</label>
+              <input type="text" id="feedback-name" placeholder="e.g. Purba, Krish, Sneha..." style="width: 100%; font-size: 0.85rem; padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.06); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); color: #fff; box-sizing: border-box;">
+            </div>
+
             <div style="margin-bottom: 1.5rem;">
               <label style="font-size: 0.82rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; display: block;">Your Review (Optional)</label>
               <textarea id="feedback-comment" rows="3" placeholder="Tell us what you loved, or what we can do better..." style="width: 100%; resize: none; font-size: 0.85rem;"></textarea>
@@ -3519,17 +3524,21 @@
 
     document.getElementById('btn-submit-feedback')?.addEventListener('click', () => {
       const comment = document.getElementById('feedback-comment')?.value.trim() || 'Wonderful meal and impeccable service!';
+      const typedName = document.getElementById('feedback-name')?.value.trim();
+      const activeTableOrder = (state.orders || []).find(o => o.tableId === table.id && o.customerName && o.customerName !== 'Guest Diner');
+      const resolvedName = typedName || (activeTableOrder ? activeTableOrder.customerName : 'Guest Diner');
+
       const reviewObj = {
         id: `rev-${Date.now()}`,
         tenantId: tenant.slug || tenant.id || 'the-urban-plate',
-        customerName: 'Guest Diner',
+        customerName: resolvedName,
         ratingOverall: ratings.overall,
         ratingFood: ratings.food,
         ratingService: ratings.service,
         ratingAmbience: ratings.ambience,
         comment,
         tableId: table.id,
-        date: 'Just now'
+        date: 'Today'
       };
       state.reviews.unshift(reviewObj);
 
@@ -6841,19 +6850,22 @@
 
   // REVIEWS FEED
   function renderReviewsFeed(container, tenant) {
+    const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
+    const tenantReviews = (state.reviews || []).filter(r => !r.tenantId || r.tenantId === tenantSlug);
+
     container.innerHTML = `
       <div style="margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.35rem; font-weight: 800;">Customer Reviews & Ratings (${state.reviews.length} Verified)</h2>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time feedback submitted directly by table guests after dining.</p>
+        <h2 style="font-size: 1.35rem; font-weight: 800;">Customer Reviews & Ratings (${tenantReviews.length} Verified in PostgreSQL)</h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time feedback submitted directly by table guests after dining, stored in cloud database.</p>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem;">
-        ${state.reviews.map(rev => `
+        ${tenantReviews.map(rev => `
           <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
               <div>
                 <h4 style="font-size: 0.95rem; font-weight: 800; color: #fff;">${rev.customerName}</h4>
-                <span style="font-size: 0.72rem; color: var(--brand-primary); font-weight: 700;">Table ${rev.tableId} • ${rev.date}</span>
+                <span style="font-size: 0.72rem; color: var(--brand-primary); font-weight: 700;">Table ${rev.tableId || 'Dine-In'} • ${rev.date || 'Today'}</span>
               </div>
               <div style="font-size: 1.1rem; color: var(--status-gold);">
                 ${'★'.repeat(rev.ratingOverall)}${'☆'.repeat(5 - rev.ratingOverall)}

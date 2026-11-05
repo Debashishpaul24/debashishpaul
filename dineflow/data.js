@@ -1969,13 +1969,16 @@ const DineFlowStore = {
   _isDatabaseLoaded: false,
 
   init() {
-    // 1. Purge legacy monolithic localStorage blobs to prevent stale client cache
+    // 1. Purge legacy monolithic and business data localStorage blobs (Zero LocalStorage for business data)
     try {
       if (typeof localStorage !== 'undefined') {
         localStorage.removeItem('DINEFLOW_SaaS_STORE_v5');
         localStorage.removeItem('DINEFLOW_SaaS_STORE_v4');
         localStorage.removeItem('DINEFLOW_SaaS_STORE_v3');
         localStorage.removeItem('DINEFLOW_SaaS_STORE_v2');
+        localStorage.removeItem('DINEFLOW_CUSTOM_OFFERS_v1');
+        localStorage.removeItem('DINEFLOW_DELETED_OFFERS_v1');
+        localStorage.removeItem('df_custom_offers_v2');
       }
     } catch (e) {}
 
@@ -2022,107 +2025,39 @@ const DineFlowStore = {
     }
   },
 
-  // Custom & Staff Promo Code Persistence Layer (Persists user-created/edited promo codes)
+  // Database-First Promo Codes (100% PostgreSQL Source of Truth)
   getCustomOffers() {
-    try {
-      if (typeof localStorage !== 'undefined') {
-        const stored = localStorage.getItem(this.OFFERS_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) return parsed;
-        }
-      }
-    } catch (e) {
-      console.warn('[DineFlowStore] Error reading custom offers:', e);
-    }
     return [];
   },
 
   saveCustomOffer(offer) {
-    if (!offer || !offer.id) return;
-    try {
-      const list = this.getCustomOffers();
-      const codeUpper = (offer.code || '').trim().toUpperCase();
-      const idx = list.findIndex(o => o.id === offer.id || ((o.code || '').trim().toUpperCase() === codeUpper));
-      if (idx >= 0) {
-        list[idx] = { ...list[idx], ...offer };
-      } else {
-        list.unshift(offer);
-      }
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.OFFERS_KEY, JSON.stringify(list));
-      }
-      this.unmarkDeletedOffer(offer.id);
-    } catch (e) {
-      console.warn('[DineFlowStore] Error saving custom offer:', e);
-    }
+    // Handled 100% in PostgreSQL via DineFlowDB.pushAction
   },
 
   deleteCustomOffer(offerId) {
-    if (!offerId) return;
-    try {
-      const list = this.getCustomOffers().filter(o => o.id !== offerId);
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.OFFERS_KEY, JSON.stringify(list));
-      }
-      const deleted = this.getDeletedOfferIds();
-      if (!deleted.includes(offerId)) {
-        deleted.push(offerId);
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem(this.DELETED_OFFERS_KEY, JSON.stringify(deleted));
-        }
-      }
-    } catch (e) {
-      console.warn('[DineFlowStore] Error deleting custom offer:', e);
-    }
+    // Handled 100% in PostgreSQL via DineFlowDB.pushAction
   },
 
   getDeletedOfferIds() {
-    try {
-      if (typeof localStorage !== 'undefined') {
-        const stored = localStorage.getItem(this.DELETED_OFFERS_KEY);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed)) return parsed;
-        }
-      }
-    } catch (e) {}
     return [];
   },
 
-  unmarkDeletedOffer(offerId) {
-    try {
-      const deleted = this.getDeletedOfferIds().filter(id => id !== offerId);
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.DELETED_OFFERS_KEY, JSON.stringify(deleted));
-      }
-    } catch (e) {}
-  },
+  unmarkDeletedOffer(offerId) {},
 
   mergeOffers(baseOffers = []) {
-    const deletedIds = this.getDeletedOfferIds();
-    const customOffers = this.getCustomOffers();
     const defaultOffers = Array.isArray(DINEFLOW_DEFAULT_DATA?.offers) ? DINEFLOW_DEFAULT_DATA.offers : [];
-
     const offerMap = new Map();
 
-    // 1. Seed base default offers (ensures PURBA_KRISH 100% Family Pass is always present)
+    // 1. Seed base default offers (ensures PURBA_KRISH baseline fallback if offline)
     defaultOffers.forEach(o => {
-      if (o && o.id && !deletedIds.includes(o.id)) {
+      if (o && o.id) {
         offerMap.set(o.id, { ...o });
       }
     });
 
-    // 2. Overlay PostgreSQL cloud offers from Supabase
+    // 2. Overlay live PostgreSQL cloud offers from Supabase (sole cloud source of truth)
     (baseOffers || []).forEach(o => {
-      if (o && o.id && !deletedIds.includes(o.id)) {
-        offerMap.set(o.id, { ...offerMap.get(o.id), ...o });
-      }
-    });
-
-    // 3. Overlay staff custom and edited offers (highest priority for user modifications)
-    customOffers.forEach(o => {
-      if (o && o.id && !deletedIds.includes(o.id)) {
+      if (o && o.id) {
         offerMap.set(o.id, { ...offerMap.get(o.id), ...o });
       }
     });
