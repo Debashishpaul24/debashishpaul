@@ -15,6 +15,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <!-- Instant Boot Shield: Eliminates pre-rendered landing page flash when launching Guest Menu or Staff OS directly -->
+  <style>
+    /* Critical Inline Boot Shield: Guarantees 0ms instant hiding of pre-rendered landing page on deep routes */
+    html.df-deep-loading #app {
+      display: none !important;
+    }
+    html.df-deep-loading #df-boot-loader {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 999999 !important;
+      background: #07090E !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-direction: column !important;
+      gap: 1rem !important;
+      color: #fff !important;
+    }
+  </style>
   <script>
     (function() {
       try {
@@ -29,14 +50,14 @@
         }
       } catch(e) {}
 
-      // Failsafe auto-dismiss: guarantees the loading spinner never gets stuck
+      // Emergency failsafe only: ensures spinner never stays indefinitely if a fatal script crash occurs
       setTimeout(function() {
         try {
           document.documentElement.classList.remove('df-deep-loading');
           var bl = document.getElementById('df-boot-loader');
           if (bl) bl.style.display = 'none';
         } catch(e) {}
-      }, 1200);
+      }, 8000);
     })();
   </script>
   <!-- Primary SEO Metadata -->
@@ -127,7 +148,7 @@
   </script>
 
   <!-- Design Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2.5.3">
+  <link rel="stylesheet" href="style.css?v=2.5.4">
 </head>
 
 <body>
@@ -771,7 +792,7 @@
   <script src="dineflow-db.js?v=3.1.0"></script>
   <!-- High-Precision Thermal Receipt & KOT Engine (80mm ESC/POS + Dynamic UPI) -->
   <script src="thermal-printer.js?v=2.5.0"></script>
-  <script src="app.js?v=3.1.4"></script>
+  <script src="app.js?v=3.1.5"></script>
 
   <!-- Commercial Growth Engine: Live ROI Simulator & Lead Hooks -->
   <script>

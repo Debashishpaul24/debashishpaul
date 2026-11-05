@@ -267,14 +267,8 @@ html.df-deep-loading #app {
 
 html.df-deep-loading #df-boot-loader {
   display: flex !important;
-  animation: df-boot-fadein 0.15s ease 0.25s forwards;
-}
-
-@keyframes df-boot-fadein {
-  to {
-    opacity: 1;
-    pointer-events: auto;
-  }
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 #df-boot-loader {

@@ -8882,6 +8882,44 @@
 
   });
 
+  // Global Client-Side SPA Link Interceptor: Guarantees instant (< 5ms) view transitions without page reloads
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    // Ignore external links, mailto, tel, target="_blank", or other pages
+    if (
+      link.getAttribute('target') === '_blank' ||
+      href.startsWith('http://') ||
+      href.startsWith('https://') ||
+      href.startsWith('//') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      href.startsWith('../') ||
+      href.includes('demo.html') ||
+      href.includes('view=demo') ||
+      href.includes('view=sandbox')
+    ) {
+      return;
+    }
+
+    // Intercept internal DineFlow route queries (?r=..., ?view=admin, ?view=super-admin, ?section=..., etc.)
+    if (href.startsWith('?') || href.startsWith('./?') || href === './' || href === '') {
+      e.preventDefault();
+      const targetQuery = href.startsWith('?') ? href : (href.startsWith('./?') ? href.slice(2) : (href === './' ? '' : href));
+      const targetUrl = window.location.pathname + targetQuery;
+
+      if (window.location.search !== targetQuery) {
+        window.history.pushState({}, '', targetUrl);
+        renderApp();
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    }
+  });
+
   // Browser Back/Forward Navigation
   window.addEventListener('popstate', () => {
     renderApp();
