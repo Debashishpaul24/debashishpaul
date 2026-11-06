@@ -732,6 +732,19 @@ body.mobile-drawer-open #back-to-top {
   margin-bottom: 0.35rem;
 }
 
+/* Accessibility & SEO utility for non-visual semantic crawling */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .hero-title {
   font-family: var(--font-display);
   font-weight: 800;

@@ -209,7 +209,8 @@ input:focus, textarea:focus, select:focus {
   display: block;
 }
 
-.df-brand-text h1 {
+.df-brand-text h1,
+.df-brand-text .df-brand-name {
   font-size: 0.94rem;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -217,6 +218,7 @@ input:focus, textarea:focus, select:focus {
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
+  display: block;
 }
 
 .df-brand-tagline {
@@ -2441,11 +2443,13 @@ body.splash-active {
     min-width: 0;
     overflow: hidden;
   }
-  .df-brand-text h1 {
+  .df-brand-text h1,
+  .df-brand-text .df-brand-name {
     font-size: 0.88rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
   }
   .df-brand-tagline {
     font-size: 0.64rem;
