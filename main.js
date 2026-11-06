@@ -356,6 +356,27 @@
     checkDineFlowServiceParam();
     window.addEventListener('hashchange', checkDineFlowServiceParam);
 
+    // Auto-fill and scroll to contact form from Services Section cards
+    document.querySelectorAll('.btn-service-inquire').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const serviceVal = btn.getAttribute('data-service');
+        const select = document.getElementById('lead-service');
+        if (select && serviceVal) {
+          for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === serviceVal || select.options[i].text.toLowerCase().includes(serviceVal.toLowerCase())) {
+              select.selectedIndex = i;
+              break;
+            }
+          }
+        }
+        const contactSection = document.getElementById('contact');
+        if (contactSection) {
+          contactSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
     let isSubmitting = false;
 
     function isValidEmail(val) {
