@@ -103,9 +103,14 @@
   </url>
   <url>
     <loc>https://www.debashishpaul.in/services</loc>
-    <lastmod>2026-10-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://www.debashishpaul.in/assets/og-preview.png</image:loc>
+      <image:title>Specialized Web Engineering, SaaS Architecture &amp; Consulting Services - Debashish Paul</image:title>
+      <image:caption>SaaS Product Architecture &amp; MVPs, High-Converting Business Platforms, Full-Stack Web Engineering, 60fps Motion, Real-Time APIs, and Core Web Vitals Audits</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://www.debashishpaul.in/testimonials</loc>

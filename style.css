@@ -4432,7 +4432,7 @@ body.mobile-drawer-open #back-to-top {
   box-sizing: border-box;
 }
 
-@media (max-width: 1180px) and (min-width: 1025px) {
+@media (max-width: 1280px) {
   .role-pills-wrap {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -4442,7 +4442,7 @@ body.mobile-drawer-open #back-to-top {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.34rem 0.25rem;
+  padding: 0.36rem 0.3rem;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -4455,6 +4455,9 @@ body.mobile-drawer-open #back-to-top {
   transition: all 0.2s ease;
   box-sizing: border-box;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .role-pill:hover {
@@ -4821,6 +4824,11 @@ body.mobile-drawer-open #back-to-top {
   .flow-step-text span {
     font-size: 0.6rem;
     white-space: nowrap;
+  }
+  .role-pills-wrap {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.35rem;
+    width: 100%;
   }
 }
 
