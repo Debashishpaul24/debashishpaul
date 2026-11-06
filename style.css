@@ -4215,9 +4215,8 @@ body.mobile-drawer-open #back-to-top {
 /* Quick Role Switcher Strip */
 .flagship-role-links {
   display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.4rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -4226,29 +4225,42 @@ body.mobile-drawer-open #back-to-top {
   font-size: 0.64rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-dim);
-  margin-right: 0.2rem;
   white-space: nowrap;
-  flex-shrink: 0;
+}
+
+.role-pills-wrap {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1180px) and (min-width: 1025px) {
+  .role-pills-wrap {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .role-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.28rem 0.65rem;
+  padding: 0.34rem 0.25rem;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-muted);
-  font-size: 0.72rem;
+  font-size: clamp(0.64rem, 0.85vw, 0.71rem);
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  flex-shrink: 0;
+  text-align: center;
   transition: all 0.2s ease;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .role-pill:hover {
@@ -4709,8 +4721,7 @@ body.mobile-drawer-open #back-to-top {
   }
   .flagship-role-links {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    flex-direction: column;
     gap: 0.35rem;
     width: 100%;
   }
@@ -4720,13 +4731,18 @@ body.mobile-drawer-open #back-to-top {
     font-size: 0.62rem;
     white-space: nowrap;
   }
+  .role-pills-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.35rem;
+    width: 100%;
+  }
   .role-pill {
-    flex: 1 1 auto;
-    min-width: fit-content;
+    width: 100%;
     justify-content: center;
     text-align: center;
-    padding: 0.3rem 0.45rem;
-    font-size: clamp(0.64rem, 2.5vw, 0.72rem);
+    padding: 0.32rem 0.35rem;
+    font-size: clamp(0.65rem, 2.5vw, 0.72rem);
     white-space: nowrap;
   }
   .flagship-metrics-strip {
@@ -4840,11 +4856,14 @@ body.mobile-drawer-open #back-to-top {
   .signature-flagship-card {
     padding: 0.85rem 0.6rem;
   }
+  .role-pills-wrap {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.28rem;
+  }
   .role-pill {
-    flex: 1 1 100%;
     width: 100%;
-    padding: 0.35rem 0.4rem;
-    font-size: 0.68rem;
+    padding: 0.3rem 0.2rem;
+    font-size: 0.64rem;
     white-space: nowrap;
   }
   .flagship-metrics-strip {
