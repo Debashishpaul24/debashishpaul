@@ -5666,3 +5666,149 @@ body.splash-active {
   color: #07090E;
   font-weight: 700;
 }
+
+/* ========================================================================== */
+/* DineFlow FAQ Accordion Section                                            */
+/* ========================================================================== */
+.df-faq-wrapper {
+  margin: 3.5rem 0 2rem;
+  scroll-margin-top: 5rem;
+}
+
+.df-faq-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 2.25rem;
+}
+
+.df-faq-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(229, 169, 60, 0.1);
+  border: 1px solid rgba(229, 169, 60, 0.25);
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-primary);
+  margin-bottom: 0.75rem;
+}
+
+.df-faq-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.df-faq-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.df-faq-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.df-faq-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.df-faq-item:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.df-faq-item[open] {
+  border-color: rgba(229, 169, 60, 0.4);
+  background: rgba(20, 26, 41, 0.9);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.df-faq-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #F8FAFC;
+  list-style: none;
+}
+
+.df-faq-summary::-webkit-details-marker {
+  display: none;
+}
+
+.df-faq-question {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.df-faq-q-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(229, 169, 60, 0.12);
+  color: var(--brand-primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.df-faq-chevron {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.df-faq-item[open] .df-faq-chevron {
+  transform: rotate(180deg);
+  color: var(--brand-primary);
+}
+
+.df-faq-answer {
+  padding: 0 1.4rem 1.25rem 3.5rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  margin-top: 0.25rem;
+  padding-top: 0.85rem;
+}
+
+.df-faq-answer strong {
+  color: #F8FAFC;
+}
+
+.df-faq-answer p + p {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .df-faq-answer {
+    padding-left: 1.4rem;
+  }
+}
+

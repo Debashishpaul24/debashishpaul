@@ -207,6 +207,22 @@
               "@type": "Answer",
               "text": "Yes, DineFlow is 100% browser-based. Guests order without downloading apps, and kitchen staff operate on any existing tablet, iPad, or desktop screen with zero hardware lock-in."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "Can we manage multi-branch restaurant chains and custom logos?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. DineFlow provides enterprise multi-tenant isolation. You can govern multiple brands or franchise branches from a single Owner HQ terminal with custom vector logos, theme colors, private menus, table floor plans, and isolated staff PINs."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How fast is real-time order synchronization across devices?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Order events synchronize in under 100ms using a hybrid engine combining PostgreSQL Realtime Change Data Capture (CDC) with client-side BroadcastChannel event dispatching without manual page reloads."
+            }
           }
         ]
       },
@@ -300,6 +316,7 @@
           <a href="?section=explore-roles" class="df-nav-pill">👥 Explore 3 Modules</a>
           <a href="?section=roi-calculator" class="df-nav-pill">📊 ROI Calculator</a>
           <a href="?section=why-dineflow" class="df-nav-pill">⚖️ Why DineFlow vs POS</a>
+          <a href="?section=faq" class="df-nav-pill">❓ Operator FAQ</a>
         </div>
       </div>
 
@@ -751,6 +768,120 @@
             </tr>
           </tbody>
         </table>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- FREQUENTLY ASKED QUESTIONS (FAQ) ACCORDION                           -->
+      <!-- ==================================================================== -->
+      <section class="df-faq-wrapper" id="faq">
+        <div class="df-faq-header">
+          <div class="df-faq-badge">
+            <span>💡</span>
+            <span>Hospitality Operator Clarity</span>
+          </div>
+          <h2 class="df-faq-title">Frequently Asked Questions</h2>
+          <p class="df-faq-subtitle">
+            Everything restaurant owners, general managers, and tech leads need to know about DineFlow.
+          </p>
+        </div>
+
+        <div class="df-faq-grid">
+          <!-- FAQ 1 -->
+          <details class="df-faq-item" open>
+            <summary class="df-faq-summary">
+              <span class="df-faq-question">
+                <span class="df-faq-q-icon">01</span>
+                <span>How does DineFlow QR code restaurant ordering work?</span>
+              </span>
+              <svg class="df-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="df-faq-answer">
+              <p>Guests scan a dynamic table tent QR code with any smartphone camera to open the digital menu with <strong>zero app download</strong> or account signup required. Guests customize their order (spice levels, cooking notes, allergy warnings), and orders fire straight to the Kitchen KDS Kanban in <strong>under 50ms</strong> with acoustic kitchen chimes.</p>
+            </div>
+          </details>
+
+          <!-- FAQ 2 -->
+          <details class="df-faq-item">
+            <summary class="df-faq-summary">
+              <span class="df-faq-question">
+                <span class="df-faq-q-icon">02</span>
+                <span>How does DineFlow eliminate aggregator eat-in commissions?</span>
+              </span>
+              <svg class="df-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="df-faq-answer">
+              <p>Third-party dining aggregators charge <strong>15% to 25% commission</strong> on dine-in discounts and keep your customer data. DineFlow provides direct at-table ordering with dynamic <strong>0% fee UPI QR payments</strong> straight to your merchant VPA, allowing restaurant owners to retain 100% of their revenue while fully owning customer CRM data.</p>
+            </div>
+          </details>
+
+          <!-- FAQ 3 -->
+          <details class="df-faq-item">
+            <summary class="df-faq-summary">
+              <span class="df-faq-question">
+                <span class="df-faq-q-icon">03</span>
+                <span>Does DineFlow support thermal receipt and KOT printing?</span>
+              </span>
+              <svg class="df-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="df-faq-answer">
+              <p>Yes. DineFlow features an integrated <strong>80mm ESC/POS thermal printing engine</strong> for Kitchen Order Tickets (KOT) and GST tax invoices. Invoices print with dynamic UPI payment QR codes so guests can scan-to-pay directly on the physical receipt paper with zero proprietary printer driver locks.</p>
+            </div>
+          </details>
+
+          <!-- FAQ 4 -->
+          <details class="df-faq-item">
+            <summary class="df-faq-summary">
+              <span class="df-faq-question">
+                <span class="df-faq-q-icon">04</span>
+                <span>Can DineFlow work without an app download or proprietary POS hardware?</span>
+              </span>
+              <svg class="df-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="df-faq-answer">
+              <p>Yes. DineFlow is <strong>100% browser-based (Progressive Web Application)</strong>. Guests never need to download anything from the App Store or Google Play. Floor managers and kitchen staff run the Kitchen Display System (KDS) on any existing tablet, iPad, TV screen, or PC with zero costly hardware lock-in.</p>
+            </div>
+          </details>
+
+          <!-- FAQ 5 -->
+          <details class="df-faq-item">
+            <summary class="df-faq-summary">
+              <span class="df-faq-question">
+                <span class="df-faq-q-icon">05</span>
+                <span>Can we manage multi-branch restaurant chains and custom logos?</span>
+              </span>
+              <svg class="df-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="df-faq-answer">
+              <p>Yes. DineFlow provides enterprise <strong>multi-tenant isolation</strong>. You can govern multiple brands or franchise branches from a single Owner HQ terminal. Each restaurant features custom vector logos, theme colors, private menus, table floor plans, and isolated staff PINs synced securely via PostgreSQL.</p>
+            </div>
+          </details>
+
+          <!-- FAQ 6 -->
+          <details class="df-faq-item">
+            <summary class="df-faq-summary">
+              <span class="df-faq-question">
+                <span class="df-faq-q-icon">06</span>
+                <span>How fast is real-time order synchronization across devices?</span>
+              </span>
+              <svg class="df-faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </summary>
+            <div class="df-faq-answer">
+              <p>Order events synchronize in <strong>under 100ms</strong> using a hybrid engine combining PostgreSQL Realtime Change Data Capture (CDC) with client-side BroadcastChannel event dispatching. When a guest orders or calls a waiter, the Kitchen KDS and Floor Manager console ring immediately without page reloads.</p>
+            </div>
+          </details>
+        </div>
       </section>
 
       <!-- Real-Time Testing Helper Box -->
