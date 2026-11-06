@@ -259,6 +259,7 @@
         },
         coverImage: db.cover_image || `images/cover-${db.slug}.jpg`,
         logoEmoji: db.logo_emoji || '🍽️',
+        logoUrl: db.logo_url || null,
         wifiName: db.wifi_name || 'Guest-WiFi',
         wifiPass: db.wifi_pass || 'welcome123',
         upiVpa: db.upi_vpa || 'merchant@upi',
@@ -1247,9 +1248,19 @@
                 service_charge_rate: Number(t.serviceChargeRate) || 5,
                 wifi_name: t.wifiName,
                 wifi_pass: t.wifiPass,
+                logo_emoji: t.logoEmoji || '🍽️',
                 updated_at: new Date().toISOString()
               };
-              const { error } = await sb.from('tenants').update(row).eq('slug', t.slug || tenantId);
+              if (t.logoUrl !== undefined) {
+                row.logo_url = t.logoUrl;
+              }
+              let { error } = await sb.from('tenants').update(row).eq('slug', t.slug || tenantId);
+              if (error && error.code === 'PGRST204' && row.logo_url !== undefined) {
+                console.warn('[DineFlowDB] logo_url column not found in remote tenants schema cache. Updating other fields.');
+                delete row.logo_url;
+                const retry = await sb.from('tenants').update(row).eq('slug', t.slug || tenantId);
+                error = retry.error;
+              }
               if (error) throw error;
               console.log(`[DineFlowDB] ✓ Tenant ${t.name} branding updated in PostgreSQL!`);
             }

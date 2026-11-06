@@ -897,6 +897,68 @@
     root.style.setProperty('--brand-primary-rgb', `${r}, ${g}, ${b}`);
 
     document.title = `${tenant.name} | QR Digital Dining Experience`;
+
+    // Real-Time Header Logo Synchronization across active DOM elements on screen
+    document.querySelectorAll('.df-brand-icon').forEach(iconEl => {
+      if (iconEl.closest('.df-brand-badge') || iconEl.closest('#btn-venue-switcher-toggle')) {
+        if (tenant.logoUrl) {
+          iconEl.classList.add('has-logo-img');
+          iconEl.innerHTML = `<img src="${tenant.logoUrl}" alt="${tenant.name}" class="df-brand-logo-img">`;
+        } else {
+          iconEl.classList.remove('has-logo-img');
+          iconEl.textContent = tenant.logoEmoji || '🍽️';
+        }
+      }
+    });
+
+    const splashLogo = document.querySelector('.df-splash-logo-card');
+    if (splashLogo) {
+      if (tenant.logoUrl) {
+        splashLogo.classList.add('has-logo-img');
+        splashLogo.innerHTML = `<img src="${tenant.logoUrl}" alt="${tenant.name}" class="df-brand-logo-img">`;
+      } else {
+        splashLogo.classList.remove('has-logo-img');
+        splashLogo.textContent = tenant.logoEmoji || '🍽️';
+      }
+    }
+
+    const footerIcon = document.querySelector('.df-footer-icon');
+    if (footerIcon) {
+      if (tenant.logoUrl) {
+        footerIcon.classList.add('has-logo-img');
+        footerIcon.innerHTML = `<img src="${tenant.logoUrl}" alt="${tenant.name}" class="df-brand-logo-img">`;
+      } else {
+        footerIcon.classList.remove('has-logo-img');
+        footerIcon.textContent = tenant.logoEmoji || '🍽️';
+      }
+    }
+  }
+
+  // Helper: Render Brand Icon HTML (Image or Fallback Emoji)
+  function renderBrandIconHtml(tenant, extraClass = '') {
+    if (!tenant) return `<div class="df-brand-icon ${extraClass}">🍽️</div>`;
+    if (tenant.logoUrl) {
+      return `<div class="df-brand-icon has-logo-img ${extraClass}"><img src="${tenant.logoUrl}" alt="${tenant.name}" class="df-brand-logo-img"></div>`;
+    }
+    return `<div class="df-brand-icon ${extraClass}">${tenant.logoEmoji || '🍽️'}</div>`;
+  }
+
+  // Helper: Render Splash Screen Logo Card HTML
+  function renderSplashLogoHtml(tenant) {
+    if (!tenant) return `<div class="df-splash-logo-card">🍽️</div>`;
+    if (tenant.logoUrl) {
+      return `<div class="df-splash-logo-card has-logo-img"><img src="${tenant.logoUrl}" alt="${tenant.name}" class="df-brand-logo-img"></div>`;
+    }
+    return `<div class="df-splash-logo-card">${tenant.logoEmoji || '🍽️'}</div>`;
+  }
+
+  // Helper: Render Outlet Directory Icon HTML
+  function renderOutletIconHtml(t) {
+    if (!t) return `<div class="df-outlet-icon">🍽️</div>`;
+    if (t.logoUrl) {
+      return `<div class="df-outlet-icon has-logo-img"><img src="${t.logoUrl}" alt="${t.name}" class="df-brand-logo-img"></div>`;
+    }
+    return `<div class="df-outlet-icon">${t.logoEmoji || '🍽️'}</div>`;
   }
 
   // Floating Role Switcher Pill for Multi-Persona Exploration
@@ -1310,7 +1372,7 @@
                 <div class="df-outlet-card" style="--outlet-color: ${primaryColor};">
                   <div class="df-outlet-top">
                     <div class="df-outlet-brand">
-                      <div class="df-outlet-icon">${t.logoEmoji || '🍽️'}</div>
+                      ${renderOutletIconHtml(t)}
                       <div class="df-outlet-info">
                         <h3>${t.name}</h3>
                         <div class="df-outlet-branch">
@@ -2041,7 +2103,7 @@
       <!-- Top Sticky Bar -->
       <header class="df-topbar">
         <div class="df-brand-badge">
-          <div class="df-brand-icon">${tenant.logoEmoji || '🍽️'}</div>
+          ${renderBrandIconHtml(tenant)}
           <div class="df-brand-text">
             <h1>${tenant.name}</h1>
             <span class="df-brand-tagline">${tenant.branch}</span>
@@ -2162,7 +2224,9 @@
           <footer class="df-customer-footer">
             <div class="df-footer-top">
               <div class="df-footer-brand">
-                <span class="df-footer-icon">${tenant.logoEmoji || '🍽️'}</span>
+                <span class="df-footer-icon ${tenant.logoUrl ? 'has-logo-img' : ''}">
+                  ${tenant.logoUrl ? `<img src="${tenant.logoUrl}" alt="${tenant.name}" class="df-brand-logo-img">` : (tenant.logoEmoji || '🍽️')}
+                </span>
                 <div>
                   <h4 class="df-footer-name">${tenant.name}</h4>
                   <p class="df-footer-branch">${tenant.branch}</p>
@@ -2212,9 +2276,7 @@
 
       <!-- Splash / Welcome Overlay Screen (First time scan simulation) -->
       <div class="df-splash-screen ${sessionStorage.getItem('df_splash_dismissed') ? 'hidden' : ''}" id="splash-screen">
-        <div class="df-splash-logo-card">
-          ${tenant.logoEmoji || '🍽️'}
-        </div>
+        ${renderSplashLogoHtml(tenant)}
         <h2 class="df-splash-title">
           Welcome to ${tenant.name}
         </h2>
@@ -3612,7 +3674,7 @@
       <header class="df-topbar df-staff-topbar">
         <div class="df-venue-switcher-container" id="df-venue-switcher-wrap">
           <button id="btn-venue-switcher-toggle" class="df-venue-switcher-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Switch Restaurant Outlets">
-            <div class="df-brand-icon">${tenant.logoEmoji || '🍽️'}</div>
+            ${renderBrandIconHtml(tenant)}
             <div class="df-brand-text">
               <div class="df-venue-current-row">
                 <h1 title="${tenant.name} Staff OS">${tenant.name}</h1>
@@ -3634,7 +3696,9 @@
       return `
                   <a href="?r=${t.slug}&view=admin" class="df-venue-item ${isCurrent ? 'active' : ''}" data-slug="${t.slug}">
                     <div class="df-venue-item-info">
-                      <span class="df-venue-item-icon">${t.logoEmoji || '🍽️'}</span>
+                      <span class="df-venue-item-icon ${t.logoUrl ? 'has-logo-img' : ''}">
+                        ${t.logoUrl ? `<img src="${t.logoUrl}" alt="${t.name}">` : (t.logoEmoji || '🍽️')}
+                      </span>
                       <div>
                         <div class="df-venue-item-name">${t.name}</div>
                         <div class="df-venue-item-sub">${t.branch || 'Main'} &bull; ${totalTbls} Tables</div>
@@ -3730,7 +3794,9 @@
               <div class="df-sidebar-venue-list">
                 ${Object.values(state.tenants || {}).map(t => `
                   <a href="?r=${t.slug}&view=admin" class="df-sidebar-venue-btn ${t.slug === tenant.slug ? 'active' : ''}" title="Switch to ${t.name}">
-                    <span>${t.logoEmoji || '🍽️'} ${t.name.split(' ')[0]}</span>
+                    <span style="display:inline-flex;align-items:center;gap:0.35rem;">
+                      ${t.logoUrl ? `<img src="${t.logoUrl}" alt="${t.name}" style="width:16px;height:16px;border-radius:4px;object-fit:cover;vertical-align:middle;">` : (t.logoEmoji || '🍽️')} ${t.name.split(' ')[0]}
+                    </span>
                     <span style="font-size: 0.65rem; opacity: 0.7;">${t.slug === tenant.slug ? 'Active' : '↗'}</span>
                   </a>
                 `).join('')}
@@ -6890,15 +6956,122 @@
   // BRANDING SETTINGS
   function renderBrandingSettings(container, tenant) {
     const currentTone = (state.settings && state.settings.toneProfile) || 'executive';
+    let currentLogoUrl = tenant.logoUrl || null;
+    let currentLogoEmoji = tenant.logoEmoji || '🍽️';
+
+    // Sample culinary preset logos for 1-click testing
+    const sampleLogos = [
+      {
+        name: 'The Urban Plate Crest',
+        url: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNjAiIGZpbGw9IiMwRjE3MkEiIHN0cm9rZT0iI0U1QTkzQyIgc3Ryb2tlLXdpZHRoPSI0Ii8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0U1QTkzQyIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1kYXNoYXJyYXk9IjMsMyIvPjx0ZXh0IHg9IjY0IiB5PSI3NCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzIiIGZvbnQtd2VpZ2h0PSI5MDAiIGZpbGw9IiNFNUE5M0MiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlVQPC90ZXh0Pjx0ZXh0IHg9IjY0IiB5PSI5NCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iOSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0U1QTkzQyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjIiPkJJU1RSTzwvdGV4dD48L3N2Zz4='
+      },
+      {
+        name: 'Bella Vista Trattoria',
+        url: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNjAiIGZpbGw9IiMxRTFCNEIiIHN0cm9rZT0iIzEwQjk4MSIgc3Ryb2tlLXdpZHRoPSI0Ii8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzEwQjk4MSIgc3Ryb2tlLWRhc2hhcnJheT0iNCw0IiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI2NCIgeT0iNzQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjM0IiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjMTBCOTgxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CVjwvdGV4dD48dGV4dCB4PSI2NCIgeT0iOTQiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjQTdGM0QwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIjtsZXR0ZXItc3BhY2luZz0iMiI+Uk9NQTwvdGV4dD48L3N2Zz4='
+      },
+      {
+        name: 'Sakura Asian Crest',
+        url: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNjAiIGZpbGw9IiMwQjBGMTkiIHN0cm9rZT0iI0UxMUQ0OCIgc3Ryb2tlLXdpZHRoPSI0Ii8+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMzAiIGZpbGw9IiNFMTFENDgiLz48dGV4dCB4PSI2NCIgeT0iNzUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjRkZGRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7moZw8L3RleHQ+PC9zdmc+'
+      },
+      {
+        name: 'Royal Bistro Crown',
+        url: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiB2aWV3Qm94PSIwIDAgMTI4IDEyOCI+PGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNjAiIGZpbGw9IiMxODE4MUIiIHN0cm9rZT0iI0Y1OUUwQiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PHBhdGggZD0iTTQwIDc2bC02LTMwIDE4IDEyIDEyLTIwIDEyIDIwIDE4LTEyLTYgMzB6IiBmaWxsPSIjRjU5RTBCIi8+PGNpcmNsZSBjeD0iNjQiIGN5PSI5MCIgcj0iNSIgZmlsbD0iI0Y1OUUwQiIvPjwvc3ZnPg=='
+      }
+    ];
+
+    const emojiPresets = ['🍽️', '🍕', '🍣', '🍔', '🍜', '🍸', '☕', '🥩', '🌮', '🥐'];
 
     container.innerHTML = `
       <div style="margin-bottom: 1.5rem;">
         <h2 style="font-size: 1.35rem; font-weight: 800;">Restaurant Configuration & Dynamic Branding</h2>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Changes instantly update the customer interface colors, typography, currency, and tax rates.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Customize your restaurant logo, theme colors, guest Wi-Fi, and GST rates. Changes publish instantly across all customer phones and staff terminals.</p>
       </div>
 
-      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; max-width: 650px;">
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; max-width: 680px;">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+
+          <!-- 1. RESTAURANT LOGO MANAGEMENT CONSOLE -->
+          <div class="df-logo-config-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+              <div>
+                <h3 style="font-size: 1rem; font-weight: 800; color: #fff; margin-bottom: 0.2rem;">Restaurant Brand Logo</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Displays prominently in mobile headers, Staff OS topbars, and splash screens.</p>
+              </div>
+              <div id="cfg-logo-status-tag">
+                ${currentLogoUrl ? '<span style="color:#10B981;font-size:0.72rem;font-weight:700;background:rgba(16,185,129,0.15);padding:0.2rem 0.55rem;border-radius:99px;border:1px solid rgba(16,185,129,0.3);">● Custom Logo Active</span>' : '<span style="color:var(--brand-primary);font-size:0.72rem;font-weight:700;background:rgba(229,169,60,0.15);padding:0.2rem 0.55rem;border-radius:99px;border:1px solid rgba(229,169,60,0.3);">● Fallback Emblem Active</span>'}
+              </div>
+            </div>
+
+            <!-- Live Header & Splash Preview Mockup -->
+            <div class="df-logo-preview-banner">
+              <div class="df-logo-preview-unit" style="flex: 1; min-width: 220px;">
+                <span class="df-logo-preview-legend">Header Display Mockup (All Devices)</span>
+                <div class="df-logo-header-sample">
+                  <div class="df-brand-icon ${currentLogoUrl ? 'has-logo-img' : ''}" id="cfg-logo-preview-icon">
+                    ${currentLogoUrl ? `<img src="${currentLogoUrl}" alt="${tenant.name}" class="df-brand-logo-img">` : currentLogoEmoji}
+                  </div>
+                  <div class="df-brand-text">
+                    <h1 id="cfg-logo-preview-name" style="font-size: 0.92rem; font-weight: 800; color: #fff; margin: 0;">${tenant.name}</h1>
+                    <span class="df-brand-tagline">${tenant.branch} • Staff OS</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="df-logo-preview-unit" style="align-items: center;">
+                <span class="df-logo-preview-legend">Welcome Screen</span>
+                <div class="df-splash-logo-card ${currentLogoUrl ? 'has-logo-img' : ''}" id="cfg-logo-preview-splash" style="width: 52px; height: 52px; border-radius: 14px; font-size: 1.6rem; margin-bottom: 0;">
+                  ${currentLogoUrl ? `<img src="${currentLogoUrl}" alt="${tenant.name}" class="df-brand-logo-img">` : currentLogoEmoji}
+                </div>
+              </div>
+            </div>
+
+            <!-- Upload File & URL Controls -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+                <input type="file" id="cfg-logo-file" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                <label for="cfg-logo-file" class="df-logo-upload-trigger">
+                  <span>📁 Upload Image from Device</span>
+                </label>
+                <button type="button" id="btn-clear-logo-img" class="df-logo-clear-btn" style="display: ${currentLogoUrl ? 'inline-flex' : 'none'};">
+                  <span>✕ Remove Image</span>
+                </button>
+              </div>
+
+              <div>
+                <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim); margin-bottom: 0.35rem; display: block;">Or Enter Logo Image URL / Path</label>
+                <input type="text" id="cfg-logo-url" placeholder="https://example.com/logo.png or images/cover-the-urban-plate.jpg" value="${currentLogoUrl && !currentLogoUrl.startsWith('data:') ? currentLogoUrl : ''}" style="width: 100%; font-size: 0.8rem;">
+              </div>
+
+              <!-- 1-Click Sample Preset Logos -->
+              <div>
+                <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-bottom: 0.35rem;">Sample Brand Logos (1-Click Test):</span>
+                <div class="df-logo-preset-list">
+                  ${sampleLogos.map((s, idx) => `
+                    <button type="button" class="df-logo-preset-btn btn-sample-logo" data-url="${encodeURIComponent(s.url)}">
+                      <span>✨ ${s.name}</span>
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Fallback Emoji / Symbol Picker -->
+              <div style="margin-top: 0.35rem; padding-top: 0.65rem; border-top: 1px solid rgba(255,255,255,0.06);">
+                <label style="font-size: 0.75rem; font-weight: 700; color: var(--text-dim); margin-bottom: 0.35rem; display: block;">Fallback Brand Symbol / Emoji</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                  <input type="text" id="cfg-logo-emoji" value="${currentLogoEmoji}" maxlength="4" style="width: 60px; text-align: center; font-size: 1.2rem; padding: 0.35rem;">
+                  <div class="df-logo-preset-list" style="margin-top: 0;">
+                    ${emojiPresets.map(em => `
+                      <button type="button" class="df-logo-preset-btn btn-emoji-preset ${em === currentLogoEmoji ? 'active' : ''}" data-emoji="${em}">
+                        <span>${em}</span>
+                      </button>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. RESTAURANT BASIC DETAILS -->
           <div>
             <label style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 0.35rem; display: block;">Restaurant Trade Name</label>
             <input type="text" id="cfg-name" value="${tenant.name}" style="width: 100%;">
@@ -6945,7 +7118,7 @@
       </div>
 
       <!-- Audio Notification Tone & Alert Profile -->
-      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; max-width: 650px; margin-top: 1.5rem;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; max-width: 680px; margin-top: 1.5rem;">
         <div style="margin-bottom: 1.25rem;">
           <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 0.35rem;">Staff OS Audio Alert Tone &amp; Profile</h3>
           <p style="font-size: 0.8rem; color: var(--text-muted);">Choose the synthesized acoustic tone played when new orders arrive, tables call, or actions complete.</p>
@@ -6965,6 +7138,155 @@
       </div>
     `;
 
+    // Internal helper to refresh preview elements
+    function updateLogoPreview(logoUrl, logoEmoji) {
+      const previewIcon = document.getElementById('cfg-logo-preview-icon');
+      const previewSplash = document.getElementById('cfg-logo-preview-splash');
+      const previewStatus = document.getElementById('cfg-logo-status-tag');
+      const clearBtn = document.getElementById('btn-clear-logo-img');
+
+      if (logoUrl) {
+        if (previewIcon) {
+          previewIcon.classList.add('has-logo-img');
+          previewIcon.innerHTML = `<img src="${logoUrl}" alt="${tenant.name}" class="df-brand-logo-img">`;
+        }
+        if (previewSplash) {
+          previewSplash.classList.add('has-logo-img');
+          previewSplash.innerHTML = `<img src="${logoUrl}" alt="${tenant.name}" class="df-brand-logo-img">`;
+        }
+        if (previewStatus) {
+          previewStatus.innerHTML = '<span style="color:#10B981;font-size:0.72rem;font-weight:700;background:rgba(16,185,129,0.15);padding:0.2rem 0.55rem;border-radius:99px;border:1px solid rgba(16,185,129,0.3);">● Custom Logo Active</span>';
+        }
+        if (clearBtn) clearBtn.style.display = 'inline-flex';
+      } else {
+        if (previewIcon) {
+          previewIcon.classList.remove('has-logo-img');
+          previewIcon.textContent = logoEmoji || '🍽️';
+        }
+        if (previewSplash) {
+          previewSplash.classList.remove('has-logo-img');
+          previewSplash.textContent = logoEmoji || '🍽️';
+        }
+        if (previewStatus) {
+          previewStatus.innerHTML = '<span style="color:var(--brand-primary);font-size:0.72rem;font-weight:700;background:rgba(229,169,60,0.15);padding:0.2rem 0.55rem;border-radius:99px;border:1px solid rgba(229,169,60,0.3);">● Fallback Emblem Active</span>';
+        }
+        if (clearBtn) clearBtn.style.display = 'none';
+      }
+    }
+
+    // Name input live preview update
+    document.getElementById('cfg-name')?.addEventListener('input', (e) => {
+      const previewName = document.getElementById('cfg-logo-preview-name');
+      if (previewName) previewName.textContent = e.target.value.trim() || tenant.name;
+    });
+
+    // File upload reader with automatic high-quality downsampling to max 240x240 for optimal database storage
+    const fileInput = document.getElementById('cfg-logo-file');
+    fileInput?.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select a valid image file (PNG, JPG, SVG, WebP)', '⚠️');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        const rawData = re.target.result;
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 240;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxDim) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            }
+          } else {
+            if (h > maxDim) {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, w, h);
+          const optimized = canvas.toDataURL('image/webp', 0.9) || canvas.toDataURL('image/png');
+          currentLogoUrl = optimized;
+          const urlInput = document.getElementById('cfg-logo-url');
+          if (urlInput) urlInput.value = '';
+          updateLogoPreview(currentLogoUrl, currentLogoEmoji);
+          showToast('Logo image loaded & optimized! Click "Save & Publish" to go live.', '🖼️');
+        };
+        img.onerror = () => {
+          currentLogoUrl = rawData;
+          updateLogoPreview(currentLogoUrl, currentLogoEmoji);
+          showToast('Logo loaded! Click "Save & Publish" to activate.', '🖼️');
+        };
+        img.src = rawData;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // URL input listener
+    const urlInput = document.getElementById('cfg-logo-url');
+    urlInput?.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      currentLogoUrl = val || null;
+      updateLogoPreview(currentLogoUrl, currentLogoEmoji);
+    });
+
+    // Clear logo button
+    const clearBtn = document.getElementById('btn-clear-logo-img');
+    clearBtn?.addEventListener('click', () => {
+      currentLogoUrl = null;
+      if (urlInput) urlInput.value = '';
+      if (fileInput) fileInput.value = '';
+      updateLogoPreview(null, currentLogoEmoji);
+      showToast('Logo image cleared. Active emblem is now fallback emoji.', 'ℹ️');
+    });
+
+    // Sample logo preset buttons
+    container.querySelectorAll('.btn-sample-logo').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rawUrl = decodeURIComponent(btn.getAttribute('data-url') || '');
+        if (rawUrl) {
+          currentLogoUrl = rawUrl;
+          if (urlInput) urlInput.value = '';
+          updateLogoPreview(currentLogoUrl, currentLogoEmoji);
+          showToast(`Applied preset logo! Click "Save & Publish" to activate.`, '✨');
+        }
+      });
+    });
+
+    // Emoji input listener
+    const emojiInput = document.getElementById('cfg-logo-emoji');
+    emojiInput?.addEventListener('input', (e) => {
+      currentLogoEmoji = e.target.value.trim() || '🍽️';
+      if (!currentLogoUrl) {
+        updateLogoPreview(null, currentLogoEmoji);
+      }
+    });
+
+    // Emoji preset pills
+    container.querySelectorAll('.btn-emoji-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const em = btn.getAttribute('data-emoji') || '🍽️';
+        currentLogoEmoji = em;
+        if (emojiInput) emojiInput.value = em;
+        container.querySelectorAll('.btn-emoji-preset').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (!currentLogoUrl) {
+          updateLogoPreview(null, currentLogoEmoji);
+        }
+      });
+    });
+
+    // Tone preview button
     document.getElementById('btn-preview-tone')?.addEventListener('click', () => {
       const selected = document.getElementById('cfg-tone-profile')?.value || 'executive';
       if (selected === 'mute') {
@@ -6975,6 +7297,7 @@
       }
     });
 
+    // Tone change listener
     document.getElementById('cfg-tone-profile')?.addEventListener('change', (e) => {
       state.settings = state.settings || {};
       state.settings.toneProfile = e.target.value;
@@ -6998,6 +7321,7 @@
       }
     });
 
+    // Save & Publish branding button
     document.getElementById('btn-save-branding')?.addEventListener('click', () => {
       tenant.name = document.getElementById('cfg-name')?.value.trim() || tenant.name;
       tenant.tagline = document.getElementById('cfg-tagline')?.value.trim() || tenant.tagline;
@@ -7007,9 +7331,16 @@
       tenant.serviceChargeRate = parseFloat(document.getElementById('cfg-service')?.value) || 5;
       tenant.wifiName = document.getElementById('cfg-wifi-name')?.value.trim() || tenant.wifiName;
       tenant.wifiPass = document.getElementById('cfg-wifi-pass')?.value.trim() || tenant.wifiPass;
+      tenant.logoUrl = currentLogoUrl;
+      tenant.logoEmoji = document.getElementById('cfg-logo-emoji')?.value.trim() || currentLogoEmoji || '🍽️';
 
       state.settings = state.settings || {};
       state.settings.toneProfile = document.getElementById('cfg-tone-profile')?.value || state.settings.toneProfile || 'executive';
+
+      // Keep in-memory tenant object synchronized
+      if (state.tenants && state.tenants[tenant.slug]) {
+        state.tenants[tenant.slug] = { ...state.tenants[tenant.slug], ...tenant };
+      }
 
       DineFlowStore.save(state, {
         action: 'TENANT_UPDATED',
@@ -7018,7 +7349,10 @@
       });
       applyTenantBranding(tenant);
       SoundFX.chime('success');
-      showToast('Branding updated and published live!');
+      showToast('Branding & Restaurant Logo updated and published live across all devices! 🎨', '🚀');
+
+      // Re-render Staff OS view to update header, topbar, and branding form
+      renderAdminView(document.getElementById('app'), tenant);
     });
   }
 
@@ -8247,7 +8581,7 @@
                 <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.65rem;">
-                      <span style="font-size: 1.75rem;">${t.logoEmoji || '🍽️'}</span>
+                      ${t.logoUrl ? `<img src="${t.logoUrl}" alt="${t.name}" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-subtle);">` : `<span style="font-size: 1.75rem;">${t.logoEmoji || '🍽️'}</span>`}
                       <div>
                         <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff;">${t.name}</h3>
                         <span style="font-size: 0.75rem; color: var(--text-dim);">${t.branch}</span>

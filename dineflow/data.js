@@ -260,6 +260,7 @@ const DINEFLOW_DEFAULT_DATA = {
       secondaryColor: '#0F172A',
       coverImage: 'images/cover-the-urban-plate.jpg',
       logoEmoji: '🍽️',
+      logoUrl: null,
       wifiName: 'UrbanPlate_Guest',
       wifiPass: 'GoodFood2026',
       plan: 'Enterprise Pro',
@@ -282,6 +283,7 @@ const DINEFLOW_DEFAULT_DATA = {
       secondaryColor: '#1E1B4B',
       coverImage: 'images/cover-bella-vista.jpg',
       logoEmoji: '🍕',
+      logoUrl: null,
       wifiName: 'BellaVista_5G',
       wifiPass: 'PizzaPasta2026',
       plan: 'Growth Tier',
@@ -304,6 +306,7 @@ const DINEFLOW_DEFAULT_DATA = {
       secondaryColor: '#0B0F19',
       coverImage: 'images/cover-sakura-asian.jpg',
       logoEmoji: '🥢',
+      logoUrl: null,
       wifiName: 'Sakura_VIP',
       wifiPass: 'SushiTokyo26',
       plan: 'Enterprise Pro',
@@ -1964,9 +1967,30 @@ const DineFlowStore = {
   SESSION_KEY: 'DINEFLOW_SESSION_v1',
   OFFERS_KEY: 'DINEFLOW_CUSTOM_OFFERS_v1',
   DELETED_OFFERS_KEY: 'DINEFLOW_DELETED_OFFERS_v1',
+  BRANDING_KEY: 'DINEFLOW_BRANDING_v1',
   broadcastChannel: null,
   _dbState: null,
   _isDatabaseLoaded: false,
+
+  getBrandingOverrides() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const raw = localStorage.getItem(this.BRANDING_KEY);
+        if (raw) return JSON.parse(raw);
+      }
+    } catch (e) {}
+    return {};
+  },
+
+  saveBrandingOverride(slug, data) {
+    try {
+      if (typeof localStorage !== 'undefined' && slug) {
+        const current = this.getBrandingOverrides();
+        current[slug] = { ...(current[slug] || {}), ...data };
+        localStorage.setItem(this.BRANDING_KEY, JSON.stringify(current));
+      }
+    } catch (e) {}
+  },
 
   init() {
     // 1. Purge legacy monolithic and business data localStorage blobs (Zero LocalStorage for business data)
@@ -2073,7 +2097,15 @@ const DineFlowStore = {
       this._dbState = JSON.parse(JSON.stringify(DINEFLOW_DEFAULT_DATA));
     }
 
-    if (freshState.tenants) this._dbState.tenants = freshState.tenants;
+    if (freshState.tenants) {
+      const overrides = this.getBrandingOverrides();
+      Object.keys(overrides).forEach(slug => {
+        if (freshState.tenants[slug]) {
+          freshState.tenants[slug] = { ...freshState.tenants[slug], ...overrides[slug] };
+        }
+      });
+      this._dbState.tenants = freshState.tenants;
+    }
     if (freshState.staffAccounts) this._dbState.staffAccounts = freshState.staffAccounts;
     if (freshState.tables) {
       this._dbState.tables = (typeof sortTablesSerially === 'function')
@@ -2103,6 +2135,14 @@ const DineFlowStore = {
     if (this._dbState) {
       this._dbState.session = this.getSession();
       this._dbState.offers = this.mergeOffers(this._dbState.offers || []);
+      const overrides = this.getBrandingOverrides();
+      if (this._dbState.tenants) {
+        Object.keys(overrides).forEach(slug => {
+          if (this._dbState.tenants[slug]) {
+            this._dbState.tenants[slug] = { ...this._dbState.tenants[slug], ...overrides[slug] };
+          }
+        });
+      }
       return this._dbState;
     }
 
@@ -2112,6 +2152,14 @@ const DineFlowStore = {
     fallback.offers = this.mergeOffers(fallback.offers || []);
     if (fallback.tables && typeof sortTablesSerially === 'function') {
       fallback.tables = sortTablesSerially(fallback.tables);
+    }
+    const overrides = this.getBrandingOverrides();
+    if (fallback.tenants) {
+      Object.keys(overrides).forEach(slug => {
+        if (fallback.tenants[slug]) {
+          fallback.tenants[slug] = { ...fallback.tenants[slug], ...overrides[slug] };
+        }
+      });
     }
     this._dbState = fallback;
     return this._dbState;
@@ -2128,6 +2176,20 @@ const DineFlowStore = {
       // Persist active session credentials in localStorage (no business data)
       if (data && data.session) {
         this.saveSession(data.session);
+      }
+
+      // Persist tenant branding customizations (custom logo, emoji, theme)
+      if (meta && meta.action === 'TENANT_UPDATED' && meta.tenant) {
+        const slug = meta.tenant.slug || meta.tenantSlug;
+        if (slug) {
+          this.saveBrandingOverride(slug, {
+            logoUrl: meta.tenant.logoUrl || null,
+            logoEmoji: meta.tenant.logoEmoji || '🍽️',
+            name: meta.tenant.name,
+            tagline: meta.tenant.tagline,
+            primaryColor: meta.tenant.primaryColor
+          });
+        }
       }
 
       this._dbState = data;

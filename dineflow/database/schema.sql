@@ -39,6 +39,7 @@ CREATE TABLE tenants (
     secondary_color VARCHAR(32) DEFAULT '#0F172A',
     cover_image TEXT,
     logo_emoji VARCHAR(16) DEFAULT '🍽️',
+    logo_url TEXT,                                      -- Custom brand logo image (URL or Data URL)
     wifi_name VARCHAR(64),
     wifi_pass VARCHAR(64),
     upi_vpa VARCHAR(128) DEFAULT 'merchant@upi',        -- Merchant UPI ID for instant dynamic QR
