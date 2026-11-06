@@ -8,3 +8,4 @@ ALTER TABLE tenants ADD COLUMN IF NOT EXISTS logo_url TEXT;
 
 -- Notify PostgREST to immediately refresh its schema cache
 NOTIFY pgrst, 'reload config';
+
