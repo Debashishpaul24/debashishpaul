@@ -35,11 +35,11 @@ Built entirely with zero heavy frontend framework dependencies—delivering ligh
 | **Main Portfolio Hub** | [`/`](https://www.debashishpaul.in/) | Interactive 3D canvas hero, featured projects, client proof, and consulting inquiry form. |
 | **DineFlow™ SaaS Hub** | [`/dineflow/`](https://www.debashishpaul.in/dineflow/) | Production QR restaurant platform, interactive ROI financial calculator, and lead intake. |
 | **Dual-Device Operations Sandbox** | [`/dineflow/?view=demo`](https://www.debashishpaul.in/dineflow/?view=demo) | Side-by-side live simulator syncing an iPhone 16 Pro diner view with a Kitchen KDS Kanban. |
-| **About Debashish** | [`/about/`](https://www.debashishpaul.in/about/) | Career journey, core engineering philosophy, tech stack proficiencies, and credentials. |
-| **Engineering Services** | [`/services/`](https://www.debashishpaul.in/services/) | Full-stack engineering, performance audits, enterprise web architecture, and UI/UX solutions. |
-| **Project Directory** | [`/projects/`](https://www.debashishpaul.in/projects/) | Detailed case studies spanning enterprise SaaS, 3D web experiences, and high-conversion portals. |
-| **Testimonials & Client Proof** | [`/testimonials/`](https://www.debashishpaul.in/testimonials/) | Verified enterprise reviews, project outcomes, delivery metrics, and client endorsements. |
-| **Consultation & Inquiries** | [`/contact/`](https://www.debashishpaul.in/contact/) | Direct inquiry intake pipeline with dynamic currency selection, country dial codes, and file upload. |
+| **About Debashish** | [`/about`](https://www.debashishpaul.in/about) | Career journey, core engineering philosophy, tech stack proficiencies, and credentials. |
+| **Engineering Services** | [`/services`](https://www.debashishpaul.in/services) | Full-stack engineering, performance audits, enterprise web architecture, and UI/UX solutions. |
+| **Project Directory** | [`/projects`](https://www.debashishpaul.in/projects) | Detailed case studies spanning enterprise SaaS, 3D web experiences, and high-conversion portals. |
+| **Testimonials & Client Proof** | [`/testimonials`](https://www.debashishpaul.in/testimonials) | Verified enterprise reviews, project outcomes, delivery metrics, and client endorsements. |
+| **Consultation & Inquiries** | [`/contact`](https://www.debashishpaul.in/contact) | Direct inquiry intake pipeline with dynamic currency selection, country dial codes, and file upload. |
 
 ---
 

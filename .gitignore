@@ -11,3 +11,6 @@ NUL
 # Documents & Office temp files
 *.docx
 ~$*
+
+# Scratch & temporary development scripts
+scratch/

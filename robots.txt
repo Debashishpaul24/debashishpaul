@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /*-demo.html
+Disallow: /dineflow-v2/
+Disallow: /scratch/
 
 Sitemap: https://www.debashishpaul.in/sitemap.xml
