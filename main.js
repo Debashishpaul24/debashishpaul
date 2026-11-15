@@ -356,6 +356,47 @@
     checkDineFlowServiceParam();
     window.addEventListener('hashchange', checkDineFlowServiceParam);
 
+    // Dynamic Adaptive Placeholders based on Service Selection
+    const leadServiceSelect = document.getElementById('lead-service');
+    const leadMsgField = document.getElementById('lead-message');
+    const leadAdaptiveHint = document.getElementById('message-adaptive-hint');
+
+    function updateServiceIntakeContext(serviceVal) {
+      if (!leadMsgField) return;
+      if (serviceVal === 'ServiceNow Platform Consultation') {
+        if (!leadMsgField.value || leadMsgField.value.trim() === '') {
+          leadMsgField.placeholder = "Tell us about your ServiceNow instance release (e.g. Utah/Washington/Xanadu), required modules (ITSM, Service Portal UI/UX, Scoped Apps, Integration Hub), or timeline...";
+        }
+        if (leadAdaptiveHint) {
+          leadAdaptiveHint.textContent = "Tailored for ServiceNow Architecture";
+          leadAdaptiveHint.className = "form-adaptive-hint snow-hint";
+        }
+      } else if (serviceVal && serviceVal.includes('DineFlow')) {
+        if (!leadMsgField.value || leadMsgField.value.trim() === '') {
+          leadMsgField.placeholder = "Tell us about your restaurant / venue, city, and approximate number of tables...";
+        }
+        if (leadAdaptiveHint) {
+          leadAdaptiveHint.textContent = "Tailored for DineFlow Restaurant Pilot";
+          leadAdaptiveHint.className = "form-adaptive-hint";
+        }
+      } else {
+        if (!leadMsgField.value || leadMsgField.value.trim() === '') {
+          leadMsgField.placeholder = "Describe your vision, target deliverables, timeline, or current challenges...";
+        }
+        if (leadAdaptiveHint) {
+          leadAdaptiveHint.textContent = "Tailored for Web Engineering";
+          leadAdaptiveHint.className = "form-adaptive-hint";
+        }
+      }
+    }
+
+    if (leadServiceSelect) {
+      leadServiceSelect.addEventListener('change', () => {
+        updateServiceIntakeContext(leadServiceSelect.value);
+      });
+      updateServiceIntakeContext(leadServiceSelect.value);
+    }
+
     // Auto-fill and scroll to contact form from Services Section cards
     document.querySelectorAll('.btn-service-inquire').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -909,7 +950,6 @@
         // Auto-detected default country flag when input is empty
         flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/${currentDefault.iso}.png" class="flag-img" alt="${currentDefault.name}" loading="lazy">`;
         flagIcon.title = `${currentDefault.name} (${currentDefault.code})`;
-        flagIcon.style.transform = 'scale(1.05)';
         return;
       }
 
@@ -922,7 +962,6 @@
       if (match) {
         flagIcon.innerHTML = `<img src="https://flagcdn.com/w40/${match.iso}.png" class="flag-img" alt="${match.name}" loading="lazy" onerror="this.style.display='none'">`;
         flagIcon.title = `${match.name} (${match.code})`;
-        flagIcon.style.transform = 'scale(1.05)';
 
         // Automatically toggle budget currency based on country code
         // When country code other than +91 is entered -> $USD
@@ -937,7 +976,6 @@
       } else {
         flagIcon.innerHTML = defaultGlobe;
         flagIcon.removeAttribute('title');
-        flagIcon.style.transform = 'scale(1)';
 
         // If a non-+91 country prefix is entered (e.g. +4, +3, +2, etc.)
         if (val.length >= 2 && !val.startsWith('+91') && typeof window.__setBudgetCurrency === 'function') {

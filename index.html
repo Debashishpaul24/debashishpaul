@@ -1819,26 +1819,34 @@
                       <!-- Row 1: Name (Req) & Business Name -->
                       <div class="form-row">
                         <div class="form-group">
-                          <label for="lead-name" class="form-label">Name <span class="req">*</span></label>
+                          <div class="form-label-row">
+                            <label for="lead-name" class="form-label">Name <span class="req">*</span></label>
+                          </div>
                           <input type="text" id="lead-name" name="name" class="form-input"
                             placeholder="e.g. Alex Morgan" required autocomplete="name">
                         </div>
                         <div class="form-group">
-                          <label for="lead-business" class="form-label">Business Name</label>
+                          <div class="form-label-row">
+                            <label for="lead-business" class="form-label">Business / Organization</label>
+                          </div>
                           <input type="text" id="lead-business" name="business_name" class="form-input"
-                            placeholder="e.g. Acme Corp or Studio" autocomplete="organization">
+                            placeholder="e.g. Enterprise IT / Startup" autocomplete="organization">
                         </div>
                       </div>
 
-                      <!-- Row 2: Email Address (Req) & Phone / WhatsApp (Req) -->
+                      <!-- Row 2: Work Email (Req) & Phone / WhatsApp -->
                       <div class="form-row">
                         <div class="form-group">
-                          <label for="lead-email" class="form-label">Email Address <span class="req">*</span></label>
+                          <div class="form-label-row">
+                            <label for="lead-email" class="form-label">Work Email <span class="req">*</span></label>
+                          </div>
                           <input type="email" id="lead-email" name="email" class="form-input"
-                            placeholder="alex@company.com (or personal email)" required autocomplete="email">
+                            placeholder="alex@company.com" required autocomplete="email">
                         </div>
                         <div class="form-group">
-                          <label for="lead-phone" class="form-label">Phone / WhatsApp <span class="req">*</span></label>
+                          <div class="form-label-row">
+                            <label for="lead-phone" class="form-label">Phone / WhatsApp</label>
+                          </div>
                           <div class="phone-input-wrapper">
                             <span class="phone-flag-prefix" id="phone-flag-icon" title="Country Flag">
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1848,79 +1856,60 @@
                               </svg>
                             </span>
                             <input type="tel" id="lead-phone" name="phone" class="form-input phone-input-with-flag"
-                              placeholder="+1 (555) 000-0000" autocomplete="tel" inputmode="tel" pattern="[\+]?[0-9\s\-]+" required>
+                              placeholder="+1 (555) 000-0000" autocomplete="tel" inputmode="tel" pattern="[\+]?[0-9\s\-]+">
                           </div>
                         </div>
                       </div>
 
-                      <!-- Row 3: Service Required & Describe your requirement -->
+                      <!-- Row 3: Service Required & Estimated Scope/Budget -->
                       <div class="form-row">
                         <div class="form-group">
-                          <label for="lead-service" class="form-label">Service Required</label>
+                          <div class="form-label-row">
+                            <label for="lead-service" class="form-label">Service Required <span class="req">*</span></label>
+                          </div>
                           <select id="lead-service" name="service" class="form-select">
-                            <option value="SaaS Product Architecture &amp; MVPs">SaaS Product Architecture &amp; MVPs</option>
-                            <option value="High-Converting Business Platforms">High-Converting Business Platforms</option>
-                            <option value="Full-Stack Web Engineering">Full-Stack Web Engineering</option>
-                            <option value="60fps Motion &amp; Interactive UI/UX">60fps Motion &amp; Interactive UI/UX</option>
-                            <option value="Real-Time APIs &amp; Integrations">Real-Time APIs &amp; Integrations</option>
-                            <option value="Core Web Vitals &amp; SEO Audits">Core Web Vitals &amp; SEO Audits</option>
-                            <option value="DineFlow QR Restaurant OS &amp; Pilot">DineFlow OS - QR Restaurant SaaS &amp; Free Pilot</option>
-                            <option value="New Website Development" selected>New Website Development</option>
-                            <option value="Website Redesign &amp; Modernization">Website Redesign &amp; Modernization</option>
-                            <option value="UI/UX Design">UI/UX Design</option>
-                            <option value="3D &amp; Scroll Motion">3D &amp; Scroll Motion</option>
-                            <option value="Custom Web Development">Custom Web Development</option>
-                            <option value="API &amp; Third-Party Integrations">API &amp; Third-Party Integrations</option>
-                            <option value="Business Automation &amp; Workflows">Business Automation &amp; Workflows</option>
-                            <option value="SEO &amp; Performance Optimization">SEO &amp; Performance Optimization</option>
-                            <option value="E-commerce Development">E-commerce Development</option>
-                            <option value="Business &amp; Local Website Development">Business &amp; Local Website Development</option>
-                            <option value="Website Maintenance &amp; Support">Website Maintenance &amp; Support</option>
-                            <option value="Website Audit &amp; Consultation">Website Audit &amp; Consultation</option>
-                            <option value="ServiceNow Platform Consultation">ServiceNow Platform Consultation</option>
-                            <option value="Other / Custom Requirement">Other / Custom Requirement</option>
+                            <option value="New Website Development" selected>🌐 Website Development / Redesign</option>
+                            <option value="DineFlow QR Restaurant OS &amp; Pilot">🍽️ DineFlow™ QR Restaurant OS &amp; Free Pilot</option>
+                            <option value="ServiceNow Platform Consultation">⚡ ServiceNow Platform Consultation (ITSM, Portal, Scoped Apps)</option>
+                            <option value="SaaS Product Architecture &amp; MVPs">🚀 SaaS Product Architecture &amp; MVPs</option>
+                            <option value="High-Converting Business Platforms">💼 High-Converting Business Platforms</option>
+                            <option value="Core Web Vitals &amp; SEO Audits">🔍 Architecture, Performance &amp; Security Audit</option>
+                            <option value="Other / Custom Requirement">💬 Other Strategic Advisory / Custom Project</option>
                           </select>
                         </div>
                         <div class="form-group">
-                          <label for="lead-requirement-tier" class="form-label">Describe your requirement</label>
-                          <select id="lead-requirement-tier" name="requirement_tier" class="form-select">
-                            <option value="Starter: Simple website / landing page">Starter: Simple website / landing page</option>
-                            <option value="Professional: Business / portfolio website" selected>Professional: Business / portfolio website</option>
-                            <option value="Business: Advanced business website">Business: Advanced business website</option>
-                            <option value="Custom: E-commerce / booking / integrations / web application">Custom: E-commerce / booking / integrations / web application</option>
-                            <option value="Not sure, help me choose">Not sure, help me choose</option>
+                          <div class="form-label-row">
+                            <label for="lead-budget" class="form-label" id="budget-label">Estimated Budget</label>
+                            <div class="currency-switcher" id="currency-switcher" role="group" aria-label="Currency Switcher">
+                              <button type="button" class="curr-btn active" id="curr-btn-usd" data-curr="USD">$ USD</button>
+                              <button type="button" class="curr-btn" id="curr-btn-inr" data-curr="INR">₹ INR</button>
+                            </div>
+                          </div>
+                          <select id="lead-budget" name="budget" class="form-select">
+                            <option value="Flexible / Open for Discussion">Flexible / Open to Discuss on Call</option>
+                            <option value="$1,500 - $3,500 (Starter / MVP)">$1,500 – $3,500 (Starter / MVP Platform)</option>
+                            <option value="$3,500 - $7,500 (Full-Stack / E-commerce)">$3,500 – $7,500 (Full-Stack &amp; E-commerce)</option>
+                            <option value="$7,500 - $15,000+ (Enterprise & AI)">$7,500 – $15,000+ (Enterprise Architecture / Scoped Apps)</option>
+                            <option value="Flexible Hourly / Advisory">Flexible Hourly / Retainer Advisory</option>
                           </select>
                         </div>
                       </div>
 
-                      <!-- Row 4: Estimated Budget with Currency Switcher -->
+                      <!-- Row 4: Tell us about your requirement (Req) with Adaptive Placeholder -->
                       <div class="form-group">
                         <div class="form-label-row">
-                          <label for="lead-budget" class="form-label" id="budget-label">Estimated Budget</label>
-                          <div class="currency-switcher" id="currency-switcher" role="group" aria-label="Currency Switcher">
-                            <button type="button" class="curr-btn active" id="curr-btn-usd" data-curr="USD">$ USD</button>
-                            <button type="button" class="curr-btn" id="curr-btn-inr" data-curr="INR">₹ INR</button>
-                          </div>
+                          <label for="lead-message" class="form-label">Project Brief / Requirement <span class="req">*</span></label>
+                          <span class="form-adaptive-hint" id="message-adaptive-hint">Tailored for Web Engineering</span>
                         </div>
-                        <select id="lead-budget" name="budget" class="form-select">
-                          <option value="Flexible / Open for Discussion">Flexible / Open to Discuss on Call</option>
-                          <option value="$1,500 - $3,500 (Starter / MVP)">$1,500 – $3,500 (Starter / MVP Platform)</option>
-                          <option value="$3,500 - $7,500 (Full-Stack / E-commerce)">$3,500 – $7,500 (Full-Stack & E-commerce)</option>
-                          <option value="$7,500 - $15,000+ (Enterprise & AI)">$7,500 – $15,000+ (Enterprise Architecture & AI)</option>
-                          <option value="Flexible Hourly / Advisory">Flexible Hourly / Retainer Advisory</option>
-                        </select>
-                      </div>
-
-                      <!-- Row 5: Tell us about your requirement (Req) -->
-                      <div class="form-group">
-                        <label for="lead-message" class="form-label">Tell us about your requirement <span class="req">*</span></label>
                         <textarea id="lead-message" name="message" class="form-textarea" rows="4"
                           placeholder="Describe your vision, target deliverables, timeline, or current challenges..." required></textarea>
                       </div>
 
-                      <!-- Row 6: Attach Reference Files or Wireframes (Compact Horizontal Pill) -->
+                      <!-- Row 5: Attach Reference Files or Wireframes (Compact Horizontal Pill) -->
                       <div class="form-group">
-                        <label for="file-input" id="file-input-label" class="form-label">Attach Reference Files or Wireframes</label>
+                        <div class="form-label-row">
+                          <label for="file-input" id="file-input-label" class="form-label">Attach Reference Files or Wireframes</label>
+                        </div>
                         <div class="upload-zone upload-zone-compact" id="upload-zone">
                           <input type="file" id="file-input" name="file" class="upload-input-file"
                             accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip"
@@ -1961,6 +1950,14 @@
                         </svg>
                         <span class="btn-spinner" aria-hidden="true"></span>
                       </button>
+
+                      <!-- Instant Calendly Discovery Call Fast-Track -->
+                      <div class="form-calendly-fasttrack">
+                        <span>Prefer an instant discussion?</span>
+                        <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" class="calendly-link">
+                          <span>⚡ Book 15-Min Discovery Call ↗</span>
+                        </a>
+                      </div>
 
                       <!-- Feedback status notice -->
                       <div id="form-feedback" class="form-feedback" style="display: none;"></div>
