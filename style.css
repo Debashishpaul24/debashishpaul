@@ -1467,8 +1467,39 @@ body.mobile-drawer-open #back-to-top {
 }
 
 /* Brands / Clients Strip */
+/* Brands / Clients Strip */
 .brands-section {
-  padding: 2.5rem 0 6rem;
+  padding: 2.5rem 0 5.5rem;
+  position: relative;
+}
+
+.brands-header {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.brands-eyebrow {
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.brands-eyebrow::before,
+.brands-eyebrow::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22));
+}
+
+.brands-eyebrow::after {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.22), transparent);
 }
 
 .brands-row {
@@ -1476,48 +1507,123 @@ body.mobile-drawer-open #back-to-top {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 2rem;
-  padding: 1.5rem 2.5rem;
-  background: rgba(14, 14, 18, 0.45);
-  border: 1px solid var(--border-subtle);
+  gap: 1.75rem 2rem;
+  padding: 1.35rem 2.5rem;
+  background: rgba(14, 16, 22, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.brands-row:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .brand-item {
-  font-family: var(--font-display);
+  font-family: var(--font-display, 'Plus Jakarta Sans', sans-serif);
   font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.45);
-  text-transform: uppercase;
-  display: flex;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.5);
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
+  gap: 0.55rem;
+  text-decoration: none;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: default;
+  user-select: none;
 }
 
+.brand-item.brand-link {
+  cursor: pointer;
+}
+
+.brand-svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  opacity: 0.65;
+  transition: all 0.25s ease;
+}
+
+.brand-name {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.brand-sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: -0.15rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.brand-tm {
+  font-size: 0.6em;
+  vertical-align: super;
+  margin-left: 1px;
+  opacity: 0.75;
+}
+
+/* Hover Accent Colors per Brand */
 .brand-item:hover {
-  color: #ffffff;
   transform: translateY(-2px);
 }
 
-.brand-dixie {
-  letter-spacing: 0.15em;
-  font-size: 0.95rem;
+.brand-item:hover .brand-svg {
+  opacity: 1;
+  transform: scale(1.12);
 }
 
-.brand-rogue {
-  text-transform: lowercase;
-  font-weight: 800;
+.brand-tcs:hover {
+  color: #38bdf8;
+}
+.brand-tcs:hover .brand-svg {
+  stroke: #38bdf8;
 }
 
-.brand-perfect {
-  text-transform: capitalize;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 1.2rem;
+.brand-servicenow:hover {
+  color: #2bd4bd;
+}
+.brand-servicenow:hover .brand-svg {
+  fill: #2bd4bd;
+}
+
+.brand-dineflow:hover {
+  color: #fbbf24;
+}
+.brand-dineflow:hover .brand-svg {
+  stroke: #fbbf24;
+}
+
+.brand-nexus:hover {
+  color: #c084fc;
+}
+.brand-nexus:hover .brand-svg {
+  stroke: #c084fc;
+}
+
+.brand-sterling:hover {
+  color: #93c5fd;
+}
+.brand-sterling:hover .brand-svg {
+  stroke: #93c5fd;
+}
+
+.brand-admirers:hover {
+  color: #f472b6;
+}
+.brand-admirers:hover .brand-svg {
+  stroke: #f472b6;
 }
 
 /* Selected Projects Section */
@@ -3854,8 +3960,25 @@ body.mobile-drawer-open #back-to-top {
   }
 
   .brands-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.15rem 1rem;
+    padding: 1.25rem 1.25rem;
+  }
+
+  .brand-item {
     justify-content: center;
-    gap: 1.5rem;
+    font-size: 0.88rem;
+  }
+
+  .brands-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+  }
+
+  .brands-eyebrow::before,
+  .brands-eyebrow::after {
+    width: 18px;
   }
 
   .form-card {
