@@ -239,6 +239,7 @@ input:focus, textarea:focus, select:focus {
 .df-pill-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid var(--border-subtle);
@@ -248,6 +249,11 @@ input:focus, textarea:focus, select:focus {
   font-size: 0.78rem;
   font-weight: 600;
   transition: all 0.2s ease;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  text-decoration: none;
+  line-height: 1.25;
+  box-sizing: border-box;
 }
 
 .df-pill-btn:hover {
@@ -338,6 +344,227 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 8px #34D399;
   animation: pulseLive 1.8s infinite;
   margin-right: 0.25rem;
+  flex-shrink: 0;
+}
+
+/* Prospective Client Conversion & B2B Responsive Layouts */
+.df-modal-fasttrack {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 10px;
+  padding: 0.65rem 0.95rem;
+  margin-bottom: 1.1rem;
+  box-sizing: border-box;
+}
+
+.df-modal-fasttrack-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.df-modal-fasttrack-text {
+  font-size: 0.78rem;
+  color: #CBD5E1;
+  line-height: 1.4;
+}
+
+.df-modal-fasttrack-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.df-customer-b2b-cta {
+  margin: 1.25rem 0;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.09) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+.df-customer-b2b-cta-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.df-customer-b2b-cta-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.df-customer-b2b-cta-desc {
+  font-size: 0.73rem;
+  color: #CBD5E1;
+  line-height: 1.45;
+}
+
+.df-customer-b2b-cta-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.df-login-prospect-card {
+  max-width: 480px;
+  width: 100%;
+  margin: 1.5rem auto 0;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.df-prospect-actions-grid {
+  display: flex;
+  gap: 0.55rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.df-pill-btn.btn-whatsapp-glow {
+  background: rgba(37, 211, 102, 0.16) !important;
+  border: 1.5px solid rgba(37, 211, 102, 0.45) !important;
+  color: #4ADE80 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer;
+  white-space: nowrap !important;
+}
+
+.df-pill-btn.btn-whatsapp-glow:hover {
+  background: rgba(37, 211, 102, 0.28) !important;
+  border-color: #25D366 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+.df-fleet-header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Tablet & Mobile Breakpoints for Clean Non-Breaking Alignment */
+@media (max-width: 768px) {
+  .df-topbar .df-top-actions {
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .df-topbar .df-top-actions::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .df-customer-b2b-cta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding: 1rem 0.95rem;
+  }
+  .df-customer-b2b-cta-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .df-customer-b2b-cta-actions .df-pill-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 0.48rem 0.4rem;
+    font-size: 0.73rem;
+  }
+  .df-fleet-header-actions {
+    width: 100%;
+    gap: 0.5rem;
+  }
+  .df-fleet-header-actions .df-pill-btn {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 540px) {
+  .df-modal-fasttrack {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.75rem;
+  }
+  .df-modal-fasttrack-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .df-modal-fasttrack-actions .df-pill-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 0.45rem 0.4rem;
+    font-size: 0.72rem;
+  }
+  .df-login-prospect-card {
+    padding: 1.1rem 0.95rem;
+    margin: 1.2rem auto 0;
+  }
+  .df-prospect-actions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .df-prospect-actions-grid .df-pill-btn {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .df-customer-b2b-cta-actions,
+  .df-modal-fasttrack-actions {
+    grid-template-columns: 1fr;
+  }
+  .df-btn-claim-pilot {
+    font-size: 0.8rem !important;
+    padding: 0.75rem 0.5rem !important;
+  }
 }
 
 /* Deep-Route Boot Shield: Conceals pre-rendered landing page when visiting Guest Menu or Staff OS directly */
