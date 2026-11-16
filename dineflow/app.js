@@ -1914,11 +1914,11 @@
           <a href="?view=hub&section=restaurant-directory" class="df-pill-btn" title="View All Outlets Directory">
             <span>🏪 Outlets Directory</span>
           </a>
-          <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Book 15-Minute Discovery Call with Debashish Paul">
-            <span>📅 Book Call ↗</span>
+          <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Schedule a 1-on-1 Live Demo with Debashish Paul">
+            <span>📅 Book Live Demo ↗</span>
           </a>
-          <a href="../#contact" target="_blank" class="df-pill-btn" title="Open Contact & Inquiry Form">
-            <span>✉️ Contact Form</span>
+          <a href="../#contact" target="_blank" class="df-pill-btn" title="Contact Sales & Custom Onboarding">
+            <span>✉️ Contact Sales</span>
           </a>
           <a href="?r=${activeTenant.slug}&t=T12" class="df-pill-btn" title="Return to Guest Dining Experience">
             <span>🍽️ Guest Dining</span>
@@ -2071,10 +2071,10 @@
           </p>
           <div style="display: flex; gap: 0.55rem; justify-content: center; flex-wrap: wrap;">
             <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn primary" style="font-size: 0.76rem; padding: 0.45rem 0.9rem; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-weight: 700; color: #fff; box-shadow: 0 4px 12px rgba(99,102,241,0.35);">
-              <span>📅 Book 15-Min Call ↗</span>
+              <span>📅 Schedule Live Demo ↗</span>
             </a>
             <a href="../#contact" target="_blank" class="df-pill-btn" style="font-size: 0.76rem; padding: 0.45rem 0.8rem; background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); color: #E2E8F0;">
-              <span>✉️ Contact Form</span>
+              <span>✉️ Contact Sales</span>
             </a>
             <a href="https://wa.me/919905608257?text=Hi%20Debashish,%20I'm%20interested%20in%20a%20commercial%20pilot%20of%20DineFlow" target="_blank" class="df-pill-btn" style="font-size: 0.76rem; padding: 0.45rem 0.8rem; background: rgba(37,211,102,0.15); border-color: rgba(37,211,102,0.35); color: #4ADE80;">
               <span>💬 WhatsApp</span>
@@ -2573,10 +2573,10 @@
               </div>
               <div style="display: flex; gap: 0.45rem; align-items: center;">
                 <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.4rem 0.8rem; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-weight: 700; color: #fff; white-space: nowrap;">
-                  📅 Book 15-Min Demo ↗
+                  📅 Book Live Demo ↗
                 </a>
                 <a href="../#contact" target="_blank" class="df-pill-btn" style="font-size: 0.72rem; padding: 0.4rem 0.75rem; white-space: nowrap;">
-                  ✉️ Contact
+                  ✉️ Contact Sales
                 </a>
               </div>
             </div>
@@ -4118,8 +4118,8 @@
           <a href="?r=${tenant.slug}&t=${tenant.slug === 'bella-vista' ? 'BV-02' : (tenant.slug === 'sakura-asian' ? 'SK-02' : 'T12')}" target="_blank" class="df-pill-btn" title="Open Customer View for this restaurant">
             <span>Customer QR ↗</span>
           </a>
-          <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Book 15-Minute Discovery Call with Debashish Paul">
-            <span>📅 Book Call ↗</span>
+          <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Schedule a 1-on-1 Live Demo with Debashish Paul">
+            <span>📅 Book Live Demo ↗</span>
           </a>
           <a href="?view=super-admin" class="df-pill-btn" title="Super Admin Platform">
             <span>SaaS Admin</span>
@@ -8685,11 +8685,11 @@
             <button id="btn-open-create-user-modal" class="df-pill-btn" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #10B981; font-weight: 700;" title="Create new restaurant staff profile">
               <span>+ Create Staff Profile</span>
             </button>
-            <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Book 15-Minute Discovery Call with Debashish Paul">
-              <span>📅 Book Call ↗</span>
+            <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Schedule a 1-on-1 Live Demo with Debashish Paul">
+              <span>📅 Book Live Demo ↗</span>
             </a>
-            <a href="../#contact" target="_blank" class="df-pill-btn" title="Open Contact & Inquiry Form">
-              <span>✉️ Contact Form</span>
+            <a href="../#contact" target="_blank" class="df-pill-btn" title="Contact Sales & Custom Onboarding">
+              <span>✉️ Contact Sales</span>
             </a>
             <a href="?view=onboarding" class="df-pill-btn primary">
               + Onboard Restaurant
