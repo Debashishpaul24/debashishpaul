@@ -359,7 +359,6 @@
     // Dynamic Adaptive Placeholders based on Service Selection
     const leadServiceSelect = document.getElementById('lead-service');
     const leadMsgField = document.getElementById('lead-message');
-    const leadAdaptiveHint = document.getElementById('message-adaptive-hint');
 
     function updateServiceIntakeContext(serviceVal) {
       if (!leadMsgField) return;
@@ -367,25 +366,13 @@
         if (!leadMsgField.value || leadMsgField.value.trim() === '') {
           leadMsgField.placeholder = "Tell us about your ServiceNow instance release (e.g. Utah/Washington/Xanadu), required modules (ITSM, Service Portal UI/UX, Scoped Apps, Integration Hub), or timeline...";
         }
-        if (leadAdaptiveHint) {
-          leadAdaptiveHint.textContent = "Tailored for ServiceNow Architecture";
-          leadAdaptiveHint.className = "form-adaptive-hint snow-hint";
-        }
       } else if (serviceVal && serviceVal.includes('DineFlow')) {
         if (!leadMsgField.value || leadMsgField.value.trim() === '') {
           leadMsgField.placeholder = "Tell us about your restaurant / venue, city, and approximate number of tables...";
         }
-        if (leadAdaptiveHint) {
-          leadAdaptiveHint.textContent = "Tailored for DineFlow Restaurant Pilot";
-          leadAdaptiveHint.className = "form-adaptive-hint";
-        }
       } else {
         if (!leadMsgField.value || leadMsgField.value.trim() === '') {
           leadMsgField.placeholder = "Describe your vision, target deliverables, timeline, or current challenges...";
-        }
-        if (leadAdaptiveHint) {
-          leadAdaptiveHint.textContent = "Tailored for Web Engineering";
-          leadAdaptiveHint.className = "form-adaptive-hint";
         }
       }
     }
