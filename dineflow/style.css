@@ -2139,12 +2139,16 @@ body.splash-active {
 }
 
 .df-table-qr-preview {
-  width: 140px;
-  height: 140px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 175px;
+  height: 175px;
+  max-width: 100%;
+  aspect-ratio: 1/1;
+  background: #ffffff !important;
+  border: 4px solid #ffffff;
+  outline: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -2156,14 +2160,16 @@ body.splash-active {
   width: 100%;
   height: 100%;
   display: block;
+  shape-rendering: crispEdges;
 }
 
 /* Printable Table Tent Stand Card (Modal / Print Mode) */
 .df-print-tent-card {
-  width: 320px;
+  width: 340px;
+  max-width: 100%;
   background: #ffffff;
   color: #0b0f17;
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 2rem 1.5rem;
   text-align: center;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
@@ -2186,13 +2192,16 @@ body.splash-active {
 }
 
 .df-print-qr-holder {
-  width: 210px;
-  height: 210px;
+  width: 250px;
+  height: 250px;
+  max-width: 100%;
+  aspect-ratio: 1/1;
   margin: 0 auto 1.25rem;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 16px;
+  border: 3px solid #e2e8f0;
+  border-radius: 20px;
   padding: 12px;
-  background: #ffffff;
+  background: #ffffff !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -2204,6 +2213,7 @@ body.splash-active {
   width: 100%;
   height: 100%;
   display: block;
+  shape-rendering: crispEdges;
 }
 
 .df-print-table-tag {

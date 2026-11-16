@@ -664,10 +664,10 @@
      */
     generateSVG: function (text, options) {
       options = options || {};
-      var size = options.size || 240;
+      var size = options.size || 280;
       // Enforce ISO/IEC 18004 standard quiet zone (minimum 4 modules) across all outputs
       var margin = options.margin !== undefined ? Math.max(options.margin, 4) : 4;
-      var darkColor = options.darkColor || '#0b0f17';
+      var darkColor = options.darkColor || '#000000';
       var lightColor = options.lightColor || '#ffffff';
       var rounded = options.rounded || false;
 
@@ -677,7 +677,7 @@
       var moduleSize = size / fullSize;
       var bgRadius = options.bgRadius !== undefined ? options.bgRadius : 0;
 
-      var svg = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" width="100%" height="100%" style="display:block;aspect-ratio:1/1;max-width:100%;height:auto;background:' + lightColor + ';">'];
+      var svg = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" width="100%" height="100%" shape-rendering="crispEdges" style="display:block;aspect-ratio:1/1;max-width:100%;height:auto;background:' + lightColor + ';">'];
       
       if (lightColor && lightColor !== 'transparent') {
         svg.push('<rect width="' + size + '" height="' + size + '" fill="' + lightColor + '" rx="' + bgRadius + '"/>');
@@ -709,14 +709,18 @@
      */
     renderToCanvas: function (canvas, text, options) {
       options = options || {};
-      var size = options.size || 300;
+      var size = options.size || 320;
       var margin = options.margin !== undefined ? Math.max(options.margin, 4) : 4;
-      var darkColor = options.darkColor || '#0b0f17';
+      var darkColor = options.darkColor || '#000000';
       var lightColor = options.lightColor || '#ffffff';
+      var dpr = (typeof window !== 'undefined' && window.devicePixelRatio) ? Math.min(window.devicePixelRatio, 3) : 1;
 
-      canvas.width = size;
-      canvas.height = size;
+      canvas.width = Math.round(size * dpr);
+      canvas.height = Math.round(size * dpr);
+      canvas.style.width = size + 'px';
+      canvas.style.height = size + 'px';
       var ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       var qr = createQRInstance(text, options);
       var count = qr.getModuleCount();

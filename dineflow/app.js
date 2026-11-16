@@ -3531,7 +3531,7 @@
     // Render mock UPI QR
     const upiHolder = document.getElementById('upi-qr-holder');
     if (upiHolder && window.DineFlowQR) {
-      upiHolder.innerHTML = window.DineFlowQR.generateSVG(`upi://pay?pa=urbanplate@hdfcbank&pn=${encodeURIComponent(tenant.name)}&am=${totalAmount}&cu=INR`, { size: 160 });
+      upiHolder.innerHTML = window.DineFlowQR.generateSVG(`upi://pay?pa=urbanplate@hdfcbank&pn=${encodeURIComponent(tenant.name)}&am=${totalAmount}&cu=INR`, { size: 220, darkColor: '#000000', margin: 4, lightColor: '#ffffff' });
     }
 
     document.querySelectorAll('input[name="pay-method"]').forEach(radio => {
@@ -4813,7 +4813,7 @@
       const el = document.getElementById(`qr-table-${table.id}`);
       if (el && window.DineFlowQR) {
         const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
-        el.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 140, darkColor: '#0f172a' });
+        el.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 240, darkColor: '#000000', margin: 4, lightColor: '#ffffff' });
       }
     });
 
@@ -5199,7 +5199,7 @@
       const tableUrl = getDineFlowTableUrl(tenant.slug, tid);
       if (urlEl) urlEl.textContent = tableUrl;
       if (qrHolder && window.DineFlowQR) {
-        qrHolder.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 60, darkColor: '#0f172a' });
+        qrHolder.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 140, darkColor: '#000000', margin: 4, lightColor: '#ffffff' });
       }
 
       const isDuplicate = tenantTables.some(t => t.id && t.id.toLowerCase() === tid.toLowerCase());
@@ -5444,7 +5444,7 @@
 
     const svgBox = document.getElementById('print-qr-svg-box');
     if (svgBox && window.DineFlowQR) {
-      svgBox.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 210, darkColor: '#0b0f17', margin: 2 });
+      svgBox.innerHTML = window.DineFlowQR.generateSVG(tableUrl, { size: 250, darkColor: '#000000', margin: 4, lightColor: '#ffffff' });
     }
 
     document.getElementById('btn-close-tent')?.addEventListener('click', () => {
@@ -5477,7 +5477,7 @@
     // 4. Raw QR Matrix Only (PNG)
     document.getElementById('btn-download-qr-only-png')?.addEventListener('click', () => {
       if (window.DineFlowQR) {
-        const dataUrl = window.DineFlowQR.getDataURL(tableUrl, { size: 1000, margin: 4 });
+        const dataUrl = window.DineFlowQR.getDataURL(tableUrl, { size: 1000, margin: 4, darkColor: '#000000', lightColor: '#ffffff' });
         const a = document.createElement('a');
         a.href = dataUrl;
         a.download = `${tenant.slug}-Table-${table.id}-QR-matrix.png`;
@@ -5489,7 +5489,7 @@
     // 5. Raw QR Matrix Only (SVG)
     document.getElementById('btn-download-qr-only-svg')?.addEventListener('click', () => {
       if (window.DineFlowQR) {
-        const svgContent = window.DineFlowQR.generateSVG(tableUrl, { size: 500, darkColor: '#0b0f17', margin: 4 });
+        const svgContent = window.DineFlowQR.generateSVG(tableUrl, { size: 600, darkColor: '#000000', margin: 4, lightColor: '#ffffff' });
         const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -5514,7 +5514,7 @@
   // Pure Vector SVG Generator for the Complete Table Tent Stand Card
   function buildTableTentCardSVG(table, tenant) {
     const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
-    const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 400, darkColor: '#0b0f17', margin: 2, lightColor: '#ffffff' }) : '';
+    const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 400, darkColor: '#000000', margin: 4, lightColor: '#ffffff' }) : '';
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1140" width="800" height="1140">
@@ -5594,7 +5594,7 @@
   // Standalone Isolated Single-Page PDF Print Generator
   function printTableTentCard(table, tenant) {
     const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
-    const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#0b0f17', margin: 2 }) : '';
+    const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#000000', margin: 4, lightColor: '#ffffff' }) : '';
 
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
@@ -5744,7 +5744,7 @@
     const sortedTables = sortTablesSerially(tables);
     const cardsHTML = sortedTables.map(table => {
       const tableUrl = getDineFlowTableUrl(tenant.slug, table.id);
-      const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#0b0f17', margin: 2 }) : '';
+      const qrSvg = window.DineFlowQR ? window.DineFlowQR.generateSVG(tableUrl, { size: 300, darkColor: '#000000', margin: 4, lightColor: '#ffffff' }) : '';
       return `
         <div class="tent-card-page">
           <div class="tent-card">

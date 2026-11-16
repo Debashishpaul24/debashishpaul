@@ -118,7 +118,7 @@
 
       let upiQrSvg = '';
       if (global.DineFlowQR && typeof global.DineFlowQR.generateSVG === 'function') {
-        upiQrSvg = global.DineFlowQR.generateSVG(upiUrl, { size: 130, darkColor: '#000000' });
+        upiQrSvg = global.DineFlowQR.generateSVG(upiUrl, { size: 140, darkColor: '#000000', margin: 4, lightColor: '#ffffff' });
       }
 
       const rowsHtml = Array.from(itemMap.values()).map(it => {
