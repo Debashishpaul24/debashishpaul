@@ -4218,24 +4218,26 @@
                       ` : ''}
                     </div>
 
-                    ${isUnverified ? `
-                      <!-- Waiter Confirmation Gate (1-Click Anti-Spoof Protection) -->
-                      <div class="df-verification-gate">
+                    ${isIncoming ? `
+                      <!-- Waiter Confirmation & Kitchen Fire Gate -->
+                      <div class="df-verification-gate" style="${!isUnverified ? 'border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.08);' : ''}">
                         <div class="df-vg-header">
-                          <div class="df-vg-title">
-                            <span>⚠️ Table Check</span>
+                          <div class="df-vg-title" style="${!isUnverified ? 'color: #38BDF8;' : ''}">
+                            <span>${isUnverified ? '⚠️ Table Check' : '📥 Incoming Order'}</span>
                           </div>
-                          <span class="df-vg-badge">Anti-Spoof</span>
+                          <span class="df-vg-badge" style="${!isUnverified ? 'background: rgba(56, 189, 248, 0.2); color: #38BDF8; border-color: rgba(56, 189, 248, 0.4);' : ''}">
+                            ${isUnverified ? 'Anti-Spoof' : '✓ Seated Table'}
+                          </span>
                         </div>
-                        <p class="df-vg-desc">
-                          Check if guests are seated at <strong>Table ${order.tableId}</strong> before firing to kitchen:
+                        <p class="df-vg-desc" style="${!isUnverified ? 'color: #BAE6FD;' : ''}">
+                          ${isUnverified ? `Check if guests are seated at <strong>Table ${order.tableId}</strong> before firing to kitchen:` : `Accept new order ticket from <strong>Table ${order.tableId}</strong>:`}
                         </p>
                         <div class="df-vg-actions">
                           <button class="df-pill-btn btn-accept-order" data-id="${order.id}" data-table="${order.tableId}" title="Confirm seated & fire to kitchen">
                             ✅ Accept & Fire
                           </button>
-                          <button class="df-pill-btn btn-reject-order" data-id="${order.id}" data-table="${order.tableId}" title="Reject remote prank order">
-                            🚫 Reject Prank
+                          <button class="df-pill-btn btn-reject-order" data-id="${order.id}" data-table="${order.tableId}" title="Reject or cancel order" style="${!isUnverified ? 'background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #EF4444;' : ''}">
+                            🚫 ${isUnverified ? 'Reject Prank' : 'Reject Order'}
                           </button>
                         </div>
                       </div>
@@ -4334,18 +4336,25 @@
       renderAdminView(document.getElementById('app'), tenant);
     }
 
-    // 1-Click Waiter Confirmation Gate: Reject Remote Prank / Empty Table
+    // 1-Click Waiter Confirmation Gate: Reject Remote Prank / Cancel Order
     function rejectPrankOrder(orderId) {
       const order = state.orders.find(o => o.id === orderId);
       if (!order) return;
 
-      const confirmed = window.confirm(`🚫 Reject Order #${order.id} (Table ${order.tableId}) as remote prank / empty table?\n\nThis cancels the order immediately so no food is cooked.`);
+      const isUnverified = order.verificationStatus !== 'VERIFIED';
+      const promptMsg = isUnverified
+        ? `🚫 Reject Order #${order.id} (Table ${order.tableId}) as remote prank / empty table?\n\nThis cancels the order immediately so no food is cooked.`
+        : `🚫 Reject / Cancel Order #${order.id} for Table ${order.tableId}?\n\nThis cancels the order immediately and alerts the guest.`;
+
+      const confirmed = window.confirm(promptMsg);
       if (!confirmed) return;
 
       const tenantSlug = tenant.slug || tenant.id || 'the-urban-plate';
       order.verificationStatus = 'REJECTED';
       order.status = 'CANCELLED';
-      order.cancelReason = 'Table unoccupied / Remote prank rejected by floor captain';
+      order.cancelReason = isUnverified
+        ? 'Table unoccupied / Remote prank rejected by floor captain'
+        : 'Order cancelled / rejected by floor staff';
 
       const hasMoreActive = state.orders.some(o => o.tableId === order.tableId && (!o.tenantId || o.tenantId === tenantSlug) && o.id !== order.id && o.status !== 'COMPLETED' && o.status !== 'CANCELLED');
       if (!hasMoreActive) {
