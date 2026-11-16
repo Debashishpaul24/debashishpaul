@@ -3439,7 +3439,7 @@
     }
 
     // CASE 2: Active balance exists (totalAmount > 0)
-    let selectedPayment = 'UPI';
+    let selectedPayment = (pendingBill && pendingBill.paymentMethod) ? pendingBill.paymentMethod : 'UPI';
 
     modalContainer.innerHTML = `
       <div class="df-modal-backdrop active" id="bill-backdrop">
@@ -3484,34 +3484,34 @@
 
             <h4 class="df-option-title">Select Preferred Payment Mode</h4>
             <div class="df-choice-list" style="margin-bottom: 1.25rem;">
-              <label class="df-choice-item selected" data-pay="UPI">
+              <label class="df-choice-item ${selectedPayment === 'UPI' ? 'selected' : ''}" data-pay="UPI">
                 <div class="df-choice-left">
-                  <input type="radio" name="pay-method" value="UPI" checked>
+                  <input type="radio" name="pay-method" value="UPI" ${selectedPayment === 'UPI' ? 'checked' : ''}>
                   <span style="font-size: 0.88rem; font-weight: 700;">📱 Instant UPI (GPay, PhonePe, Paytm, QR)</span>
                 </div>
               </label>
-              <label class="df-choice-item" data-pay="CARD">
+              <label class="df-choice-item ${selectedPayment === 'CARD' ? 'selected' : ''}" data-pay="CARD">
                 <div class="df-choice-left">
-                  <input type="radio" name="pay-method" value="CARD">
+                  <input type="radio" name="pay-method" value="CARD" ${selectedPayment === 'CARD' ? 'checked' : ''}>
                   <span style="font-size: 0.88rem; font-weight: 700;">💳 Credit / Debit Card (Server brings POS machine)</span>
                 </div>
               </label>
-              <label class="df-choice-item" data-pay="CASH">
+              <label class="df-choice-item ${selectedPayment === 'CASH' ? 'selected' : ''}" data-pay="CASH">
                 <div class="df-choice-left">
-                  <input type="radio" name="pay-method" value="CASH">
+                  <input type="radio" name="pay-method" value="CASH" ${selectedPayment === 'CASH' ? 'checked' : ''}>
                   <span style="font-size: 0.88rem; font-weight: 700;">💵 Cash at Table</span>
                 </div>
               </label>
-              <label class="df-choice-item" data-pay="COUNTER">
+              <label class="df-choice-item ${selectedPayment === 'COUNTER' ? 'selected' : ''}" data-pay="COUNTER">
                 <div class="df-choice-left">
-                  <input type="radio" name="pay-method" value="COUNTER">
+                  <input type="radio" name="pay-method" value="COUNTER" ${selectedPayment === 'COUNTER' ? 'checked' : ''}>
                   <span style="font-size: 0.88rem; font-weight: 700;">🏢 Settle at Reception Counter</span>
                 </div>
               </label>
             </div>
 
             <!-- Dynamic Mock UPI QR if selected -->
-            <div id="upi-qr-preview-box" style="text-align: center; margin-bottom: 1.25rem; background: #fff; padding: 1.25rem; border-radius: 16px; color: #0b0f17;">
+            <div id="upi-qr-preview-box" style="display: ${selectedPayment === 'UPI' ? 'block' : 'none'}; text-align: center; margin-bottom: 1.25rem; background: #fff; padding: 1.25rem; border-radius: 16px; color: #0b0f17;">
               <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem; color: #0f172a;">Scan to Pay via Any UPI App</div>
               <div id="upi-qr-holder" style="width: 160px; height: 160px; margin: 0 auto;"></div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem;">UPI ID: <strong>urbanplate@hdfcbank</strong></div>
@@ -3521,7 +3521,7 @@
             </div>
 
             <button class="df-splash-btn" id="btn-submit-bill-req" style="width: 100%; text-align: center; padding: 0.95rem;">
-              ${pendingBill ? 'Update Bill Request 💳' : 'Send Bill Request to Staff 💳'}
+              ${pendingBill ? `Update Bill Request (${selectedPayment}) 💳` : 'Send Bill Request to Staff 💳'}
             </button>
           </div>
         </div>
@@ -3537,8 +3537,15 @@
     document.querySelectorAll('input[name="pay-method"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
         selectedPayment = e.target.value;
+        document.querySelectorAll('.df-choice-item').forEach(item => {
+          item.classList.toggle('selected', item.getAttribute('data-pay') === selectedPayment);
+        });
         const qrBox = document.getElementById('upi-qr-preview-box');
         if (qrBox) qrBox.style.display = selectedPayment === 'UPI' ? 'block' : 'none';
+        const submitBtn = document.getElementById('btn-submit-bill-req');
+        if (submitBtn) {
+          submitBtn.textContent = pendingBill ? `Update Bill Request (${selectedPayment}) 💳` : `Send Bill Request (${selectedPayment}) 💳`;
+        }
       });
     });
 
