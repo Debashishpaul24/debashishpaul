@@ -44,6 +44,11 @@ CREATE TABLE tenants (
     wifi_pass VARCHAR(64),
     upi_vpa VARCHAR(128) DEFAULT 'merchant@upi',        -- Merchant UPI ID for instant dynamic QR
     plan VARCHAR(64) DEFAULT 'Enterprise Pro',
+    allowed_devices INT DEFAULT 3,                      -- Concurrent terminal hardware slots
+    subscription_status VARCHAR(32) DEFAULT 'active',   -- 'active' | 'suspended' | 'trial' | 'expired'
+    valid_until TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '1 year'),
+    owner_name VARCHAR(128) DEFAULT 'Restaurant Owner',
+    license_key VARCHAR(128) DEFAULT 'DF-PRO-2026-LIVE',
     status VARCHAR(32) DEFAULT 'active',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -247,6 +252,26 @@ CREATE TABLE audit_logs (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ------------------------------------------------------------------------------
+-- 13. ACTIVE DEVICE SESSIONS & ANTI-PIRACY TELEMETRY
+-- ------------------------------------------------------------------------------
+CREATE TABLE active_device_sessions (
+    id VARCHAR(128) PRIMARY KEY,                         -- Unique hardware fingerprint hash
+    tenant_id VARCHAR(64) REFERENCES tenants(id) ON DELETE CASCADE,
+    device_name VARCHAR(128) NOT NULL,                   -- e.g. "Main Kitchen KDS Display", "Cashier POS"
+    browser VARCHAR(64),                                 -- e.g. "Chrome 122", "Edge 121"
+    os VARCHAR(64),                                      -- e.g. "Windows 11", "iPadOS"
+    screen_res VARCHAR(32),                              -- e.g. "1920x1080", "412x915"
+    ip_address VARCHAR(64) DEFAULT '127.0.0.1',
+    staff_id VARCHAR(64),                                -- Last staff account active on device
+    staff_name VARCHAR(128),
+    role VARCHAR(32) DEFAULT 'STAFF',                    -- 'STAFF' | 'OWNER' | 'KDS' | 'POS'
+    is_active BOOLEAN DEFAULT TRUE,
+    is_blocked BOOLEAN DEFAULT FALSE,                    -- Remote killswitch status
+    last_heartbeat TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ==============================================================================
 -- INDEXES FOR LOW-LATENCY DINNER RUSH QUERIES
 -- ==============================================================================
@@ -357,6 +382,13 @@ BEGIN
     ) THEN
         ALTER PUBLICATION supabase_realtime ADD TABLE offers;
     END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND tablename = 'active_device_sessions'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE active_device_sessions;
+    END IF;
 END $$;
 
 -- ==============================================================================
@@ -375,6 +407,7 @@ ALTER TABLE bill_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE active_device_sessions ENABLE ROW LEVEL SECURITY;
 
 -- Allow public (anon guests scanning QR) read access to restaurant catalog
 CREATE POLICY "Public can view active tenants" ON tenants FOR SELECT USING (status = 'active');
@@ -406,4 +439,5 @@ CREATE POLICY "Staff can manage staff accounts" ON staff_accounts FOR ALL USING 
 CREATE POLICY "Staff can view and record audit logs" ON audit_logs FOR ALL USING (TRUE);
 CREATE POLICY "Staff can view CRM customers" ON customers FOR ALL USING (TRUE);
 CREATE POLICY "Staff can manage offers" ON offers FOR ALL USING (TRUE);
+CREATE POLICY "Staff can manage active device sessions" ON active_device_sessions FOR ALL USING (TRUE);
 

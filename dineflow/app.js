@@ -1636,6 +1636,126 @@
   }
 
   // ------------------------------------------------------------------------------
+  // COMMERCIAL ANTI-PIRACY MODALS & REMOTE LOCKOUT CONTROLLER
+  // ------------------------------------------------------------------------------
+  function showDeviceBlockedModal(tenant, entitlement) {
+    const modalId = 'df-device-blocked-modal';
+    const old = document.getElementById(modalId);
+    if (old) old.remove();
+
+    const el = document.createElement('div');
+    el.id = modalId;
+    el.className = 'df-modal-backdrop';
+    el.innerHTML = `
+      <div class="df-modal" style="max-width: 480px; text-align: center; border: 1px solid rgba(239, 68, 68, 0.4); box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.25);">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); color: #EF4444; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; border: 1px solid rgba(239, 68, 68, 0.3);">
+          🚨
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Hardware Terminal Deactivated</h3>
+        <p style="font-size: 0.82rem; color: #FCA5A5; line-height: 1.5; margin-bottom: 1rem;">
+          This device has been remotely deactivated by Platform Administrator Debashish Paul. Unauthorized hardware cannot connect to <strong>${tenant.name}</strong>.
+        </p>
+        <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.75rem; text-align: left; font-size: 0.75rem; color: #94A3B8; margin-bottom: 1.25rem;">
+          <div style="margin-bottom: 0.3rem;"><strong>Device Hardware ID:</strong> <code style="color: #F59E0B;">${entitlement.deviceId}</code></div>
+          <div style="margin-bottom: 0.3rem;"><strong>Target Venue:</strong> ${tenant.name} (${tenant.branch || 'Main'})</div>
+          <div><strong>License Protection:</strong> Anti-Piracy Cloud Lock Active</div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: center;">
+          <button onclick="document.getElementById('${modalId}').remove()" class="df-pill-btn secondary" style="font-size: 0.8rem;">
+            Dismiss
+          </button>
+          <a href="mailto:debashish@dineflow.io" class="df-pill-btn primary" style="font-size: 0.8rem;">
+            Contact Debashish Paul ✉️
+          </a>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(el);
+  }
+
+  function showDeviceQuotaExceededModal(tenant, entitlement) {
+    const modalId = 'df-quota-exceeded-modal';
+    const old = document.getElementById(modalId);
+    if (old) old.remove();
+
+    const el = document.createElement('div');
+    el.id = modalId;
+    el.className = 'df-modal-backdrop';
+    el.innerHTML = `
+      <div class="df-modal" style="max-width: 520px; text-align: center; border: 1px solid rgba(245, 158, 11, 0.4); box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.25);">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(245, 158, 11, 0.15); color: #F59E0B; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; border: 1px solid rgba(245, 158, 11, 0.3);">
+          🔒
+        </div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Device Limit Exceeded</h3>
+        <p style="font-size: 0.85rem; color: #FDE68A; line-height: 1.5; margin-bottom: 1.25rem;">
+          <strong>${tenant.name}</strong> has reached its maximum authorized concurrent device terminals (${entitlement.activeCount}/${entitlement.allowedQuota} active).
+        </p>
+
+        <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 1rem; text-align: left; font-size: 0.8rem; color: #CBD5E1; margin-bottom: 1.25rem; line-height: 1.6;">
+          <div style="font-weight: 700; color: #fff; margin-bottom: 0.5rem;">Commercial Hardware Entitlement Rule:</div>
+          <ul style="padding-left: 1.2rem; margin: 0; display: flex; flex-direction: column; gap: 0.35rem;">
+            <li>Each restaurant license authorizes up to <strong>${entitlement.allowedQuota} concurrent terminals</strong> (Kitchen KDS + Cashier POS + Floor Waiter).</li>
+            <li>To connect this terminal, the owner must add another restaurant branch (each branch unlocks additional device terminals) or revoke an idle terminal in Debashish Paul's Platform Console.</li>
+          </ul>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+          <button onclick="document.getElementById('${modalId}').remove()" class="df-pill-btn secondary" style="font-size: 0.82rem;">
+            Close
+          </button>
+          <a href="?view=super-admin" class="df-pill-btn" style="border-color: rgba(99,102,241,0.4); color: #818CF8; font-size: 0.82rem;">
+            Open Creator HQ ⚡
+          </a>
+          <a href="?view=onboarding" class="df-pill-btn primary" style="font-size: 0.82rem;">
+            + Add Restaurant Branch
+          </a>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(el);
+  }
+
+  window.triggerRemoteLockout = function (reason) {
+    state = DineFlowStore.get();
+    state.session = { isAuthenticated: false, role: 'CUSTOMER', user: null, tenantId: null };
+    DineFlowStore.saveSession(state.session);
+    SoundFX.chime('alert');
+
+    let lockEl = document.getElementById('df-lockout-overlay');
+    if (!lockEl) {
+      lockEl = document.createElement('div');
+      lockEl.id = 'df-lockout-overlay';
+      document.body.appendChild(lockEl);
+    }
+    const devId = (typeof DineFlowStore.getDeviceId === 'function') ? DineFlowStore.getDeviceId() : 'UNKNOWN';
+    lockEl.innerHTML = `
+      <div class="df-modal-backdrop" style="position: fixed; inset: 0; z-index: 99999; background: rgba(10, 15, 29, 0.96); backdrop-filter: blur(16px); display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
+        <div class="df-modal" style="max-width: 480px; text-align: center; border: 1px solid rgba(239, 68, 68, 0.45); box-shadow: 0 30px 60px -12px rgba(239, 68, 68, 0.35);">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🚨</div>
+          <h2 style="color: #EF4444; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Terminal Access Revoked</h2>
+          <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 0.85rem; font-size: 0.85rem; color: #FCA5A5; margin-bottom: 1.25rem; line-height: 1.45;">
+            ${reason || 'This hardware terminal has been deactivated by Platform Administrator Debashish Paul.'}
+          </div>
+          <div style="font-size: 0.75rem; color: #94A3B8; margin-bottom: 1.5rem;">
+            Hardware Fingerprint: <code style="color: #F59E0B; background: rgba(0,0,0,0.5); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.78rem;">${devId}</code>
+          </div>
+          <p style="font-size: 0.82rem; color: #CBD5E1; margin-bottom: 1.5rem; line-height: 1.5;">
+            Local session tokens and terminal privileges have been wiped remotely. Contact Debashish Paul to request authorization.
+          </p>
+          <div style="display: flex; gap: 0.75rem; justify-content: center;">
+            <button onclick="document.getElementById('df-lockout-overlay').remove(); window.location.href='?view=login';" class="df-pill-btn secondary" style="font-size: 0.82rem;">
+              Back to Portal Login
+            </button>
+            <a href="mailto:debashish@dineflow.io" class="df-pill-btn primary" style="font-size: 0.82rem;">
+              Contact Debashish Paul ✉️
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
+  // ------------------------------------------------------------------------------
   // 0. AUTHENTICATION & LOGIN GATEWAY VIEW
   // ------------------------------------------------------------------------------
   function renderLoginView(container, redirectTarget = null, requestedRole = null, portalType = null, tenantSlug = null) {
@@ -1685,6 +1805,24 @@
       const destinationTenantId = isSuper ? (state.currentTenantId || 'the-urban-plate') : (account.tenantId || 'the-urban-plate');
       const destinationTenant = getCurrentTenant(destinationTenantId);
 
+      // COMMERCIAL DEVICE HARDWARE ENTITLEMENT & ANTI-PIRACY CHECK
+      if (!isSuper) {
+        const entitlement = (typeof DineFlowStore.checkDeviceEntitlement === 'function')
+          ? DineFlowStore.checkDeviceEntitlement(destinationTenantId)
+          : { allowed: true };
+
+        if (!entitlement.allowed) {
+          SoundFX.chime('alert');
+          triggerShake();
+          if (entitlement.reason === 'BLOCKED_BY_ADMIN') {
+            showDeviceBlockedModal(destinationTenant, entitlement);
+          } else {
+            showDeviceQuotaExceededModal(destinationTenant, entitlement);
+          }
+          return false;
+        }
+      }
+
       // 3. Establish Authenticated Session
       state.session = {
         isAuthenticated: true,
@@ -1697,6 +1835,12 @@
       }
       DineFlowStore.save(state);
       SoundFX.chime('success');
+
+      // Register Device Session Hardware Telemetry in Cloud Database
+      const devRole = isSuper ? 'OWNER' : (account.department?.includes('Kitchen') ? 'KDS' : 'POS');
+      if (typeof DineFlowStore.registerCurrentDevice === 'function') {
+        DineFlowStore.registerCurrentDevice(destinationTenantId, account, devRole);
+      }
 
       if (isSuper) {
         showToast(`Welcome, ${account.name}! Authenticated to Platform Owner HQ`, account.avatarEmoji || '⚡');
@@ -2212,6 +2356,7 @@
     ensureTenantMenuAndCategories(tenant);
     const tenantCategories = state.categories.filter(c => c.tenantId === tenant.id);
     let items = getFilteredCustomerItems(tenant);
+    const isWelcomeDismissed = (typeof sessionStorage !== 'undefined') && sessionStorage.getItem(`df_welcome_${tenant.slug}_${table.id}`);
 
     container.innerHTML = `
       <!-- Top Sticky Bar -->
@@ -2254,6 +2399,42 @@
               </div>
             </div>
           </div>
+
+          <!-- Customer Hospitality & Welcome Greeting Banner -->
+          ${!isWelcomeDismissed ? `
+            <div class="df-customer-welcome-card" id="df-customer-welcome-card">
+              <div class="df-welcome-top">
+                <div class="df-welcome-badge">
+                  <span>✨ Table ${table.id}</span>
+                  <span class="df-welcome-sep">•</span>
+                  <span>${table.section}</span>
+                  <span class="df-welcome-pulse"></span>
+                </div>
+                <button class="df-welcome-close-btn" id="btn-close-welcome" title="Close Welcome Banner">✕</button>
+              </div>
+              <div class="df-welcome-main">
+                <div class="df-welcome-avatar">${tenant.logoEmoji || '🍽️'}</div>
+                <div class="df-welcome-text">
+                  <h3 class="df-welcome-heading">Welcome to ${tenant.name}!</h3>
+                  <p class="df-welcome-desc">
+                    Your contactless dining session is active. Tap any dish to order directly to the kitchen, call your waiter with 1-tap, and settle your bill instantly via UPI or card.
+                  </p>
+                </div>
+              </div>
+              <div class="df-welcome-chips">
+                <div class="df-welcome-chip" id="chip-guest-wifi" title="Tap to copy Wi-Fi password">
+                  <span>📶 Guest Wi-Fi: <strong>${tenant.wifiName}</strong></span>
+                  <span style="font-size: 0.68rem; color: #38BDF8; margin-left: 0.35rem;">(Tap to copy)</span>
+                </div>
+                <div class="df-welcome-chip">
+                  <span>⚡ <strong>&lt;50ms Edge Sync</strong></span>
+                </div>
+                <div class="df-welcome-chip">
+                  <span>🛡️ <strong>Verified Floor OS</strong></span>
+                </div>
+              </div>
+            </div>
+          ` : ''}
 
           <!-- Quick Actions Hub -->
           <div class="df-quick-actions-bar">
@@ -2601,6 +2782,38 @@
     document.getElementById('act-call-staff')?.addEventListener('click', () => openCallStaffModal(tenant, table));
     document.getElementById('btn-call-staff-top')?.addEventListener('click', () => openCallStaffModal(tenant, table));
     document.getElementById('act-request-bill')?.addEventListener('click', () => openRequestBillModal(tenant, table));
+
+    // Welcome Card Dismiss & Wi-Fi Copy Listeners
+    document.getElementById('btn-close-welcome')?.addEventListener('click', () => {
+      const card = document.getElementById('df-customer-welcome-card');
+      if (card) {
+        card.style.transition = 'opacity 0.25s ease, transform 0.25s ease, max-height 0.25s ease';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(-8px)';
+        card.style.maxHeight = '0';
+        card.style.padding = '0';
+        card.style.margin = '0';
+        card.style.overflow = 'hidden';
+        setTimeout(() => card.remove(), 250);
+      }
+      try {
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem(`df_welcome_${tenant.slug}_${table.id}`, 'true');
+        }
+      } catch (e) {}
+    });
+
+    document.getElementById('chip-guest-wifi')?.addEventListener('click', () => {
+      if (tenant.wifiPass && navigator.clipboard) {
+        navigator.clipboard.writeText(tenant.wifiPass).then(() => {
+          showToast(`Wi-Fi password "${tenant.wifiPass}" copied to clipboard! 📶`, '✓');
+        }).catch(() => {
+          showToast(`Wi-Fi: ${tenant.wifiName} • Pass: ${tenant.wifiPass} 📶`, 'ℹ️');
+        });
+      } else {
+        showToast(`Wi-Fi: ${tenant.wifiName} • Pass: ${tenant.wifiPass} 📶`, 'ℹ️');
+      }
+    });
   }
 
   // ------------------------------------------------------------------------------
@@ -8381,6 +8594,10 @@
     function renderMain() {
       const logs = getFilteredLogs();
       const allManagers = (state.staffAccounts && state.staffAccounts.length) ? state.staffAccounts : DINEFLOW_DEFAULT_DATA.staffAccounts;
+      const allDevices = Array.isArray(state.activeDeviceSessions) ? state.activeDeviceSessions : (DINEFLOW_DEFAULT_DATA.activeDeviceSessions || []);
+      const activeDevices = allDevices.filter(d => d.isActive !== false && !d.isBlocked);
+      const blockedDevices = allDevices.filter(d => d.isBlocked);
+      const totalAllowedSlots = tenantsList.reduce((acc, t) => acc + (t.allowedDevices || 3), 0);
 
       // Calculate dynamic KPIs from logs
       const totalAmount = logs.reduce((sum, l) => sum + (l.amount || 0), 0) || (totalOrdersRev * 12);
@@ -8437,6 +8654,9 @@
             </button>
             <button class="df-superadmin-tab-btn ${activeSuperTab === 'outlets' ? 'active' : ''}" data-tab="outlets">
               <span>🏢</span> Managed Outlets (${tenantsList.length})
+            </button>
+            <button class="df-superadmin-tab-btn ${activeSuperTab === 'fleet' ? 'active' : ''}" data-tab="fleet">
+              <span>🛡️</span> Creator HQ Anti-Piracy Fleet (${allDevices.length})
             </button>
           </div>
 
@@ -8696,7 +8916,7 @@
               </div>
 
             </div>
-          ` : `
+          ` : activeSuperTab === 'outlets' ? `
             <!-- Outlets Management View -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
               <div>
@@ -8752,6 +8972,248 @@
                   </div>
                 </div>
               `).join('')}
+            </div>
+          ` : `
+            <!-- Anti-Piracy & Fleet Command View -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem;">
+                  <span style="font-size: 1.4rem;">🛡️</span>
+                  <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0;">Creator HQ Anti-Piracy &amp; Device Fleet Command</h2>
+                  <span class="df-micro-badge" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.35);">
+                    🟢 Realtime Cloud Protected
+                  </span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">
+                  Master console for <strong>Debashish Paul</strong>. Monitor connected hardware terminals worldwide, enforce restaurant license quotas, and trigger instant 1-click remote killswitches against pirated copies.
+                </p>
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <span class="df-micro-badge" style="background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.35); padding: 0.45rem 0.75rem;">
+                  Master Admin: Debashish Paul ⚡
+                </span>
+              </div>
+            </div>
+
+            <!-- Fleet Telemetry 4 KPI Cards -->
+            <div class="df-audit-kpis-grid" style="margin-bottom: 2rem;">
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Registered Restaurant Owners</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(99, 102, 241, 0.15); color: #818CF8;">🏢</div>
+                </div>
+                <div class="df-audit-kpi-value">${tenantsList.length} Outlets</div>
+                <div class="df-audit-kpi-sub">
+                  <span>Licensed multi-tenant partners</span>
+                  <span style="color: #10B981; font-weight: 700;">✓ Active</span>
+                </div>
+              </div>
+
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Total Licensed Terminal Slots</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;">💻</div>
+                </div>
+                <div class="df-audit-kpi-value">${totalAllowedSlots} Slots</div>
+                <div class="df-audit-kpi-sub">
+                  <span>Quota pool across all branches</span>
+                  <span style="color: #F59E0B; font-weight: 700;">${activeDevices.length}/${totalAllowedSlots} Occupied</span>
+                </div>
+              </div>
+
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Active Live Connected Terminals</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">🟢</div>
+                </div>
+                <div class="df-audit-kpi-value">${activeDevices.length} Online</div>
+                <div class="df-audit-kpi-sub">
+                  <span>Heartbeat &lt; 5m • Realtime PubSub</span>
+                  <span style="color: #10B981; font-weight: 700;">Sub-50ms sync</span>
+                </div>
+              </div>
+
+              <div class="df-audit-kpi-card">
+                <div class="df-audit-kpi-header">
+                  <span class="df-audit-kpi-title">Anti-Piracy Killswitches</span>
+                  <div class="df-audit-kpi-icon" style="background: rgba(239, 68, 68, 0.15); color: #EF4444;">🚨</div>
+                </div>
+                <div class="df-audit-kpi-value">${blockedDevices.length} Revoked</div>
+                <div class="df-audit-kpi-sub">
+                  <span>Deactivated unauthorized devices</span>
+                  <span style="color: ${blockedDevices.length > 0 ? '#EF4444' : '#10B981'}; font-weight: 700;">
+                    ${blockedDevices.length > 0 ? 'Blocked' : '✓ Zero Leakage'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table 1: Restaurant Owners & Commercial Quota Governance -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 2rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                  <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">Restaurant Owners &amp; Device Entitlement Quotas</h3>
+                  <span style="font-size: 0.75rem; color: var(--text-dim);">
+                    Each restaurant outlet is granted authorized concurrent terminal slots (POS + Kitchen KDS + Waiters). Adding restaurants expands device quota.
+                  </span>
+                </div>
+                <a href="?view=onboarding" class="df-pill-btn primary" style="font-size: 0.78rem;">
+                  + Onboard New Owner
+                </a>
+              </div>
+
+              <div class="df-audit-table-wrap">
+                <table class="df-audit-table">
+                  <thead>
+                    <tr>
+                      <th>Restaurant &amp; Slug</th>
+                      <th>Owner / Licensee</th>
+                      <th>Commercial Plan</th>
+                      <th>Hardware Device Quota</th>
+                      <th>License Activation Key</th>
+                      <th>Valid Until</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${tenantsList.map(t => {
+                      const tenantDevices = allDevices.filter(d => d.tenantId === t.slug && !d.isBlocked);
+                      const quota = t.allowedDevices || 3;
+                      const usagePct = Math.min(100, Math.round((tenantDevices.length / quota) * 100));
+                      return `
+                        <tr>
+                          <td>
+                            <div style="font-weight: 700; color: #fff; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                              <span>${t.logoEmoji || '🍽️'}</span>
+                              <span>${t.name}</span>
+                            </div>
+                            <div style="font-size: 0.7rem; color: var(--text-dim); font-family: monospace;">${t.slug} • ${t.branch || 'Main'}</div>
+                          </td>
+                          <td style="white-space: nowrap; font-size: 0.82rem; color: #CBD5E1;">
+                            ${t.ownerName || 'Restaurant Owner'}
+                          </td>
+                          <td style="white-space: nowrap;">
+                            <span class="df-micro-badge chef" style="text-transform: uppercase;">${t.plan || 'Commercial Pro'}</span>
+                          </td>
+                          <td style="min-width: 170px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.35rem;">
+                              <span style="color: #fff; font-weight: 700;">${tenantDevices.length} / ${quota} Devices</span>
+                              <span style="color: ${usagePct >= 100 ? '#EF4444' : '#10B981'}; font-weight: 700;">${usagePct}%</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden;">
+                              <div style="width: ${usagePct}%; height: 100%; background: ${usagePct >= 100 ? '#EF4444' : '#10B981'}; border-radius: 999px;"></div>
+                            </div>
+                          </td>
+                          <td style="white-space: nowrap; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #818CF8;">
+                            ${t.licenseKey || 'DF-PRO-2026-LIVE'}
+                          </td>
+                          <td style="white-space: nowrap; font-size: 0.75rem; color: var(--text-muted);">
+                            ${t.validUntil ? new Date(t.validUntil).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Dec 31, 2027'}
+                          </td>
+                          <td style="white-space: nowrap;">
+                            <span class="df-sec-flag verified" style="font-size: 0.7rem;">✓ Active</span>
+                          </td>
+                          <td style="white-space: nowrap;">
+                            <button class="df-pill-btn btn-increase-quota" data-slug="${t.slug}" style="font-size: 0.72rem; padding: 0.25rem 0.6rem; border-color: rgba(99,102,241,0.4); color: #818CF8;" title="Add 1 additional hardware device slot">
+                              +1 Slot
+                            </button>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Table 2: Live Hardware Device Fleet & Anti-Piracy Killswitch -->
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                  <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff; margin-bottom: 0.25rem;">Live Hardware Fleet &amp; Anti-Piracy Telemetry</h3>
+                  <span style="font-size: 0.75rem; color: var(--text-dim);">
+                    Persistent device fingerprinting (OS, browser, screen, GPU, UUID). 1-click remote killswitch invalidates unauthorized copies instantly via Supabase Realtime broadcast.
+                  </span>
+                </div>
+                <span class="df-micro-badge" style="background: rgba(99, 102, 241, 0.15); color: #818CF8; border: 1px solid rgba(99, 102, 241, 0.35);">
+                  ${allDevices.length} TRACKED HARDWARE SLOTS
+                </span>
+              </div>
+
+              <div class="df-audit-table-wrap">
+                <table class="df-audit-table">
+                  <thead>
+                    <tr>
+                      <th>Device ID &amp; Fingerprint</th>
+                      <th>Assigned Restaurant</th>
+                      <th>Hardware &amp; Terminal Name</th>
+                      <th>OS &amp; Browser</th>
+                      <th>Active Staff User</th>
+                      <th>Telemetry Ping</th>
+                      <th>Anti-Piracy Killswitch</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${allDevices.length ? allDevices.map(d => {
+                      const tObj = state.tenants ? state.tenants[d.tenantId] : null;
+                      const venueName = tObj ? tObj.name : (d.tenantId || 'Unassigned');
+                      const isCurrentDev = (typeof DineFlowStore.getDeviceId === 'function') && d.id === DineFlowStore.getDeviceId();
+                      return `
+                        <tr style="${d.isBlocked ? 'opacity: 0.6; background: rgba(239, 68, 68, 0.05);' : ''}">
+                          <td style="white-space: nowrap;">
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; color: #F59E0B;">
+                              ${d.id} ${isCurrentDev ? '<span class="df-micro-badge chef" style="font-size: 0.6rem; padding: 0.1rem 0.3rem;">THIS PC</span>' : ''}
+                            </div>
+                            <div style="font-size: 0.68rem; color: var(--text-dim);">${d.ipAddress || '127.0.0.1 (Verified)'}</div>
+                          </td>
+                          <td style="white-space: nowrap;">
+                            <div style="font-weight: 700; font-size: 0.8rem; color: #fff;">🏢 ${venueName}</div>
+                            <div style="font-size: 0.68rem; color: var(--text-dim);">${d.tenantId}</div>
+                          </td>
+                          <td>
+                            <div style="font-size: 0.82rem; font-weight: 700; color: #CBD5E1;">${d.deviceName}</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted);">${d.screenRes || '1920x1080'} &bull; Role: ${d.role || 'STAFF'}</div>
+                          </td>
+                          <td style="white-space: nowrap; font-size: 0.78rem; color: var(--text-muted);">
+                            <div>${d.os || 'Windows 11'}</div>
+                            <div style="font-size: 0.68rem; color: var(--text-dim);">${d.browser || 'Chrome 122'}</div>
+                          </td>
+                          <td style="white-space: nowrap; font-size: 0.8rem; color: #fff;">
+                            ${d.staffName ? `👨‍🍳 ${d.staffName}` : '<span style="color: var(--text-dim);">Floor Operator</span>'}
+                          </td>
+                          <td style="white-space: nowrap;">
+                            ${d.isBlocked ? `
+                              <span class="df-sec-flag alert" style="font-size: 0.7rem;">🚨 Revoked / Kill</span>
+                            ` : `
+                              <span class="df-sec-flag verified" style="font-size: 0.7rem; color: #10B981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.1);">
+                                🟢 Active (Live)
+                              </span>
+                            `}
+                          </td>
+                          <td style="white-space: nowrap;">
+                            ${d.isBlocked ? `
+                              <button class="df-pill-btn btn-unblock-device" data-id="${d.id}" data-name="${d.deviceName}" style="font-size: 0.72rem; padding: 0.3rem 0.65rem; background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.35);" title="Re-authorize this terminal">
+                                ✓ Re-authorize
+                              </button>
+                            ` : `
+                              <button class="df-pill-btn danger btn-revoke-device" data-id="${d.id}" data-name="${d.deviceName}" style="font-size: 0.72rem; padding: 0.3rem 0.65rem;" title="Remotely terminate and lockout this terminal">
+                                ⚡ Remote Kill
+                              </button>
+                            `}
+                          </td>
+                        </tr>
+                      `;
+                    }).join('') : `
+                      <tr>
+                        <td colspan="7" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                          No active device sessions registered yet.
+                        </td>
+                      </tr>
+                    `}
+                  </tbody>
+                </table>
+              </div>
             </div>
           `}
 
@@ -8963,6 +9425,60 @@
           DineFlowStore.save(state);
           navigateTo({ view: 'admin' });
           showToast(`Switched active tenant to ${state.tenants[slug].name}`);
+        });
+      });
+
+      // Remote Device Killswitch Listener (Anti-Piracy)
+      container.querySelectorAll('.btn-revoke-device').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const devId = btn.getAttribute('data-id');
+          const devName = btn.getAttribute('data-name');
+          if (confirm(`🚨 REMOTE KILLSWITCH CONFIRMATION:\n\nAre you sure you want to deactivate hardware terminal "${devName}" [ID: ${devId}]?\n\nThis will instantly kick out any active user and block this machine from reconnecting until re-authorized by Debashish Paul.`)) {
+            const ok = DineFlowStore.revokeDevice(devId, 'Deactivated remotely by Debashish Paul');
+            if (ok) {
+              SoundFX.chime('alert');
+              showToast(`Hardware terminal [${devId}] deactivated! Remote killswitch signal broadcast.`, '⚡');
+              renderMain();
+            }
+          }
+        });
+      });
+
+      // Remote Device Re-authorization Listener
+      container.querySelectorAll('.btn-unblock-device').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const devId = btn.getAttribute('data-id');
+          const ok = DineFlowStore.unblockDevice(devId);
+          if (ok) {
+            SoundFX.chime('success');
+            showToast(`Hardware terminal [${devId}] re-authorized successfully!`, '✓');
+            renderMain();
+          }
+        });
+      });
+
+      // Increase Tenant Terminal Quota Listener
+      container.querySelectorAll('.btn-increase-quota').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const slug = btn.getAttribute('data-slug');
+          state = DineFlowStore.get();
+          if (state.tenants && state.tenants[slug]) {
+            state.tenants[slug].allowedDevices = (state.tenants[slug].allowedDevices || 3) + 1;
+            DineFlowStore.save(state, {
+              action: 'TENANT_UPDATED',
+              tenant: state.tenants[slug],
+              tenantSlug: slug
+            });
+            SoundFX.chime('success');
+            showToast(`Added +1 terminal slot to ${state.tenants[slug].name} (Total: ${state.tenants[slug].allowedDevices} devices)`, '💻');
+            renderMain();
+          }
         });
       });
 
@@ -9395,6 +9911,18 @@
   window.navigateTo = navigateTo;
   window.renderApp = renderApp;
   window.dismissBootLoader = dismissBootLoader;
+
+  // Background Hardware Terminal Heartbeat Telemetry (Anti-Piracy Fleet Monitor)
+  if (!window._dfHeartbeatInterval) {
+    window._dfHeartbeatInterval = setInterval(() => {
+      try {
+        const curState = DineFlowStore.get();
+        if (curState?.session?.isAuthenticated && typeof DineFlowStore.sendDeviceHeartbeat === 'function') {
+          DineFlowStore.sendDeviceHeartbeat(curState.currentTenantId || curState.session?.tenantId);
+        }
+      } catch (e) {}
+    }, 45000);
+  }
 
   // Asynchronous Database-First Application Boot Engine
   async function initApp() {

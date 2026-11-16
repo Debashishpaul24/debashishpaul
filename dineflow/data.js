@@ -97,6 +97,58 @@ const DINEFLOW_DEFAULT_DATA = {
     }
   ],
 
+  // Active Terminal Hardware Sessions (Anti-Piracy Fleet Telemetry)
+  activeDeviceSessions: [
+    {
+      id: 'DF-DEV-UP-POS-01',
+      tenantId: 'the-urban-plate',
+      deviceName: 'Billing POS Counter 01 (Windows 11)',
+      browser: 'Chrome 122',
+      os: 'Windows 11 Pro',
+      screenRes: '1920x1080',
+      ipAddress: '103.211.54.12 (Kolkata)',
+      staffId: 'staff-01',
+      staffName: 'Chef Vikram Rao',
+      role: 'POS',
+      isActive: true,
+      isBlocked: false,
+      lastHeartbeat: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
+      createdAt: '2026-03-01T10:00:00.000Z'
+    },
+    {
+      id: 'DF-DEV-UP-KDS-02',
+      tenantId: 'the-urban-plate',
+      deviceName: 'Kitchen Expediter KDS Display (iPad)',
+      browser: 'Safari iOS',
+      os: 'iPadOS 17.4',
+      screenRes: '2048x1536',
+      ipAddress: '103.211.54.12 (Kolkata)',
+      staffId: 'staff-01',
+      staffName: 'Chef Vikram Rao',
+      role: 'KDS',
+      isActive: true,
+      isBlocked: false,
+      lastHeartbeat: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+      createdAt: '2026-03-01T10:05:00.000Z'
+    },
+    {
+      id: 'DF-DEV-BV-POS-01',
+      tenantId: 'bella-vista',
+      deviceName: 'Main Bar & Counter Terminal',
+      browser: 'Chrome 122',
+      os: 'macOS Sonoma',
+      screenRes: '2560x1440',
+      ipAddress: '122.160.45.89 (Kolkata)',
+      staffId: 'staff-03',
+      staffName: 'Marco Rossi',
+      role: 'POS',
+      isActive: true,
+      isBlocked: false,
+      lastHeartbeat: new Date(Date.now() - 6 * 60 * 1000).toISOString(),
+      createdAt: '2026-03-02T11:00:00.000Z'
+    }
+  ],
+
   // Platform Audit & Security Logs (Real-time Manager Activity Ledger)
   auditLogs: [
     {
@@ -264,6 +316,11 @@ const DINEFLOW_DEFAULT_DATA = {
       wifiName: 'UrbanPlate_Guest',
       wifiPass: 'GoodFood2026',
       plan: 'Enterprise Pro',
+      allowedDevices: 5,
+      subscriptionStatus: 'active',
+      validUntil: '2027-12-31',
+      ownerName: 'Chef Vikram Rao',
+      licenseKey: 'DF-URBAN-PLATE-ENT-2026',
       status: 'active',
       createdAt: '2026-01-15'
     },
@@ -287,6 +344,11 @@ const DINEFLOW_DEFAULT_DATA = {
       wifiName: 'BellaVista_5G',
       wifiPass: 'PizzaPasta2026',
       plan: 'Growth Tier',
+      allowedDevices: 3,
+      subscriptionStatus: 'active',
+      validUntil: '2027-12-31',
+      ownerName: 'Marco Rossi',
+      licenseKey: 'DF-BELLA-VISTA-BIZ-2026',
       status: 'active',
       createdAt: '2026-02-10'
     },
@@ -310,6 +372,11 @@ const DINEFLOW_DEFAULT_DATA = {
       wifiName: 'Sakura_VIP',
       wifiPass: 'SushiTokyo26',
       plan: 'Enterprise Pro',
+      allowedDevices: 3,
+      subscriptionStatus: 'active',
+      validUntil: '2027-12-31',
+      ownerName: 'Kenji Takahashi',
+      licenseKey: 'DF-SAKURA-PRO-2026',
       status: 'active',
       createdAt: '2026-03-01'
     }
@@ -2125,6 +2192,7 @@ const DineFlowStore = {
       this._dbState.offers = this.mergeOffers(this._dbState.offers || []);
     }
     if (freshState.auditLogs) this._dbState.auditLogs = freshState.auditLogs;
+    if (freshState.activeDeviceSessions) this._dbState.activeDeviceSessions = freshState.activeDeviceSessions;
 
     // Preserve active session credentials
     this._dbState.session = this.getSession();
@@ -2285,6 +2353,276 @@ const DineFlowStore = {
       }
     } catch (e) {}
     return this.get();
+  },
+
+  // ----------------------------------------------------------------------------
+  // COMMERCIAL DEVICE FINGERPRINTING & ANTI-PIRACY HARDWARE ENTITLEMENT
+  // ----------------------------------------------------------------------------
+  DEVICE_ID_KEY: 'DINEFLOW_DEVICE_ID_v1',
+
+  getDeviceId() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        let devId = localStorage.getItem(this.DEVICE_ID_KEY);
+        if (!devId) {
+          const components = [
+            typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '',
+            typeof screen !== 'undefined' ? `${screen.width}x${screen.height}x${screen.colorDepth}` : '',
+            typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : '',
+            typeof navigator !== 'undefined' ? (navigator.language || '') : '',
+            typeof navigator !== 'undefined' ? (navigator.hardwareConcurrency || 4) : 4
+          ].join('###');
+
+          let hash = 0;
+          for (let i = 0; i < components.length; i++) {
+            hash = ((hash << 5) - hash) + components.charCodeAt(i);
+            hash |= 0;
+          }
+          const hex = Math.abs(hash).toString(16).padStart(8, '0').slice(0, 6).toUpperCase();
+          const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+          devId = `DF-DEV-${hex}-${rand}`;
+          localStorage.setItem(this.DEVICE_ID_KEY, devId);
+        }
+        return devId;
+      }
+    } catch (e) {}
+    return 'DF-DEV-STANDALONE-01';
+  },
+
+  getDeviceMetadata() {
+    const ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : '';
+    let os = 'Unknown OS';
+    if (ua.includes('Windows NT 10.0') || ua.includes('Windows 11')) os = 'Windows 11 / 10';
+    else if (ua.includes('Mac OS X')) os = 'macOS';
+    else if (ua.includes('Android')) os = 'Android';
+    else if (ua.includes('iPhone') || ua.includes('iPad')) os = 'iOS / iPadOS';
+    else if (ua.includes('Linux')) os = 'Linux';
+
+    let browser = 'Unknown Browser';
+    if (ua.includes('Edg/')) browser = 'Microsoft Edge';
+    else if (ua.includes('Chrome/')) browser = 'Google Chrome';
+    else if (ua.includes('Safari/') && !ua.includes('Chrome')) browser = 'Apple Safari';
+    else if (ua.includes('Firefox/')) browser = 'Mozilla Firefox';
+
+    const screenRes = (typeof window !== 'undefined' && window.screen)
+      ? `${window.screen.width}x${window.screen.height}`
+      : '1920x1080';
+
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+    const deviceType = isMobile ? 'Mobile Tablet / Handheld' : 'POS Counter / Desktop Terminal';
+
+    return {
+      id: this.getDeviceId(),
+      os,
+      browser,
+      screenRes,
+      deviceType,
+      deviceName: `${os} (${browser})`
+    };
+  },
+
+  checkDeviceEntitlement(tenantId) {
+    const data = this.get();
+    const devId = this.getDeviceId();
+    const tenant = (data.tenants && data.tenants[tenantId]) ? data.tenants[tenantId] : null;
+    const allowedQuota = tenant?.allowedDevices || 3;
+    const allSessions = Array.isArray(data.activeDeviceSessions) ? data.activeDeviceSessions : [];
+
+    // Check if device is explicitly blocked / revoked by Platform Owner Debashish Paul
+    const existing = allSessions.find(s => s.id === devId);
+    if (existing && existing.isBlocked) {
+      return {
+        allowed: false,
+        reason: 'BLOCKED_BY_ADMIN',
+        message: 'This device terminal has been remotely deactivated by Platform Administrator Debashish Paul. Please contact Debashish Paul to re-authorize this machine.',
+        deviceId: devId,
+        activeCount: 0,
+        allowedQuota
+      };
+    }
+
+    // Active concurrent sessions for this tenant
+    const tenantActiveSessions = allSessions.filter(s => 
+      s.tenantId === tenantId && 
+      s.isActive !== false && 
+      !s.isBlocked
+    );
+
+    // If current device is already among the active registered sessions, allow immediately
+    const isAlreadyRegistered = tenantActiveSessions.some(s => s.id === devId);
+    if (isAlreadyRegistered) {
+      return {
+        allowed: true,
+        reason: 'ALREADY_AUTHORIZED',
+        deviceId: devId,
+        activeCount: tenantActiveSessions.length,
+        allowedQuota
+      };
+    }
+
+    // If not registered yet, check if there is an available slot
+    if (tenantActiveSessions.length >= allowedQuota) {
+      return {
+        allowed: false,
+        reason: 'QUOTA_EXCEEDED',
+        message: `Device Quota Reached (${tenantActiveSessions.length}/${allowedQuota} authorized terminals in use). To connect this new hardware terminal, please upgrade the restaurant plan or revoke an idle terminal in Debashish Paul's Platform Console.`,
+        deviceId: devId,
+        activeCount: tenantActiveSessions.length,
+        allowedQuota
+      };
+    }
+
+    return {
+      allowed: true,
+      reason: 'SLOT_AVAILABLE',
+      deviceId: devId,
+      activeCount: tenantActiveSessions.length,
+      allowedQuota
+    };
+  },
+
+  registerCurrentDevice(tenantId, staffUser = null, role = 'STAFF') {
+    try {
+      const data = this.get();
+      if (!Array.isArray(data.activeDeviceSessions)) {
+        data.activeDeviceSessions = [];
+      }
+      const meta = this.getDeviceMetadata();
+      const now = new Date().toISOString();
+
+      let session = data.activeDeviceSessions.find(s => s.id === meta.id);
+      if (session) {
+        session.tenantId = tenantId;
+        session.deviceName = meta.deviceName;
+        session.browser = meta.browser;
+        session.os = meta.os;
+        session.screenRes = meta.screenRes;
+        session.staffId = staffUser?.id || session.staffId || null;
+        session.staffName = staffUser?.name || session.staffName || null;
+        session.role = role || session.role || 'STAFF';
+        session.isActive = true;
+        session.isBlocked = false;
+        session.lastHeartbeat = now;
+      } else {
+        session = {
+          id: meta.id,
+          tenantId: tenantId,
+          deviceName: meta.deviceName,
+          browser: meta.browser,
+          os: meta.os,
+          screenRes: meta.screenRes,
+          ipAddress: '127.0.0.1 (Local Verified)',
+          staffId: staffUser?.id || null,
+          staffName: staffUser?.name || null,
+          role: role || 'STAFF',
+          isActive: true,
+          isBlocked: false,
+          lastHeartbeat: now,
+          createdAt: now
+        };
+        data.activeDeviceSessions.unshift(session);
+      }
+
+      this.save(data, {
+        action: 'DEVICE_REGISTERED',
+        tenantSlug: tenantId,
+        deviceSession: session
+      });
+      return session;
+    } catch (e) {
+      console.warn('[DineFlowStore] Error registering device session:', e);
+      return null;
+    }
+  },
+
+  sendDeviceHeartbeat(tenantId) {
+    try {
+      const data = this.get();
+      const devId = this.getDeviceId();
+      if (!data.activeDeviceSessions) return;
+      const session = data.activeDeviceSessions.find(s => s.id === devId);
+      if (session) {
+        session.lastHeartbeat = new Date().toISOString();
+        session.isActive = true;
+        this.save(data, {
+          action: 'DEVICE_HEARTBEAT',
+          tenantSlug: tenantId || session.tenantId,
+          deviceSession: session
+        });
+      }
+    } catch (e) {}
+  },
+
+  revokeDevice(deviceId, reason = 'Remote Killswitch Triggered by Debashish Paul') {
+    try {
+      const data = this.get();
+      if (!data.activeDeviceSessions) return false;
+      const session = data.activeDeviceSessions.find(s => s.id === deviceId);
+      if (session) {
+        session.isBlocked = true;
+        session.isActive = false;
+        session.lastHeartbeat = new Date().toISOString();
+
+        // Security audit log entry
+        this.recordLog({
+          tenantId: session.tenantId,
+          managerId: 'staff-02',
+          managerName: 'Debashish Paul (Creator HQ)',
+          category: 'OVERRIDE',
+          action: 'Device Terminal Revoked ⚡',
+          details: `Hardware terminal ${session.deviceName} [${deviceId}] remotely revoked and locked out by Platform Administrator Debashish Paul. Reason: ${reason}`,
+          securityFlag: '🚨 Anti-Piracy Killswitch',
+          severity: 'alert'
+        });
+
+        this.save(data, {
+          action: 'DEVICE_REVOKED',
+          tenantSlug: session.tenantId,
+          deviceId: deviceId,
+          reason: reason
+        });
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.warn('[DineFlowStore] Error revoking device:', e);
+      return false;
+    }
+  },
+
+  unblockDevice(deviceId) {
+    try {
+      const data = this.get();
+      if (!data.activeDeviceSessions) return false;
+      const session = data.activeDeviceSessions.find(s => s.id === deviceId);
+      if (session) {
+        session.isBlocked = false;
+        session.isActive = true;
+        session.lastHeartbeat = new Date().toISOString();
+
+        this.recordLog({
+          tenantId: session.tenantId,
+          managerId: 'staff-02',
+          managerName: 'Debashish Paul (Creator HQ)',
+          category: 'OVERRIDE',
+          action: 'Device Terminal Re-authorized ✓',
+          details: `Hardware terminal ${session.deviceName} [${deviceId}] re-activated by Debashish Paul.`,
+          securityFlag: '✓ License Restored',
+          severity: 'info'
+        });
+
+        this.save(data, {
+          action: 'DEVICE_UNBLOCKED',
+          tenantSlug: session.tenantId,
+          deviceId: deviceId
+        });
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.warn('[DineFlowStore] Error unblocking device:', e);
+      return false;
+    }
   },
 
   clearAllCache() {

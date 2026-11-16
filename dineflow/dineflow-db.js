@@ -264,6 +264,11 @@
         wifiPass: db.wifi_pass || 'welcome123',
         upiVpa: db.upi_vpa || 'merchant@upi',
         plan: db.plan || 'Enterprise Pro',
+        allowedDevices: Number(db.allowed_devices) || 3,
+        subscriptionStatus: db.subscription_status || 'active',
+        validUntil: db.valid_until || '2027-12-31',
+        ownerName: db.owner_name || 'Restaurant Owner',
+        licenseKey: db.license_key || 'DF-PRO-2026-LIVE',
         status: db.status || 'active'
       };
     },
@@ -378,6 +383,43 @@
         payment_method: log.paymentMethod || 'UPI',
         severity: log.severity || 'info',
         security_flag: log.securityFlag || '✓ Verified'
+      };
+    },
+
+    deviceSessionFromDb(db) {
+      return {
+        id: db.id,
+        tenantId: db.tenant_id,
+        deviceName: db.device_name || 'Terminal',
+        browser: db.browser || 'Unknown',
+        os: db.os || 'Unknown',
+        screenRes: db.screen_res || '1920x1080',
+        ipAddress: db.ip_address || '127.0.0.1',
+        staffId: db.staff_id || null,
+        staffName: db.staff_name || null,
+        role: db.role || 'STAFF',
+        isActive: db.is_active !== false,
+        isBlocked: Boolean(db.is_blocked),
+        lastHeartbeat: db.last_heartbeat || new Date().toISOString(),
+        createdAt: db.created_at || new Date().toISOString()
+      };
+    },
+
+    deviceSessionToDb(session, tenantId) {
+      return {
+        id: session.id,
+        tenant_id: session.tenantId || tenantId || currentTenant,
+        device_name: session.deviceName || 'Terminal',
+        browser: session.browser || 'Unknown',
+        os: session.os || 'Unknown',
+        screen_res: session.screenRes || '1920x1080',
+        ip_address: session.ipAddress || '127.0.0.1',
+        staff_id: session.staffId || null,
+        staff_name: session.staffName || null,
+        role: session.role || 'STAFF',
+        is_active: session.isActive !== false,
+        is_blocked: Boolean(session.isBlocked),
+        last_heartbeat: session.lastHeartbeat || new Date().toISOString()
       };
     }
   };
@@ -575,6 +617,15 @@
           secondaryState.auditLogs = auditLogsRes.data.map(Transformers.auditLogFromDb);
         }
 
+        try {
+          const { data: devData } = await sb.from('active_device_sessions').select('*').order('last_heartbeat', { ascending: false }).limit(100);
+          if (devData && devData.length > 0) {
+            secondaryState.activeDeviceSessions = devData.map(Transformers.deviceSessionFromDb);
+          }
+        } catch (e) {
+          console.warn('[DineFlowDB] Non-critical device sessions fetch notice:', e);
+        }
+
         if (typeof DineFlowStore !== 'undefined' && typeof DineFlowStore.setDatabaseState === 'function') {
           DineFlowStore.setDatabaseState(secondaryState);
         }
@@ -696,6 +747,11 @@
           { event: '*', schema: 'public', table: 'offers' },
           (payload) => this.handleLiveOfferEvent(payload)
         )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'active_device_sessions' },
+          (payload) => this.handleLiveDeviceSessionEvent(payload)
+        )
         .subscribe((status, err) => {
           if (status === 'SUBSCRIBED') {
             console.log(`[DineFlowDB] 🟢 Realtime WebSocket connected successfully!`);
@@ -790,6 +846,45 @@
           const tbl = (state.tables || []).find(t => t.id === meta.tableId);
           if (tbl) {
             tbl.status = meta.newStatus || meta.status;
+            stateChanged = true;
+          }
+        } else if (meta.action === 'KILL_SESSION' || meta.action === 'DEVICE_REVOKED') {
+          const targetDeviceId = meta.deviceId;
+          const currentDevId = (typeof DineFlowStore !== 'undefined' && DineFlowStore.getDeviceId) ? DineFlowStore.getDeviceId() : null;
+          
+          if (targetDeviceId && currentDevId && targetDeviceId === currentDevId) {
+            console.warn('[DineFlowDB] 🚨 REMOTE KILLSWITCH ACTIVATED: This terminal has been revoked by Debashish Paul!');
+            if (typeof window.triggerRemoteLockout === 'function') {
+              window.triggerRemoteLockout(meta.reason || 'Terminal access deactivated by Platform Administrator Debashish Paul.');
+            }
+          }
+
+          if (state.activeDeviceSessions) {
+            const dev = state.activeDeviceSessions.find(d => d.id === targetDeviceId);
+            if (dev) {
+              dev.isBlocked = true;
+              dev.isActive = false;
+              stateChanged = true;
+            }
+          }
+        } else if (meta.action === 'DEVICE_UNBLOCKED') {
+          if (state.activeDeviceSessions && meta.deviceId) {
+            const dev = state.activeDeviceSessions.find(d => d.id === meta.deviceId);
+            if (dev) {
+              dev.isBlocked = false;
+              dev.isActive = true;
+              stateChanged = true;
+            }
+          }
+        } else if (meta.action === 'DEVICE_REGISTERED' || meta.action === 'DEVICE_HEARTBEAT') {
+          if (meta.deviceSession) {
+            if (!state.activeDeviceSessions) state.activeDeviceSessions = [];
+            const idx = state.activeDeviceSessions.findIndex(d => d.id === meta.deviceSession.id);
+            if (idx >= 0) {
+              state.activeDeviceSessions[idx] = { ...state.activeDeviceSessions[idx], ...meta.deviceSession };
+            } else {
+              state.activeDeviceSessions.unshift(meta.deviceSession);
+            }
             stateChanged = true;
           }
         }
@@ -1080,6 +1175,38 @@
         state.offers = state.offers.filter(o => o.id !== payload.old.id);
         DineFlowStore.saveLocalOnly(state);
         this.notifyUI({ action: 'OFFERS_UPDATED' });
+      }
+    },
+
+    handleLiveDeviceSessionEvent(payload) {
+      try {
+        const { eventType, new: newRow, old: oldRow } = payload;
+        const currentDevId = (typeof DineFlowStore !== 'undefined' && DineFlowStore.getDeviceId) ? DineFlowStore.getDeviceId() : null;
+
+        if (newRow && newRow.id === currentDevId && newRow.is_blocked) {
+          console.warn('[DineFlowDB] 🚨 Device marked blocked in cloud database!');
+          if (typeof window.triggerRemoteLockout === 'function') {
+            window.triggerRemoteLockout('Terminal access revoked by Platform Administrator Debashish Paul.');
+          }
+        }
+
+        const state = DineFlowStore.get();
+        if (!state.activeDeviceSessions) state.activeDeviceSessions = [];
+
+        if ((eventType === 'INSERT' || eventType === 'UPDATE') && newRow) {
+          const mapped = Transformers.deviceSessionFromDb(newRow);
+          const idx = state.activeDeviceSessions.findIndex(d => d.id === mapped.id);
+          if (idx >= 0) state.activeDeviceSessions[idx] = mapped;
+          else state.activeDeviceSessions.unshift(mapped);
+          DineFlowStore.saveLocalOnly(state);
+        } else if (eventType === 'DELETE' && oldRow) {
+          state.activeDeviceSessions = state.activeDeviceSessions.filter(d => d.id !== oldRow.id);
+          DineFlowStore.saveLocalOnly(state);
+        }
+
+        this.notifyUI({ action: 'DEVICE_SESSION_UPDATED', session: newRow });
+      } catch (e) {
+        console.warn('[DineFlowDB] Device session event error:', e);
       }
     },
 
@@ -1485,6 +1612,54 @@
               const { error } = await sb.from('customers').upsert(row);
               if (error) throw error;
               console.log(`[DineFlowDB] ✓ Customer ${row.name} synced to PostgreSQL!`);
+            }
+            break;
+          }
+
+          case 'DEVICE_REGISTERED':
+          case 'DEVICE_HEARTBEAT': {
+            if (meta.deviceSession) {
+              try {
+                const row = Transformers.deviceSessionToDb(meta.deviceSession, tenantId);
+                const { error } = await sb.from('active_device_sessions').upsert(row);
+                if (error && error.code !== '42P01') {
+                  console.warn('[DineFlowDB] Non-critical device session push error:', error.message || error);
+                } else {
+                  console.log(`[DineFlowDB] ✓ Device session ${row.id} synced to cloud!`);
+                }
+              } catch (e) {
+                console.warn('[DineFlowDB] Device session push notice:', e);
+              }
+            }
+            break;
+          }
+
+          case 'DEVICE_REVOKED': {
+            if (meta.deviceId) {
+              try {
+                const { error } = await sb.from('active_device_sessions')
+                  .update({ is_blocked: true, is_active: false })
+                  .eq('id', meta.deviceId);
+                if (error && error.code !== '42P01') console.warn('[DineFlowDB] Device revoke error:', error);
+                else console.log(`[DineFlowDB] ✓ Device ${meta.deviceId} marked revoked in cloud!`);
+              } catch (e) {
+                console.warn('[DineFlowDB] Device revoke notice:', e);
+              }
+            }
+            break;
+          }
+
+          case 'DEVICE_UNBLOCKED': {
+            if (meta.deviceId) {
+              try {
+                const { error } = await sb.from('active_device_sessions')
+                  .update({ is_blocked: false, is_active: true })
+                  .eq('id', meta.deviceId);
+                if (error && error.code !== '42P01') console.warn('[DineFlowDB] Device unblock error:', error);
+                else console.log(`[DineFlowDB] ✓ Device ${meta.deviceId} re-authorized in cloud!`);
+              } catch (e) {
+                console.warn('[DineFlowDB] Device unblock notice:', e);
+              }
             }
             break;
           }
