@@ -1914,6 +1914,12 @@
           <a href="?view=hub&section=restaurant-directory" class="df-pill-btn" title="View All Outlets Directory">
             <span>🏪 Outlets Directory</span>
           </a>
+          <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Book 15-Minute Discovery Call with Debashish Paul">
+            <span>📅 Book Call ↗</span>
+          </a>
+          <a href="../#contact" target="_blank" class="df-pill-btn" title="Open Contact & Inquiry Form">
+            <span>✉️ Contact Form</span>
+          </a>
           <a href="?r=${activeTenant.slug}&t=T12" class="df-pill-btn" title="Return to Guest Dining Experience">
             <span>🍽️ Guest Dining</span>
           </a>
@@ -2051,6 +2057,28 @@
           <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-dim);">
             <span>🔒 Single Universal Operations Gateway</span>
             <a href="?view=hub&section=restaurant-directory" style="color: var(--brand-primary); text-decoration: none; font-weight: 600;">Browse Outlets →</a>
+          </div>
+        </div>
+
+        <!-- Commercial Sales & Discovery Call Card for Prospective Restaurant Owners -->
+        <div class="df-login-prospect-card" style="max-width: 440px; margin: 1.5rem auto 0; background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 14px; padding: 1.25rem 1.4rem; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.4); text-align: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+            <span style="font-size: 1.25rem;">🚀</span>
+            <h3 style="font-size: 0.98rem; font-weight: 800; color: #fff; margin: 0;">Interested in Deploying DineFlow?</h3>
+          </div>
+          <p style="font-size: 0.78rem; color: #CBD5E1; line-height: 1.5; margin: 0 0 1rem 0;">
+            Schedule a 1-on-1 walkthrough with SaaS Creator <strong>Debashish Paul</strong> to activate a commercial license, pilot tabletop QR stands, or request custom features.
+          </p>
+          <div style="display: flex; gap: 0.55rem; justify-content: center; flex-wrap: wrap;">
+            <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn primary" style="font-size: 0.76rem; padding: 0.45rem 0.9rem; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-weight: 700; color: #fff; box-shadow: 0 4px 12px rgba(99,102,241,0.35);">
+              <span>📅 Book 15-Min Call ↗</span>
+            </a>
+            <a href="../#contact" target="_blank" class="df-pill-btn" style="font-size: 0.76rem; padding: 0.45rem 0.8rem; background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); color: #E2E8F0;">
+              <span>✉️ Contact Form</span>
+            </a>
+            <a href="https://wa.me/919905608257?text=Hi%20Debashish,%20I'm%20interested%20in%20a%20commercial%20pilot%20of%20DineFlow" target="_blank" class="df-pill-btn" style="font-size: 0.76rem; padding: 0.45rem 0.8rem; background: rgba(37,211,102,0.15); border-color: rgba(37,211,102,0.35); color: #4ADE80;">
+              <span>💬 WhatsApp</span>
+            </a>
           </div>
         </div>
       </main>
@@ -2530,6 +2558,27 @@
               <a href="../projects" class="df-back-portfolio-btn" title="Return to Debashish Paul Portfolio">
                 <span>← Back to Portfolio</span>
               </a>
+            </div>
+
+            <!-- Commercial Viral Hook for Restaurant Owners Dining In -->
+            <div class="df-customer-b2b-cta" style="margin: 1.25rem 0; padding: 1rem 1.25rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.75) 100%); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="min-width: 0; flex: 1;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.2rem;">
+                  <span>🍽️</span>
+                  <span>Own a restaurant, bar, or cloud kitchen?</span>
+                </div>
+                <div style="font-size: 0.72rem; color: #CBD5E1; line-height: 1.4;">
+                  Deploy DineFlow zero-commission QR ordering, live Kitchen KDS, and digital billing at your venue.
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.45rem; align-items: center;">
+                <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn primary" style="font-size: 0.72rem; padding: 0.4rem 0.8rem; background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; font-weight: 700; color: #fff; white-space: nowrap;">
+                  📅 Book 15-Min Demo ↗
+                </a>
+                <a href="../#contact" target="_blank" class="df-pill-btn" style="font-size: 0.72rem; padding: 0.4rem 0.75rem; white-space: nowrap;">
+                  ✉️ Contact
+                </a>
+              </div>
             </div>
 
             <div class="df-footer-divider"></div>
@@ -4068,6 +4117,9 @@
           </button>
           <a href="?r=${tenant.slug}&t=${tenant.slug === 'bella-vista' ? 'BV-02' : (tenant.slug === 'sakura-asian' ? 'SK-02' : 'T12')}" target="_blank" class="df-pill-btn" title="Open Customer View for this restaurant">
             <span>Customer QR ↗</span>
+          </a>
+          <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Book 15-Minute Discovery Call with Debashish Paul">
+            <span>📅 Book Call ↗</span>
           </a>
           <a href="?view=super-admin" class="df-pill-btn" title="Super Admin Platform">
             <span>SaaS Admin</span>
@@ -8633,6 +8685,12 @@
             <button id="btn-open-create-user-modal" class="df-pill-btn" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #10B981; font-weight: 700;" title="Create new restaurant staff profile">
               <span>+ Create Staff Profile</span>
             </button>
+            <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #818CF8; font-weight: 700;" title="Book 15-Minute Discovery Call with Debashish Paul">
+              <span>📅 Book Call ↗</span>
+            </a>
+            <a href="../#contact" target="_blank" class="df-pill-btn" title="Open Contact & Inquiry Form">
+              <span>✉️ Contact Form</span>
+            </a>
             <a href="?view=onboarding" class="df-pill-btn primary">
               + Onboard Restaurant
             </a>
@@ -8988,10 +9046,13 @@
                   Master console for <strong>Debashish Paul</strong>. Monitor connected hardware terminals worldwide, enforce restaurant license quotas, and trigger instant 1-click remote killswitches against pirated copies.
                 </p>
               </div>
-              <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                 <span class="df-micro-badge" style="background: rgba(99,102,241,0.15); color: #818CF8; border: 1px solid rgba(99,102,241,0.35); padding: 0.45rem 0.75rem;">
                   Master Admin: Debashish Paul ⚡
                 </span>
+                <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener noreferrer" onclick="return window.openCalendlyPopup ? window.openCalendlyPopup(event) : true;" class="df-pill-btn" style="background: linear-gradient(135deg, #6366F1, #4F46E5); border: none; color: #fff; font-weight: 700; font-size: 0.78rem; padding: 0.4rem 0.85rem;" title="Schedule Enterprise Consultation with Debashish Paul">
+                  <span>📅 Schedule Enterprise Consultation ↗</span>
+                </a>
               </div>
             </div>
 
