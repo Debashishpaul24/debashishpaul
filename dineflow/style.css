@@ -278,6 +278,68 @@ input:focus, textarea:focus, select:focus {
   border-color: rgba(239, 68, 68, 0.55);
 }
 
+/* High-Impact Eye-Catchy CTA Styles for Prospective Clients */
+.df-pill-btn.btn-live-demo-glow {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #4F46E5 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45), 0 0 16px rgba(139, 92, 246, 0.35) !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  animation: df-demo-pulse 2.4s infinite ease-in-out;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.01em;
+}
+
+.df-pill-btn.btn-live-demo-glow:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.75), 0 0 25px rgba(139, 92, 246, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+@keyframes df-demo-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.5), 0 0 0 0 rgba(99, 102, 241, 0.55);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.75), 0 0 0 6px rgba(99, 102, 241, 0);
+    transform: translateY(-1px);
+  }
+}
+
+.df-pill-btn.btn-contact-sales-glow {
+  background: rgba(16, 185, 129, 0.16) !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.55) !important;
+  color: #34D399 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer;
+}
+
+.df-pill-btn.btn-contact-sales-glow:hover {
+  background: rgba(16, 185, 129, 0.3) !important;
+  border-color: #10B981 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+
+.df-live-beacon {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34D399;
+  box-shadow: 0 0 8px #34D399;
+  animation: pulseLive 1.8s infinite;
+  margin-right: 0.25rem;
+}
+
 /* Deep-Route Boot Shield: Conceals pre-rendered landing page when visiting Guest Menu or Staff OS directly */
 html.df-deep-loading #app {
   display: none !important;
