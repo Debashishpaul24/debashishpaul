@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DineFlow™ | Commercial 1-Pager Pitch Deck & Executive Solution Overview</title>
+  <meta name="description" content="Official 1-Pager Commercial Pitch Deck for DineFlow: Zero-Commission QR Restaurant Ordering, Web Kitchen KDS, and Direct UPI Settlement. Printable PDF executive overview.">
+  <meta name="author" content="Debashish Paul">
+  <meta name="robots" content="index, follow">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DineFlow Commercial Pitch Deck Design System (Screen + Print Optimized)
+       ========================================================================== */
+    :root {
+      --bg-dark: #07090E;
+      --bg-card: #0F172A;
+      --bg-card-glass: rgba(15, 23, 42, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(99, 102, 241, 0.4);
+      --brand-primary: #E5A93C;
+      --brand-primary-rgb: 229, 169, 60;
+      --brand-indigo: #6366F1;
+      --brand-indigo-rgb: 99, 102, 241;
+      --brand-emerald: #10B981;
+      --text-main: #FFFFFF;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.35;
+      font-size: 13px;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Floating Screen Action Bar (Hidden on Print) */
+    .df-deck-screen-bar {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: rgba(7, 9, 14, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .df-deck-screen-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .df-deck-back-btn {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s ease;
+    }
+    .df-deck-back-btn:hover {
+      color: #fff;
+    }
+
+    .df-deck-screen-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .df-btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .df-btn-print {
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      color: #07090E;
+      border: none;
+      box-shadow: 0 4px 14px rgba(229, 169, 60, 0.35);
+    }
+    .df-btn-print:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(229, 169, 60, 0.5);
+    }
+
+    .df-btn-demo {
+      background: linear-gradient(135deg, #6366F1, #4F46E5);
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+    }
+    .df-btn-demo:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+    }
+
+    .df-btn-wa {
+      background: rgba(37, 211, 102, 0.15);
+      border: 1px solid rgba(37, 211, 102, 0.4);
+      color: #4ADE80;
+    }
+    .df-btn-wa:hover {
+      background: rgba(37, 211, 102, 0.28);
+      color: #fff;
+    }
+
+    /* Main 1-Pager Canvas (A4 Proportioned on Screen) */
+    .df-deck-viewport {
+      padding: 2rem 1rem 4rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .df-deck-page {
+      width: 100%;
+      max-width: 820px;
+      background: #0B0F18;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+      padding: 1.6rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient Glow Background Accent */
+    .df-deck-page::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 70%);
+      pointer-events: none;
+    }
+
+    /* Header Section */
+    .df-deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.9rem;
+      margin-bottom: 0.9rem;
+      gap: 1rem;
+    }
+
+    .df-deck-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .df-deck-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #E5A93C, #F59E0B);
+      color: #07090E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      box-shadow: 0 4px 14px rgba(229, 169, 60, 0.35);
+      flex-shrink: 0;
+    }
+
+    .df-deck-title-group h1 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .df-deck-title-group h1 span.edition-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(99, 102, 241, 0.2);
+      color: #A5B4FC;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    .df-deck-subtitle {
+      font-size: 0.76rem;
+      color: #CBD5E1;
+      margin-top: 0.15rem;
+      font-weight: 500;
+    }
+
+    .df-deck-meta-tags {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    .df-meta-pill {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #E2E8F0;
+    }
+    .df-meta-pill.highlight {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34D399;
+    }
+
+    .df-deck-founder-card {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .df-founder-name {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .df-founder-role {
+      font-size: 0.68rem;
+      color: var(--brand-primary);
+      font-weight: 600;
+    }
+
+    .df-founder-contact {
+      font-size: 0.68rem;
+      color: #94A3B8;
+      margin-top: 0.15rem;
+    }
+
+    /* Executive Problem vs DineFlow Advantage */
+    .df-deck-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .df-comp-card {
+      padding: 0.75rem 0.95rem;
+      border-radius: 10px;
+      font-size: 0.72rem;
+    }
+
+    .df-comp-card.pain {
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .df-comp-card.pain h3 {
+      color: #F87171;
+      font-size: 0.76rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .df-comp-card.gain {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+    .df-comp-card.gain h3 {
+      color: #34D399;
+      font-size: 0.76rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .df-comp-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .df-comp-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      line-height: 1.35;
+      color: #CBD5E1;
+    }
+
+    /* 4 Core Pillars Grid */
+    .df-deck-section-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94A3B8;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .df-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .df-pillar-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.7rem 0.65rem;
+      text-align: left;
+    }
+
+    .df-pillar-icon {
+      font-size: 1.1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .df-pillar-title {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .df-pillar-desc {
+      font-size: 0.67rem;
+      color: #94A3B8;
+      line-height: 1.35;
+    }
+
+    /* ROI Impact 4 Metrics Row */
+    .df-roi-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 10px;
+      padding: 0.65rem 0.9rem;
+      margin-bottom: 0.9rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      text-align: center;
+    }
+
+    .df-roi-stat-num {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #FBBF24;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .df-roi-stat-label {
+      font-size: 0.65rem;
+      color: #CBD5E1;
+      font-weight: 600;
+      margin-top: 0.1rem;
+    }
+
+    /* Commercial Pricing Matrix */
+    .df-pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .df-plan-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.75rem 0.85rem;
+      position: relative;
+    }
+
+    .df-plan-card.featured {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.12) 0%, rgba(15, 23, 42, 0.7) 100%);
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .df-plan-tag {
+      position: absolute;
+      top: -9px;
+      right: 12px;
+      background: #6366F1;
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+    }
+
+    .df-plan-name {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .df-plan-price {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #F8FAFC;
+      margin: 0.25rem 0 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .df-plan-price span.term {
+      font-size: 0.65rem;
+      color: #94A3B8;
+      font-weight: 500;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .df-plan-features {
+      list-style: none;
+      font-size: 0.66rem;
+      color: #CBD5E1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      margin-top: 0.4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 0.4rem;
+    }
+    .df-plan-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .df-plan-features li span.check {
+      color: #34D399;
+      font-weight: 900;
+    }
+
+    /* Footer: Scannable Live Demo QR + Contact Fast Track */
+    .df-deck-footer {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .df-footer-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .df-footer-cta-title {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .df-footer-cta-desc {
+      font-size: 0.7rem;
+      color: #CBD5E1;
+      margin: 0.2rem 0 0.45rem;
+      line-height: 1.35;
+    }
+
+    .df-footer-contact-row {
+      display: flex;
+      gap: 0.8rem;
+      font-size: 0.68rem;
+      color: #94A3B8;
+      flex-wrap: wrap;
+    }
+    .df-footer-contact-row strong {
+      color: #fff;
+    }
+
+    .df-footer-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .df-qr-box {
+      width: 76px;
+      height: 76px;
+      background: #FFFFFF;
+      padding: 4px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .df-qr-box canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .df-qr-text {
+      text-align: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #94A3B8;
+      line-height: 1.25;
+      max-width: 76px;
+    }
+    .df-qr-text span.scan-tag {
+      color: #FBBF24;
+      display: block;
+    }
+
+    /* ==========================================================================
+       Print-Specific Rules (A4 1-Page Exact Enforcement)
+       ========================================================================== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 6mm 8mm;
+      }
+
+      html, body {
+        background: #0B0F18 !important;
+        color: #FFFFFF !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .df-deck-screen-bar {
+        display: none !important;
+      }
+
+      .df-deck-viewport {
+        padding: 0 !important;
+        margin: 0 !important;
+        display: block !important;
+      }
+
+      .df-deck-page {
+        max-width: 100% !important;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+      }
+
+      .df-deck-page::before {
+        display: none !important;
+      }
+
+      /* Compact font adjustments so all sections fit on exactly 1 printed A4 */
+      .df-deck-header {
+        margin-bottom: 0.65rem !important;
+        padding-bottom: 0.65rem !important;
+      }
+      .df-deck-comparison {
+        margin-bottom: 0.65rem !important;
+      }
+      .df-pillars-grid {
+        margin-bottom: 0.65rem !important;
+      }
+      .df-roi-banner {
+        margin-bottom: 0.65rem !important;
+        padding: 0.5rem 0.75rem !important;
+      }
+      .df-pricing-grid {
+        margin-bottom: 0.65rem !important;
+      }
+      .df-deck-footer {
+        padding: 0.65rem 0.85rem !important;
+      }
+    }
+
+    /* Screen Responsiveness for Mobile Browsing */
+    @media (max-width: 680px) {
+      .df-deck-comparison {
+        grid-template-columns: 1fr;
+      }
+      .df-pillars-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .df-roi-banner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+      .df-pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .df-deck-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .df-deck-founder-card {
+        text-align: left;
+      }
+      .df-deck-footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .df-footer-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Floating Toolbar (Hidden when downloading / printing PDF) -->
+  <header class="df-deck-screen-bar">
+    <div class="df-deck-screen-bar-left">
+      <a href="./" class="df-deck-back-btn" title="Back to DineFlow Overview">
+        <span>←</span> <span>Back to DineFlow</span>
+      </a>
+      <span style="color: var(--border-subtle);">|</span>
+      <span style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">Executive 1-Pager Commercial Deck</span>
+    </div>
+    <div class="df-deck-screen-bar-right">
+      <button class="df-btn-action df-btn-print" onclick="window.print();" title="Save as pristine 1-Page PDF or Print">
+        <span>🖨️ Download / Print PDF</span>
+      </button>
+      <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener" class="df-btn-action df-btn-demo" title="Schedule Live 1-on-1 Walkthrough">
+        <span>📅 Book Live Demo ↗</span>
+      </a>
+      <a href="https://wa.me/919905608257?text=Hi%20Debashish,%20I'm%20reviewing%20the%20DineFlow%20commercial%20pitch%20deck%20and%20would%20like%20to%20discuss%20a%20pilot" target="_blank" rel="noopener" class="df-btn-action df-btn-wa" title="Connect on WhatsApp">
+        <span>💬 WhatsApp</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main 1-Pager Printable Canvas -->
+  <main class="df-deck-viewport">
+    <article class="df-deck-page" id="printable-pitch-deck">
+      
+      <!-- Header: Identity & Meta -->
+      <header class="df-deck-header">
+        <div class="df-deck-brand">
+          <div class="df-deck-logo">⚡</div>
+          <div class="df-deck-title-group">
+            <h1>
+              DineFlow™ 
+              <span class="edition-badge">Commercial SaaS</span>
+            </h1>
+            <p class="df-deck-subtitle">
+              Zero-Commission QR Table Ordering, Real-Time Web Kitchen KDS &amp; Direct UPI Settlement
+            </p>
+            <div class="df-deck-meta-tags">
+              <span class="df-meta-pill highlight">✓ 0% Aggregator Commission</span>
+              <span class="df-meta-pill">✓ Zero App Download</span>
+              <span class="df-meta-pill">✓ &lt;50ms Postgres Realtime KDS</span>
+              <span class="df-meta-pill">✓ 80mm ESC/POS Thermal Printing</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="df-deck-founder-card">
+          <div class="df-founder-name">Debashish Paul</div>
+          <div class="df-founder-role">Creator &amp; Enterprise Architect</div>
+          <div class="df-founder-contact">
+            <div>📞 +91 9905608257</div>
+            <div>🌐 debashishpaul.in/dineflow</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Section: Problem vs DineFlow Advantage -->
+      <section class="df-deck-comparison">
+        <div class="df-comp-card pain">
+          <h3><span>⚠️</span> The Industry Bottleneck</h3>
+          <ul class="df-comp-list">
+            <li><span>✕</span> <strong>20%–30% Aggregator Commission Cuts</strong> erode profit margins on delivery and dine-in apps.</li>
+            <li><span>✕</span> <strong>15–20 Min Wasted Table Wait Times</strong> waiting for paper menus, floor staff, and physical credit card bills.</li>
+            <li><span>✕</span> <strong>₹60,000+ Hardware Capex Lock-In</strong> on proprietary POS desktop terminals with heavy annual AMC fees.</li>
+          </ul>
+        </div>
+
+        <div class="df-comp-card gain">
+          <h3><span>⚡</span> The DineFlow Solution</h3>
+          <ul class="df-comp-list">
+            <li><span>✓</span> <strong>100% Zero Commission:</strong> Direct dynamic UPI settlements straight into your venue's bank account.</li>
+            <li><span>✓</span> <strong>Instant Table Turns:</strong> Guests scan tabletop QR, order in 60 seconds, and staff receive real-time kitchen tickets.</li>
+            <li><span>✓</span> <strong>Zero Hardware Capex:</strong> Runs smoothly on any iPad, Android tablet, phone, or existing kitchen display.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section: 4 Core Platform Pillars -->
+      <div class="df-deck-section-title">
+        <span>📦</span> Core Platform Architecture &amp; Modules
+      </div>
+      <section class="df-pillars-grid">
+        <div class="df-pillar-card">
+          <div class="df-pillar-icon">📱</div>
+          <div class="df-pillar-title">At-Table QR Dining</div>
+          <div class="df-pillar-desc">
+            Zero app installation. 60fps instant catalog with dietary tags, spice filters, modifiers, split bills, and 1-tap call-waiter chimes.
+          </div>
+        </div>
+
+        <div class="df-pillar-card">
+          <div class="df-pillar-icon">👨‍🍳</div>
+          <div class="df-pillar-title">Live Kitchen KDS</div>
+          <div class="df-pillar-desc">
+            Real-time Supabase Postgres CDC stream (&lt;50ms). Synthesized acoustic alert profiles, kanban ticket queues, and prep countdown timers.
+          </div>
+        </div>
+
+        <div class="df-pillar-card">
+          <div class="df-pillar-icon">🛡️</div>
+          <div class="df-pillar-title">Floor Waiter OS</div>
+          <div class="df-pillar-desc">
+            Anti-spoof waiter verification gate, dynamic live table map, instant bill settlements (Cash, POS Card, or UPI), and role-based staff PINs.
+          </div>
+        </div>
+
+        <div class="df-pillar-card">
+          <div class="df-pillar-icon">🖨️</div>
+          <div class="df-pillar-title">Thermal Hardware Engine</div>
+          <div class="df-pillar-desc">
+            Direct WebUSB / Bluetooth 80mm ESC/POS thermal printing for kitchen KOT tickets and customer GST receipts with zero print drivers.
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: ROI & Financial Impact -->
+      <section class="df-roi-banner">
+        <div>
+          <div class="df-roi-stat-num">+₹3,27,000</div>
+          <div class="df-roi-stat-label">Estimated Monthly Revenue Lift (25-Table Venue)</div>
+        </div>
+        <div>
+          <div class="df-roi-stat-num">0% Cut</div>
+          <div class="df-roi-stat-label">Direct UPI to Venue Bank (₹0 Aggregator Fees)</div>
+        </div>
+        <div>
+          <div class="df-roi-stat-num">-12 Mins</div>
+          <div class="df-roi-stat-label">Average Dining Turnaround Time Reduction</div>
+        </div>
+        <div>
+          <div class="df-roi-stat-num">+22%</div>
+          <div class="df-roi-stat-label">Higher Re-Order Rate on Desserts &amp; Beverages</div>
+        </div>
+      </section>
+
+      <!-- Section: Transparent Commercial Licensing -->
+      <div class="df-deck-section-title">
+        <span>💳</span> Commercial Licensing &amp; Deployment Plans
+      </div>
+      <section class="df-pricing-grid">
+        <div class="df-plan-card">
+          <div class="df-plan-name">14-Day Free Pilot</div>
+          <div class="df-plan-price">₹0 <span class="term">/ 14 Days</span></div>
+          <ul class="df-plan-features">
+            <li><span class="check">✓</span> 1 Restaurant Location</li>
+            <li><span class="check">✓</span> Up to 10 Dining Tables</li>
+            <li><span class="check">✓</span> 10 Free Acrylic QR Stands</li>
+            <li><span class="check">✓</span> Live Kitchen KDS + Menu Setup</li>
+            <li><span class="check">✓</span> Zero Commitment / Cancel Anytime</li>
+          </ul>
+        </div>
+
+        <div class="df-plan-card featured">
+          <span class="df-plan-tag">Most Popular</span>
+          <div class="df-plan-name">Growth Outlet</div>
+          <div class="df-plan-price">₹2,499 <span class="term">/ month</span></div>
+          <ul class="df-plan-features">
+            <li><span class="check">✓</span> Single Venue (Unlimited Tables)</li>
+            <li><span class="check">✓</span> Unlimited QR Scans &amp; Orders</li>
+            <li><span class="check">✓</span> 2 Live Kitchen KDS Terminals</li>
+            <li><span class="check">✓</span> 80mm ESC/POS Thermal Printing</li>
+            <li><span class="check">✓</span> Direct UPI QR + Waiter Floor OS</li>
+          </ul>
+        </div>
+
+        <div class="df-plan-card">
+          <div class="df-plan-name">Enterprise Fleet</div>
+          <div class="df-plan-price">₹4,999 <span class="term">/ month</span></div>
+          <ul class="df-plan-features">
+            <li><span class="check">✓</span> Multi-Branch (Up to 3 Outlets)</li>
+            <li><span class="check">✓</span> Super Admin Master Fleet Console</li>
+            <li><span class="check">✓</span> Hardware Fingerprinting &amp; Killswitch</li>
+            <li><span class="check">✓</span> Custom Domain &amp; White-label Branding</li>
+            <li><span class="check">✓</span> Priority 24/7 Dedicated Support</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Footer: Scannable Live Demo QR + Direct Founder Fast-Track -->
+      <footer class="df-deck-footer">
+        <div class="df-footer-left">
+          <div class="df-footer-cta-title">
+            <span>🚀</span> Ready to Transform Your Dining Operations?
+          </div>
+          <p class="df-footer-cta-desc">
+            Deploy DineFlow within 24 hours with zero disruption to your kitchen staff. Free tabletop acrylic stands and menu digitization included for all new venue pilots.
+          </p>
+          <div class="df-footer-contact-row">
+            <div><strong>Founder:</strong> Debashish Paul</div>
+            <div><strong>WhatsApp:</strong> +91 9905608257</div>
+            <div><strong>Email:</strong> pauldebashish522@gmail.com</div>
+            <div><strong>Web:</strong> debashishpaul.in/dineflow</div>
+          </div>
+        </div>
+
+        <div class="df-footer-right">
+          <div class="df-qr-text">
+            <span class="scan-tag">SCAN TO TEST</span>
+            Live Sandbox on Phone
+          </div>
+          <div class="df-qr-box" title="Scan to launch live mobile ordering sandbox">
+            <canvas id="deck-demo-qr" width="76" height="76"></canvas>
+          </div>
+        </div>
+      </footer>
+
+    </article>
+  </main>
+
+  <!-- Embedded Vanilla QR Engine for 100% Offline/Self-Contained Rendering -->
+  <script src="qr-engine.js"></script>
+  <script>
+    (function initDeckQR() {
+      try {
+        var qrCanvas = document.getElementById('deck-demo-qr');
+        if (qrCanvas && window.DineFlowQR) {
+          window.DineFlowQR.renderToCanvas(
+            qrCanvas,
+            'https://www.debashishpaul.in/dineflow/demo.html?view=demo',
+            { size: 76, margin: 1 }
+          );
+        }
+      } catch (err) {
+        console.warn('QR render notice:', err);
+      }
+    })();
+  </script>
+
+</body>
+</html>

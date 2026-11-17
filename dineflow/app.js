@@ -2079,6 +2079,9 @@
             <a href="https://wa.me/919905608257?text=Hi%20Debashish,%20I'm%20interested%20in%20a%20commercial%20pilot%20of%20DineFlow" target="_blank" class="df-pill-btn btn-whatsapp-glow">
               <span>💬 WhatsApp</span>
             </a>
+            <a href="pitch-deck.html" target="_blank" class="df-pill-btn" style="background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;" title="Open printable 1-Pager Commercial Pitch Deck PDF">
+              <span>📄 Pitch Deck</span>
+            </a>
           </div>
         </div>
       </main>
