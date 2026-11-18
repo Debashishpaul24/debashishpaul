@@ -20,6 +20,11 @@
     /* ==========================================================================
        DineFlow Commercial Pitch Deck Design System (Screen + Print Optimized)
        ========================================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 0 !important;
+    }
+
     :root {
       --bg-dark: #07090E;
       --bg-card: #0F172A;
@@ -142,6 +147,20 @@
     .df-btn-wa:hover {
       background: rgba(37, 211, 102, 0.28);
       color: #fff;
+    }
+
+    .df-print-quick-tip {
+      font-size: 0.72rem;
+      color: #FBBF24;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+      font-weight: 600;
     }
 
     /* Main 1-Pager Canvas (A4 Proportioned on Screen) */
@@ -633,22 +652,53 @@
     }
 
     /* ==========================================================================
-       Print-Specific Rules (A4 1-Page Exact Enforcement)
+       Print-Specific Rules (Full-Bleed 1-Page A4 Executive PDF)
        ========================================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 0 !important;
+    }
+
     @media print {
       @page {
         size: A4 portrait;
-        margin: 5mm 7mm;
+        margin: 0 !important;
       }
 
-      html, body {
-        background: #0B0F18 !important;
-        color: #FFFFFF !important;
+      /* Force browser to print exact dark background graphics */
+      *, *::before, *::after {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        box-sizing: border-box !important;
+      }
+
+      :root, html {
+        background: #0B0F18 !important;
+        background-color: #0B0F18 !important;
+        margin: 0 !important;
+        padding: 0 !important;
         width: 100% !important;
-        height: auto !important;
-        overflow: visible !important;
+        height: 100% !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      body {
+        background: #0B0F18 !important;
+        background-color: #0B0F18 !important;
+        color: #FFFFFF !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        max-height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        overflow: hidden !important;
       }
 
       .df-deck-screen-bar {
@@ -659,18 +709,31 @@
         padding: 0 !important;
         margin: 0 !important;
         display: block !important;
+        background: #0B0F18 !important;
+        background-color: #0B0F18 !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 100% !important;
       }
 
       .df-deck-page {
-        max-width: 100% !important;
         width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        min-height: 100% !important;
+        margin: 0 !important;
+        padding: 8mm 12mm 8mm 12mm !important;
+        background: #0B0F18 !important;
+        background-color: #0B0F18 !important;
         border: none !important;
         box-shadow: none !important;
-        padding: 0 !important;
-        background: transparent !important;
         border-radius: 0 !important;
         page-break-inside: avoid !important;
         page-break-after: avoid !important;
+        page-break-before: avoid !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
       }
 
       .df-deck-page::before {
@@ -678,27 +741,43 @@
       }
 
       .df-deck-header {
-        margin-bottom: 0.6rem !important;
+        margin-bottom: 0.45rem !important;
       }
       .df-deck-meta-strip {
-        margin-bottom: 0.65rem !important;
-        padding-bottom: 0.65rem !important;
+        margin-bottom: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
       }
       .df-deck-comparison {
-        margin-bottom: 0.65rem !important;
+        margin-bottom: 0.5rem !important;
+      }
+      .df-comp-card {
+        padding: 0.55rem 0.75rem !important;
+      }
+      .df-comp-list {
+        gap: 0.35rem !important;
+      }
+      .df-deck-section-title {
+        font-size: 0.72rem !important;
+        margin-bottom: 0.35rem !important;
       }
       .df-pillars-grid {
-        margin-bottom: 0.65rem !important;
+        margin-bottom: 0.5rem !important;
+      }
+      .df-pillar-card {
+        padding: 0.55rem 0.65rem !important;
       }
       .df-roi-banner {
-        margin-bottom: 0.65rem !important;
-        padding: 0.5rem 0.75rem !important;
+        margin-bottom: 0.5rem !important;
+        padding: 0.45rem 0.75rem !important;
       }
       .df-pricing-grid {
-        margin-bottom: 0.65rem !important;
+        margin-bottom: 0.5rem !important;
+      }
+      .df-plan-card {
+        padding: 0.55rem 0.75rem !important;
       }
       .df-deck-footer {
-        padding: 0.6rem 0.85rem !important;
+        padding: 0.55rem 0.85rem !important;
       }
     }
 
@@ -739,6 +818,9 @@
       .df-qr-text {
         text-align: left;
       }
+      .df-print-quick-tip {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -754,7 +836,10 @@
       <span style="font-size: 0.75rem; color: #94A3B8; font-weight: 600;">Executive 1-Pager Commercial Deck</span>
     </div>
     <div class="df-deck-screen-bar-right">
-      <button class="df-btn-action df-btn-print" onclick="window.print();" title="Save as pristine 1-Page PDF or Print">
+      <div class="df-print-quick-tip" title="Recommended Chrome Print Settings for Full-Bleed Dark PDF">
+        <span>💡 Margins: <strong>None</strong> &bull; Background: <strong>ON</strong></span>
+      </div>
+      <button class="df-btn-action df-btn-print" onclick="window.print();" title="Save as pristine full-bleed 1-Page PDF">
         <span>🖨️ Download / Print PDF</span>
       </button>
       <a href="https://calendly.com/pauldebashish522/30min" target="_blank" rel="noopener" class="df-btn-action df-btn-demo" title="Schedule Live 1-on-1 Walkthrough">
