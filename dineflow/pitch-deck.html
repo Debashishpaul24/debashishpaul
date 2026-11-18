@@ -21,7 +21,6 @@
        DineFlow Commercial Pitch Deck Design System (Screen + Print Optimized)
        ========================================================================== */
     @page {
-      size: A4 portrait;
       margin: 0 !important;
     }
 
@@ -662,16 +661,14 @@
     }
 
     /* ==========================================================================
-       Print-Specific Rules (Full-Bleed 1-Page A4 Executive PDF)
+       Print-Specific Rules (Full-Bleed 1-Page Responsive PDF: A4 & Letter)
        ========================================================================== */
     @page {
-      size: A4 portrait;
       margin: 0 !important;
     }
 
     @media print {
       @page {
-        size: A4 portrait;
         margin: 0 !important;
       }
 
@@ -689,6 +686,7 @@
         margin: 0 !important;
         padding: 0 !important;
         width: 100% !important;
+        min-width: 100% !important;
         height: 100% !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -700,6 +698,7 @@
         background-color: #0B0F18 !important;
         color: #FFFFFF !important;
         width: 100% !important;
+        min-width: 100% !important;
         height: 100% !important;
         min-height: 100% !important;
         max-height: 100% !important;
@@ -722,12 +721,14 @@
         background: #0B0F18 !important;
         background-color: #0B0F18 !important;
         width: 100% !important;
+        min-width: 100% !important;
         height: 100% !important;
         min-height: 100% !important;
       }
 
       .df-deck-page {
         width: 100% !important;
+        min-width: 100% !important;
         max-width: 100% !important;
         height: 100% !important;
         min-height: 100% !important;
