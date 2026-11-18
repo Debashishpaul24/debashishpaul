@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/dineflow",
+      "destination": "/dineflow/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

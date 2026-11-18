@@ -39,6 +39,11 @@
   <script>
     (function() {
       try {
+        // Failsafe trailing slash normalization: ensures relative assets (style.css, app.js) resolve correctly to /dineflow/
+        if (window.location.pathname === '/dineflow') {
+          window.location.replace('/dineflow/' + (window.location.search || '') + (window.location.hash || ''));
+          return;
+        }
         var s = window.location.search || '';
         var h = window.location.hash || '';
         if (s.indexOf('view=demo') !== -1 || s.indexOf('view=sandbox') !== -1) {
