@@ -350,36 +350,48 @@ input:focus, textarea:focus, select:focus {
 /* Prospective Client Conversion & B2B Responsive Layouts */
 .df-modal-fasttrack {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
   background: rgba(99, 102, 241, 0.08);
   border: 1px solid rgba(99, 102, 241, 0.25);
-  border-radius: 10px;
-  padding: 0.65rem 0.95rem;
-  margin-bottom: 1.1rem;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.15rem;
   box-sizing: border-box;
 }
 
 .df-modal-fasttrack-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-  flex: 1;
+  gap: 0.55rem;
+  width: 100%;
 }
 
 .df-modal-fasttrack-text {
-  font-size: 0.78rem;
-  color: #CBD5E1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #E2E8F0;
   line-height: 1.4;
+  flex: 1;
 }
 
 .df-modal-fasttrack-actions {
-  display: flex;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr 1fr;
+  gap: 0.45rem;
+  width: 100%;
   align-items: center;
-  flex-shrink: 0;
+}
+
+.df-modal-fasttrack-actions .df-pill-btn {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 0.45rem 0.4rem;
+  font-size: 0.72rem;
+  white-space: nowrap !important;
 }
 
 .df-customer-b2b-cta {
@@ -518,24 +530,8 @@ input:focus, textarea:focus, select:focus {
 
 @media (max-width: 540px) {
   .df-modal-fasttrack {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.65rem;
-    padding: 0.75rem;
-  }
-  .df-modal-fasttrack-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    width: 100%;
-  }
-  .df-modal-fasttrack-actions .df-pill-btn {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-    box-sizing: border-box;
-    padding: 0.45rem 0.4rem;
-    font-size: 0.72rem;
+    padding: 0.75rem 0.85rem;
+    gap: 0.6rem;
   }
   .df-login-prospect-card {
     padding: 1.1rem 0.95rem;
@@ -556,9 +552,16 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
-@media (max-width: 380px) {
-  .df-customer-b2b-cta-actions,
+@media (max-width: 440px) {
   .df-modal-fasttrack-actions {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+  }
+  .df-modal-fasttrack-actions .df-pill-btn {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.76rem;
+  }
+  .df-customer-b2b-cta-actions {
     grid-template-columns: 1fr;
   }
   .df-btn-claim-pilot {
